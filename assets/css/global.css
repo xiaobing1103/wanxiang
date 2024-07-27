@@ -1,0 +1,9 @@
+:root{
+	--bg-color:'#f6f7f6';
+}
+
+page{
+	width: 100vw;
+	height: 100vh;
+	background-color: var(--bg-color)!important;
+}

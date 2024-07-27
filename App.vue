@@ -5,7 +5,6 @@
 
 			console.log('App Launch')
 			uni.getSystemInfo({
-
 			});
 
 		},
@@ -18,6 +17,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss" scoped>
 	/*每个页面公共css */
+	@import url("@/assets/css/index.scss");
 </style>

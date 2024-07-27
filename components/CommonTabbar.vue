@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<up-tabbar :value="indexValue" :fixed="true" :placeholder="false" :safeAreaInsetBottom="false">
+		<up-tabbar :value="indexValue"  :placeholder="false" :safeAreaInsetBottom="false">
 			<up-tabbar-item text="首页" icon="home" @click="topath"></up-tabbar-item>
 			<up-tabbar-item text="绘画" icon="photo" @click="topath"></up-tabbar-item>
 			<up-tabbar-item @click="topath">

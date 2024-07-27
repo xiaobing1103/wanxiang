@@ -21,7 +21,7 @@
 			</view>
 		</view>
 		<!--  #endif -->
-		<!-- #ifdef H5 -->
+		<!-- #ifndef MP-WEIXIN -->
 		<!-- 		<view class="h5-header">
 			<view class="h5-header-left">
 				<image class="h5-header-leftImage" src="//file.1foo.com/2024/07/25/45ceb337b8a9c661fa7ed7992f04e7ea.svg"

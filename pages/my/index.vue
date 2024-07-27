@@ -1,31 +1,30 @@
 <template>
-	<view class="content">
-		<!-- <CommonHeader /> -->
-		<view class="myView">
-			<view class="">
-				带我去带我去带我去的武器
-			</view>
-		</view>
-		<CommonTabbar :indexValue="4" />
-	</view>
+	<z-paging :pagingStyle="{padding:'0 30rpx',background:'#F6F7F6'}">
+		<template #top>
+			<!-- 顶部用户信息 -->			
+			<UserInfo/>
+			<!-- 会员卡片 -->
+			<VipCard v-if="userStore.showVip"/>
+		</template>
+		<!-- 菜单列表 -->
+		<MenuList/>
+		<template #bottom>
+			<!-- 底部自定义tabar -->
+			<CommonTabbar :indexValue="4" />
+		</template>
+	</z-paging>
 </template>
 
 <script setup lang="ts">
 	import CommonTabbar from '@/components/CommonTabbar.vue'
-	import CommonHeader from '@/components/CommonHeader.vue'
+	import MenuList from './components/menuList/index.vue'
+	import VipCard from './components/vipCard/index.vue'
+	import UserInfo from './components/userInfo/index.vue'
+	
+	import { useUserStore } from '@/store/index'
+	const userStore = useUserStore()
 </script>
 
 <style lang="scss">
-	.content {}
 
-	.myView {
-		height: calc(100vh - 50px);
-		background-image: url("../../static/myBackGround.png");
-		background-repeat: no-repeat;
-		/* 不重复背景图像 */
-		background-size: 100% 100%;
-		/* 背景图像宽度和高度都设置为视口或容器的 100% */
-		background-position: center;
-		/* 确保背景图像居中显示 */
-	}
 </style>

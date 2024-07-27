@@ -1,9 +1,16 @@
 <template>
-	<view class="content">
-		<CommonHeader />
+<!-- 	<view class="content">
 		<CommonChat />
-		<CommonTabbar :indexValue="0" />
-	</view>
+	</view> -->
+	<z-paging>
+		<template #top>
+			<CommonHeader />
+		</template>
+		<CommonChat />
+		<template #bottom>
+			<CommonTabbar :indexValue="0" />
+		</template>
+	</z-paging>
 </template>
 
 <script setup>
