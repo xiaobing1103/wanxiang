@@ -19,7 +19,8 @@ export interface chatConfigProps {
 	messagesTemplate ?: MessagesTemplate[] //消息模板
 }
 export type MessagesTemplate = {
-	role : 'user' | 'system' //角色类型 
-	template : string //模板
-	templateType ?: MessageType //模版类型
+	role : TargetType //角色类型 
+	template ?: string //模板
+	MessageType ?: MessageType //模版类型
+	message ?: string | any //模版内容 
 }

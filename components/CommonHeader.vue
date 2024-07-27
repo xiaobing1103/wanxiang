@@ -3,7 +3,7 @@
 		<!-- #ifdef MP-WEIXIN -->
 		<view :style="{height:navBarHeight + 'px'}">
 			<view class="weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
-				<!-- 	<view class="weixin-header_left">
+				<!-- <view class="weixin-header_left">
 					<image class="weixin-header_left_Image"
 						src="//file.1foo.com/2024/07/25/45ceb337b8a9c661fa7ed7992f04e7ea.svg" alt="history" />
 				</view>

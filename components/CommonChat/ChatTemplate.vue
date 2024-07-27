@@ -11,8 +11,6 @@
 
 			</view>
 			<view class="systemChat">
-
-
 				<view v-if="model == 'v35'">
 					<V35Template :onFun="setContent" :onTemplates="checkUserToken" />
 				</view>
@@ -38,7 +36,7 @@
 				{
 					role: 'system',
 					template: V35Template
-				}
+				},
 			]
 		},
 		v40: {
