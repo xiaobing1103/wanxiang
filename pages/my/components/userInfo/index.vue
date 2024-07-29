@@ -4,9 +4,9 @@
 		<view class="info">
 			<text class="user-name">
 				<template v-if="!token">
-					<view class="LoginButton" @click="LoginFn">
+					<text @click="LoginFn">
 						登录/注册
-					</view>
+					</text>
 				</template>
 				<template v-else>
 					{{userInfo?.nick || '万象用户GQxm2a'}}
@@ -52,9 +52,5 @@
 				font-size: 35rpx;
 			}
 		}
-	}
-
-	.LoginButton {
-		height: 50rpx;
 	}
 </style>

@@ -13,7 +13,7 @@
 	</z-paging>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import api from '@/api/api.ts'
 import CommonTabbar from '@/components/CommonTabbar.vue'
 import CommonHeader from '@/components/CommonHeader.vue'

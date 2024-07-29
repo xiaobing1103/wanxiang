@@ -1,4 +1,4 @@
-// api.js
+
 import http from "./http";
 
 const urls = {

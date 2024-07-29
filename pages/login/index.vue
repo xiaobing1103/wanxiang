@@ -21,16 +21,14 @@
 					</image>
 				</view>
 				<view class="buttonGroup">
-					<up-button size="small" class="LoginButton" type="primary" text="账户用户登录" @click="to"></up-button>
-					<up-button size="small" class="LoginButton" type="success" text="一键登录"></up-button>
+
+					<up-button :customStyle="{width: '70%',borderRadius:'40rpx',marginBottom:'20rpx'}" size="small"
+						type="primary" text="账户用户登录" @click="toAccountLogin"></up-button>
+					<up-button :customStyle="{width: '70%',borderRadius:'40rpx',marginBottom:'20rpx'}" size="small"
+						type="success" text="一键登录"></up-button>
 				</view>
 
-				<view class="loginBottom">
-					我已阅读并同意
-					<text class="loginBottom_link" rel="stylesheet" href=""> 域方科技用户协议</text>
-					<text class="loginBottom_link" rel="stylesheet" href=""> 隐私协议</text>
-					<text class="loginBottom_link" rel="stylesheet" href=""> 支付协议</text>
-				</view>
+				<LoginDecscriptions />
 			</template>
 
 		</z-paging>
@@ -39,90 +37,79 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import CommonTabbar from '@/components/CommonTabbar.vue'
+	import { ref } from 'vue';
+	import CommonTabbar from '@/components/CommonTabbar.vue'
+	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue'
 
-import {
-	useUserStore
-} from '@/store/index'
+	import {
+		useUserStore
+	} from '@/store/index'
 
-const userStore = useUserStore()
-const radiovalue1 = ref('苹果');
+	const userStore = useUserStore()
+	const radiovalue1 = ref('苹果');
+	const toAccountLogin = () => {
+		uni.navigateTo({
+			url: '/pages/loginAccount/index'
+		})
+	}
 </script>
 
 <style lang="scss" scoped>
-.loginback {
-	background-image: url('http://file.1foo.com/2024/07/29/af36f8c0ba1944af16deba5328d73e0d.png');
-	background-position: -303px -478px;
-	width: 100vw;
-	height: 100vh;
-}
+	.loginback {
+		background-image: url('http://file.1foo.com/2024/07/29/af36f8c0ba1944af16deba5328d73e0d.png');
+		background-position: -303px -478px;
+		width: 100vw;
+		height: 100vh;
+	}
 
-.LoginButton {
-	width: 70% !important;
-	border-radius: 40rpx !important;
-	margin-bottom: 20rpx;
-}
+	.loginViewText {
+		margin-top: 60rpx;
 
-.loginViewText {
-	margin-top: 60rpx;
+		&_header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
 
-	&_header {
+			&_logo {
+				height: 60rpx;
+				width: 100rpx;
+			}
+
+			&_text {
+				font-weight: 800;
+				margin-left: 20rpx;
+			}
+		}
+
+		&_desc {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+
+			&_top {
+				font-size: 25rpx;
+				padding: 10rpx 0;
+			}
+
+			&_main {
+				font-size: 15rpx;
+			}
+		}
+	}
+
+	.loginView {
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-direction: column;
+		padding: 50rpx;
+		box-sizing: border-box;
 
-		&_logo {
-			height: 60rpx;
-			width: 100rpx;
-		}
-
-		&_text {
-			font-weight: 800;
-			margin-left: 20rpx;
+		&_image {
+			// height: 500rpx;
 		}
 	}
 
-	&_desc {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-
-		&_top {
-			font-size: 25rpx;
-			padding: 10rpx 0;
-		}
-
-		&_main {
-			font-size: 15rpx;
-		}
+	.buttonGroup {
+		padding: 20rpx 0 !important;
 	}
-}
-
-.loginView {
-	display: flex;
-	padding: 50rpx;
-	box-sizing: border-box;
-
-	&_image {
-		// height: 500rpx;
-	}
-}
-
-.buttonGroup {
-	padding: 20rpx 0 !important;
-}
-
-.loginBottom {
-	display: flex;
-	justify-content: center;
-	margin-top: 100rpx;
-	font-size: 20rpx;
-
-	&_link {
-		color: $uni-color-primary;
-		padding: 0 10rpx;
-	}	}
 </style>
