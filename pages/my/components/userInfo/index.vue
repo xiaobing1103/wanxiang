@@ -1,5 +1,5 @@
 <template>
-	<view class="user">
+	<view class="user" :style="{paddingTop:screenStore.safeTopHeight+'px'}">
 		<up-avatar :size="50"></up-avatar>
 		<view class="info">
 			<text class="user-name">万象用户GQxm2a</text>
@@ -12,12 +12,11 @@
 
 <script setup lang="ts">
 	import { useUserStore } from '@/store/index'
-	import {useCounterStore} from '@/store/system'
+	import {useScreenStore} from '@/store/index'
 	
-	const systemStore = useCounterStore()
+	const screenStore = useScreenStore()
 	const userStore = useUserStore()
 	
-	console.log(systemStore.safeTopHeight())
 </script>
 
 <style lang="scss" scoped>

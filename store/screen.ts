@@ -6,8 +6,23 @@ const useScreenStore = defineStore("screen",() =>{
 	const menuButtonInfo = ref<UniApp.GetMenuButtonBoundingClientRectRes>()
 	const systemInfo = ref<UniApp.GetSystemInfoResult>()
 	
+	//顶部安全距离
+	const safeTopHeight = computed(() =>{
+		let height:number = 0
+		// #ifdef H5
+			height = 10
+		// #endif
+		// #ifdef MP-WEIXIN
+		   height = menuButtonInfo.value.top+menuButtonInfo.value.height
+		// #endif
+		// #ifdef APP-PLUS
+			height = systemInfo.value.statusBarHeight
+		// #endif
+		return height
+	})
 	return {
 		statusBarHeight,
+		safeTopHeight,
 		menuButtonInfo,
 		systemInfo
 	}
