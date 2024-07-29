@@ -4,9 +4,9 @@
 		<view class="info">
 			<text class="user-name">
 				<template v-if="!token">
-					<view class="LoginButton" @click="LoginFn">
+					<text class="LoginButton" @click="LoginFn">
 						登录/注册
-					</view>
+					</text>
 				</template>
 				<template v-else>
 					{{userInfo?.nick || '万象用户GQxm2a'}}
@@ -28,8 +28,9 @@
 	const screenStore = useScreenStore()
 	const UserStore = useUserStore()
 	const { userInfo, showVip, token } = storeToRefs(UserStore)
-	console.log(UserStore)
+	
 	const LoginFn = () => {
+		console.log('sssssss')
 		uni.navigateTo({
 			url: '/pages/login/index',
 		})

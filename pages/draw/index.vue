@@ -7,9 +7,9 @@
 			<MenuCardItem @change="toPage(item)" v-for="(item,index) in menuList" :key="index" :data="item"/>
 		</view>
 		<text class="desc">未完功能持续上线中...</text>
-		<template #bottom>
+<!-- 		<template #bottom>
 			<CommonTabbar :indexValue="3"/>
-		</template>
+		</template> -->
 	</z-paging>
 </template>
 
