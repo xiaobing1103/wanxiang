@@ -73,7 +73,21 @@
 			}
 		}
 	],
-
+	"subPackages": [
+		{
+			"root": "pages/function/subPage",
+			 "pages": [
+				{
+					"path": "ppt/index",
+					"name": "ppt",
+					"style": {
+						"navigationBarTitleText": "一键生成ppt",
+						"navigationStyle": "custom"
+					}
+				}
+			]
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "万象AI",
