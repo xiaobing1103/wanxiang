@@ -22,7 +22,7 @@ import * as Pinia from 'pinia';
 export function createApp() {
 	const app = createSSRApp(App)
 	setupStore(app)
-	app.use(uviewPlus).use(Pinia.createPinia())
+	app.use(uviewPlus)
 	app.config.globalProperties.$assets = assetsConfig//挂载全局获取图片路径方法
 	return {
 		app,
