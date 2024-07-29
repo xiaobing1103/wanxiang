@@ -1,5 +1,5 @@
 <template>
-	<view class="menu-card">
+	<view class="menu-card" @click="$emit('change',data)">
 		<view class="cover" :style="{backgroundImage:`url(${data.cover})`}">
 	
 		</view>
@@ -16,6 +16,9 @@
 		data:MenuItem
 	}
 	const props = defineProps<Props>()
+	const emit = defineEmits<{
+		(e:'change',val:MenuItem):void
+	}>()
 </script>
 
 <style lang="scss" scoped>

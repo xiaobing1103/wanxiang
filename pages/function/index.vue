@@ -4,8 +4,9 @@
 			<CommonHeader />
 		</template>
 		<view class="body">
-			<MenuCardItem @click="toPage(item)" v-for="(item,index) in menuList" :key="index" :data="item"/>
+			<MenuCardItem @change="toPage(item)" v-for="(item,index) in menuList" :key="index" :data="item"/>
 		</view>
+		<text class="desc">未完功能持续上线中...</text>
 		<template #bottom>
 			<CommonTabbar :indexValue="3"/>
 		</template>
@@ -61,7 +62,10 @@
 	]
 	
 	const toPage = (item:MenuItem) =>{
-		console.log(item)
+		if(!item.path){
+			uni.$u.toast('尚未开放')
+			return
+		}
 		uni.navigateTo({
 			url:item.path
 		})
@@ -75,4 +79,11 @@
 		box-sizing: border-box;
 		padding: 30rpx;
 	}
+	.desc{
+		font-size: 24rpx;
+		text-align: center;
+		display: block;
+		width: 100%;
+		color:$u-info-disabled;
+	}	
 </style>
