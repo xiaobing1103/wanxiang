@@ -1,20 +1,21 @@
 
-<script lang="ts">
-	export default {
-		onLaunch: function () {
-
-			console.log('App Launch')
-			uni.getSystemInfo({
-			});
-
-		},
-		onShow: function () {
-			console.log('App Show')
-		},
-		onHide: function () {
-			console.log('App Hide')
-		}
+<script lang="ts" setup>
+	import {onLaunch,onLoad,onHide,onShow} from '@dcloudio/uni-app'
+	import {useScreenStore} from '@/store/index.js'
+	const screenStore = useScreenStore()
+	
+	const initPageSystem = async () =>{
+		const systemInfo = await uni.getSystemInfo()
+		// #ifdef MP-WEIXIN
+			const buttonInfo = uni.getMenuButtonBoundingClientRect()
+			screenStore.menuButtonInfo = buttonInfo
+		// #endif
+		screenStore.systemInfo = systemInfo
 	}
+	onLaunch(() =>{
+		//初始化页面信息
+		initPageSystem()
+	})
 </script>
 
 <style lang="scss" scoped>

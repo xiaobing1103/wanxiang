@@ -20,9 +20,10 @@
 	import MenuList from './components/menuList/index.vue'
 	import VipCard from './components/vipCard/index.vue'
 	import UserInfo from './components/userInfo/index.vue'
-	
 	import { useUserStore } from '@/store/index'
-	const userStore = useUserStore()
+	
+	const userStore = useUserStore() 
+	
 </script>
 
 <style lang="scss">

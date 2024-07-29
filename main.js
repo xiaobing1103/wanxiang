@@ -1,5 +1,6 @@
 import App from './App'
-
+import assetsConfig from '@/config/assets.config.js'
+import setupStore from '@/store/index.js'
 // #ifndef VUE3
 import Vue from 'vue'
 import './uni.promisify.adaptor'
@@ -20,7 +21,9 @@ import uviewPlus from 'uview-plus'
 import * as Pinia from 'pinia';
 export function createApp() {
 	const app = createSSRApp(App)
+	setupStore(app)
 	app.use(uviewPlus).use(Pinia.createPinia())
+	app.config.globalProperties.$assets = assetsConfig//挂载全局获取图片路径方法
 	return {
 		app,
 		Pinia, // 此处必须将 Pinia 返回

@@ -7,3 +7,7 @@ page{
 	height: 100vh;
 	background-color: var(--bg-color)!important;
 }
+
+:root{
+	--primary-warning-color:#FE6938;
+}

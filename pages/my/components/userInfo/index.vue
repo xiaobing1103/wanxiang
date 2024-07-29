@@ -12,12 +12,16 @@
 
 <script setup lang="ts">
 	import { useUserStore } from '@/store/index'
+	import {useCounterStore} from '@/store/system'
+	
+	const systemStore = useCounterStore()
 	const userStore = useUserStore()
+	
+	console.log(systemStore.safeTopHeight())
 </script>
 
 <style lang="scss" scoped>
 	.user {
-		padding-top: 100rpx;
 		display: flex;
 		align-items: center;
 	

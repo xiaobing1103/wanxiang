@@ -7,8 +7,8 @@
 		</view>
 		<view class="desc-box">
 			<text class="desc">{{description}}</text>
-			<slot name="extra"></slot>
-			<up-icon size="16" color="rgba(185, 191, 207, 1)" name="arrow-right"></up-icon>
+			<view class="extra"><slot name="extra"></slot></view>
+			<up-icon v-if="expand" size="16" color="rgba(185, 191, 207, 1)" name="arrow-right"></up-icon>
 		</view>
 	</view>
 </template>
@@ -53,12 +53,18 @@
 		box-sizing: border-box;
 		.label-box{
 			.label{
-				font-size: 32rpx;
+				font-size: 30rpx;
 			}
 		}
 		.desc-box{
 			display: flex;
 			align-items: center;
+			.extra{
+				margin-left: 10rpx;
+				display: flex;
+				font-size: 24rpx;
+				align-items: center;
+			}
 			.desc{
 				font-size: 24rpx;
 				color: rgba(185, 191, 207, 1);
