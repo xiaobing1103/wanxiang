@@ -1,9 +1,9 @@
 <template>
 	<view>
-		<up-tabbar :value="indexValue"  :placeholder="false" :safeAreaInsetBottom="false">
+		<up-tabbar :value="indexValue" :placeholder="false" :safeAreaInsetBottom="false">
 			<up-tabbar-item text="首页" icon="home" @click="topath"></up-tabbar-item>
 			<up-tabbar-item text="绘画" icon="photo" @click="topath"></up-tabbar-item>
-			<up-tabbar-item @click="topath">
+			<up-tabbar-item @click="openModel">
 				<view class="custom_style">
 					<image class="custom_style_icon" src="/static/plus.svg" mode="aspectFit"></image>
 				</view>
@@ -32,12 +32,14 @@
 	})
 
 	const topath = (e : number) => {
-		console.log(e)
 		const filterArr = ["/pages/index/index", "/pages/draw/index", "/pages/chat/index", "/pages/function/index", "/pages/my/index"]
 		uni.switchTab({
 			url: filterArr[e],
 		})
 
+	}
+	const openModel = () => {
+		console.log(1231)
 	}
 	// tabbarRef.value?.setTabBarBadge({
 	// 	index: 0,

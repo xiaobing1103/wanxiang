@@ -1,6 +1,6 @@
 import App from './App'
-import assetsConfig from '@/config/assets.config.js'
-import setupStore from '@/store/index.js'
+import assetsConfig from '@/config/assets.config.ts'
+import setupStore from '@/store/index.ts'
 // #ifndef VUE3
 import Vue from 'vue'
 import './uni.promisify.adaptor'

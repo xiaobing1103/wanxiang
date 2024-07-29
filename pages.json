@@ -31,7 +31,9 @@
 				"app-plus": {
 					"titleNView": false
 				}
+
 			}
+
 		},
 
 		{
@@ -50,6 +52,19 @@
 			"path": "pages/function/index",
 			"style": {
 				"navigationBarTitleText": "function",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+
+
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "login",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom",
 				"app-plus": {

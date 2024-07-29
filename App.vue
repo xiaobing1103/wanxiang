@@ -1,7 +1,7 @@
 
 <script lang="ts" setup>
 	import {onLaunch,onLoad,onHide,onShow} from '@dcloudio/uni-app'
-	import {useScreenStore} from '@/store/index.js'
+	import {useScreenStore} from '@/store'
 	const screenStore = useScreenStore()
 	
 	const initPageSystem = async () =>{
