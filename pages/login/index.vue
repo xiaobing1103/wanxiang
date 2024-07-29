@@ -1,6 +1,6 @@
 <template>
 	<view class="loginback">
-		<z-paging :pagingStyle="{padding:'0 30rpx'}">
+		<z-paging :pagingStyle="{ padding: '0 30rpx' }">
 			<template #top>
 				<view class="loginViewText">
 					<view class="loginViewText_header">
@@ -21,7 +21,7 @@
 					</image>
 				</view>
 				<view class="buttonGroup">
-					<up-button size="small" class="LoginButton" type="primary" text="账户用户登录"></up-button>
+					<up-button size="small" class="LoginButton" type="primary" text="账户用户登录" @click="to"></up-button>
 					<up-button size="small" class="LoginButton" type="success" text="一键登录"></up-button>
 				</view>
 
@@ -32,100 +32,97 @@
 					<text class="loginBottom_link" rel="stylesheet" href=""> 支付协议</text>
 				</view>
 			</template>
-			<template #bottom>
-				<CommonTabbar :indexValue="4" />
-			</template>
+
 		</z-paging>
 
 	</view>
 </template>
 
 <script setup lang="ts">
-	import { ref } from 'vue';
-	import CommonTabbar from '@/components/CommonTabbar.vue'
+import { ref } from 'vue';
+import CommonTabbar from '@/components/CommonTabbar.vue'
 
-	import {
-		useUserStore
-	} from '@/store/index'
+import {
+	useUserStore
+} from '@/store/index'
 
-	const userStore = useUserStore()
-	const radiovalue1 = ref('苹果');
+const userStore = useUserStore()
+const radiovalue1 = ref('苹果');
 </script>
 
 <style lang="scss" scoped>
-	.loginback {
-		background-image: url('http://file.1foo.com/2024/07/29/af36f8c0ba1944af16deba5328d73e0d.png');
-		background-position: -303px -478px;
-		width: 100vw;
-		height: 100vh;
-	}
+.loginback {
+	background-image: url('http://file.1foo.com/2024/07/29/af36f8c0ba1944af16deba5328d73e0d.png');
+	background-position: -303px -478px;
+	width: 100vw;
+	height: 100vh;
+}
 
-	.LoginButton {
-		width: 70% !important;
-		border-radius: 40rpx !important;
-		margin-bottom: 20rpx;
-	}
+.LoginButton {
+	width: 70% !important;
+	border-radius: 40rpx !important;
+	margin-bottom: 20rpx;
+}
 
-	.loginViewText {
-		margin-top: 60rpx;
+.loginViewText {
+	margin-top: 60rpx;
 
-		&_header {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-
-			&_logo {
-				height: 60rpx;
-				width: 100rpx;
-			}
-
-			&_text {
-				font-weight: 800;
-				margin-left: 20rpx;
-			}
-		}
-
-		&_desc {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-
-			&_top {
-				font-size: 25rpx;
-				padding: 10rpx 0;
-			}
-
-			&_main {
-				font-size: 15rpx;
-			}
-		}
-	}
-
-	.loginView {
+	&_header {
 		display: flex;
-		padding: 50rpx;
-		box-sizing: border-box;
-
-		&_image {
-			// height: 500rpx;
-		}
-	}
-
-	.buttonGroup {
-		padding: 20rpx 0 !important;
-	}
-
-	.loginBottom {
-		display: flex;
+		align-items: center;
 		justify-content: center;
-		margin-top: 100rpx;
-		font-size: 20rpx;
+		flex-direction: column;
 
-		&_link {
-			color: $uni-color-primary;
-			padding: 0 10rpx;
+		&_logo {
+			height: 60rpx;
+			width: 100rpx;
+		}
+
+		&_text {
+			font-weight: 800;
+			margin-left: 20rpx;
 		}
 	}
+
+	&_desc {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		&_top {
+			font-size: 25rpx;
+			padding: 10rpx 0;
+		}
+
+		&_main {
+			font-size: 15rpx;
+		}
+	}
+}
+
+.loginView {
+	display: flex;
+	padding: 50rpx;
+	box-sizing: border-box;
+
+	&_image {
+		// height: 500rpx;
+	}
+}
+
+.buttonGroup {
+	padding: 20rpx 0 !important;
+}
+
+.loginBottom {
+	display: flex;
+	justify-content: center;
+	margin-top: 100rpx;
+	font-size: 20rpx;
+
+	&_link {
+		color: $uni-color-primary;
+		padding: 0 10rpx;
+	}	}
 </style>
