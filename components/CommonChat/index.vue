@@ -68,8 +68,7 @@
 
 <style scoped lang="scss">
 	.CommonChat {
-		background-color: rgb(246, 247, 249);
-		height: calc(100vh - 88rpx);
+		// background-color: rgb(246, 247, 249);
 		padding: 20rpx;
 		box-sizing: border-box;
 	}

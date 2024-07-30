@@ -1,6 +1,5 @@
 <template>
 	<view class="chatBox">
-
 		<view class="chatBox_main" v-for="item in itemMessages" :key="item.id">
 			<template v-if="item.messageType === 'text'
 				|| item.messageType === 'text2'
@@ -84,16 +83,10 @@
 					</view>
 				</view>
 			</template>
-
 			<template v-else>
 				{{item.message}}
 			</template>
 		</view>
-
-
-
-		<Chat></Chat>
-
 	</view>
 </template>
 
@@ -103,7 +96,6 @@
 	import { defineProps, watch } from 'vue';
 	import { useChatStore } from '@/store/chat';
 	import V35Template from "@/components/ChatTemplate/V35Template.vue"
-	import Chat from "@/components/CommonChat/Chat.vue"
 	import V40Template from "@/components/ChatTemplate/V40Template.vue"
 
 	import { GenNonDuplicateID } from '../../tools/uuid';
@@ -146,7 +138,7 @@
 
 <style lang="scss" scoped>
 	.chatBox {
-		min-height: calc(100vh - 200rpx);
+		height: 100%;
 		position: relative;
 	}
 

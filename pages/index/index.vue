@@ -1,20 +1,25 @@
 <template>
-	<z-paging>
+	<z-paging :pagingStyle="{background:'rgb(246, 247, 249)'}">
 		<template #top>
 			<CommonHeader />
 		</template>
+		<!-- 对话框 -->
 		<CommonChat />
-<!-- 		<template #bottom>
-			<CommonTabbar :indexValue="0" />
-		</template> -->
+		<template #bottom>
+			<!-- 气泡选择 -->
+			<ChatInputToolTipVue/>
+			<!-- 聊天输入框 -->
+			<Chat/>
+		</template>
 	</z-paging>
 </template>
 
 <script setup lang="ts">
 import api from '@/api/api.ts'
-import CommonTabbar from '@/components/CommonTabbar.vue'
+import Chat from "@/components/CommonChat/Chat.vue"
 import CommonHeader from '@/components/CommonHeader.vue'
 import CommonChat from '@/components/CommonChat/index.vue'
+import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue'
 import {
 	ref
 } from 'vue';
@@ -32,12 +37,9 @@ const list = ref([{
 	text: '评论'
 }
 ]);
-
 const onLoad = () => {
 	console.log(123)
 }
-
-
 api.login().then(res => {
 	console.log(res)
 })
