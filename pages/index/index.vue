@@ -1,5 +1,5 @@
 <template>
-	<z-paging :pagingStyle="{background:'rgb(246, 247, 249)'}">
+	<z-paging :pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx'}">
 		<template #top>
 			<CommonHeader />
 		</template>
