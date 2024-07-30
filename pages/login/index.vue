@@ -21,13 +21,11 @@
 					</image>
 				</view>
 				<view class="buttonGroup">
-
 					<up-button :customStyle="{width: '70%',borderRadius:'40rpx',marginBottom:'20rpx'}" size="small"
 						type="primary" text="账户用户登录" @click="toAccountLogin"></up-button>
 					<up-button :customStyle="{width: '70%',borderRadius:'40rpx',marginBottom:'20rpx'}" size="small"
 						type="success" text="一键登录"></up-button>
 				</view>
-
 				<LoginDecscriptions />
 			</template>
 

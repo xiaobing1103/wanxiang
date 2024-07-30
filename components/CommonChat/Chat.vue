@@ -2,11 +2,9 @@
 	<view class="chatAll">
 		<view class="chatInput">
 			<image class="chatInput_left" src="@/static/image.svg" mode=""></image>
-
 			<view class="chatInput_input">
 				<up-input placeholder="请输入内容" border="surround" v-model="value" @change="change"></up-input>
 			</view>
-
 			<view class="chatInput_right">
 				<image class="chatInput_right_image" src="@/static/send.svg" mode=""></image>
 			</view>
@@ -27,9 +25,10 @@
 	.chatAll {
 		display: flex;
 		justify-content: center;
+		position: absolute;
+		bottom: 20rpx;
 		width: 100%;
 		overflow: hidden;
-		margin-bottom: 20rpx;
 	}
 
 	.chatInput {
