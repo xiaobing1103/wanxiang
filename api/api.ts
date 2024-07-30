@@ -1,8 +1,8 @@
 
-import { useUserStore } from "../store";
-import http from "./http";
+import http, { UrlConfig } from "./http";
 
-const urls = {
+
+const urls : Record<string, UrlConfig> = {
 	login: {
 		url: "api/v1/user/login", method: "POST", loading: true
 	},

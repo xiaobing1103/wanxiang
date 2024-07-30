@@ -20,7 +20,8 @@
 						<view class="loginAccount_main_input">
 							<up-input :customStyle="{width:'70%',borderRadius:'35rpx',
 							fontSize:'20rpx'}" placeholder="请输入手机验证码" border="surround" v-model="PhoneLoginParmas.code"></up-input>
-							<text class="loginAccount_main_input_code" @click="sendCode">获取验证码</text>
+							<text class="loginAccount_main_input_code"
+								@click="sendCode">{{timerActive? veifytime : '获取验证码'}} </text>
 						</view>
 					</template>
 					<template v-else>
@@ -57,12 +58,26 @@
 </template>
 
 <script setup lang="ts">
-	import { computed, reactive, ref } from 'vue';
+	import { computed, reactive, ref, watch } from 'vue';
 	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue'
 	import { useUserStore } from '../../store';
 	import { verifyPhoneFn } from '../../utils/verifyPhoneFn';
+	import api from '../../api/api';
 	const userStore = useUserStore()
 	const show = ref(false)
+	const veifytime = ref(60);
+	const timerActive = ref(false);
+	watch([veifytime, timerActive], ([newVeifytime, newTimerActive]) => {
+		let timer = null;
+		if (newTimerActive && newVeifytime > 0) {
+			timer = setTimeout(() => {
+				veifytime.value -= 1;
+			}, 1000);
+		} else if (newVeifytime === 0) {
+			timerActive.value = false;
+		}
+		return () => clearTimeout(timer);
+	});
 	const userComputed = computed({
 		get() {
 			return isMessageLogin.value ? PhoneLoginParmas.phone : loginParmas.user;
@@ -100,17 +115,33 @@
 			userStore.userInfo = result.data
 			// 设置请求头
 			userStore.token = result?.data?.token
+			
+			
 		} else {
 			show.value = false
 
 		}
 	}
 
-	const sendCode = () => {
+	const sendCode = async () => {
 		if (!verifyPhoneFn(PhoneLoginParmas.phone || '')) {
 			uni.$u.toast('请输入正确的手机号！')
 			return
 		}
+		if (timerActive.value) {
+			uni.$u.toast('请等待2分钟后再试！');
+			return;
+		}
+		// 发送验证码的逻辑
+		timerActive.value = true;
+		veifytime.value = 60;
+		const result = await api.sendSmsCode({ phone: PhoneLoginParmas.phone })
+		if (result.code == 200) {
+			uni.$u.toast('发送验证码成功，请注意查收！')
+		} else {
+			uni.$u.toast(result.msg)
+		}
+
 	}
 </script>
 
@@ -154,7 +185,7 @@
 				&_code {
 					color: rgb(192, 196, 204);
 					padding: 0 15rpx;
-					font-size: 23rpx;
+					font-size: 30rpx;
 
 				}
 			}
