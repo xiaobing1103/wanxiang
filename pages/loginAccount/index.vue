@@ -7,34 +7,37 @@
 					<image class="loginAccount_header_image" src="../../static/logo.svg" mode=""></image>
 				</view>
 				<view class="loginAccount_tabList">
-					<up-tabs :list="tabList"></up-tabs>
+					<up-tabs :current="current" @change="changeTabs" :list="tabList"></up-tabs>
 				</view>
-
 				<view class="loginAccount_main">
 					<view class="loginAccount_main_input">
 						<up-input :customStyle="{width:'70%',borderRadius:'35rpx',
-						fontSize:'20rpx'}" :placeholder="isMessageLogin ? '请输入手机号' : '请输入邮箱或用户名'" border="surround"
+						fontSize:'20rpx'}" :placeholder="type=='phone' ? '请输入手机号' : '请输入邮箱或用户名'" border="surround"
 							v-model="userComputed"></up-input>
 					</view>
-					<template v-if="isMessageLogin">
+					<template v-if="type == 'phone'">
 						<view class="loginAccount_main_input">
 							<up-input :customStyle="{width:'70%',borderRadius:'35rpx',
 							fontSize:'20rpx'}" placeholder="请输入手机验证码" border="surround" v-model="PhoneLoginParmas.code"></up-input>
-							<text class="loginAccount_main_input_code"
-								@click="sendCode">{{timerActive? veifytime : '获取验证码'}} </text>
+							<text class="loginAccount_main_input_code" @click="sendCode">获取验证码</text>
 						</view>
 					</template>
 					<template v-else>
 						<view class="loginAccount_main_input">
 							<up-input type="password" :customStyle="{width:'70%',borderRadius:'35rpx',
 							fontSize:'20rpx'}" placeholder="请输入密码" border="surround" v-model="loginParmas.pass"></up-input>
+
+						</view>
+					</template>
+					<template v-if="type == 'register'">
+						<view class="loginAccount_main_input">
+							<up-input type="password" :customStyle="{width:'70%',borderRadius:'35rpx',
+							fontSize:'20rpx'}" placeholder="请输入邀请码" border="surround" v-model="loginParmas.code"></up-input>
 						</view>
 					</template>
 
-
 					<view class="vertifyStuas">
-						<text
-							@click="()=> isMessageLogin = !isMessageLogin">{{isMessageLogin ? '账户密码登录' : '短信验证码登录'}}</text>
+						<text @click="changeType">{{type == 'phone' ? '账户密码登录' : '短信验证码登录'}}</text>
 					</view>
 					<LoginDecscriptions />
 					<view class="loginButton">
@@ -43,15 +46,12 @@
 					</view>
 				</view>
 			</template>
-
 			<up-overlay :show="show">
 				<view class="warp">
 					<up-loading-icon vertical color="#e8e8e8" text-color="#e8e8e8" text="登录中"
 						textSize="18"></up-loading-icon>
 				</view>
 			</up-overlay>
-
-
 		</z-paging>
 	</view>
 
@@ -65,8 +65,14 @@
 	import api from '../../api/api';
 	const userStore = useUserStore()
 	const show = ref(false)
-	const veifytime = ref(60);
+	const veifytime = ref(120);
 	const timerActive = ref(false);
+	const tabList = ref([
+		{ name: '账户登录', value: 'login' },
+		{ name: '注册账户', value: 'register' },
+	])
+	const current = ref(0)
+	const type = ref<'login' | 'register' | 'phone'>('login')
 	watch([veifytime, timerActive], ([newVeifytime, newTimerActive]) => {
 		let timer = null;
 		if (newTimerActive && newVeifytime > 0) {
@@ -90,36 +96,56 @@
 			}
 		}
 	});
+
+
 	const loginParmas = reactive({
 		user: '',
 		pass: '',
-
+		code: ''
 	})
+	const changeTabs = (val) => {
+		current.value = val.index
+		type.value = val.value
+	}
 	const PhoneLoginParmas = reactive({
 		phone: '',
 		code: ''
 	})
 	const isMessageLogin = ref(false)
-	const tabList = ref([
-		{ name: '账户登录' },
-		{ name: '注册账户' },
-	]
-	)
+	const changeType = () => {
+		isMessageLogin.value = !isMessageLogin.value
+		isMessageLogin.value ? (type.value = 'phone') : (type.value = 'login')
+		current.value = 0
+	}
+
 	const onLogin = async () => {
-		show.value = true
 		const parmas = isMessageLogin.value ? PhoneLoginParmas : loginParmas
-		const type = isMessageLogin.value ? 'phone' : 'login'
-		const result = await userStore.login(parmas, type)
+		// 验证登录方式
+		if (type.value == 'phone') {
+			if (!PhoneLoginParmas.phone || !PhoneLoginParmas.code) {
+				uni.$u.toast('请输入手机号和验证码后登录！')
+				return
+			}
+		}
+		if (type.value == 'login' || type.value == 'register') {
+			if (!loginParmas.user || !loginParmas.pass) {
+				uni.$u.toast('请输入用户名和密码后登录！')
+				return
+			}
+		}
+		show.value = true
+		const result = await userStore.login(parmas, type.value)
 		if (result.code == 200) {
 			show.value = false
 			userStore.userInfo = result.data
-			// 设置请求头
 			userStore.token = result?.data?.token
-			
-			
+			uni.switchTab({
+				url: '/pages/my/index'
+			})
+			uni.$u.toast('登录成功！')
 		} else {
 			show.value = false
-
+			uni.$u.toast(result.msg)
 		}
 	}
 
@@ -163,7 +189,6 @@
 				width: 200rpx;
 				height: 100rpx;
 				padding: 70rpx;
-
 			}
 		}
 
@@ -186,7 +211,6 @@
 					color: rgb(192, 196, 204);
 					padding: 0 15rpx;
 					font-size: 30rpx;
-
 				}
 			}
 		}
@@ -194,8 +218,6 @@
 
 	.loginButton {
 		width: 88%;
-
-
 	}
 
 	.vertifyStuas {
@@ -205,7 +227,6 @@
 		color: $u-primary ;
 		justify-content: flex-end;
 	}
-
 
 	.warp {
 		display: flex;

@@ -15,11 +15,14 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 
 	}
 	// 用户名密码登录
-	const login = async (parmas, type : string) => {
+	const login = async (parmas, type : 'login' | 'register' | 'phone') => {
 		if (type == 'phone') {
 			return await api.phoneLogin(parmas)
 		}
 		if (type == 'login') {
+			return await api.login(parmas)
+		}
+		if (type == 'register') {
 			return await api.login(parmas)
 		}
 	}

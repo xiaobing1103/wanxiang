@@ -15,6 +15,9 @@ const urls : Record<string, UrlConfig> = {
 	// 获取模版信息
 	getModels: {
 		url: "api/v1/chat2/getModels", method: "POST", loading: true,
+	},
+	register: {
+		url: "api/v1/user/register", method: "POST", loading: true,
 	}
 };
 

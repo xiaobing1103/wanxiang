@@ -7,6 +7,7 @@ export interface RequestOptions {
 	data ?: any;
 	header ?: Record<string, string>;
 	loading ?: boolean;
+	timeout ?: number; // 新增属性
 }
 
 export enum HttpStatusCode {
@@ -55,6 +56,7 @@ export interface Response<T = any> {
 	code : HttpStatusCode;
 	msg : string;
 	headers : Record<string, string>;
+
 }
 
 export interface UserStore {
@@ -75,6 +77,7 @@ export interface UrlConfig {
 	loading : boolean;
 	header ?: Record<string, string>;
 	baseURL ?: string;
+	timeout ?: number; // 新增属性
 }
 
 export interface ApiMethods {
@@ -82,12 +85,14 @@ export interface ApiMethods {
 	phoneLogin : RequestMethod;
 	sendSmsCode : RequestMethod<{ phone : string }>;
 	getModels : RequestMethod;
+	register : RequestMethod<{ user : string, pass : string, code ?: string }>
 }
 
 const header : Record<string, string> = {};
 
 const baseURL = "https://ai1foo.com/";
-const http = new Http().setBaseURL(baseURL).setHeader(header);
+const defaultTimeout = 20000
+const http = new Http().setBaseURL(baseURL).setHeader(header);;
 
 // 请求拦截器
 http.interceptors.request.use(
@@ -101,6 +106,7 @@ http.interceptors.request.use(
 		request.header["uid"] = userStore.userInfo.id || '';
 		request.header["token"] = userStore.userInfo.token || '';
 		request.header["App"] = userStore.userInfo.appid || '';
+		request.timeout = request.timeout || defaultTimeout;
 		return request;
 	},
 	(error : any) => Promise.resolve(error)
@@ -129,25 +135,32 @@ http.interceptors.response.use(
 		console.log("complete", complete);
 	}
 );
-
 class HttpBuilder {
-	constructor(private http : Http) { }
+	constructor(private http : Http<any>) { }
 
 	public dispatch(urls : Record<string, UrlConfig>) : ApiMethods {
 		const apiMethods : Partial<ApiMethods> = {};
 		for (const key in urls) {
 			if (Object.prototype.hasOwnProperty.call(urls, key)) {
 				const urlConfig = urls[key];
-				apiMethods[key] = (params : any) => this.http.request({
-					url: urlConfig.url,
-					method: urlConfig.method,
-					data: params,
-					loading: urlConfig.loading,
-				});
+				apiMethods[key] = (params : any) => {
+					const userStore = useUserStore();
+					// 路由拦截
+					if (!userStore.userInfo.token && urlConfig.url !== '/login' && urlConfig.url !== '/register') {
+						return Promise.reject(uni.$u.toast("用户未登录"));
+					}
+					return this.http.request({
+						url: urlConfig.url,
+						method: urlConfig.method,
+						data: params,
+						loading: urlConfig.loading,
+						header: urlConfig.header,
+						timeout: urlConfig.timeout || defaultTimeout,
+					});
+				};
 			}
 		}
 		return apiMethods as ApiMethods;
 	}
 }
-
 export default new HttpBuilder(http);
