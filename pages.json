@@ -35,7 +35,6 @@
 			}
 
 		},
-
 		{
 			"path": "pages/draw/index",
 			"style": {
@@ -47,7 +46,6 @@
 				}
 			}
 		},
-
 		{
 			"path": "pages/function/index",
 			"style": {
@@ -59,8 +57,6 @@
 				}
 			}
 		},
-
-
 		{
 			"path": "pages/login/index",
 			"style": {
@@ -80,11 +76,10 @@
 				"app-plus": {
 					"titleNView": false
 				}
-<<<<<<< HEAD
 			}
-=======
-			]
-		},
+		}
+	],
+	"subPackages": [
 		{
 			"root": "pages/my/subPage",
 			"pages": [
@@ -97,10 +92,8 @@
 					}
 				}				
 			]
->>>>>>> d7426b8559bec48a2f4423de7a7af20f31392fb3
-		}
-	],
-	"subPackages": [{
+		},		
+		{
 		"root": "pages/function/subPage",
 		"pages": [{
 			"path": "ppt/index",
