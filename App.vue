@@ -12,9 +12,11 @@
 		// #endif
 		screenStore.systemInfo = systemInfo
 	}
-	uni.onTabBarMidButtonTap(() =>{
-		console.log('asas')
-	})
+	// #ifndef MP-WEIXIN
+		uni.onTabBarMidButtonTap(() =>{
+			console.log('asas')
+		})
+	// #endif
 	onLaunch(() =>{
 		//初始化页面信息
 		initPageSystem()

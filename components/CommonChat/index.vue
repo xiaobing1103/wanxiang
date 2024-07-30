@@ -69,7 +69,7 @@
 <style scoped lang="scss">
 	.CommonChat {
 		// background-color: rgb(246, 247, 249);
-		padding: 20rpx;
+		padding: 20rpx 0;
 		box-sizing: border-box;
 	}
 </style>
