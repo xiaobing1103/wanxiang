@@ -27,10 +27,9 @@
 	.chatAll {
 		display: flex;
 		justify-content: center;
-		position: absolute;
-		bottom: 20rpx;
 		width: 100%;
 		overflow: hidden;
+		margin-bottom: 20rpx;
 	}
 
 	.chatInput {

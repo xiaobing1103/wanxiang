@@ -2,15 +2,16 @@
 	<view class="wrapper">
 		<scroll-view  :show-scrollbar="false" scroll-x style="flex-1">
 			<view class="tooltip">
-				<view class="row">
-					<view :style="{background:item.color}" v-for="(item,index) in rows.firstArray" :key="index" class="toolip-item">
-						<text class="name">{{item.text}}</text>
+				<view v-for="(item,index) in rows" :key="index" class="row">
+					<view v-for="(citem,cindex) in item" :key="cindex" :style="{background:citem.color}" class="toolip-item">
+						<template v-if="citem.iconType == 'symbol'">
+							<wx-icon :size="12" :name="citem.icon"></wx-icon>
+						</template>
+						<template v-if="citem.iconType == 'text'">
+							<text>{{citem.icon}}</text>
+						</template>
+						<text class="name">{{citem.text}}</text>
 					</view>
-				</view>
-				<view class="row">
-					<view :style="{background:item.color}" v-for="(item,index) in rows.secondArray" :key="index" class="toolip-item">
-						<text class="name">{{item.text}}</text>
-					</view>						
 				</view>
 			</view>
 		</scroll-view>		
@@ -19,97 +20,92 @@
 
 <script setup lang="ts">
 	import {computed} from 'vue'
+	
 	interface ToolipItem{
 		icon:string;
 		text:string;
 		color:string;
 		path:string;
-		iconType:'text' | "url"
+		iconType:'text' | "symbol"
 	}
 	const tooTipList:ToolipItem[] = [
 		{
-			icon:'',
+			icon:'💯',
 			text:'AI长论文写作',
 			color:'#ECF7EF',
-			path:'💯',
+			path:'',
 			iconType:"text"
 		},
 		{
-			icon:'',
+			icon:'ppt',
 			text:'一键生成PPT',
 			color:'#FCF2E7',
 			path:'',
-			iconType:"url"
+			iconType:"symbol"
 		},
 		{
-			icon:'',
+			icon:'human',
 			text:'图片转卡通',
 			color:'#EEF5FD',
 			path:'',
-			iconType:"url"
+			iconType:"symbol"
 		},
 		{
-			icon:'',
+			icon:'hl',
 			text:'AI换脸',
 			color:'#FCEDF2',
 			path:'',
-			iconType:"url"
+			iconType:"symbol"
 		},
 		{
-			icon:'',
+			icon:'mianxingmianjijian',
 			text:'图表生成',
 			color:'#ECF7EF',
 			path:'',
-			iconType:"url"
+			iconType:"symbol"
 		},
 		{
-			icon:'',
+			icon:'xz',
 			text:'AI写真',
 			color:'#FCF2E7',
 			path:''	,
-			iconType:"url"
+			iconType:"symbol"
 		},
 		{
-			icon:'',
+			icon:'lwss',
 			text:'联网搜索',
 			color:'#EEF5FD',
 			path:'',
-			iconType:"url"
+			iconType:"symbol"
 		},
 		{
-			icon:'',
+			icon:'💼',
 			text:'工作总结',
 			color:'#FCF2E7',
 			path:'',
-			iconType:"url"
+			iconType:"text"
 		},
 		{
-			icon:'',
+			icon:'caihong',
 			text:'图片上色',
 			color:'#ECF7EF',
 			path:'',
-			iconType:"url"
+			iconType:"symbol"
 		},
 		{
-			icon:'',
+			icon:'🧠',
 			text:'思维导图',
 			color:'#EEF5FD',
 			path:'',
-			iconType:"url"
+			iconType:"text"
 		}													
 	]
 	
-	const rows = computed<{
-		firstArray:ToolipItem[]
-		secondArray:ToolipItem[]
-	}>(() =>{
+	const rows = computed<Array<ToolipItem[]>>(() =>{
 		const middle = Math.ceil(tooTipList.length / 2)
 		const firstArray = tooTipList.slice(0,middle)
 		const secondArray = tooTipList.slice(middle)
-		return {
-			firstArray,
-			secondArray
-		}
+		return [firstArray,secondArray]
 	})
 </script>
 
@@ -129,9 +125,16 @@
 			.toolip-item{
 				padding: 10rpx 20rpx;
 				margin: 10rpx;
+				align-items: center;
+				justify-content: center;
+				display: flex;
 				flex-shrink: 0;
 				font-size: 20rpx;
 				border-radius: 40rpx;
+				.name{
+					display: block;
+					margin-left: 5rpx;
+				}
 			}
 		}	
 	}
