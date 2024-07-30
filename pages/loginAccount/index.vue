@@ -56,12 +56,15 @@
 <script setup lang="ts">
 	import { computed, reactive, ref } from 'vue';
 	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue'
+	import api from '@/api/api.ts'
+
 	const userComputed = computed(() => isMessageLogin ? loginParmas.user : PhoneLoginParmas.phone)
+	const loginFunctionComputed = computed(() => isMessageLogin ? api.login : api.phoneLogin)
 	const loginParmas = reactive({
 		user: 'xiaobing1103',
 		pass: '',
 
-	})
+	})	
 	const PhoneLoginParmas = reactive({
 		phone: '15386003374',
 		code: ''
