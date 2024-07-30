@@ -112,7 +112,6 @@
 	},
 	"tabBar": {
 		"fontSize": "15",
-		"borderStyle": "none",
 		"midButton": {
 			"iconPath": "static/add.png"
 		},

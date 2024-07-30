@@ -1,9 +1,10 @@
 // http.js
 import { Http } from "@anyup/uni-http";
+import { useUserStore } from "../store";
 
 const header = {};
 
-const baseURL = "https://ai1foo.com/api/";
+const baseURL = "https://ai1foo.com/";
 const http = new Http().setBaseURL(baseURL).setHeader(header);
 
 // 请求拦截器
@@ -13,7 +14,10 @@ http.interceptors.request.use(
 			// 如果配置了loading，显示
 		}
 		// 设置请求header
-		request.header["Authorization"] = "";
+		const userStore = useUserStore()
+		request.header["uid"] = userStore.userInfo.id || '';
+		request.header["token"] = userStore.userInfo.token || '';
+		request.header["App"] = userStore.userInfo.appid || '';
 		return request;
 	},
 	(error) => Promise.resolve(error)

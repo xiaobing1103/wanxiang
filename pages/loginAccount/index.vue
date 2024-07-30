@@ -16,20 +16,17 @@
 						fontSize:'20rpx'}" :placeholder="isMessageLogin ? '请输入手机号' : '请输入邮箱或用户名'" border="surround"
 							v-model="userComputed"></up-input>
 					</view>
-
-
 					<template v-if="isMessageLogin">
 						<view class="loginAccount_main_input">
 							<up-input :customStyle="{width:'70%',borderRadius:'35rpx',
-							fontSize:'20rpx'}" placeholder="请输入手机验证码" border="surround" v-model="password"></up-input>
-							<text class="loginAccount_main_input_code">获取验证码</text>
+							fontSize:'20rpx'}" placeholder="请输入手机验证码" border="surround" v-model="PhoneLoginParmas.code"></up-input>
+							<text class="loginAccount_main_input_code" @click="sendCode">获取验证码</text>
 						</view>
 					</template>
 					<template v-else>
 						<view class="loginAccount_main_input">
 							<up-input type="password" :customStyle="{width:'70%',borderRadius:'35rpx',
-							fontSize:'20rpx'}" placeholder="请输入密码" border="surround" v-model=" loginParmas.pass"></up-input>
-
+							fontSize:'20rpx'}" placeholder="请输入密码" border="surround" v-model="loginParmas.pass"></up-input>
 						</view>
 					</template>
 
@@ -41,11 +38,17 @@
 					<LoginDecscriptions />
 					<view class="loginButton">
 						<up-button size="small" :customStyle="{width:'100%',borderRadius:'35rpx',marginTop:'30rpx'}"
-							type="primary" text="确定"></up-button>
+							@click="onLogin" type="primary" text="确定"></up-button>
 					</view>
 				</view>
 			</template>
 
+			<up-overlay :show="show">
+				<view class="warp">
+					<up-loading-icon vertical color="#e8e8e8" text-color="#e8e8e8" text="登录中"
+						textSize="18"></up-loading-icon>
+				</view>
+			</up-overlay>
 
 
 		</z-paging>
@@ -56,17 +59,29 @@
 <script setup lang="ts">
 	import { computed, reactive, ref } from 'vue';
 	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue'
-	import api from '@/api/api.ts'
-
-	const userComputed = computed(() => isMessageLogin ? loginParmas.user : PhoneLoginParmas.phone)
-	const loginFunctionComputed = computed(() => isMessageLogin ? api.login : api.phoneLogin)
+	import { useUserStore } from '../../store';
+	import { verifyPhoneFn } from '../../utils/verifyPhoneFn';
+	const userStore = useUserStore()
+	const show = ref(false)
+	const userComputed = computed({
+		get() {
+			return isMessageLogin.value ? PhoneLoginParmas.phone : loginParmas.user;
+		},
+		set(value) {
+			if (isMessageLogin.value) {
+				PhoneLoginParmas.phone = value;
+			} else {
+				loginParmas.user = value;
+			}
+		}
+	});
 	const loginParmas = reactive({
-		user: 'xiaobing1103',
+		user: '',
 		pass: '',
 
-	})	
+	})
 	const PhoneLoginParmas = reactive({
-		phone: '15386003374',
+		phone: '',
 		code: ''
 	})
 	const isMessageLogin = ref(false)
@@ -75,7 +90,28 @@
 		{ name: '注册账户' },
 	]
 	)
-	const password = ref('')
+	const onLogin = async () => {
+		show.value = true
+		const parmas = isMessageLogin.value ? PhoneLoginParmas : loginParmas
+		const type = isMessageLogin.value ? 'phone' : 'login'
+		const result = await userStore.login(parmas, type)
+		if (result.code == 200) {
+			show.value = false
+			userStore.userInfo = result.data
+			// 设置请求头
+			userStore.token = result?.data?.token
+		} else {
+			show.value = false
+
+		}
+	}
+
+	const sendCode = () => {
+		if (!verifyPhoneFn(PhoneLoginParmas.phone || '')) {
+			uni.$u.toast('请输入正确的手机号！')
+			return
+		}
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -137,5 +173,20 @@
 		font-size: 25rpx;
 		color: $u-primary ;
 		justify-content: flex-end;
+	}
+
+
+	.warp {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+	}
+
+	.rect {
+		width: 200px;
+		height: 200px;
+		background-color: #fff;
 	}
 </style>
