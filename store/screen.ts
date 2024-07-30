@@ -10,13 +10,13 @@ const useScreenStore = defineStore("screen",() =>{
 	const safeTopHeight = computed(() =>{
 		let height:number = 0
 		// #ifdef H5
-			height = 10
+			height = 20
 		// #endif
 		// #ifdef MP-WEIXIN
 		   height = menuButtonInfo.value.top+menuButtonInfo.value.height
 		// #endif
 		// #ifdef APP-PLUS
-			height = systemInfo.value.statusBarHeight
+			height = systemInfo.value.statusBarHeight + 20
 		// #endif
 		return height
 	})

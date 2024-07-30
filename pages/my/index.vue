@@ -1,9 +1,6 @@
 <template>
 	<view class="myback">
-
-
 		<z-paging :pagingStyle="{padding:'0 30rpx'}">
-
 			<template #top>
 				<!-- 顶部用户信息 -->
 				<UserInfo />
@@ -12,10 +9,9 @@
 			</template>
 			<!-- 菜单列表 -->
 			<MenuList />
-			<template #bottom>
-				<!-- 底部自定义tabar -->
+<!-- 			<template #bottom>
 				<CommonTabbar :indexValue="4" />
-			</template>
+			</template> -->
 		</z-paging>
 	</view>
 </template>

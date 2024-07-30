@@ -1,15 +1,12 @@
 <template>
-<!-- 	<view class="content">
-		<CommonChat />
-	</view> -->
 	<z-paging>
 		<template #top>
 			<CommonHeader />
 		</template>
 		<CommonChat />
-		<template #bottom>
+<!-- 		<template #bottom>
 			<CommonTabbar :indexValue="0" />
-		</template>
+		</template> -->
 	</z-paging>
 </template>
 

@@ -12,6 +12,9 @@
 		// #endif
 		screenStore.systemInfo = systemInfo
 	}
+	uni.onTabBarMidButtonTap(() =>{
+		console.log('asas')
+	})
 	onLaunch(() =>{
 		//初始化页面信息
 		initPageSystem()

@@ -1,5 +1,5 @@
 <template>
-	<view :style="[setCustomerStyle]"  class="form-cell-item">
+	<view @click="handleCellClick" :style="[setCustomerStyle]"  class="form-cell-item">
 		<view class="label-box">
 			<slot name="label">
 				<text class="label">{{label}}</text>
@@ -15,23 +15,25 @@
 
 <script setup lang="ts">
 	import { Component, computed, toRefs } from 'vue';
-	
+	import {toPage} from '@/utils/index'
 	interface Props{
 		label?:string;
 		description?:string;
-		url?:string;
+		path?:string;
 		height?:number;
 		border?:boolean;
 		labelIcon?:Component | string;
 		iconSize?:number
 		expand?:boolean;
 	}
-	
 	const props = withDefaults(defineProps<Props>(),{
 		border:true,
 		height:88
 	})
 	
+	const emit = defineEmits<{
+		(e:'change'):void
+	}>()
 	const {border} = toRefs(props)
 	
 	const setCustomerStyle = computed(() =>{
@@ -40,6 +42,15 @@
 		style['height'] = props.height + 'rpx'
 		return style
 	})
+	
+	//点击事件
+	const handleCellClick = () =>{
+		if(!props.path){
+			emit('change')
+			return
+		}
+		toPage(props.path)
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -53,7 +64,7 @@
 		box-sizing: border-box;
 		.label-box{
 			.label{
-				font-size: 30rpx;
+				font-size: 28rpx;
 			}
 		}
 		.desc-box{

@@ -80,7 +80,24 @@
 				"app-plus": {
 					"titleNView": false
 				}
+<<<<<<< HEAD
 			}
+=======
+			]
+		},
+		{
+			"root": "pages/my/subPage",
+			"pages": [
+				{
+					"path": "vip/index",
+					"name": "vip",
+					"style": {
+						"navigationBarTitleText": "会员信息",
+						"navigationStyle": "custom"
+					}
+				}				
+			]
+>>>>>>> d7426b8559bec48a2f4423de7a7af20f31392fb3
 		}
 	],
 	"subPackages": [{
@@ -101,22 +118,26 @@
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
-		"custom": true,
-		"height": "0",
+		"fontSize": "15",
+		"borderStyle": "none",
+		"midButton": {
+			"iconPath": "static/add.png"
+		},
 		"list": [{
-				"pagePath": "pages/index/index"
+				"pagePath": "pages/index/index",
+				"text": "对话"
 			},
 			{
-				"pagePath": "pages/draw/index"
+				"pagePath": "pages/draw/index",
+				"text": "绘画"
 			},
 			{
-				"pagePath": "pages/function/index"
+				"pagePath": "pages/function/index",
+				"text": "功能库"
 			},
 			{
-				"pagePath": "pages/chat/index"
-			},
-			{
-				"pagePath": "pages/my/index"
+				"pagePath": "pages/my/index",
+				"text": "我的"
 			}
 		]
 	},
