@@ -1,19 +1,18 @@
 import {
 	defineStore
 } from 'pinia';
+import { ref } from 'vue';
 
-export const useChatStore = defineStore('chat', {
-	state: () => {
-		return {
-			model: 'v35',
+const useChatStore = defineStore('wanxiang_chat', () => {
+	const model = ref('v35')
+	const setModel = (val : string) => {
+		model.value = val
+	}
 
-		};
-	},
-	// 也可以这样定义
-	// state: () => ({ count: 0 })
-	actions: {
-		setModel(newModel : string) {
-			this.model = newModel;
-		},
-	},
-});
+	return {
+		model,
+		setModel
+	}
+}
+);
+export default useChatStore

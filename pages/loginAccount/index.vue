@@ -2,7 +2,6 @@
 	<view class="loginAccount">
 		<z-paging :pagingStyle="{padding:'0 30rpx'}">
 			<template #top>
-
 				<view class="loginAccount_header">
 					<image class="loginAccount_header_image" src="../../static/logo.svg" mode=""></image>
 				</view>
@@ -137,12 +136,17 @@
 		const result = await userStore.login(parmas, type.value)
 		if (result.code == 200) {
 			show.value = false
-			userStore.userInfo = result.data
 			userStore.token = result?.data?.token
+			userStore.userInfo = result.data
+			const users = await api.userInfo(null)
+			if (users.code == 200) {
+				userStore.userInfo = users.data
+			}
 			uni.switchTab({
 				url: '/pages/my/index'
 			})
 			uni.$u.toast('登录成功！')
+
 		} else {
 			show.value = false
 			uni.$u.toast(result.msg)

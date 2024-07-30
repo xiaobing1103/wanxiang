@@ -1,5 +1,7 @@
 import { Http } from "@anyup/uni-http";
 import { useUserStore } from "../store";
+import { LoginReq } from "../type/userTypes";
+
 
 export interface RequestOptions {
 	url : string;
@@ -8,6 +10,9 @@ export interface RequestOptions {
 	header ?: Record<string, string>;
 	loading ?: boolean;
 	timeout ?: number; // 新增属性
+	eventStream ?: boolean; // 新增属性，用于标记 text/event-stream 请求
+	callback ?: (chunk : string) => void; // 新增属性，回调函数
+	errorback ?: (error : any) => void; // 新增属性，错误回调函数
 }
 
 export enum HttpStatusCode {
@@ -55,8 +60,9 @@ export interface Response<T = any> {
 	data : T;
 	code : HttpStatusCode;
 	msg : string;
-	headers : Record<string, string>;
-
+	header : Record<string, string>;
+	callback : (val) => void
+	errorCallback : (val) => void
 }
 
 export interface UserStore {
@@ -78,20 +84,23 @@ export interface UrlConfig {
 	header ?: Record<string, string>;
 	baseURL ?: string;
 	timeout ?: number; // 新增属性
+	eventStream ?: boolean; // 添加 eventStream 配置
 }
 
 export interface ApiMethods {
-	login : RequestMethod;
+	login : RequestMethod<LoginReq>;
+	userInfo : RequestMethod<null>;
 	phoneLogin : RequestMethod;
 	sendSmsCode : RequestMethod<{ phone : string }>;
 	getModels : RequestMethod;
 	register : RequestMethod<{ user : string, pass : string, code ?: string }>
+	v35 : RequestMethod<{ params : string, prompt : string, type ?: string }>
 }
 
 const header : Record<string, string> = {};
 
-const baseURL = "https://ai1foo.com/";
-const defaultTimeout = 20000
+export const baseURL = "https://ai1foo.com/";
+export const defaultTimeout = 20000
 const http = new Http().setBaseURL(baseURL).setHeader(header);;
 
 // 请求拦截器
@@ -102,11 +111,17 @@ http.interceptors.request.use(
 		}
 		// 设置请求header
 		const userStore = useUserStore();
+		const { userInfo } = userStore
 		request.header = request.header || {};
-		request.header["uid"] = userStore.userInfo.id || '';
-		request.header["token"] = userStore.userInfo.token || '';
-		request.header["App"] = userStore.userInfo.appid || '';
+		request.header["uid"] = userInfo?.id || '';
+		request.header["token"] = userInfo?.token || '';
+		request.header["App"] = userInfo?.appid || '';
+		request.header["Access-Token"] = userInfo?.access_token || ''
 		request.timeout = request.timeout || defaultTimeout;
+		// 如果是 event-stream 请求，设置 Accept 头
+		if (request.eventStream) {
+			request.header["Accept"] = "text/event-stream";
+		}
 		return request;
 	},
 	(error : any) => Promise.resolve(error)
@@ -114,12 +129,11 @@ http.interceptors.request.use(
 
 // 响应拦截器
 http.interceptors.response.use(
-	(response : Response) => {
-		// 请求成功
+	(response : any) => {
+		// 非流请求正常处理
 		if (!response.data) {
 			return Promise.reject(new Error("接口请求未知错误"));
 		}
-		// 其他业务处理
 		return Promise.resolve(response);
 	},
 	(error : any) => {
@@ -143,20 +157,17 @@ class HttpBuilder {
 		for (const key in urls) {
 			if (Object.prototype.hasOwnProperty.call(urls, key)) {
 				const urlConfig = urls[key];
-				apiMethods[key] = (params : any) => {
+				apiMethods[key] = (params : any, callback ?: (chunk : string) => void, errorback ?: (error : any) => void) => {
 					const userStore = useUserStore();
-					// 路由拦截
-					if (!userStore.userInfo.token && urlConfig.url !== '/login' && urlConfig.url !== '/register') {
-						return Promise.reject(uni.$u.toast("用户未登录"));
-					}
-					return this.http.request({
+					return http.request({
 						url: urlConfig.url,
 						method: urlConfig.method,
 						data: params,
 						loading: urlConfig.loading,
 						header: urlConfig.header,
 						timeout: urlConfig.timeout || defaultTimeout,
-					});
+						eventStream: urlConfig.eventStream || false, // 设置 eventStream 参数
+					})
 				};
 			}
 		}

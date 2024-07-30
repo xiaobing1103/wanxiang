@@ -28,8 +28,9 @@
 	import { computed, ref } from 'vue';
 	import V35Template from '../ChatTemplate/V35Template.vue';
 	import V40Template from '../ChatTemplate/V40Template.vue'; // 假设你有这个组件
-	import { useChatStore } from '@/store/chat.ts';
-	const { model, setModel } = useChatStore();
+	import useChatStore from '@/store/chat';
+	const ChatStore = useChatStore();
+	const { model, setModel } = ChatStore;
 	const TemplateConfig = {
 		v35: {
 			messagesTemplate: [

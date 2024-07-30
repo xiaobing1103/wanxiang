@@ -13,7 +13,7 @@
 	import FastSelectedModel from '@/components/CommonChat/FastSelectedModel.vue'
 	import ChatBox from '@/components/CommonChat/ChatBox.vue'
 	import { ModelType, chatConfigProps } from '../../type/chatData';
-	import { useChatStore } from '@/store/chat.ts';
+	import useChatStore from '@/store/chat';
 	const { model, setModel } = useChatStore();
 	const config : chatConfigProps = {
 		placeholder: '有问题尽管问，知无不答~',

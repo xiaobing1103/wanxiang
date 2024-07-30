@@ -21,8 +21,6 @@
 					 'chatBox_main_View_main_systemMessage' : item.target == 'assistant' || item.target =='system',
 					 'chatBox_main_View_main_echarts': model == 'echarts' 
 					 }
-					
-				
 					" :style="{
 							marginLeft: item.target === 'user' ? '0' : '20rpx',
 							marginRight: item.target === 'user' ? '20rpx' : '0',
@@ -30,7 +28,6 @@
 							background: item.messageType == 'template' ||	item.messageType == 'image' ? 'transparent' : 'white',
 							minWidth: item.messageType =='template' || item.messageType == 'image' ? '1%' :'100%'
 						}">
-
 						<template v-if="item.state == 'waite' && item.message.length <= 0">
 							<up-loading-page :loading="true"></up-loading-page>
 						</template>
@@ -74,12 +71,8 @@
 										<V40Template />
 									</template>
 								</template>
-
 							</template>
-
 						</template>
-
-
 					</view>
 				</view>
 			</template>
@@ -94,7 +87,7 @@
 	import { ref } from 'vue';
 	import { ItemMessage, MessagesTemplate, chatConfigProps } from '../../type/chatData';
 	import { defineProps, watch } from 'vue';
-	import { useChatStore } from '@/store/chat';
+	import useChatStore from '@/store/chat';
 	import V35Template from "@/components/ChatTemplate/V35Template.vue"
 	import V40Template from "@/components/ChatTemplate/V40Template.vue"
 

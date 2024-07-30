@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import api from '../api/api'
+import { LoginReq, UserInfoDTO } from '../type/userTypes'
 
 const useUserStore = defineStore("wanxiang_userInfo", () => {
-	const userInfo = ref({})//用户信息
+	const userInfo = ref<UserInfoDTO | {}>({})//用户信息
 	const token = ref('')//token
 	// const appId = ref('')//appid
 	// 用户唯一id
 	// const uid = ref('')
 	const showVip = ref(true)
-
 	//退出登录
 	const exitLogin = () => {
 
@@ -23,7 +23,7 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 			return await api.login(parmas)
 		}
 		if (type == 'register') {
-			return await api.login(parmas)
+			return await api.register(parmas)
 		}
 	}
 	//微信授权登录
