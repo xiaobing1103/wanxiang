@@ -151,14 +151,12 @@ http.interceptors.response.use(
 );
 class HttpBuilder {
 	constructor(private http : Http<any>) { }
-
 	public dispatch(urls : Record<string, UrlConfig>) : ApiMethods {
 		const apiMethods : Partial<ApiMethods> = {};
 		for (const key in urls) {
 			if (Object.prototype.hasOwnProperty.call(urls, key)) {
 				const urlConfig = urls[key];
 				apiMethods[key] = (params : any, callback ?: (chunk : string) => void, errorback ?: (error : any) => void) => {
-					const userStore = useUserStore();
 					return http.request({
 						url: urlConfig.url,
 						method: urlConfig.method,

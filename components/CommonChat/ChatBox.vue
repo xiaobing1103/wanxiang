@@ -12,9 +12,9 @@
 							<image class="chatBox_main_View_header_image" src="../../static/logo.svg"></image>
 						</template>
 						<template v-else>
-							<view class="avatar">
+							<!-- <view class="avatar">
 								刘
-							</view>
+							</view> -->
 						</template>
 					</view>
 					<view class="chatBox_main_View_main" :class="{'chatBox_main_View_main_userMessage':item.target == 'user',

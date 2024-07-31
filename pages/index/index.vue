@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-	import api from '@/api/api.ts'
+	// import api from '@/api/api.ts'
 	import Chat from "@/components/CommonChat/Chat.vue"
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CommonChat from '@/components/CommonChat/index.vue'

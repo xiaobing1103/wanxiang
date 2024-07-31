@@ -61,7 +61,8 @@
 	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue'
 	import { useUserStore } from '../../store';
 	import { verifyPhoneFn } from '../../utils/verifyPhoneFn';
-	import api from '../../api/api';
+	// import api from '../../api/api';
+	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
 	const userStore = useUserStore()
 	const show = ref(false)
 	const veifytime = ref(120);
@@ -95,7 +96,7 @@
 			}
 		}
 	});
-
+	const { $api } = useGlobalProperties()
 
 	const loginParmas = reactive({
 		user: '',
@@ -132,24 +133,25 @@
 				return
 			}
 		}
-		show.value = true
-		const result = await userStore.login(parmas, type.value)
-		if (result.code == 200) {
+		// show.value = true
+		const { data } = await userStore.login(parmas, type.value)
+		if (data.code == 200) {
 			show.value = false
-			userStore.token = result?.data?.token
-			userStore.userInfo = result.data
-			const users = await api.userInfo(null)
+			userStore.token = data?.data?.token
+			userStore.userInfo = data.data
+			// const users = await api.userInfo(null)
+			const users = $api.get('api/v1/user/info')
 			if (users.code == 200) {
 				userStore.userInfo = users.data
 			}
 			uni.switchTab({
 				url: '/pages/my/index'
 			})
-			uni.$u.toast('登录成功！')
+			// uni.$u.toast('登录成功！')
 
 		} else {
 			show.value = false
-			uni.$u.toast(result.msg)
+			uni.$u.toast(data.msg)
 		}
 	}
 
@@ -165,7 +167,9 @@
 		// 发送验证码的逻辑
 		timerActive.value = true;
 		veifytime.value = 60;
-		const result = await api.sendSmsCode({ phone: PhoneLoginParmas.phone })
+
+		// const result = await api.sendSmsCode({ phone: PhoneLoginParmas.phone })
+		const result = await $api.post('api/v1/user/sendSmsCode', { phone: PhoneLoginParmas.phone })
 		if (result.code == 200) {
 			uni.$u.toast('发送验证码成功，请注意查收！')
 		} else {

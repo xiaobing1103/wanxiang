@@ -10,94 +10,91 @@ interface StreamRequestOptions {
 	errorback ?: (error : any) => void; // 错误回调函数
 }
 
-export function streamRequest(options : StreamRequestOptions) {
-	return new Promise<void>((resolve, reject) => {
-		const { url, method, data, header, eventStream, callback, errorback } = options;
-
-		if (!eventStream) {
-			reject(new Error("Not a stream request"));
-			return;
-		}
-
-		const userStore = useUserStore();
-		const headers = {
-			...header,
-			"uid": userStore.userInfo?.id || '',
-			"token": userStore.userInfo?.token || '',
-			"App": userStore.userInfo?.appid || '',
-			"Access-Token": userStore.userInfo?.access_token || '',
-			"vt": userStore.userInfo?.vip || '',
-			"Accept": "text/event-stream",
-		};
-
-		uni.request({
+export const StreamRequest = (options : StreamRequestOptions) => {
+	const { url, method, data, header } = options;
+	const userStore = useUserStore();
+	const headers = {
+		...header,
+		"uid": userStore.userInfo?.id || '',
+		"token": userStore.userInfo?.token || '',
+		"App": userStore.userInfo?.appid || '',
+		"Access-Token": userStore.userInfo?.access_token || '',
+		"vt": userStore.userInfo?.vip || '',
+	};
+	return new Promise((resolve, reject) => {
+		const response = uni.request({
 			url,
 			method,
 			data,
-			header: headers,
-			success: (response) => {
-				if (response.statusCode === 200) {
-					const reader = new TextDecoderStream();
-					const stream = new ReadableStream({
-						start(controller) {
-							const reader = response.data.getReader();
-							const decoder = new TextDecoder();
-							let result = '';
-
-							function push() {
-								reader.read().then(({ done, value }) => {
-									if (done) {
-										controller.close();
-										if (callback) {
-											callback(result);
-										}
-										resolve();
-										return;
-									}
-									const chunk = decoder.decode(value, { stream: true });
-									result += chunk;
-									if (callback) {
-										callback(chunk);
-									}
-									push();
-								}).catch((error) => {
-									controller.error(error);
-									if (errorback) {
-										errorback(error);
-									}
-									reject(error);
-								});
-							}
-
-							push();
-						}
-					});
-
-					const streamReader = new Response(stream).body?.getReader();
-					streamReader?.read().then(({ done, value }) => {
-						if (done) {
-							resolve();
-						}
-					}).catch((error) => {
-						if (errorback) {
-							errorback(error);
-						}
-						reject(error);
-					});
-				} else {
-					const errorMsg = `Request failed with status ${response.statusCode}`;
-					if (errorback) {
-						errorback(new Error(errorMsg));
-					}
-					reject(new Error(errorMsg));
-				}
+			header: header || headers,
+			responseType: "text",
+			enableChunked: true, // 开启流传输
+			success: (res) => {
+				resolve(res)
 			},
-			fail: (error) => {
-				if (errorback) {
-					errorback(error);
-				}
-				reject(error);
-			}
+			fail: (err) => {
+				reject(err)
+			},
+		})
+
+		// 返回请求的响应
+		resolve(response)
+	})
+}
+
+
+export async function fetchStream(
+	options : StreamRequestOptions
+) {
+	const { url, method, data, header, callback, errorback } = options;
+	const userStore = useUserStore();
+	const headers = {
+		...header,
+		"uid": userStore.userInfo?.id || '',
+		"token": userStore.userInfo?.token || '',
+		"App": userStore.userInfo?.appid || '',
+		"Access-Token": userStore.userInfo?.access_token || '',
+		"vt": userStore.userInfo?.vip || '',
+		"Content-Type": 'application/json'
+	};
+	try {
+		const extendedHeaders = {
+			...headers,
+		};
+		const response = await fetch(url, {
+			method: method,
+			headers: extendedHeaders,
+			body: JSON.stringify(data),
 		});
-	});
+		if (response.ok) {
+			const reader = response.body
+				.pipeThrough(new TextDecoderStream())
+				.getReader();
+			const processStream = async () => {
+				try {
+					let result = '';
+					while (true) {
+						const { done, value } = await reader.read();
+						if (done) break;
+						result += value;
+						if (callback) {
+							callback(value);
+						}
+					}
+				} catch (error) {
+					if (errorback) {
+						errorback(error);
+					}
+				}
+			};
+			processStream();
+		} else {
+
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+	} catch (error) {
+		if (errorback) {
+			errorback(error);
+		}
+	}
 }

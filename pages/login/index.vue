@@ -35,16 +35,6 @@
 </template>
 
 <script setup lang="ts">
-	import { ref } from 'vue';
-	import CommonTabbar from '@/components/CommonTabbar.vue'
-	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue'
-
-	import {
-		useUserStore
-	} from '@/store/index'
-
-	const userStore = useUserStore()
-	const radiovalue1 = ref('苹果');
 	const toAccountLogin = () => {
 		uni.navigateTo({
 			url: '/pages/loginAccount/index'

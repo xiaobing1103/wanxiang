@@ -3,10 +3,12 @@
 		<view class="chatInput">
 			<image class="chatInput_left" src="@/static/image.svg" mode=""></image>
 			<view class="chatInput_input">
-				<up-input placeholder="请输入内容" border="surround" v-model="value" @change="change"></up-input>
+				<up-input placeholder="请输入内容" border="surround" v-model="value"></up-input>
 			</view>
 			<view class="chatInput_right">
-				<image @click="SendMessage" class="chatInput_right_image" src="@/static/send.svg" mode=""></image>
+				<image @click="SendMessage" class="chatInput_right_image"
+					:src="value ? '//file.1foo.com/2024/07/31/00043f53937f16cc083f142cf4cdf257.svg' : '//file.1foo.com/2024/07/31/137536c06dd024e2703c8cb7ec146af9.svg'"
+					mode=""></image>
 			</view>
 		</view>
 	</view>
@@ -14,60 +16,55 @@
 
 <script setup lang="ts">
 	import { ref } from 'vue';
-	import api from '../../api/api';
-	import { useChatStore } from '../../store';
 	import { baseURL } from '../../api/http';
-	import { streamRequest } from '../../api/request';
-	const chatstore = useChatStore()
+	import { StreamRequest, fetchStream } from '../../api/request';
+	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
 	const value = ref('')
-	const change = (e) => {
-		console.log(e)
-	}
+	const { $api } = useGlobalProperties()
 	const SendMessage = async () => {
+		// if (value) {
+
+		// }
 		const options = {
-			url: baseURL + 'api/v1/chat2/v35', // 你的流式数据的URL
-			method: "POST", // HTTP 方法
-			eventStream: true, // 标识这是一个流请求
+			url: baseURL + 'api/v1/chat2/v35',
+			method: "POST",
 			data: {
 				params: "[{\"role\":\"user\",\"content\":\"你好\"}]",
 				prompt: "请以中文回复我 官方设置的默认角度，适用于日常生活工作的询问与回答，权重均衡",
 				type: "Web-推荐对话"
 			},
-			callback: (chunk : string) => {
-				// 实时处理每个数据块
-				console.log("Received chunk:", chunk);
+			callback: (chunk) => {
+				console.log('Received chunk:', chunk);
 			},
-			errorback: (error : any) => {
-				// 处理错误
-				console.error("Stream error:", error);
+			errorback: (error) => {
+				console.error('Stream error:', error);
 			}
 		};
+		// #ifdef MP-WEIXIN
+		const requestTask = await $api.getStream('api/v1/chat2/v35', options.data, true)
+		// const requestTask = await StreamRequest(options)
+		requestTask.onHeadersReceived(function (res) {
+			console.log(res)
+		});
+		requestTask.onChunkReceived(function (res) {
+			let decoder = new TextDecoder('utf-8');
+			let text = decoder.decode(new Uint8Array(res.data));
+			console.log(text)
+		});
+		// #endif
 
-
-		// 	const result = await api[chatstore.model](
-		// 		{
-		// 			params: "[{\"role\":\"user\",\"content\":\"你好\"}]",
-		// 			prompt: "请以中文回复我 官方设置的默认角度，适用于日常生活工作的询问与回答，权重均衡",
-		// 			type: "Web-推荐对话"
-		// 		},
-		// 		(chunk : string) => {
-		// 			// 实时处理每个数据块
-		// 			console.log("Received chunk:", chunk);
-		// 		},
-		// 		(error : any) => {
-		// 			// 处理错误
-		// 			console.error("Stream error:", error);
-		// 		})
-
-		// 	console.log(result)
-
-		streamRequest(options)
-			.then(() => {
-				console.log("Stream processing completed.");
+		// #ifdef H5
+		await $api.getStream('api/v1/chat2/v35', options.data, true,
+			(chunk) => {
+				console.log('Received chunk:', chunk);
+			},
+			(error) => {
+				console.error('Stream error:', error);
 			})
-			.catch((error) => {
-				console.error("Stream request failed:", error);
-			});
+		// #endif
+
+
+
 	}
 </script>
 

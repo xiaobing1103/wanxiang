@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import api from '../api/api'
+// import api from '../api/api'
 import { LoginReq, UserInfoDTO } from '../type/userTypes'
+import { useGlobalProperties } from '../hooks/useGlobalHooks'
 
 const useUserStore = defineStore("wanxiang_userInfo", () => {
 	const userInfo = ref<UserInfoDTO | {}>({})//用户信息
 	const token = ref('')//token
 	// const appId = ref('')//appid
 	// 用户唯一id
+	const { $api } = useGlobalProperties()
 	// const uid = ref('')
 	const showVip = ref(true)
 	//退出登录
@@ -17,13 +19,16 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 	// 用户名密码登录
 	const login = async (parmas, type : 'login' | 'register' | 'phone') => {
 		if (type == 'phone') {
-			return await api.phoneLogin(parmas)
+			return $api.post('api/v1/user/phoneLogin', parmas)
+			// return await api.phoneLogin(parmas)
 		}
 		if (type == 'login') {
-			return await api.login(parmas)
+			return $api.post('api/v1/user/login', parmas)
+			// return await api.login(parmas)
 		}
 		if (type == 'register') {
-			return await api.register(parmas)
+			return $api.post('api/v1/user/register', parmas)
+			// return await api.register(parmas)
 		}
 	}
 	//微信授权登录
