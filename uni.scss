@@ -76,3 +76,19 @@ $uni-color-paragraph: #3F536E; // 文章段落颜色
 $uni-font-size-paragraph:15px;
 
 @import 'uview-plus/theme.scss';
+
+.scroll-container {
+  width: 100%;
+  height: 300px; /* 设置容器高度，超过高度会出现滚动条 */
+  overflow-y: auto; /* 允许垂直滚动 */
+}
+
+/* 全局样式文件，如 App.vue 中的 <style> 部分或者单独的全局样式文件 */
+// *::-webkit-scrollbar {
+//   display: none;
+// }
+/* 全局样式文件，如 App.vue 中的 <style> 部分或者单独的全局样式文件 */
+// * {
+//   scrollbar-width: thin; 
+//   scrollbar-color: transparent transparent;
+// }

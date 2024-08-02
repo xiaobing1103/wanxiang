@@ -134,13 +134,14 @@
 			}
 		}
 		// show.value = true
-		const { data } = await userStore.login(parmas, type.value)
+		const data = await userStore.login(parmas, type.value)
+
 		if (data.code == 200) {
 			show.value = false
 			userStore.token = data?.data?.token
 			userStore.userInfo = data.data
 			// const users = await api.userInfo(null)
-			const users = $api.get('api/v1/user/info')
+			const users = await $api.get('api/v1/user/info')
 			if (users.code == 200) {
 				userStore.userInfo = users.data
 			}

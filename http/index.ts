@@ -2,7 +2,7 @@ import { defaultTimeout } from '../api/http'
 import { useUserStore } from '../store'
 import http from './interface'
 
-export const $http = (url : string, method : string, data ?: any, json ?: any, isStream ?: boolean, callback : () => void, errorCallback : () => void) => {
+export const $http = (url : string, method : string, data ?: any, json ?: boolean, isStream ?: boolean, callback : () => void, errorCallback : () => void) => {
 	//设置请求前拦截器
 	const userStore = useUserStore();
 	const { userInfo } = userStore
@@ -26,7 +26,6 @@ export const $http = (url : string, method : string, data ?: any, json ?: any, i
 		config.timeout = config.timeout || defaultTimeout;
 	}
 	http.interceptor.response = async (response) => {
-
 		uni.hideLoading()
 		if (response.data.code === 401) { //token失效
 			return response.data = await doRequest(response, url) //动态刷新token,并重新完成request请求
@@ -51,6 +50,8 @@ export const $http = (url : string, method : string, data ?: any, json ?: any, i
 			method,
 			data,
 			header: headers,
+			success: callback,
+			fail: errorCallback
 		})
 		// #endif
 		//  #ifdef H5
@@ -58,18 +59,24 @@ export const $http = (url : string, method : string, data ?: any, json ?: any, i
 			url,
 			method,
 			data,
-			header: headers,
+			header: { 'Content-Type': 'application/json;charset=UTF-8', ...headers },
 			success: callback,
 			fail: errorCallback
 		})
 		// #endif
 		return isDelopMent
 	} else {
-		return http.request({
-			method: method,
-			url: url,
-			dataType: 'json',
-			data,
+		return new Promise((resolvce, reject) => {
+			http.request({
+				method: method,
+				url: url,
+				dataType: 'json',
+				data,
+			}).then((res) => {
+				resolvce(res.data)
+			}).catch((err) => {
+				reject(err)
+			})
 		})
 	}
 

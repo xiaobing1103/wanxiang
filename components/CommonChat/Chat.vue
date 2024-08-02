@@ -3,68 +3,44 @@
 		<view class="chatInput">
 			<image class="chatInput_left" src="@/static/image.svg" mode=""></image>
 			<view class="chatInput_input">
-				<up-input placeholder="请输入内容" border="surround" v-model="value"></up-input>
+				<up-input placeholder="请输入内容" border="surround" v-model="chatValue"></up-input>
 			</view>
 			<view class="chatInput_right">
-				<image @click="SendMessage" class="chatInput_right_image"
-					:src="value ? '//file.1foo.com/2024/07/31/00043f53937f16cc083f142cf4cdf257.svg' : '//file.1foo.com/2024/07/31/137536c06dd024e2703c8cb7ec146af9.svg'"
-					mode=""></image>
+				<image @click="SendMessage" class="chatInput_right_image" :src="chatValue ? 
+					'//file.1foo.com/2024/07/31/00043f53937f16cc083f142cf4cdf257.svg' : 
+					'//file.1foo.com/2024/07/31/137536c06dd024e2703c8cb7ec146af9.svg'" mode=""></image>
 			</view>
 		</view>
 	</view>
+	<!-- <h1>{{ dataValue }}</h1>
+	<button @click="dataValue = '❤❤❤❤' ">修改父组件的数据</button> -->
 </template>
 
 <script setup lang="ts">
-	import { ref } from 'vue';
-	import { baseURL } from '../../api/http';
-	import { StreamRequest, fetchStream } from '../../api/request';
-	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
-	const value = ref('')
-	const { $api } = useGlobalProperties()
+	import { defineProps, defineModel, ModelRef } from 'vue';
+	const chatValue = defineModel<string>("chatValue")
+	const dataValue = defineModel<string>("dataValue")
+	// 定义 defineModel 的返回类型
+	// type DefineModelReturnType = ReturnType<typeof defineModel>;
+
+	const props = defineProps<{ dataValue : string, chatValue : string, onSend : () => void, data : string, update : () => void }>();
+	const emit = defineEmits<{
+		// (e : 'update:chatValue', val : string) : void
+		(e : 'onSend', val : string) : void
+		// (e : "update:dataValue", value : string) : void
+
+	}>()
+	// const value = computed({
+	// 	get() {
+	// 		return chatValue
+	// 	},
+	// 	set(val : string) {
+	// 		emit('update:chatValue', val)
+	// 		console.log(val)
+	// 	}
+	// })
 	const SendMessage = async () => {
-		// if (value) {
-
-		// }
-		const options = {
-			url: baseURL + 'api/v1/chat2/v35',
-			method: "POST",
-			data: {
-				params: "[{\"role\":\"user\",\"content\":\"你好\"}]",
-				prompt: "请以中文回复我 官方设置的默认角度，适用于日常生活工作的询问与回答，权重均衡",
-				type: "Web-推荐对话"
-			},
-			callback: (chunk) => {
-				console.log('Received chunk:', chunk);
-			},
-			errorback: (error) => {
-				console.error('Stream error:', error);
-			}
-		};
-		// #ifdef MP-WEIXIN
-		const requestTask = await $api.getStream('api/v1/chat2/v35', options.data, true)
-		// const requestTask = await StreamRequest(options)
-		requestTask.onHeadersReceived(function (res) {
-			console.log(res)
-		});
-		requestTask.onChunkReceived(function (res) {
-			let decoder = new TextDecoder('utf-8');
-			let text = decoder.decode(new Uint8Array(res.data));
-			console.log(text)
-		});
-		// #endif
-
-		// #ifdef H5
-		await $api.getStream('api/v1/chat2/v35', options.data, true,
-			(chunk) => {
-				console.log('Received chunk:', chunk);
-			},
-			(error) => {
-				console.error('Stream error:', error);
-			})
-		// #endif
-
-
-
+		emit('onSend', chatValue.value)
 	}
 </script>
 

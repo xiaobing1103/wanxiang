@@ -1,10 +1,8 @@
 <template>
 	<view class="chatBox">
-		<view class="chatBox_main" v-for="item in itemMessages" :key="item.id">
-			<template v-if="item.messageType === 'text'
-				|| item.messageType === 'text2'
-				|| item.messageType === 'image'
-				|| item.messageType === 'template'">
+		<view class="chatBox_main" v-for="[key,item] in messageList" :key="key">
+			<template
+				v-if="item.messageType == 'text'|| item.messageType === 'text2'|| item.messageType === 'image'|| item.messageType === 'template'">
 				<view class="chatBox_main_View"
 					:style="{ alignItems: item.target == 'user' ? 'flex-end' : 'flex-start' }">
 					<view class="chatBox_main_View_header">
@@ -84,55 +82,72 @@
 </template>
 
 <script lang="ts" setup>
-	import { ref } from 'vue';
-	import { ItemMessage, MessagesTemplate, chatConfigProps } from '../../type/chatData';
-	import { defineProps, watch } from 'vue';
 	import useChatStore from '@/store/chat';
 	import V35Template from "@/components/ChatTemplate/V35Template.vue"
 	import V40Template from "@/components/ChatTemplate/V40Template.vue"
-
+	import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
+	import { onMounted, ref } from 'vue';
 	import { GenNonDuplicateID } from '../../tools/uuid';
 	const { model } = useChatStore()
-	const props = defineProps({
-		config: {
-			type: Object,
-			required: true
+	// const itemMessages = defineModel<MessageItems>('itemMessages')
+	const props = defineProps<{ config : chatConfigProps }>()
+	//所有的消息集合
+	const messageList = ref<MessageItems>(new Map())
+	//新增一个消息
+	const addMessage = (id : string, value : ItemMessage) => {
+		messageList.value.set(id, value)
+		console.log(messageList.value)
+	}
+	//改变message内容
+	const setMessage = (id : string, setItems : ItemMessage) => {
+		const currentMessage = messageList.value.get(id)
+		if (!currentMessage) return
+		const newMessage : ItemMessage = {
+			message: currentMessage.message + setItems.message,
+			...setItems
 		}
-	});
-	// 使用 watch 来监视 config 的变化
-	watch(() => props.config, (newConfig) => {
-		console.log('Config updated:', newConfig);
-	}, { deep: true, immediate: true });
-
+		messageList.value.set(id, newMessage)
+	}
 	// 创建一个气泡ID
 	const createId = () => {
 		return GenNonDuplicateID(472427503);
 	}
-	const getMessagesTemplate = () => {
-		const messages : ItemMessage[] = []
-		if (props.config?.messagesTemplate) {
-			props.config.messagesTemplate.map((item : MessagesTemplate) => {
-				messages.push({
-					id: createId(),
-					state: 'waite',
-					target: item.role,
-					message: item.message || item.template,
-					messageType: item.MessageType || 'template',
-				})
-			})
-
-		}
-		return messages
+	//删除一个message
+	const deleteMessage = (id : string) => {
+		messageList.value.delete(id)
 	}
-	const itemMessages = ref<ItemMessage[]>([...getMessagesTemplate()])
-
-	console.log(itemMessages.value)
+	//清空全部message
+	const clearAllMessage = () => {
+		messageList.value.clear()
+	}
+	
+	onMounted(() => {
+		props.config.messagesTemplate.map((item, index) => {
+			const id = createId()
+			item.id = id
+			addMessage(item.id, {
+				id: id,
+				state: 'ok',
+				target: item.role,
+				message: item.message || item.template,
+				messageType: item.messageType || 'template',
+			})
+		})
+	})
+	defineExpose({
+		addMessage,
+		deleteMessage,
+		clearAllMessage,
+		setMessage
+	})
 </script>
 
 <style lang="scss" scoped>
 	.chatBox {
 		height: 100%;
 		position: relative;
+		padding: 20rpx 0;
+		box-sizing: border-box;
 	}
 
 	.chatBox_main_View {

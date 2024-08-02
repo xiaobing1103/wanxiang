@@ -97,13 +97,17 @@ export default {
 								success(value);
 							}
 						}
+						// 处理流完成后的操作，例如成功通知
+						if (success) {
+							success(null); // 通知流全部完成
+						}
 					} catch (error) {
 						if (fail) {
 							fail(error);
 						}
 					}
 				};
-				processStream();
+				await processStream(); // 等待流处理完成
 			} else {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
@@ -115,7 +119,7 @@ export default {
 	},
 	// 小程序的流式传输
 	StreamRequest(options) {
-		const { url, method, data, header } = options;
+		const { url, method, data, header, success, fail } = options;
 		return new Promise((resolve, reject) => {
 			const response = uni.request({
 				url: this.config.baseUrl + url || options.baseUrl + url,
@@ -123,12 +127,8 @@ export default {
 				data,
 				header: header,
 				enableChunked: true,
-				success: (res) => {
-					resolve(res)
-				},
-				fail: (err) => {
-					reject(err)
-				},
+				success: success,
+				fail: fail,
 			})
 			// 返回请求的响应
 			resolve(response)
