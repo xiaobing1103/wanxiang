@@ -27,7 +27,8 @@
 							minWidth: item.messageType =='template' || item.messageType == 'image' ? '1%' :'100%'
 						}">
 						<template v-if="item.state == 'waite' && item.message.length <= 0">
-							<up-loading-page :loading="true"></up-loading-page>
+							<!-- 在消息为等待请求完成时候 -->
+							<up-loading-icon mode="semicircle"></up-loading-icon>
 						</template>
 						<template class="" v-else>
 							<!-- 模版类型为image -->
@@ -86,17 +87,49 @@
 	import V35Template from "@/components/ChatTemplate/V35Template.vue"
 	import V40Template from "@/components/ChatTemplate/V40Template.vue"
 	import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
-	import { onMounted, ref } from 'vue';
+	import { computed, onMounted, ref, watch } from 'vue';
 	import { GenNonDuplicateID } from '../../tools/uuid';
-	const { model } = useChatStore()
+	import { storeToRefs } from "pinia"
+	const ChatStore = useChatStore()
+	const { model } = storeToRefs(ChatStore)
 	// const itemMessages = defineModel<MessageItems>('itemMessages')
 	const props = defineProps<{ config : chatConfigProps }>()
+
+	// 创建一个气泡ID
+	const createId = () => {
+		return GenNonDuplicateID(472427503);
+	}
+	// 获取初始消息模版 
+	const getInitTemplate = () => {
+		const maps = new Map()
+		props.config.messagesTemplate.map((item, index) => {
+			const id = createId()
+			item.id = id
+			maps.set(item.id, {
+				id: id,
+				state: 'ok',
+				target: item.role,
+				message: item.message || item.template,
+				messageType: item.messageType || 'template',
+			})
+		})
+		return maps
+	}
+	// 当前模型切换逻辑
+	const changeModel = () => {
+
+	}
+
+	watch(model, (val) => {
+		console.log(val)
+		messageList.value = getInitTemplate()
+	})
+
 	//所有的消息集合
 	const messageList = ref<MessageItems>(new Map())
 	//新增一个消息
 	const addMessage = (id : string, value : ItemMessage) => {
 		messageList.value.set(id, value)
-		console.log(messageList.value)
 	}
 	//改变message内容
 	const setMessage = (id : string, setItems : ItemMessage) => {
@@ -108,10 +141,7 @@
 		}
 		messageList.value.set(id, newMessage)
 	}
-	// 创建一个气泡ID
-	const createId = () => {
-		return GenNonDuplicateID(472427503);
-	}
+
 	//删除一个message
 	const deleteMessage = (id : string) => {
 		messageList.value.delete(id)
@@ -120,25 +150,21 @@
 	const clearAllMessage = () => {
 		messageList.value.clear()
 	}
-	
+	// 获取单个消息
+	const getSingelMessage = (id : string) => {
+		return messageList.value.get(id)
+	}
+
+
 	onMounted(() => {
-		props.config.messagesTemplate.map((item, index) => {
-			const id = createId()
-			item.id = id
-			addMessage(item.id, {
-				id: id,
-				state: 'ok',
-				target: item.role,
-				message: item.message || item.template,
-				messageType: item.messageType || 'template',
-			})
-		})
+		messageList.value = getInitTemplate()
 	})
 	defineExpose({
 		addMessage,
 		deleteMessage,
 		clearAllMessage,
-		setMessage
+		setMessage,
+		getSingelMessage
 	})
 </script>
 

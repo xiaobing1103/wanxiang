@@ -23,7 +23,6 @@
 <script setup lang="ts">
 	import { onMounted, ref, computed } from 'vue';
 	import { getRandomInt } from '@/utils/index'
-
 	// import Api from '@/api/api'
 	import type { ToolTipItem } from '@/api/types'
 	import { useGlobalProperties } from '../../hooks/useGlobalHooks';

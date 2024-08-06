@@ -9,16 +9,18 @@
 
 		<template #bottom>
 			<!-- 气泡选择 -->
-			<ChatInputToolTipVue />
+			<ChatInputToolTipVue @change="sendValue" />
 			<!-- 聊天输入框 -->
 			<Chat v-model:chatValue="chatValue" @onSend="onSend" v-model:dataValue="data" @update="changeData" />
 			<!-- <up-input v-model="chatValue" @changeData="changeData">修改子组件的数据</up-input> -->
 		</template>
 	</z-paging>
+	<CommonModelSeleted />
 </template>
 
 <script setup lang="ts">
 	import Chat from "@/components/CommonChat/Chat.vue"
+	import CommonModelSeleted from "@/components/CommonChat/CommonModelSeleted.vue"
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CommonChat from '@/components/CommonChat/index.vue'
 	import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue'
@@ -29,8 +31,13 @@
 	import { ItemMessage, MessageItems, MessageType, MessagesTemplate, StateType, TargetType } from "../../type/chatData";
 	import { GenNonDuplicateID } from "../../tools/uuid";
 	import ChatBox from '@/components/CommonChat/ChatBox.vue'
+	import { HttpStatusMessage } from "../../api/http";
+	import { storeToRefs } from "pinia"
+	import { ToolTipItem } from "../../api/types"
 	const { $api } = useGlobalProperties()
-	const { model, setModel } = useChatStore();
+	const ChatStore = useChatStore();
+	const { model, setModel } = storeToRefs(ChatStore);
+
 	const chatValue = ref('')
 	const reactiveConfig = ref(TemplateConfig)
 	const data = ref("Hello World")
@@ -53,6 +60,9 @@
 	// 创建一个气泡ID
 	const createId = () => {
 		return GenNonDuplicateID(472427503);
+	}
+	const sendValue = (val : ToolTipItem) => {
+		onSend(val.prompt)
 	}
 	// const getMessagesTemplate = () => {
 	// 	const messages : MessageItems = new Map()
@@ -84,6 +94,11 @@
 	// }
 
 	const onSend = async (val) => {
+		if (!val) {
+			uni.$u.toast('请先输入内容！')
+			return
+		}
+
 		ChatBoxRef.value.addMessage(createId(),
 			{ id: createId(), state: "ok", target: 'user', message: val, messageType: 'text' },
 		)
@@ -110,19 +125,41 @@
 	const onLoad = () => {
 		console.log(123)
 	}
+	// 解析当前流得判断成分
+	const handlerCurrentStream = (currentMessages : ItemMessage) => {
+		const linesmsg = currentMessages.message
+		if (linesmsg.replaceAll(',', '') === '[SUCCESS]') {
+			uni.$u.toast('网络异常，请重启路由器后重试。')
+		} else if (linesmsg.startsWith('[NO_COUNT]')) {
+			const errorMessage = linesmsg.split(',')[1]
+			uni.$u.toast(errorMessage)
+
+		}
+	}
+	// 流在进行中进行判断逻辑 	
+	const StreamLoading = (msg : string) => {
+		let newMsg = msg.replaceAll('\n', '')
+
+		if (msg !== '[SUCCESS]') {
+			return newMsg
+		}
+
+	}
+
 
 	async function handleStream(options) {
 		let result = ''
+		let newMsg = ''
 		const id = createId()
 		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' })
-
 
 		//#ifdef MP-WEIXIN
 		const requestTask = await $api.getStream(options.url, options.data, true,
 			(res) => {
 				console.log(res)
 				if (res.statusCode == 200) {
-					console.log('小程序流获取完成')
+					const currentMessage = ChatBoxRef.value.getSingelMessage(id)
+					handlerCurrentStream(currentMessage)
 				} else {
 					uni.$u.toast('请先登录账户！')
 					ChatBoxRef.value.deleteMessage(id)
@@ -132,27 +169,42 @@
 		// requestTask.onHeadersReceived((res) => {
 
 		// });
-		requestTask.onChunkReceived((res) => {
+		requestTask.onChunkReceived(async (res) => {
 			let decoder = new TextDecoder('utf-8');
 			let text = decoder.decode(new Uint8Array(res.data));
-			result += text
-			ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text' })
+
+			const lines = text.split('\n')
+			result += lines;
+			for (let i = 0; i < lines.length; i++) {
+				if (lines[i]) {
+					const chunk = lines[i].replaceAll('\\n', '\n')
+					if (result.length != 0 && chunk !== '[SUCCESS]') {
+						newMsg += StreamLoading(chunk)
+					}
+				}
+			}
+
+			ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: newMsg, messageType: 'text' })
+
 			scrollToBottom()
 		});
-
 		// #endif
 		//#ifdef H5
 		await $api.getStream(options.url, options.data, true,
 			(chunk) => {
 				result += chunk
-				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text' })
 				scrollToBottom()
+				if (chunk !== null) {
+					newMsg = StreamLoading(result)
+					ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: newMsg, messageType: 'text' })
+				}
 				if (chunk == null) {
 					console.log('H5端流获取完成')
 				}
 			},
 			(error) => {
-				console.error('Stream error:', error);
+				uni.$u.toast(error)
+				ChatBoxRef.value.deleteMessage(id)
 			});
 		//#endif
 	}

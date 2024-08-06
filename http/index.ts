@@ -27,8 +27,13 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 	}
 	http.interceptor.response = async (response) => {
 		uni.hideLoading()
-		if (response.data.code === 401) { //token失效
-			return response.data = await doRequest(response, url) //动态刷新token,并重新完成request请求
+		console.log(response)
+		if (response.data.code === 401 || response.statusCode === 401) {
+			uni.navigateTo({
+				url: '/pages/login/index'
+			})
+			// return response.data = await doRequest(response, url) 
+
 		} else {
 			if (response.data.code !== 200 && response.data.msg) {
 				uni.showToast({

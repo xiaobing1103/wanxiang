@@ -1,5 +1,6 @@
 <template>
 	<view class="chatAll">
+		<ChangeModel />
 		<view class="chatInput">
 			<image class="chatInput_left" src="@/static/image.svg" mode=""></image>
 			<view class="chatInput_input">
@@ -17,6 +18,7 @@
 </template>
 
 <script setup lang="ts">
+	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
 	import { defineProps, defineModel, ModelRef } from 'vue';
 	const chatValue = defineModel<string>("chatValue")
 	const dataValue = defineModel<string>("dataValue")
@@ -48,10 +50,12 @@
 	.chatAll {
 		display: flex;
 		justify-content: center;
+		flex-direction: column;
 		// position: absolute;
 		bottom: 20rpx;
 		width: 100%;
 		overflow: hidden;
+		margin-bottom: 20rpx;
 	}
 
 	.chatInput {

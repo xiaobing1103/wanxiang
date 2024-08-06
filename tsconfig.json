@@ -1,0 +1,5 @@
+{
+	"compilerOptions": {
+		"types": ["@types/node", "@types/webpack-env", "shims-vue.d.ts"]
+	}
+}

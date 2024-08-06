@@ -1,5 +1,4 @@
 <template>
-
 	<template v-for="items in selectedTemplate">
 		<view class="ChatTemplate">
 			<view class="chatRole">
@@ -15,7 +14,7 @@
 					<V35Template :onFun="setContent" :onTemplates="checkUserToken" />
 				</view>
 				<view v-if="model == 'v40'">
-					<V35Template :onFun="setContent" :onTemplates="checkUserToken" />
+					<v40Template :onFun="setContent" :onTemplates="checkUserToken" />
 				</view>
 			</view>
 		</view>
@@ -26,11 +25,12 @@
 
 <script lang="ts" setup>
 	import { computed, ref } from 'vue';
-	import V35Template from '../ChatTemplate/V35Template.vue';
-	import V40Template from '../ChatTemplate/V40Template.vue'; // 假设你有这个组件
+	import V35Template from '@/components/ChatTemplate/V35Template.vue';
+	import V40Template from "@/components/ChatTemplate/V40Template.vue"
 	import useChatStore from '@/store/chat';
+	import { storeToRefs } from "pinia"
 	const ChatStore = useChatStore();
-	const { model, setModel } = ChatStore;
+	const { model } = storeToRefs(ChatStore);
 	const TemplateConfig = {
 		v35: {
 			messagesTemplate: [
@@ -50,7 +50,7 @@
 		}
 	};
 
-	const selectedTemplate = computed(() => TemplateConfig[model].messagesTemplate)
+	const selectedTemplate = computed(() => TemplateConfig[model.value].messagesTemplate)
 
 	console.log(selectedTemplate.value)
 	const setContent = (str : string) => {
@@ -59,7 +59,6 @@
 
 	const checkUserToken = (message : string) => {
 		console.log('checkUserToken called with:', message);
-		// 这里处理 checkUserToken 的逻辑
 	};
 </script>
 

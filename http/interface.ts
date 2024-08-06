@@ -92,14 +92,21 @@ export default {
 						while (true) {
 							const { done, value } = await reader.read();
 							if (done) break;
-							result += value;
-							if (success) {
-								success(value);
+							const lines = value.split('\n')
+							result += lines;
+
+							for (let i = 0; i < lines.length; i++) {
+								if (lines[i]) {
+									console.log(lines[i])
+									const chunk = lines[i].replaceAll('\\n', '\n')
+									if (result.length != 0 && chunk !== '[SUCCESS]') {
+										success(chunk)
+									}
+								}
 							}
 						}
-						// 处理流完成后的操作，例如成功通知
 						if (success) {
-							success(null); // 通知流全部完成
+							success(null);
 						}
 					} catch (error) {
 						if (fail) {
