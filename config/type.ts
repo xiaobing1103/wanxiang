@@ -25,6 +25,7 @@ export interface ModelConfig {
 	title : string;
 	ModelPath : string;
 	modelIcon : string;
+	ModelApi : string
 }
 
 export type CommonModelKeys = 'v35' | 'v40' | 'net' | 'echarts';

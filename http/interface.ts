@@ -1,182 +1,193 @@
-import {
-	BaseApi
-} from '@/http/baseApi'
+import { BaseApi } from '@/http/baseApi';
+
 export default {
 	config: {
 		baseUrl: BaseApi,
 		header: {
 			'Content-Type': 'application/json;charset=UTF-8',
-			// 'Content-Type': 'application/x-www-form-urlencoded'
 		},
 		data: {},
-		method: "GET",
-		dataType: "json",
-		/* 如设为json，会对返回的数据做一次 JSON.parse */
-		responseType: "text",
-		success() { },
-		fail() { },
-		complete() { }
+		method: 'GET',
+		dataType: 'json',
+		responseType: 'text',
 	},
 	interceptor: {
 		request: null,
-		response: null
+		response: null,
 	},
 	request(options) {
 		if (!options) {
-			options = {}
+			options = {};
 		}
-		options.baseUrl = options.baseUrl || this.config.baseUrl
-		options.dataType = options.dataType || this.config.dataType
-		options.url = options.baseUrl + options.url
-		options.data = options.data || {}
-		options.method = options.method || this.config.method
+		options.baseUrl = options.baseUrl || this.config.baseUrl;
+		options.dataType = options.dataType || this.config.dataType;
+		options.url = options.baseUrl + options.url;
+		options.data = options.data || {};
+		options.method = options.method || this.config.method;
 
 		return new Promise((resolve, reject) => {
-			let _config = null
+			let _config = null;
 			options.complete = (response) => {
-				let statusCode = response.statusCode
-				response.config = _config
-				if (process.env.NODE_ENV === 'development') {
-					if (statusCode === 200) {
-						////console.log("【" + _config.requestId + "】 结果：" + JSON.stringify(response.data))
-					}
-				}
-				if (this.interceptor.response) {
+				let statusCode = response.statusCode;
+				response.config = _config;
 
-					let newResponse = this.interceptor.response(response)
+				if (this.interceptor.response) {
+					let newResponse = this.interceptor.response(response);
 					if (newResponse) {
-						response = newResponse
+						response = newResponse;
 					}
 				}
-				// 统一的响应日志记录
-				//_reslog(response)
-				if (statusCode === 200) { //成功
+
+				if (statusCode === 200) {
 					resolve(response);
 				} else {
-					reject(response)
+					reject(response);
 				}
-			}
+			};
 
-			_config = Object.assign({}, this.config, options)
-			_config.requestId = new Date().getTime()
+			_config = Object.assign({}, this.config, options);
+			_config.requestId = new Date().getTime();
 
 			if (this.interceptor.request) {
-				this.interceptor.request(_config)
-			}
-			// 统一的请求日志记录
-			//_reqlog(_config)
-			if (process.env.NODE_ENV === 'development') {
-				//console.log("【" + _config.requestId + "】 地址：" + _config.url)
-				if (_config.data) {
-					//console.log("【" + _config.requestId + "】 参数：" + JSON.stringify(_config.data))
-				}
+				this.interceptor.request(_config);
 			}
 
 			uni.request(_config);
 		});
 	},
-	// 	H5端的流式传输
 	async fetchStream(options) {
 		const { url, method, data, header, success, fail } = options;
-		try {
-			const response = await fetch(this.config.baseUrl + url || options.baseUrl + url, {
-				method: method,
-				headers: header,
-				body: JSON.stringify(data),
-			});
-			if (response.ok) {
-				const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-				const processStream = async () => {
-					try {
-						let result = '';
-						while (true) {
-							const { done, value } = await reader.read();
-							if (done) break;
-							const lines = value.split('\n')
-							result += lines;
+		let _config = Object.assign({}, this.config, options);
+		_config.url = this.config.baseUrl + url || options.baseUrl + url;
+		_config.method = method;
+		_config.headers = header;
+		_config.body = JSON.stringify(data);
 
-							for (let i = 0; i < lines.length; i++) {
-								if (lines[i]) {
-									console.log(lines[i])
-									const chunk = lines[i].replaceAll('\\n', '\n')
-									if (result.length != 0 && chunk !== '[SUCCESS]') {
-										success(chunk)
-									}
+		if (this.interceptor.request) {
+			this.interceptor.request(_config);
+		}
+
+		try {
+			const response = await fetch(_config.url, {
+				method: _config.method,
+				headers: _config.headers,
+				body: _config.body,
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			const reader = response.body.getReader();
+			const decoder = new TextDecoder();
+			let result = '';
+
+			const processStream = async () => {
+				try {
+					while (true) {
+						const { done, value } = await reader.read();
+						if (done) break;
+						const text = decoder.decode(value, { stream: true });
+						const lines = text.split('\n');
+						result += lines;
+
+						for (let i = 0; i < lines.length; i++) {
+							if (lines[i]) {
+								const chunk = lines[i].replaceAll('\\n', '\n');
+								if (result.length !== 0 && chunk !== '[SUCCESS]') {
+									success(chunk);
 								}
 							}
 						}
-						if (success) {
-							success(null);
-						}
-					} catch (error) {
-						if (fail) {
-							fail(error);
-						}
 					}
+					if (success) {
+						success(null);
+					}
+				} catch (error) {
+					if (fail) {
+						fail(error);
+					}
+				}
+			};
+
+			if (this.interceptor.response) {
+				let responseData = {
+					statusCode: response.status,
+					data: result,
+					config: _config,
 				};
-				await processStream(); // 等待流处理完成
-			} else {
-				throw new Error(`HTTP error! status: ${response.status}`);
+
+				let newResponse = this.interceptor.response(responseData);
+				if (newResponse) {
+					responseData = newResponse;
+				}
 			}
+
+			await processStream();
 		} catch (error) {
-			if (fail) {
-				fail(error);
+			if (error.message.includes('401')) {
+				console.error('Unauthorized access - maybe redirect to login?');
+				if (fail) fail({ message: 'Unauthorized', status: 401 });
+			} else {
+				console.error('Fetch error:', error.message);
+				if (fail) fail(error);
 			}
 		}
 	},
-	// 小程序的流式传输
 	StreamRequest(options) {
 		const { url, method, data, header, success, fail } = options;
+		let _config = Object.assign({}, this.config, options);
+		_config.url = this.config.baseUrl + url || options.baseUrl + url;
+		_config.method = method;
+		_config.headers = header;
+		_config.data = data;
+
+		if (this.interceptor.request) {
+			this.interceptor.request(_config);
+		}
+
 		return new Promise((resolve, reject) => {
 			const response = uni.request({
-				url: this.config.baseUrl + url || options.baseUrl + url,
-				method,
-				data,
-				header: header,
+				url: _config.url,
+				method: _config.method,
+				data: _config.data,
+				header: _config.headers,
 				enableChunked: true,
-				success: success,
+				success: async (response) => {
+					if (this.interceptor.response) {
+						let newResponse = this.interceptor.response(response);
+						if (newResponse) {
+							response = newResponse;
+						}
+					}
+					await success(response)
+				},
 				fail: fail,
-			})
-			// 返回请求的响应
-			resolve(response)
-		})
-	}
+			});
+			resolve(response);
+		});
+	},
+};
 
-}
-
-
-
-
-
-
-
-
-/**
- * 请求接口日志记录
- */
 function _reqlog(req) {
 	if (process.env.NODE_ENV === 'development') {
-		//console.log("【" + req.requestId + "】 地址：" + req.url)
+		console.log(`【${req.requestId}】 地址：${req.url}`);
 		if (req.data) {
-			//console.log("【" + req.requestId + "】 请求参数：" + JSON.stringify(req.data))
+			console.log(`【${req.requestId}】 请求参数：${JSON.stringify(req.data)}`);
 		}
 	}
-	//TODO 调接口异步写入日志数据库
 }
 
-/**
- * 响应接口日志记录
- */
 function _reslog(res) {
 	let _statusCode = res.statusCode;
 	if (process.env.NODE_ENV === 'development') {
-		//console.log("【" + res.config.requestId + "】 地址：" + res.config.url)
+		console.log(`【${res.config.requestId}】 地址：${res.config.url}`);
 		if (res.config.data) {
-			//console.log("【" + res.config.requestId + "】 请求参数：" + JSON.stringify(res.config.data))
+			console.log(`【${res.config.requestId}】 请求参数：${JSON.stringify(res.config.data)}`);
 		}
-		//console.log("【" + res.config.requestId + "】 响应结果：" + JSON.stringify(res))
+		console.log(`【${res.config.requestId}】 响应结果：${JSON.stringify(res)}`);
 	}
-	//TODO 除了接口服务错误外，其他日志调接口异步写入日志数据库
+
 	switch (_statusCode) {
 		case 200:
 			break;

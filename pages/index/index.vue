@@ -5,7 +5,7 @@
 		</template>
 		<!-- 对话框 -->
 		<!-- v-model:itemMessages="itemMessages" -->
-		<ChatBox ref="ChatBoxRef" :config="reactiveConfig[model]" />
+		<ChatBox ref="ChatBoxRef" />
 
 		<template #bottom>
 			<!-- 气泡选择 -->
@@ -16,30 +16,32 @@
 		</template>
 	</z-paging>
 	<CommonModelSeleted />
+	<HistoryMessage />
 </template>
 
 <script setup lang="ts">
 	import Chat from "@/components/CommonChat/Chat.vue"
 	import CommonModelSeleted from "@/components/CommonChat/CommonModelSeleted.vue"
+	import HistoryMessage from "@/components/CommonChat/HistoryMessage.vue"
 	import CommonHeader from '@/components/CommonHeader.vue'
-	import CommonChat from '@/components/CommonChat/index.vue'
 	import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue'
 	import { nextTick, onMounted, ref, watch } from "vue";
 	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
 	import { TemplateConfig } from '../chat/chatConfig'
 	import { useChatStore } from "../../store";
-	import { ItemMessage, MessageItems, MessageType, MessagesTemplate, StateType, TargetType } from "../../type/chatData";
+	import { ItemMessage, MessageItems, MessageType, MessagesTemplate, StateType, TargetType, chatConfigProps } from "../../type/chatData";
 	import { GenNonDuplicateID } from "../../tools/uuid";
 	import ChatBox from '@/components/CommonChat/ChatBox.vue'
 	import { HttpStatusMessage } from "../../api/http";
 	import { storeToRefs } from "pinia"
 	import { ToolTipItem } from "../../api/types"
+	import { commonModel } from "../../config/modelConfig"
 	const { $api } = useGlobalProperties()
 	const ChatStore = useChatStore();
 	const { model, setModel } = storeToRefs(ChatStore);
 
 	const chatValue = ref('')
-	const reactiveConfig = ref(TemplateConfig)
+
 	const data = ref("Hello World")
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null)
 	// 通过调用该事件完成修改数据的操作
@@ -108,7 +110,7 @@
 		}]
 
 		const options = {
-			url: 'api/v1/chat2/v35',
+			url: commonModel[model.value].ModelApi,
 			method: "POST",
 			data: {
 				params: JSON.stringify(requestData),
@@ -138,10 +140,10 @@
 	}
 	// 流在进行中进行判断逻辑 	
 	const StreamLoading = (msg : string) => {
-		let newMsg = msg.replaceAll('\n', '')
+		// let newMsg = msg.replaceAll('\n', '')
 
 		if (msg !== '[SUCCESS]') {
-			return newMsg
+			return msg
 		}
 
 	}
@@ -155,15 +157,17 @@
 
 		//#ifdef MP-WEIXIN
 		const requestTask = await $api.getStream(options.url, options.data, true,
-			(res) => {
-				console.log(res)
-				if (res.statusCode == 200) {
-					const currentMessage = ChatBoxRef.value.getSingelMessage(id)
-					handlerCurrentStream(currentMessage)
-				} else {
-					uni.$u.toast('请先登录账户！')
-					ChatBoxRef.value.deleteMessage(id)
-				}
+			(response : Promise<UniApp.RequestSuccessCallbackResult>) => {
+				response.then((res) => {
+					if (res.statusCode == 200) {
+						const currentMessage = ChatBoxRef.value.getSingelMessage(id)
+						handlerCurrentStream(currentMessage)
+					} else {
+						uni.$u.toast('请先登录账户！')
+						ChatBoxRef.value.deleteMessage(id)
+					}
+				})
+
 			},
 			(err) => { console.log(err) });
 		// requestTask.onHeadersReceived((res) => {

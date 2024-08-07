@@ -8,15 +8,7 @@
 				</view>
 			</template>
 		</view>
-		{{chatStore.model}}
 	</up-popup>
-
-	<up-popup :show="chatStore.openHistoryModel" :round="50" mode="bottom" @close="close" @open="open">
-		<view class="CommonPopup">
-			<text>人生若只如初见，何事秋风悲画扇</text>
-		</view>
-	</up-popup>
-
 
 
 </template>

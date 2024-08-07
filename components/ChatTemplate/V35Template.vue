@@ -7,33 +7,11 @@
 	</view>
 </template>
 
-<script lang="ts">
-	import { defineComponent } from 'vue';
+<script lang="ts" setup>
 	import ChatMenuTooltip from '@/components/CommonChat/ChatMenuTooltip.vue'
-	export default defineComponent({
-		name: 'V35Template',
-		components: {
-			ChatMenuTooltip
-		},
-		props: {
-			onFun: {
-				type: Function,
-				required: true
-			},
-			onTemplates: {
-				type: Function,
-				required: true
-			}
-		},
-		methods: {
-			handleClick() {
-				this.onFun('Sample string from V35Template');
-			},
-			handleTemplatesClick() {
-				this.onTemplates('Sample message from V35Template');
-			}
-		}
-	});
+
+	const props = defineProps<{ onFun : () => void, onTemplates : () => void }>()
+	console.log(props)
 </script>
 
 <style scoped>

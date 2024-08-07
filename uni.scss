@@ -82,7 +82,13 @@ $uni-font-size-paragraph:15px;
   height: 300px; /* 设置容器高度，超过高度会出现滚动条 */
   overflow-y: auto; /* 允许垂直滚动 */
 }
-
+/* 移除全局默认样式 */
+page, scroll-view, view, chat-box, message-item {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* 添加你需要的其他样式 */
+}
 /* 全局样式文件，如 App.vue 中的 <style> 部分或者单独的全局样式文件 */
 // *::-webkit-scrollbar {
 //   display: none;

@@ -5,7 +5,7 @@ import { LoginReq, UserInfoDTO } from '../type/userTypes'
 import { useGlobalProperties } from '../hooks/useGlobalHooks'
 
 const useUserStore = defineStore("wanxiang_userInfo", () => {
-	const userInfo = ref<UserInfoDTO | {}>({})//用户信息
+	const userInfo = ref<UserInfoDTO | null>(null)//用户信息
 	const token = ref('')//token
 	// const appId = ref('')//appid
 	// 用户唯一id

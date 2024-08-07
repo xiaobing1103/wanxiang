@@ -1,6 +1,8 @@
 import useUserStore from "./user";
 import useScreenStore from "./screen";
 import useChatStore from "./chat";
+import useCounterStore from "./system";
+
 import { createPinia } from 'pinia'
 import { createUnistorage } from '@/uni_modules/pinia-plugin-unistorage/index.js'
 
@@ -14,7 +16,8 @@ const setupStore = (app) => {
 export {
 	useUserStore,
 	useScreenStore,
-	useChatStore
+	useChatStore,
+	useCounterStore
 }
 //默认导出注册函数
 export default setupStore;

@@ -25,7 +25,7 @@
 	// 定义 defineModel 的返回类型
 	// type DefineModelReturnType = ReturnType<typeof defineModel>;
 
-	const props = defineProps<{ dataValue : string, chatValue : string, onSend : () => void, data : string, update : () => void }>();
+	// const props = defineProps<{ dataValue : string, chatValue : string, onSend : () => void, data : string, update : () => void }>();
 	const emit = defineEmits<{
 		// (e : 'update:chatValue', val : string) : void
 		(e : 'onSend', val : string) : void

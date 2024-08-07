@@ -1,11 +1,13 @@
 import { defaultTimeout } from '../api/http'
 import { useUserStore } from '../store'
+import { UserInfoDTO } from '../type/userTypes';
 import http from './interface'
 
 export const $http = (url : string, method : string, data ?: any, json ?: boolean, isStream ?: boolean, callback : () => void, errorCallback : () => void) => {
 	//设置请求前拦截器
 	const userStore = useUserStore();
-	const { userInfo } = userStore
+	const userInfo = userStore.userInfo
+
 	const headers = {
 		uid: userInfo?.id || '',
 		token: userInfo?.token || '',
@@ -32,6 +34,7 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 			uni.navigateTo({
 				url: '/pages/login/index'
 			})
+
 			// return response.data = await doRequest(response, url) 
 
 		} else {
