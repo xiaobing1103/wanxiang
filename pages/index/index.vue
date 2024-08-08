@@ -30,7 +30,7 @@
 	import { TemplateConfig } from '../chat/chatConfig'
 	import { useChatStore } from "../../store";
 	import { ItemMessage, MessageItems, MessageType, MessagesTemplate, StateType, TargetType, chatConfigProps } from "../../type/chatData";
-	import { GenNonDuplicateID } from "../../tools/uuid";
+	import { GenNonDuplicateID, generateUUID } from "../../tools/uuid";
 	import ChatBox from '@/components/CommonChat/ChatBox.vue'
 	import { HttpStatusMessage } from "../../api/http";
 	import { storeToRefs } from "pinia"
@@ -38,18 +38,28 @@
 	import { commonModel } from "../../config/modelConfig"
 	const { $api } = useGlobalProperties()
 	const ChatStore = useChatStore();
-	const { model, setModel } = storeToRefs(ChatStore);
-
+	const { addchats, setChatInfo } = ChatStore
+	const { model, selectChatId } = storeToRefs(ChatStore);
 	const chatValue = ref('')
-
 	const data = ref("Hello World")
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null)
-	// 通过调用该事件完成修改数据的操作
 	const changeData = (value : string) => {
 		data.value = value
 	}
 	const srollRef = ref(null)
+
+
 	onMounted(() => {
+		const initMessage = ChatStore.getCurrentInfo(ChatStore.selectChatId)
+		if (initMessage.data.length > 0) {
+			const newMap = new Map()
+			initMessage.data.forEach((item : ItemMessage) => {
+				newMap.set(item.id, item)
+			})
+			ChatBoxRef.value.messageList = newMap
+		} else {
+			ChatBoxRef.value.clearAllMessage()
+		}
 		scrollToBottom()
 	})
 	const scrollToBottom = () => {
@@ -58,10 +68,6 @@
 				srollRef.value.scrollToBottom()
 			}
 		})
-	}
-	// 创建一个气泡ID
-	const createId = () => {
-		return GenNonDuplicateID(472427503);
 	}
 	const sendValue = (val : ToolTipItem) => {
 		onSend(val.prompt)
@@ -91,19 +97,17 @@
 	// 	scrollToBottom();
 	// 	return id
 	// }
-	// const setItemMessage = () => {
-
-	// }
-
 	const onSend = async (val) => {
 		if (!val) {
 			uni.$u.toast('请先输入内容！')
 			return
 		}
+		const msgId = generateUUID()
+		const msgObj : ItemMessage = { id: msgId, state: "ok", target: 'user', message: val, messageType: 'text' }
 
-		ChatBoxRef.value.addMessage(createId(),
-			{ id: createId(), state: "ok", target: 'user', message: val, messageType: 'text' },
-		)
+		ChatBoxRef.value.addMessage(msgId, msgObj)
+
+		saveHistory(selectChatId.value, msgObj)
 		const requestData = [{
 			role: 'user',
 			content: val
@@ -123,10 +127,6 @@
 
 		handleStream(options)
 	}
-
-	const onLoad = () => {
-		console.log(123)
-	}
 	// 解析当前流得判断成分
 	const handlerCurrentStream = (currentMessages : ItemMessage) => {
 		const linesmsg = currentMessages.message
@@ -141,18 +141,20 @@
 	// 流在进行中进行判断逻辑 	
 	const StreamLoading = (msg : string) => {
 		// let newMsg = msg.replaceAll('\n', '')
-
 		if (msg !== '[SUCCESS]') {
 			return msg
 		}
 
 	}
 
+	const saveHistory = (id : string, currentMessage : ItemMessage) => {
+		setChatInfo(id, currentMessage)
+	}
 
 	async function handleStream(options) {
 		let result = ''
 		let newMsg = ''
-		const id = createId()
+		const id = generateUUID()
 		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' })
 
 		//#ifdef MP-WEIXIN
@@ -161,22 +163,18 @@
 				response.then((res) => {
 					if (res.statusCode == 200) {
 						const currentMessage = ChatBoxRef.value.getSingelMessage(id)
-						handlerCurrentStream(currentMessage)
+						// 存历史记录
+						saveHistory(selectChatId.value, currentMessage)
 					} else {
 						uni.$u.toast('请先登录账户！')
 						ChatBoxRef.value.deleteMessage(id)
 					}
 				})
-
 			},
 			(err) => { console.log(err) });
-		// requestTask.onHeadersReceived((res) => {
-
-		// });
 		requestTask.onChunkReceived(async (res) => {
 			let decoder = new TextDecoder('utf-8');
 			let text = decoder.decode(new Uint8Array(res.data));
-
 			const lines = text.split('\n')
 			result += lines;
 			for (let i = 0; i < lines.length; i++) {
@@ -187,9 +185,7 @@
 					}
 				}
 			}
-
 			ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: newMsg, messageType: 'text' })
-
 			scrollToBottom()
 		});
 		// #endif
@@ -201,8 +197,13 @@
 				if (chunk !== null) {
 					newMsg = StreamLoading(result)
 					ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: newMsg, messageType: 'text' })
+
+
 				}
 				if (chunk == null) {
+					const currentMessage = ChatBoxRef.value.getSingelMessage(id)
+
+					saveHistory(selectChatId.value, currentMessage)
 					console.log('H5端流获取完成')
 				}
 			},

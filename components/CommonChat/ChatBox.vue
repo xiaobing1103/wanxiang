@@ -85,17 +85,11 @@
 											</template>
 										</template>
 									</template>
-
-
 								</template>
 							</template>
 						</view>
-
 					</template>
 				</view>
-
-
-
 			</template>
 
 		</view>
@@ -108,22 +102,14 @@
 	import MessageItem from "@/components/CommonChat/MessageItem.vue"
 	// import V40Template from "@/components/ChatTemplate/V40Template.vue"
 	import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
-
-
 	import { computed, onMounted, ref, watch } from 'vue';
-	import { GenNonDuplicateID } from '../../tools/uuid';
+	import { GenNonDuplicateID, generateUUID } from '../../tools/uuid';
 	import { storeToRefs } from "pinia"
 	import { TemplateConfig } from '../../pages/chat/chatConfig';
 	const ChatStore = useChatStore()
-	const { model } = storeToRefs(ChatStore)
+	const { model, selectChatId } = storeToRefs(ChatStore)
 	// const itemMessages = defineModel<MessageItems>('itemMessages')
 	// const props = defineProps<{ config : chatConfigProps }>()
-
-	// 创建一个气泡ID
-	const createId = () => {
-		return GenNonDuplicateID(472427503);
-	}
-
 	const receivedFun = (e) => {
 		console.log(e)
 	}
@@ -134,7 +120,7 @@
 	const getInitTemplate = () => {
 		const maps = new Map()
 		TemplateConfig[model.value].messagesTemplate.map((item, index) => {
-			const id = createId()
+			const id = generateUUID()
 			item.id = id
 			maps.set(item.id, {
 				id: id,
@@ -146,19 +132,26 @@
 		})
 		return maps
 	}
-	// 当前模型切换逻辑
-	const changeModel = () => {
-
-	}
 	//所有的消息集合
 	const messageList = ref<MessageItems>(new Map())
-	watch(model, (val) => {
-		console.log(val)
-		messageList.value = getInitTemplate()
-		console.log(messageList.value)
+	// 切换模型的监听
+	// watch(model, (val) => {
+	// 	messageList.value = getInitTemplate()
+	// }, { immediate: true })
+
+	// 切换seletedid 	
+	watch(selectChatId, (val) => {
+		const currentMsg = ChatStore.chats.find((item) => item.id == val).data
+		if (currentMsg.length > 0) {
+			const newMap = new Map()
+			currentMsg.forEach((item : ItemMessage, index : number) => {
+				newMap.set(item.id, item);
+			});
+			messageList.value = newMap
+		} else {
+			messageList.value = getInitTemplate()
+		} 
 	}, { immediate: true })
-
-
 	//新增一个消息
 	const addMessage = (id : string, value : ItemMessage) => {
 		messageList.value.set(id, value)
@@ -171,17 +164,16 @@
 			message: currentMessage.message + setItems.message,
 			...setItems
 		}
-
 		messageList.value.set(id, newMessage)
 	}
-
 	//删除一个message
 	const deleteMessage = (id : string) => {
 		messageList.value.delete(id)
 	}
 	//清空全部message
 	const clearAllMessage = () => {
-		messageList.value.clear()
+		// messageList.value.clear()
+		messageList.value = getInitTemplate()
 	}
 	// 获取单个消息
 	const getSingelMessage = (id : string) => {
@@ -197,7 +189,8 @@
 		deleteMessage,
 		clearAllMessage,
 		setMessage,
-		getSingelMessage
+		getSingelMessage,
+		messageList
 	})
 </script>
 

@@ -1,20 +1,54 @@
 <template>
 	<up-popup :show="chatStore.openHistoryModel" mode="left" @close="close" @open="open">
-		<view class="historyBox">
-			
+		<view :style="{paddingTop:screenStore.safeTopHeight + 'rpx'}" class="historyBox">
+			<view class="historyBox_header">
+				<up-button size="small" type="primary" @click="addChat"
+					class="historyBox_header_button">新建对话</up-button>
+			</view>
+			<up-line></up-line>
+			<view class="historyBox_main">
+				<template v-for="item in chatStore.chats">
+					<view
+						:style="{background: item.id ==  chatStore.selectChatId  ? '#3c9cff' : '',color: item.id ==  chatStore.selectChatId  ? '#fff' : ''}"
+						class="historyBox_main_box" @click="changeChat(item.id,item.model)">
+						<view class="historyBox_main_box_left">
+							<image class="historyBox_main_box_icon" :src="item.iconUrl" mode=""></image>
+							<text class="historyBox_main_box_text">{{item.title}}</text>
+						</view>
+
+						<up-icon @click="deleteChat" stop name="close" size="15"></up-icon>
+					</view>
+				</template>
+			</view>
+			<view class="historyBox_footer">
+
+			</view>
 		</view>
 	</up-popup>
 </template>
 
 <script setup lang="ts">
-	import { useChatStore } from '../../store';
+	import { commonModel } from '@/config/modelConfig';
+	import { CommonModelKeys } from '@/config/type';
+	import { generateUUID } from '@/tools/uuid';
+	import { useChatStore, useScreenStore } from '@/store';
+	const screenStore = useScreenStore()
 	const chatStore = useChatStore()
 	const open = () => {
 		chatStore.setopenHistoryModel(true)
-
 	}
 	const close = () => {
 		chatStore.setopenHistoryModel(false)
+	}
+	const addChat = () => {
+		chatStore.initChatInfo(true)
+	}
+	const deleteChat = () => {
+		chatStore.delChats(chatStore.selectChatId)
+	}
+	const changeChat = (id : string, model : CommonModelKeys) => {
+		chatStore.changeSelectChatId(id)
+		chatStore.setModel(model)
 	}
 </script>
 <style lang="scss">
@@ -22,8 +56,8 @@
 		width: 50vw;
 		background-color: white;
 		border-radius: 30rpx;
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
+		display: flex;
+		flex-direction: column;
 
 		&_view {
 
@@ -39,6 +73,52 @@
 
 			&_text {
 				font-size: 25rpx;
+			}
+		}
+
+		&_header {
+			display: flex;
+			justify-content: center;
+			width: 100%;
+			padding: 30rpx;
+			box-sizing: border-box;
+
+			&_button {
+				width: 80% !important;
+			}
+		}
+
+		&_main {
+			display: flex;
+			flex-direction: column;
+			padding: 0 20rpx;
+
+
+			&_box {
+				display: flex;
+				align-items: center;
+				// background-color: #eaeaee;
+				justify-content: space-between;
+				border-radius: 10rpx;
+				padding: 10rpx;
+				margin-top: 20rpx;
+				border: 2rpx solid #eaeaee;
+
+
+				&_left {
+					display: flex;
+					align-items: center;
+				}
+
+				&_icon {
+					height: 40rpx;
+					width: 40rpx;
+					margin-right: 20rpx;
+				}
+
+				&_text {
+					font-size: 20rpx;
+				}
 			}
 		}
 	}

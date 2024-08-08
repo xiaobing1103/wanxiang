@@ -27,12 +27,13 @@
 
 <script setup lang="ts">
 	import { useChatStore, useCounterStore } from '@/store';
+	// import useCounterStore from '../store/system';
 	import { storeToRefs } from "pinia"
 	const chatStore = useChatStore()
 	//  #ifdef MP-WEIXIN
 	const system = useCounterStore()
-	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system).
-		statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
+	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
+	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
 	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
 	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
 	// #endif

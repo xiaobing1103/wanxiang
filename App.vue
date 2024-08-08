@@ -1,25 +1,29 @@
-
 <script lang="ts" setup>
-	import {onLaunch,onLoad,onHide,onShow} from '@dcloudio/uni-app'
-	import {useScreenStore} from '@/store'
+	import { onLaunch, onLoad, onHide, onShow } from '@dcloudio/uni-app'
+	import { useScreenStore, useChatStore, useUserStore } from '@/store'
+	import { generateUUID } from './tools/uuid';
+	import { commonModel } from './config/modelConfig';
 	const screenStore = useScreenStore()
-	
-	const initPageSystem = async () =>{
+	const ChatStore = useChatStore()
+	const UserStore = useUserStore()
+	const initPageSystem = async () => {
 		const systemInfo = await uni.getSystemInfo()
 		// #ifdef MP-WEIXIN
-			const buttonInfo = uni.getMenuButtonBoundingClientRect()
-			screenStore.menuButtonInfo = buttonInfo
+		const buttonInfo = uni.getMenuButtonBoundingClientRect()
+		screenStore.menuButtonInfo = buttonInfo
 		// #endif
 		screenStore.systemInfo = systemInfo
 	}
 	// #ifndef MP-WEIXIN
-		uni.onTabBarMidButtonTap(() =>{
-			console.log('asas')
-		})
+	uni.onTabBarMidButtonTap(() => {
+		console.log('asas')
+	})
 	// #endif
-	onLaunch(() =>{
+	// 初始化对话
+	onLaunch(() => {
 		//初始化页面信息
 		initPageSystem()
+		ChatStore.initChatInfo()
 	})
 </script>
 

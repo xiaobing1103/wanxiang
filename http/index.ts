@@ -27,7 +27,7 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 		}
 		config.timeout = config.timeout || defaultTimeout;
 	}
-	http.interceptor.response = async (response) => {
+	http.interceptor.response = (response) => {
 		uni.hideLoading()
 		console.log(response)
 		if (response.data.code === 401 || response.statusCode === 401) {
@@ -38,9 +38,9 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 			// return response.data = await doRequest(response, url) 
 
 		} else {
-			if (response.data.code !== 200 && response.data.msg) {
+			if (response.data.code !== 200 && response.data.message) {
 				uni.showToast({
-					title: response.data.msg,
+					title: response.data.message,
 					icon: 'none',
 					duration: 1500
 				})

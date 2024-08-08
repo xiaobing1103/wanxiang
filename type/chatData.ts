@@ -9,7 +9,7 @@ export type ItemMessage = {
 export type MessageItems = Map<string, ItemMessage>
 
 export type StateType = 'ok' | 'waite' | 'error'
-export type MessageType = 'text' | 'text2' | 'image' | 'assistant' | 'template' | undefined
+export type MessageType = 'text' | 'text2' | 'image' | 'assistant' | 'template'
 
 export type TargetType = 'system' | 'user' | 'assistant'
 export type ModelType = 'v35' | 'v40' | 'net' | 'echarts'
@@ -26,4 +26,12 @@ export type MessagesTemplate = {
 	messageType ?: MessageType //模版类型
 	message ?: string | any //模版内容 
 	id ?: string
+}
+
+export type ChatHistory = {
+	id : string,
+	data : ItemMessage[] | [],
+	iconUrl : string,
+	model : ModelType,
+	title : string,
 }

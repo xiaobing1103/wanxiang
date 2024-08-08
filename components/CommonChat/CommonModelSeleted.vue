@@ -2,7 +2,8 @@
 	<up-popup :show="chatStore.openSeletedModel" :round="50" mode="bottom" @close="close" @open="open">
 		<view class="CommonPopup">
 			<template v-for="(item,key) in commonModel">
-				<view class="CommonPopup_view" @click="changeModel(key)">
+				<view :style="{background:key == chatStore.model ? '#eaeaea':''}" class="CommonPopup_view"
+					@click="changeModel(key)">
 					<image class="CommonPopup_view_image" :src="item.modelIcon" mode=""></image>
 					<text class="CommonPopup_view_text"> {{item.title}}</text>
 				</view>
@@ -18,6 +19,7 @@
 	import { computed, ref } from 'vue';
 	import { useChatStore } from '@/store';
 	import { CommonModelKeys } from '../../config/type';
+	import { generateUUID } from '../../tools/uuid';
 	const chatStore = useChatStore()
 	const popup = ref(null)
 	const open = () => {
@@ -28,7 +30,17 @@
 		chatStore.setOpenSeletedModel(false)
 	}
 	const changeModel = (key : CommonModelKeys) => {
-		chatStore.setModel(key)
+		if (key == chatStore.model) {
+			return
+		}
+		chatStore.addchats({
+			id: generateUUID(),
+			iconUrl: commonModel[key].modelIcon,
+			title: commonModel[key].title,
+			data: [],
+			model: key
+		})
+		// chatStore.setModel(key)
 		close()
 	}
 </script>
