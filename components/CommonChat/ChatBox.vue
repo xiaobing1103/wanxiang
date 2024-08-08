@@ -102,7 +102,7 @@
 	import MessageItem from "@/components/CommonChat/MessageItem.vue"
 	// import V40Template from "@/components/ChatTemplate/V40Template.vue"
 	import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
-	import { computed, onMounted, ref, watch } from 'vue';
+	import { computed, nextTick, onMounted, ref, watch } from 'vue';
 	import { GenNonDuplicateID, generateUUID } from '../../tools/uuid';
 	import { storeToRefs } from "pinia"
 	import { TemplateConfig } from '../../pages/chat/chatConfig';
@@ -145,7 +145,6 @@
 		messageList.value = getInitTemplate()
 	}
 	watch(selectChatId, (val) => {
-		console.log(val)
 		const currentMsg = ChatStore.chats.find((item) => item.id == val).data
 		if (currentMsg.length > 0) {
 			messageList.value.clear()
@@ -153,12 +152,15 @@
 				currentMsg.forEach((item : ItemMessage, index : number) => {
 					messageList.value.set(item.id, item);
 				});
-			}, 1000)
+			}, 500)
+
 
 		} else {
 			messageList.value = getInitTemplate()
 		}
 	}, { immediate: true })
+
+
 	//新增一个消息
 	const addMessage = (id : string, value : ItemMessage) => {
 		messageList.value.set(id, value)
