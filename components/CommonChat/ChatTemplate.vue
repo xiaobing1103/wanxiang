@@ -1,5 +1,5 @@
 <template>
-	<template v-for="items in selectedTemplate">
+	<template v-for="(items,index) in selectedTemplate" :key="index">
 		<view class="ChatTemplate">
 			<view class="chatRole">
 				<template v-if="items.role == 'system'">

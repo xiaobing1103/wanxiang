@@ -159,19 +159,17 @@
 
 		//#ifdef MP-WEIXIN
 		const requestTask = await $api.getStream(options.url, options.data, true,
-			(response : Promise<UniApp.RequestSuccessCallbackResult>) => {
-				response.then((res) => {
-					if (res.statusCode == 200) {
-						const currentMessage = ChatBoxRef.value.getSingelMessage(id)
-						// 存历史记录
-						saveHistory(selectChatId.value, currentMessage)
-					} else {
-						uni.$u.toast('请先登录账户！')
-						ChatBoxRef.value.deleteMessage(id)
-					}
-				})
-			},
-			(err) => { console.log(err) });
+			(response : UniApp.RequestSuccessCallbackResult) => {
+				if (response.statusCode == 200) {
+					const currentMessage = ChatBoxRef.value.getSingelMessage(id)
+					// 存历史记录
+					saveHistory(selectChatId.value, currentMessage)
+				} else {
+					ChatBoxRef.value.deleteMessage(id)
+				}
+			})
+
+
 		requestTask.onChunkReceived(async (res) => {
 			let decoder = new TextDecoder('utf-8');
 			let text = decoder.decode(new Uint8Array(res.data));

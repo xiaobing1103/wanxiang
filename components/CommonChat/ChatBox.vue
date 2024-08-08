@@ -139,18 +139,25 @@
 	// 	messageList.value = getInitTemplate()
 	// }, { immediate: true })
 
-	// 切换seletedid 	
+	//清空全部message
+	const clearAllMessage = () => {
+		// messageList.value.clear()
+		messageList.value = getInitTemplate()
+	}
 	watch(selectChatId, (val) => {
+		console.log(val)
 		const currentMsg = ChatStore.chats.find((item) => item.id == val).data
 		if (currentMsg.length > 0) {
-			const newMap = new Map()
-			currentMsg.forEach((item : ItemMessage, index : number) => {
-				newMap.set(item.id, item);
-			});
-			messageList.value = newMap
+			messageList.value.clear()
+			setTimeout(() => {
+				currentMsg.forEach((item : ItemMessage, index : number) => {
+					messageList.value.set(item.id, item);
+				});
+			}, 1000)
+
 		} else {
 			messageList.value = getInitTemplate()
-		} 
+		}
 	}, { immediate: true })
 	//新增一个消息
 	const addMessage = (id : string, value : ItemMessage) => {
@@ -170,11 +177,7 @@
 	const deleteMessage = (id : string) => {
 		messageList.value.delete(id)
 	}
-	//清空全部message
-	const clearAllMessage = () => {
-		// messageList.value.clear()
-		messageList.value = getInitTemplate()
-	}
+
 	// 获取单个消息
 	const getSingelMessage = (id : string) => {
 		return messageList.value.get(id)

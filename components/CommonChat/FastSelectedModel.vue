@@ -1,6 +1,6 @@
 <template>
 	<view class="fastSeleted">
-		<view class="buttonBox" v-for="item in allTags">
+		<view class="buttonBox" v-for="(item,index) in allTags" :key="index">
 			<view class="buttonBox_box" :style="{background: '#'+ item.bgColor}">
 				<view class="icon">
 					<span class="icon_textIcon" v-if="item.icon">{{item.icon}}</span>

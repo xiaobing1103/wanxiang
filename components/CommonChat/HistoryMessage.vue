@@ -7,7 +7,7 @@
 			</view>
 			<up-line></up-line>
 			<view class="historyBox_main">
-				<template v-for="item in chatStore.chats">
+				<template v-for="(item,index) in chatStore.chats" :key="index">
 					<view
 						:style="{background: item.id ==  chatStore.selectChatId  ? '#3c9cff' : '',color: item.id ==  chatStore.selectChatId  ? '#fff' : ''}"
 						class="historyBox_main_box" @click="changeChat(item.id,item.model)">

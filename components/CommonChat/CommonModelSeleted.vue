@@ -1,7 +1,7 @@
 <template>
 	<up-popup :show="chatStore.openSeletedModel" :round="50" mode="bottom" @close="close" @open="open">
 		<view class="CommonPopup">
-			<template v-for="(item,key) in commonModel">
+			<template v-for="(item,key) in commonModel" :key="key">
 				<view :style="{background:key == chatStore.model ? '#eaeaea':''}" class="CommonPopup_view"
 					@click="changeModel(key)">
 					<image class="CommonPopup_view_image" :src="item.modelIcon" mode=""></image>
