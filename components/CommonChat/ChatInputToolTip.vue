@@ -24,8 +24,8 @@
 	import { onMounted, ref, computed } from 'vue';
 	import { getRandomInt } from '@/utils/index'
 	// import Api from '@/api/api'
-	import type { ToolTipItem } from '@/api/types'
 	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
+	import { ToolTipItem } from '../../type/userTypes';
 
 	const IconArr : string[] = [
 		'http://file.1foo.com/2023/11/30/93cb43c66866d425b4d38c26afbd81c2.png',

@@ -1,37 +1,74 @@
 <template>
 	<view class="header">
-		<!-- #ifdef MP-WEIXIN -->
+
 		<view :style="{height:navBarHeight + 'px'}">
 			<view class="weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
-				<up-navbar left-icon="clock" @leftClick="leftClick">
-					<template v-slot:center>
-						<view>
-							<image src="/static/logo.svg" style=" height: 25px;"></image>
-						</view>
+				<template v-if="curRoute == 'pages/index/index'">
+					<up-navbar :left-icon="'clock'" @leftClick="leftClick">
+						<template v-slot:center>
+							<view>
+								<image src="/static/logo.svg" style=" height: 25px;"></image>
+							</view>
+						</template>
+					</up-navbar>
+				</template>
+				<template v-else>
+					<template
+						v-if="curRoute == 'pages/draw/index' || curRoute == 'pages/function/index'  || curRoute == 'pages/my/index'">
+						<up-navbar>
+							<template v-slot:left>
+								{{""}}
+							</template>
+							<template v-slot:center>
+								<view>
+									<image src="/static/logo.svg" style=" height: 25px;"></image>
+								</view>
+							</template>
+						</up-navbar>
 					</template>
-				</up-navbar>
+					<template v-else>
+						<up-navbar :left-icon="'arrow-left'" @leftClick="backpage">
+							<template v-slot:center>
+								<view>
+									<image src="/static/logo.svg" style=" height: 25px;"></image>
+								</view>
+							</template>
+						</up-navbar>
+					</template>
+
+
+				</template>
+
 			</view>
 		</view>
-		<!--  #endif -->
+
 		<!-- #ifndef MP-WEIXIN -->
-		<up-navbar placeholder left-icon="clock" @leftClick="leftClick">
+		<!-- <up-navbar placeholder left-icon="clock" @leftClick="leftClick">
 			<template v-slot:center>
 				<view>
 					<image src="/static/logo.svg" style="height: 25px;"></image>
 				</view>
 			</template>
-		</up-navbar>
+		</up-navbar> -->
 		<!--  #endif -->
 	</view>
 </template>
 
 <script setup lang="ts">
+	import { ref, computed } from 'vue';
 	import { useChatStore, useCounterStore } from '@/store';
 	// import useCounterStore from '../store/system';
 	import { storeToRefs } from "pinia"
+
+	const curRoute = computed(() => {
+		const routers = getCurrentPages();
+		return routers[routers.length - 1].route
+	})
+
 	const chatStore = useChatStore()
 	//  #ifdef MP-WEIXIN
 	const system = useCounterStore()
+
 	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
 	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
 	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
@@ -41,6 +78,15 @@
 		console.log('fewfe3244332121 ', chatStore.openHistoryModel + '')
 		chatStore.setopenHistoryModel(true)
 	};
+	const backpage = () => {
+
+		uni.navigateBack({
+			delta: 1,//返回层数，2则上上页
+		})
+	}
+	const onload = () => {
+		console.log(12)
+	}
 </script>
 
 <style lang="scss">

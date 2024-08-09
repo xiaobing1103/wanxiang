@@ -1,101 +1,82 @@
 <template>
-	<z-paging :show-scrollbar="false">
+	<z-paging :show-scrollbar="false" v-model="ImageList" @query="getImages" ref="paging">
 		<template #top>
 			<CommonHeader />
 		</template>
 		<view class="body">
-			<MenuCardItem @change="toPage(item)" v-for="(item,index) in menuList" :key="index" :data="item"/>
+			<MenuCardItem @change="toPage(item)" v-for="(item,index) in menuList" :key="index" :data="item" />
 		</view>
-		<text class="desc">未完功能持续上线中...</text>
-<!-- 		<template #bottom>
-			<CommonTabbar :indexValue="3"/>
-		</template> -->
+		<view class="imageBox">
+			<view class="imageBox_title">
+				灵感工坊
+			</view>
+			<view class="imageLists">
+				<ImageShowcasePlaza :ImageList="ImageList" />
+			</view>
+		</view>
+		<!-- <text class="desc">未完功能持续上线中...</text> -->
+		<ImageModal />
 	</z-paging>
 </template>
 
 <script setup lang="ts">
 	import CommonTabbar from '@/components/CommonTabbar.vue'
+	import ImageShowcasePlaza from './components/ImageShowcasePlaza'
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import MenuCardItem from '@/pages/function/comoonents/menuItem.vue'
-	import {useGlobalProperties} from '@/hooks/useGlobalHooks'
-	
-	import  type {MenuItem} from '@/pages/function/type.ts'
-	
-	const {$assets} = useGlobalProperties()
-	const menuList = [
-		{
-			cover:$assets.xgst_cover,
-			title:'线稿上色',
-			description:'线稿一键变画作',
-			path:''
-		},
-		{
-			cover:$assets.tpzkt_cover,
-			title:'图片转卡通',
-			description:'一张图片制作你的Q版卡通形象',
-			path:''
-		},
-		{
-			cover:$assets.aihl_cover,
-			title:'AI换脸',
-			description:'一账图片让你当明星',
-			path:''
-		},
-		{
-			cover:$assets.paintAixz_cover,
-			title:'AI写真',
-			description:'在线写真馆',
-			path:''
-		},
-		{
-			cover:$assets.tpst_cover,
-			title:'图片生图',
-			description:'导入照片,AI百变风格',
-			path:''
-		},
-		{
-			cover:$assets.wzst_cover,
-			title:'文字生图',
-			description:'一句话,AI帮你写',
-			path:''			
-		},
-		{
-			cover:$assets.jbzh_cover,
-			title:'局部重绘',
-			description:'想改哪里改哪里',
-			path:''			
-		},
-		{
-			cover:$assets.rxkt_cover,
-			title:'人像抠图',
-			description:'只能提取人像，精确到发丝',
-			path:''			
-		}						
-	]
-	
-	const toPage = (item:MenuItem) =>{
-		if(!item.path){
+	import { ImageListDTO, menuList } from './data'
+	import type { MenuItem } from '@/pages/function/type.ts'
+	import { ref } from 'vue'
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
+	import ImageModal from './components/ImageModal'
+	const { $api } = useGlobalProperties()
+	const paging = ref(null)
+	const toPage = (item : MenuItem) => {
+		if (!item.path) {
 			uni.$u.toast('尚未开放')
 			return
 		}
 		uni.navigateTo({
-			url:item.path
+			url: item.path
 		})
+	}
+	const ImageList = ref<ImageListDTO[]>([])
+	const getImages = async (pageNo : number = 1, pageSize ?: number) => {
+		const res = await $api.get<ImageListDTO[]>('api/v1/img/publishs', {
+			page: pageNo
+		})
+		if (res.code == 200) {
+			paging.value.complete(res.data)
+
+		} else {
+			paging.value.complete(false);
+		}
 	}
 </script>
 <style lang="scss" scoped>
-	.body{
+	.body {
 		display: grid;
-		grid-template-columns: repeat(2,1fr);
+		grid-template-columns: repeat(2, 1fr);
 		gap: 20rpx;
 		box-sizing: border-box;
 		padding: 30rpx;
 	}
-	.desc{
+
+	.desc {
 		font-size: 24rpx;
 		text-align: center;
 		display: block;
 		width: 100%;
-		color:$u-info-disabled;
-	}	
+		color: $u-info-disabled;
+	}
+
+	.imageBox {
+		padding: 30rpx;
+
+		&_title {
+			font-size: 40rpx;
+			font-weight: 800;
+			padding: 30rpx 0;
+		}
+	}
 </style>

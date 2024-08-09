@@ -3,7 +3,7 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app",
+				"navigationBarTitleText": "对话",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom",
 				"app-plus": {
@@ -25,7 +25,7 @@
 		{
 			"path": "pages/my/index",
 			"style": {
-				"navigationBarTitleText": "my",
+				"navigationBarTitleText": "我的",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom",
 				"app-plus": {
@@ -38,7 +38,7 @@
 		{
 			"path": "pages/draw/index",
 			"style": {
-				"navigationBarTitleText": "draw",
+				"navigationBarTitleText": "绘画",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom",
 				"app-plus": {
@@ -49,7 +49,7 @@
 		{
 			"path": "pages/function/index",
 			"style": {
-				"navigationBarTitleText": "function",
+				"navigationBarTitleText": "功能库",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom",
 				"app-plus": {
@@ -68,6 +68,7 @@
 				}
 			}
 		},
+
 		{
 			"path": "pages/loginAccount/index",
 			"style": {
@@ -79,31 +80,105 @@
 			}
 		}
 	],
-	"subPackages": [
-		{
+	"subPackages": [{
 			"root": "pages/my/subPage",
-			"pages": [
-				{
-					"path": "vip/index",
-					"name": "vip",
+			"pages": [{
+				"path": "vip/index",
+				"name": "vip",
+				"style": {
+					"navigationBarTitleText": "会员信息",
+					"navigationStyle": "custom"
+				}
+			}]
+		},
+		{
+			"root": "pages/draw/subPage",
+			"pages": [{
+					"path": "text2image/index",
+					"name": "text2image",
 					"style": {
-						"navigationBarTitleText": "会员信息",
+						"navigationBarTitleText": "文字转图片",
 						"navigationStyle": "custom"
 					}
-				}				
+				},
+				{
+					"path": "image2image/index",
+					"name": "image2image",
+					"style": {
+						"navigationBarTitleText": "图片转图片",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "partialRepaint/index",
+					"name": "partialRepaint",
+					"style": {
+						"navigationBarTitleText": "局部重绘",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "portraitCutout/index",
+					"name": "portraitCutout",
+					"style": {
+						"navigationBarTitleText": "人像抠图",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "aiPhotoShoots/index",
+					"name": "aiPhotoShoots",
+					"style": {
+						"navigationBarTitleText": "AI写真",
+						"navigationStyle": "custom"
+					}
+				},
+
+				{
+					"path": "aiFaceSwapping/index",
+					"name": "aiFaceSwapping",
+					"style": {
+						"navigationBarTitleText": "AI换脸",
+						"navigationStyle": "custom"
+					}
+				},
+
+
+				{
+					"path": "image2cartoon/index",
+					"name": "image2cartoon",
+					"style": {
+						"navigationBarTitleText": "图片转卡通",
+						"navigationStyle": "custom"
+					}
+				},
+
+				{
+					"path": "coloringLineArt/index",
+					"name": "coloringLineArt",
+					"style": {
+						"navigationBarTitleText": "线稿上色",
+						"navigationStyle": "custom"
+					}
+				}
+
+
 			]
-		},		
+		},
+
+
 		{
-		"root": "pages/function/subPage",
-		"pages": [{
-			"path": "ppt/index",
-			"name": "ppt",
-			"style": {
-				"navigationBarTitleText": "一键生成ppt",
-				"navigationStyle": "custom"
-			}
-		}]
-	}],
+			"root": "pages/function/subPage",
+			"pages": [{
+				"path": "ppt/index",
+				"name": "ppt",
+				"style": {
+					"navigationBarTitleText": "一键生成ppt",
+					"navigationStyle": "custom"
+				}
+			}]
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "万象AI",
@@ -113,7 +188,9 @@
 	"tabBar": {
 		"fontSize": "15",
 		"midButton": {
-			"iconPath": "static/add.png"
+			"iconPath": "static/middle.svg",
+			"iconWidth": "70rpx",
+			"height": "85rpx"
 		},
 		"list": [{
 				"pagePath": "pages/index/index",

@@ -27,7 +27,7 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 				role: 'system',
 				template: 'netTemplate',
 				messageType: 'text2',
-				message: '及哦芳姐我i金额范围i哦飞机额我i哦'
+				message: '联网模型已初步对近期的信息已经学习或理解完成，但仍可能某些最新话题无法正常学习，可尝试重新提问或者换个话题。'
 			}
 		]
 	},
@@ -37,7 +37,8 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 				role: 'system',
 				template: 'echartsTemplate',
 				messageType: 'text2',
-				message: '及哦芳姐我i金额范围i哦飞机额我i哦'
+				message: `你好，我是AI-图表模型，试试对话处理表格
+我可以帮你处理表格信息，并且生成表格。支持Eharts代码数据可视化图表库`
 			}
 		]
 	}

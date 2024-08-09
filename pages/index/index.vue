@@ -32,7 +32,7 @@
 	import { ItemMessage, MessageItems, MessageType, MessagesTemplate, StateType, TargetType, chatConfigProps } from "../../type/chatData";
 	import { GenNonDuplicateID, generateUUID } from "../../tools/uuid";
 	import ChatBox from '@/components/CommonChat/ChatBox.vue'
-	import { HttpStatusMessage } from "../../api/http";
+	// import { HttpStatusMessage } from "../../api/http";
 	import { storeToRefs } from "pinia"
 	import { ToolTipItem } from "../../api/types"
 	import { commonModel } from "../../config/modelConfig"

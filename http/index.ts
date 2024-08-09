@@ -1,4 +1,4 @@
-import { defaultTimeout } from '../api/http'
+
 import { useUserStore } from '../store'
 import { UserInfoDTO } from '../type/userTypes';
 import http from './interface'
@@ -7,7 +7,7 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 	//设置请求前拦截器
 	const userStore = useUserStore();
 	const userInfo = userStore.userInfo
-
+	const defaultTimeout = 20000
 	const headers = {
 		uid: userInfo?.id || '',
 		token: userInfo?.token || '',
