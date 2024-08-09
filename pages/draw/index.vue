@@ -15,7 +15,7 @@
 			</view>
 		</view>
 		<!-- <text class="desc">未完功能持续上线中...</text> -->
-		<ImageModal />
+
 	</z-paging>
 </template>
 
@@ -28,9 +28,11 @@
 	import type { MenuItem } from '@/pages/function/type.ts'
 	import { ref } from 'vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
-	import ImageModal from './components/ImageModal'
+	
 	const { $api } = useGlobalProperties()
 	const paging = ref(null)
+	// 创建响应式数据
+	
 	const toPage = (item : MenuItem) => {
 		if (!item.path) {
 			uni.$u.toast('尚未开放')

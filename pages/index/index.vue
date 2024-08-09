@@ -62,6 +62,7 @@
 		}
 		scrollToBottom()
 	})
+	
 	const scrollToBottom = () => {
 		nextTick(() => {
 			if (srollRef.value) {
@@ -69,6 +70,7 @@
 			}
 		})
 	}
+	
 	const sendValue = (val : ToolTipItem) => {
 		onSend(val.prompt)
 	}
