@@ -6,7 +6,7 @@
 					:style="{ alignItems: item.target == 'user' ? 'flex-end' : 'flex-start' }">
 					<view class="chatBox_main_View_header">
 						<template
-							v-if=" item.target == 'assistant' || (item.target == 'system'  && messageList.size == 1) ">
+							v-if="item.target == 'assistant' || (item.target == 'system' && messageList.size == 1)">
 							<image class="chatBox_main_View_header_image" src="../../static/logo.svg"></image>
 						</template>
 						<template v-else>
@@ -16,8 +16,8 @@
 						</template>
 					</view>
 					<!-- 如果为模板得情况 -->
-					<template v-if=" item.target == 'system'">
-						<view v-if="messageList.size  == 1" class="chatBox_main_View_main">
+					<template v-if="item.target == 'system'">
+						<view v-if="messageList.size == 1" class="chatBox_main_View_main">
 							<template v-if="item.messageType == 'template'">
 								<V35Template @onFun="receivedFun" @onTemplates="onTemplates" />
 							</template>
@@ -28,7 +28,7 @@
 							</template>
 							<template v-if="item.messageType == 'text2'">
 								<view class="messageTemplate">
-									{{item.message}}
+									{{ item.message }}
 								</view>
 							</template>
 						</view>
@@ -39,17 +39,17 @@
 
 					<template v-else>
 						<view class="chatBox_main_View_main" :class="{
-										'chatBox_main_View_main_userMessage': item.target == 'user',
-										'chatBox_main_View_main_systemMessage': item.target == 'assistant' ,
-										'chatBox_main_View_main_echarts': model == 'echarts'
-									}
-										" :style="{
-										marginLeft: item.target === 'user' ? '0' : '20rpx',
-										marginRight: item.target === 'user' ? '20rpx' : '0',
-										padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
-										background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'white',
-										minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%'
-									}">
+							'chatBox_main_View_main_userMessage': item.target == 'user',
+							'chatBox_main_View_main_systemMessage': item.target == 'assistant',
+							'chatBox_main_View_main_echarts': model == 'echarts'
+						}
+							" :style="{
+								marginLeft: item.target === 'user' ? '0' : '20rpx',
+								marginRight: item.target === 'user' ? '20rpx' : '0',
+								padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
+								background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'white',
+								minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%'
+							}">
 							<template v-if="item.state == 'waite' && item.message.length <= 0">
 								<!-- 在消息为等待请求完成时候 -->
 								<up-loading-icon mode="semicircle"></up-loading-icon>
@@ -97,184 +97,184 @@
 </template>
 
 <script lang="ts" setup>
-	import useChatStore from '@/store/chat';
-	import V35Template from "@/components/ChatTemplate/V35Template.vue"
-	import MessageItem from "@/components/CommonChat/MessageItem.vue"
-	// import V40Template from "@/components/ChatTemplate/V40Template.vue"
-	import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
-	import { computed, nextTick, onMounted, ref, watch } from 'vue';
-	import { GenNonDuplicateID, generateUUID } from '../../tools/uuid';
-	import { storeToRefs } from "pinia"
-	import { TemplateConfig } from '../../pages/chat/chatConfig';
-	const ChatStore = useChatStore()
-	const { model, selectChatId } = storeToRefs(ChatStore)
-	// const itemMessages = defineModel<MessageItems>('itemMessages')
-	// const props = defineProps<{ config : chatConfigProps }>()
-	const receivedFun = (e) => {
-		console.log(e)
-	}
-	const onTemplates = (e) => {
-		console.log(e)
-	}
-	// 获取初始消息模版 
-	const getInitTemplate = () => {
-		const maps = new Map()
-		TemplateConfig[model.value].messagesTemplate.map((item, index) => {
-			const id = generateUUID()
-			item.id = id
-			maps.set(item.id, {
-				id: id,
-				state: 'ok',
-				target: item.role,
-				message: item.message || item.template,
-				messageType: item.messageType || 'template',
-			})
+import useChatStore from '@/store/chat';
+import V35Template from "@/components/ChatTemplate/V35Template.vue"
+import MessageItem from "@/components/CommonChat/MessageItem.vue"
+// import V40Template from "@/components/ChatTemplate/V40Template.vue"
+import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { GenNonDuplicateID, generateUUID } from '../../tools/uuid';
+import { storeToRefs } from "pinia"
+import { TemplateConfig } from '../../pages/chat/chatConfig';
+const ChatStore = useChatStore()
+const { model, selectChatId } = storeToRefs(ChatStore)
+// const itemMessages = defineModel<MessageItems>('itemMessages')
+// const props = defineProps<{ config : chatConfigProps }>()
+const receivedFun = (e) => {
+	console.log(e)
+}
+const onTemplates = (e) => {
+	console.log(e)
+}
+// 获取初始消息模版 
+const getInitTemplate = () => {
+	const maps = new Map()
+	TemplateConfig[model.value].messagesTemplate.map((item, index) => {
+		const id = generateUUID()
+		item.id = id
+		maps.set(item.id, {
+			id: id,
+			state: 'ok',
+			target: item.role,
+			message: item.message || item.template,
+			messageType: item.messageType || 'template',
 		})
-		return maps
-	}
-	//所有的消息集合
-	const messageList = ref<MessageItems>(new Map())
-	// 切换模型的监听
-	// watch(model, (val) => {
-	// 	messageList.value = getInitTemplate()
-	// }, { immediate: true })
+	})
+	return maps
+}
+//所有的消息集合
+const messageList = ref<MessageItems>(new Map())
+// 切换模型的监听
+// watch(model, (val) => {
+// 	messageList.value = getInitTemplate()
+// }, { immediate: true })
 
-	//清空全部message
-	const clearAllMessage = () => {
-		// messageList.value.clear()
+//清空全部message
+const clearAllMessage = () => {
+	// messageList.value.clear()
+	messageList.value = getInitTemplate()
+}
+watch(selectChatId, (val) => {
+	const currentMsg = ChatStore.chats.find((item) => item.id == val).data
+	if (currentMsg.length > 0) {
+		messageList.value.clear()
+		setTimeout(() => {
+			currentMsg.forEach((item: ItemMessage, index: number) => {
+				messageList.value.set(item.id, item);
+			});
+		}, 500)
+
+
+	} else {
 		messageList.value = getInitTemplate()
 	}
-	watch(selectChatId, (val) => {
-		const currentMsg = ChatStore.chats.find((item) => item.id == val).data
-		if (currentMsg.length > 0) {
-			messageList.value.clear()
-			setTimeout(() => {
-				currentMsg.forEach((item : ItemMessage, index : number) => {
-					messageList.value.set(item.id, item);
-				});
-			}, 500)
+}, { immediate: true })
 
 
-		} else {
-			messageList.value = getInitTemplate()
-		}
-	}, { immediate: true })
-
-
-	//新增一个消息
-	const addMessage = (id : string, value : ItemMessage) => {
-		messageList.value.set(id, value)
+//新增一个消息
+const addMessage = (id: string, value: ItemMessage) => {
+	messageList.value.set(id, value)
+}
+//改变message内容
+const setMessage = (id: string, setItems: ItemMessage) => {
+	const currentMessage = messageList.value.get(id)
+	if (!currentMessage) return
+	const newMessage: ItemMessage = {
+		message: currentMessage.message + setItems.message,
+		...setItems
 	}
-	//改变message内容
-	const setMessage = (id : string, setItems : ItemMessage) => {
-		const currentMessage = messageList.value.get(id)
-		if (!currentMessage) return
-		const newMessage : ItemMessage = {
-			message: currentMessage.message + setItems.message,
-			...setItems
-		}
-		messageList.value.set(id, newMessage)
-	}
-	//删除一个message
-	const deleteMessage = (id : string) => {
-		messageList.value.delete(id)
-	}
+	messageList.value.set(id, newMessage)
+}
+//删除一个message
+const deleteMessage = (id: string) => {
+	messageList.value.delete(id)
+}
 
-	// 获取单个消息
-	const getSingelMessage = (id : string) => {
-		return messageList.value.get(id)
-	}
+// 获取单个消息
+const getSingelMessage = (id: string) => {
+	return messageList.value.get(id)
+}
 
 
-	onMounted(() => {
-		messageList.value = getInitTemplate()
-	})
-	defineExpose({
-		addMessage,
-		deleteMessage,
-		clearAllMessage,
-		setMessage,
-		getSingelMessage,
-		messageList
-	})
+onMounted(() => {
+	messageList.value = getInitTemplate()
+})
+defineExpose({
+	addMessage,
+	deleteMessage,
+	clearAllMessage,
+	setMessage,
+	getSingelMessage,
+	messageList
+})
 </script>
 
 <style lang="scss" scoped>
-	.chatBox {
-		height: 100%;
-		position: relative;
-		padding: 20rpx 0;
-		box-sizing: border-box;
-	}
+.chatBox {
+	height: 100%;
+	position: relative;
+	padding: 20rpx 0;
+	box-sizing: border-box;
+}
 
-	.chatBox_main_View {
+.chatBox_main_View {
+	display: flex;
+	flex-direction: column;
+
+	&_header {
 		display: flex;
-		flex-direction: column;
-
-		&_header {
-			display: flex;
-			padding: 10rpx;
-
-			&_image {
-				height: 30rpx;
-				width: 100rpx;
-			}
-		}
-
-		&_main {
-			display: flex;
-			box-sizing: border-box;
-			font-size: 25rpx;
-			border-radius: 10rpx;
-
-			&_userMessage {
-				min-width: 4% !important;
-				max-width: 70% !important;
-				background: #95ec69 !important;
-			}
-
-			&_systemMessage {
-				max-width: 80% !important;
-				min-width: 6% !important;
-			}
-
-			&_echarts {
-				min-width: 80% !important;
-			}
-
-			&_image {
-				height: 200rpx;
-				width: 300rpx;
-			}
-
-			&_view {
-				display: flex;
-			}
-		}
-	}
-
-	.iamge_album {
-		height: max-content;
-		width: 500rpx;
-
-	}
-
-	.messageTemplate {
-		background-color: white;
 		padding: 10rpx;
-		border-radius: 10rpx;
+
+		&_image {
+			height: 30rpx;
+			width: 100rpx;
+		}
 	}
 
-	.avatar {
-		background-color: #a324ec;
-		font-size: 30rpx;
-		border-radius: 30rpx;
+	&_main {
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: wheat;
-		height: 60rpx !important;
-		width: 60rpx !important;
+		box-sizing: border-box;
+		font-size: 25rpx;
+		border-radius: 10rpx;
 
+		&_userMessage {
+			min-width: 4% !important;
+			max-width: 70% !important;
+			background: #95ec69 !important;
+		}
+
+		&_systemMessage {
+			max-width: 80% !important;
+			min-width: 6% !important;
+		}
+
+		&_echarts {
+			min-width: 80% !important;
+		}
+
+		&_image {
+			height: 200rpx;
+			width: 300rpx;
+		}
+
+		&_view {
+			display: flex;
+		}
 	}
+}
+
+.iamge_album {
+	height: max-content;
+	width: 500rpx;
+
+}
+
+.messageTemplate {
+	background-color: white;
+	padding: 10rpx;
+	border-radius: 10rpx;
+}
+
+.avatar {
+	background-color: #a324ec;
+	font-size: 30rpx;
+	border-radius: 30rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: wheat;
+	height: 60rpx !important;
+	width: 60rpx !important;
+
+}
 </style>

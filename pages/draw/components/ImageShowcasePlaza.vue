@@ -1,7 +1,6 @@
 <template>
 	<view class="ImageShowcasePlaza">
 		<custom-waterfalls-flow :value="ImageList" @imageClick="openImgae" @wapperClick="openImgae">
-
 			<!-- #ifndef MP-WEIXIN -->
 			<template v-slot:default="item">
 				<view class="ImageShowcasePlazaBox_item">
@@ -27,7 +26,7 @@
 			<!--  #endif -->
 
 		</custom-waterfalls-flow>
-		<ImageModal :showImageModal="showImageModal" @closeImage="closeImage" />
+		<ImageModal :showImageModal="showImageModal" @closeImage="closeImage" :currentImages="currentImages" />
 	</view>
 </template>
 
@@ -35,12 +34,13 @@
 	import ImageModal from './ImageModal'
 	import { ImageListDTO } from '../data';
 	import { ref } from 'vue';
+	const currentImages = ref<ImageListDTO>()
 	defineProps<{ ImageList : ImageListDTO[] }>()
-	const openImgae = (e) => {
+	const openImgae = (ImageList : ImageListDTO) => {
+		currentImages.value = ImageList
 		showImageModal.value = true
 	}
 	const closeImage = () => {
-		console.log(263)
 		showImageModal.value = false
 	}
 	const showImageModal = ref(false);

@@ -1,5 +1,9 @@
 {
 	"compilerOptions": {
-		"types": ["@types/node", "@types/webpack-env", "shims-vue.d.ts"]
+		"types": [
+			"@dcloudio/types",
+			"miniprogram-api-typings",
+			"mini-types"
+		]
 	}
 }

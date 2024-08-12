@@ -13,10 +13,21 @@
  */
 
 /* 颜色变量 */
+$aichat-button-color: rgb(9,224,171);
+$aichat-border-color: rgb(9,224,171);
+$aichat-text-color: rgb(16,192,215);
+
+$aichat-seletedView-backgroundColor :rgb(233, 238, 255); 
+$aichat-seletedView-textColor :rgb(28, 78, 255); 
+
+$aichat-golbal-background :rgb(246, 247, 249); 
+
+
 
 /* 行为相关颜色 */
 $uni-color-primary: #007aff;
 $uni-color-success: #4cd964;
+
 $uni-color-warning: #f0ad4e;
 $uni-color-error: #dd524d;
 
