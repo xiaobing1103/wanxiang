@@ -99,11 +99,16 @@ export default {
 		options.url = options.baseUrl + options.url;
 		options.data = options.data || {};
 		options.method = options.method || this.config.method;
+		// #ifdef MP-WEIXIN
+		if (options.data?.contentType?.includes('form-data')) {
+			options.data = options.data.buffer
+			options.header = options.data.contentType
+		}
+		// #endif
 
-		// Determine if data is FormData
+
 		const isFormData = options.data instanceof FormData;
 
-		// Set default headers if not using FormData
 		if (!isFormData) {
 			options.header = options.header || {};
 			if (typeof options.data === 'object' && !Array.isArray(options.data)) {
@@ -113,14 +118,13 @@ export default {
 			}
 		}
 
-		// Apply request interceptor
 		if (this.interceptor.request) {
 			options = this.interceptor.request(options) || options;
 		}
 
-		// Return a promise based on the type of data
 		return new Promise((resolve, reject) => {
 			let _config = Object.assign({}, this.config, options);
+
 			_config.requestId = new Date().getTime();
 			_config.complete = (response) => {
 				let statusCode = response.statusCode;
@@ -141,7 +145,6 @@ export default {
 			};
 
 			if (isFormData) {
-				// Use fly.js for FormData
 				fly.request({
 					method: _config.method,
 					url: _config.url,
@@ -152,8 +155,20 @@ export default {
 				}).catch((error) => {
 					reject(error);
 				});
+
+				// // #ifdef MP-WEIXIN
+				// fly.request({
+				// 	method: _config.method,
+				// 	url: _config.url,
+				// 	headers: _config.data.contentType,
+				// 	body: _config.data.buffer,
+				// }).then((response) => {
+				// 	_config.complete(response);
+				// }).catch((error) => {
+				// 	reject(error);
+				// });
+				// // #endif
 			} else {
-				// Use uni.request for other types of data
 				uni.request(_config);
 			}
 		});

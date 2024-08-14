@@ -75,7 +75,7 @@
 		let newParmas: FormData | Image2TextParmas = parmas.value
 		if (props.IamgeTypes.historyType == "img2img_task_json") {
 			let formdata = new FormData()
-			// !// #ifdef MP-WEIXIN
+			// #ifdef MP-WEIXIN
 			for (const key in parmas.value) {
 				formdata.append(key, parmas.value[key])
 			}
@@ -84,9 +84,7 @@
 			newParmas = data
 			// #endif
 
-
-
-			// !// #ifdef H5
+			// #ifdef H5
 			for (const key in parmas.value) {
 				formdata.append(key, parmas.value[key])
 			}
@@ -94,9 +92,7 @@
 			newParmas = formdata
 			// #endif
 
-
 		}
-		console.log(newParmas)
 		const taskDTO = await $api.post < Image2TextParmas > (props.IamgeTypes.api, newParmas, false)
 		if (taskDTO.code == 200) {
 			TaskID.value = taskDTO.data.task_id
