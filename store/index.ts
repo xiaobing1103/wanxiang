@@ -2,6 +2,7 @@ import useUserStore from "./user";
 import useScreenStore from "./screen";
 import useChatStore from "./chat";
 import useCounterStore from "./system";
+import useDrawStore from "./draw";
 
 import { createPinia } from 'pinia'
 import { createUnistorage } from '@/uni_modules/pinia-plugin-unistorage/index.js'
@@ -17,7 +18,8 @@ export {
 	useUserStore,
 	useScreenStore,
 	useChatStore,
-	useCounterStore
+	useCounterStore,
+	useDrawStore
 }
 //默认导出注册函数
 export default setupStore;

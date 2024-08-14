@@ -1,6 +1,5 @@
 <template>
 	<view class="header">
-
 		<view :style="{height:navBarHeight + 'px'}">
 			<view class="weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
 				<template v-if="curRoute == 'pages/index/index'">
@@ -64,7 +63,7 @@
 		const routers = getCurrentPages();
 		return routers[routers.length - 1].route
 	})
-
+	const props = defineProps<{ backPageNum ?: number }>()
 	const chatStore = useChatStore()
 	//  #ifdef MP-WEIXIN
 	const system = useCounterStore()
@@ -81,7 +80,7 @@
 	const backpage = () => {
 
 		uni.navigateBack({
-			delta: 1,//返回层数，2则上上页
+			delta: props.backPageNum || 1,//返回层数，2则上上页
 		})
 	}
 	const onload = () => {

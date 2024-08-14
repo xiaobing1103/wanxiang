@@ -5,7 +5,7 @@ export default {
 	config: {
 		baseUrl: BaseApi,
 		header: {
-			'Content-Type': 'application/json;charset=UTF-8',
+			// 'Content-Type': 'application/json;charset=UTF-8',
 			// 'Content-Type': 'application/x-www-form-urlencoded'
 		},
 		data: {},

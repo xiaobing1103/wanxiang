@@ -1,6 +1,6 @@
 <template>
 	<view class="preview_inputBox">
-		<up-textarea v-model="value" placeholder="请输入生成文案"></up-textarea>
+		<up-textarea v-model="parmas.prompt" placeholder="请输入生成文案"></up-textarea>
 		<view class="preview_inputBox_example">
 			<text class="preview_inputBox_example_text"> 示例 ： {{ currentKey }}</text>
 			<up-icon name="reload" @click="changeExample"></up-icon>
@@ -11,15 +11,15 @@
 
 <script setup lang="ts">
 	import { ref } from 'vue';
-	import { DrawExampleKeys, drawExamplePrompts } from '../data';
-	const value = ref('')
+	import { DrawExampleKeys, Image2TextParmas, drawExamplePrompts } from '../data';
 	const keys : DrawExampleKeys[] = Object.keys(drawExamplePrompts) as DrawExampleKeys[];
+	const parmas = defineModel<Image2TextParmas>("parmas");
 	const currentIndex = ref<number>(0);
 	const currentKey = ref<DrawExampleKeys>(keys[currentIndex.value]);
 	const changeExample = () => {
 		currentIndex.value = (currentIndex.value + 1) % keys.length;
 		currentKey.value = keys[currentIndex.value];
-		value.value = drawExamplePrompts[currentKey.value]
+		parmas.value.prompt = drawExamplePrompts[currentKey.value]
 	};
 </script>
 

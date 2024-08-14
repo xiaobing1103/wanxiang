@@ -3,7 +3,7 @@ import { useUserStore } from '../store'
 import { UserInfoDTO } from '../type/userTypes';
 import http from './interface'
 
-export const $http = (url : string, method : string, data ?: any, json ?: boolean, isStream ?: boolean, callback : () => void, errorCallback : () => void) => {
+export const $http = (url : string, method : string, data ?: any, isJson ?: boolean, isStream ?: boolean, callback ?: () => void, errorCallback ?: () => void) => {
 	//设置请求前拦截器
 	const userStore = useUserStore();
 	const userInfo = userStore.userInfo
@@ -13,18 +13,19 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 		token: userInfo?.token || '',
 		App: userInfo?.appid || '',
 		'Access-Token': userInfo?.access_token || '',
-		Vt: userInfo?.vip || ''
-
+		Vt: userInfo?.vip || '',
 	}
 	http.interceptor.request = (config) => {
 		uni.showLoading({
 			title: '加载中...'
 		})
+
 		config.header = {
-			'content-type': json ? 'application/json' : 'application/x-www-form-urlencoded',
+			'content-type': isJson ? 'application/json' : 'multipart/form-data;',
 			"Authorization": uni.getStorageSync('token'),
 			...headers
 		}
+		console.log(config)
 		config.timeout = config.timeout || defaultTimeout;
 	}
 	http.interceptor.response = (response) => {
@@ -67,7 +68,7 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 			url,
 			method,
 			data,
-			header: { 'Content-Type': 'application/json;charset=UTF-8', ...headers },
+			header: { ...headers },
 			success: callback,
 			fail: errorCallback
 		})
@@ -78,13 +79,14 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 			http.request({
 				method: method,
 				url: url,
-				dataType: 'json',
+				dataType: isJson ? 'json' : '',
 				data,
 			}).then((res) => {
 				resolvce(res.data)
 			}).catch((err) => {
 				reject(err)
 			})
+
 		})
 	}
 
@@ -92,54 +94,55 @@ export const $http = (url : string, method : string, data ?: any, json ?: boolea
 
 }
 
-async function login() {
-	return new Promise(resolve => {
-		uni.login({
-			provider: 'weixin',
-			success(loginRes) {
-				resolve(loginRes.code)
-			},
-			fail() { }
-		});
-	})
-}
+// async function login() {
+// 	return new Promise(resolve => {
+// 		uni.login({
+// 			provider: 'weixin',
+// 			success(loginRes) {
+// 				resolve(loginRes.code)
+// 			},
+// 			fail() { }
+// 		});
+// 	})
+// }
 
-async function doRequest(response, url) {
-	var code = await login()
-	var res = await get('/v1/oauth/refreshToken/code/' + code, {})
-	if (res && res.data.data.token) {
-		let config = response.config
-		uni.setStorageSync("token", res.data.data.token);
-		config.header['Authorization'] = res.data.data.token
-		let json = config.header["Content-Type"] === 'application/json'
-		const resold = await $http(url, config.method, {
-			...config.data
-		}, json)
-		return resold
-	} else {
-		uni.clearStorage()
-		uni.showToast({
-			title: "授权失效，请重新登录",
-			duration: 1000,
-		})
-		uni.navigateTo({
-			url: '/pages/login/auth'
-		})
-		return false
-	}
-}
+// async function doRequest(response, url) {
+// 	var code = await login()
+// 	var res = await get('/v1/oauth/refreshToken/code/' + code, {})
+// 	if (res && res.data.data.token) {
+// 		let config = response.config
+// 		uni.setStorageSync("token", res.data.data.token);
+// 		config.header['Authorization'] = res.data.data.token
+// 		let json = config.header["Content-Type"] === 'application/json'
+// 		const resold = await $http(url, config.method, {
+// 			...config.data
+// 		}, json)
+// 		return resold
+// 	} else {
+// 		uni.clearStorage()
+// 		uni.showToast({
+// 			title: "授权失效，请重新登录",
+// 			duration: 1000,
+// 		})
+// 		uni.navigateTo({
+// 			url: '/pages/login/auth'
+// 		})
+// 		return false
+// 	}
+// }
 
 function postJson(url, data) {
-	return $http(url, 'POST', data)
+	return $http(url, 'POST', data, true)
 }
 
 function get(url, data) {
 
-	return $http(url, 'GET', data)
+	return $http(url, 'GET', data, true)
 }
 
-function post(url, data) {
-	return $http(url, 'POST', data, true)
+function post(url, data, isjson : boolean = true) {
+
+	return $http(url, 'POST', data, isjson, false, null, null)
 }
 
 function put(url, data) {

@@ -1,7 +1,9 @@
 <template>
 	<view class="ImageLoraScale">
+		
 		<up-slider v-model="sliderValue" :min="min" :max="max" showValue :blockStyle="{ background: 'red' }">
 		</up-slider>
+		<!-- <hao-slider ref="haoSlider" :value="sliderValue" :min="min" :max="max"></hao-slider> -->
 	</view>
 </template>
 

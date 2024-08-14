@@ -1,10 +1,14 @@
+import fly from 'flyio';
 import { BaseApi } from '@/http/baseApi';
+// !// #ifdef MP-WEIXIN
+import FormData from '@/tools/FormData'
+// #endif
 
 export default {
 	config: {
 		baseUrl: BaseApi,
 		header: {
-			'Content-Type': 'application/json;charset=UTF-8',
+			// 'Content-Type': 'application/json;charset=UTF-8',
 		},
 		data: {},
 		method: 'GET',
@@ -15,6 +19,77 @@ export default {
 		request: null,
 		response: null,
 	},
+	// request(options) {
+	// 	if (!options) {
+	// 		options = {};
+	// 	}
+	// 	options.baseUrl = options.baseUrl || this.config.baseUrl;
+	// 	options.dataType = options.dataType || this.config.dataType;
+	// 	options.url = options.baseUrl + options.url;
+	// 	options.data = options.data || {};
+	// 	options.method = options.method || this.config.method;
+
+	// 	// Determine if data is FormData
+	// 	const isFormData = options.data instanceof FormData;
+
+	// 	// Set default headers if not using FormData
+	// 	if (!isFormData) {
+	// 		options.header = options.header || {};
+	// 		if (typeof options.data === 'object' && !Array.isArray(options.data)) {
+	// 			options.header['Content-Type'] = 'application/x-www-form-urlencoded';
+	// 		} else if (typeof options.data === 'string') {
+	// 			options.header['Content-Type'] = 'application/json';
+	// 		}
+	// 	}
+
+	// 	// Return a promise based on the type of data
+	// 	return new Promise((resolve, reject) => {
+	// 		let _config = null;
+	// 		options.complete = (response) => {
+	// 			let statusCode = response.statusCode;
+	// 			response.config = _config;
+
+	// 			if (this.interceptor.response) {
+	// 				let newResponse = this.interceptor.response(response);
+	// 				if (newResponse) {
+	// 					response = newResponse;
+	// 				}
+	// 			}
+
+	// 			if (statusCode === 200) {
+	// 				resolve(response);
+	// 			} else {
+	// 				reject(response);
+	// 			}
+	// 		};
+
+	// 		_config = Object.assign({}, this.config, options);
+	// 		_config.requestId = new Date().getTime();
+
+	// 		if (this.interceptor.request) {
+	// 			this.interceptor.request(_config);
+	// 		}
+
+	// 		if (isFormData) {
+	// 			// Use fly.js for FormData
+	// 			fly.request({
+	// 				method: options.method,
+	// 				url: options.url,
+	// 				headers: options.header,
+	// 				body: options.data,
+	// 			}).then((response) => {
+	// 				resolve(response);
+	// 			}).catch((error) => {
+	// 				reject(error);
+	// 			});
+	// 		} else {
+	// 			// Use uni.request for other types of data
+	// 			uni.request(_config);
+	// 		}
+	// 	});
+	// }	// async fetchStream(options) {
+
+
 	request(options) {
 		if (!options) {
 			options = {};
@@ -25,12 +100,32 @@ export default {
 		options.data = options.data || {};
 		options.method = options.method || this.config.method;
 
+		// Determine if data is FormData
+		const isFormData = options.data instanceof FormData;
+
+		// Set default headers if not using FormData
+		if (!isFormData) {
+			options.header = options.header || {};
+			if (typeof options.data === 'object' && !Array.isArray(options.data)) {
+				options.header['Content-Type'] = 'application/x-www-form-urlencoded';
+			} else if (typeof options.data === 'string') {
+				options.header['Content-Type'] = 'application/json';
+			}
+		}
+
+		// Apply request interceptor
+		if (this.interceptor.request) {
+			options = this.interceptor.request(options) || options;
+		}
+
+		// Return a promise based on the type of data
 		return new Promise((resolve, reject) => {
-			let _config = null;
-			options.complete = (response) => {
+			let _config = Object.assign({}, this.config, options);
+			_config.requestId = new Date().getTime();
+			_config.complete = (response) => {
 				let statusCode = response.statusCode;
 				response.config = _config;
-
+				// Apply response interceptor
 				if (this.interceptor.response) {
 					let newResponse = this.interceptor.response(response);
 					if (newResponse) {
@@ -45,17 +140,29 @@ export default {
 				}
 			};
 
-			_config = Object.assign({}, this.config, options);
-			_config.requestId = new Date().getTime();
-
-			if (this.interceptor.request) {
-				this.interceptor.request(_config);
+			if (isFormData) {
+				// Use fly.js for FormData
+				fly.request({
+					method: _config.method,
+					url: _config.url,
+					headers: _config.header,
+					body: _config.data,
+				}).then((response) => {
+					_config.complete(response);
+				}).catch((error) => {
+					reject(error);
+				});
+			} else {
+				// Use uni.request for other types of data
+				uni.request(_config);
 			}
-
-			uni.request(_config);
 		});
 	},
-	// async fetchStream(options) {
+
+
+
+
+
 	// 	const { url, method, data, header, success, fail } = options;
 	// 	let _config = Object.assign({}, this.config, options);
 	// 	_config.url = this.config.baseUrl + url || options.baseUrl + url;
@@ -136,6 +243,7 @@ export default {
 
 
 	async fetchStream(options) {
+
 		const { url, method, data, header, success, fail } = options;
 		let _config = Object.assign({}, this.config, options);
 		_config.url = this.config.baseUrl + url || options.baseUrl + url;

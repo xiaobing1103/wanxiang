@@ -7,15 +7,11 @@
 		<!-- v-model:itemMessages="itemMessages" -->
 		<view class="body">
 			<CommonTitle title="文字生成图片" desc="在线AI绘画,创作你的专属作品" />
-			<CommonDrawTem />
+			<CommonDrawTem :IamgeTypes="IamgeTypes" />
 		</view>
 
 		<template #bottom>
-			<!-- 气泡选择 -->
 
-			<!-- 聊天输入框 -->
-
-			<!-- <up-input v-model="chatValue" @changeData="changeData">修改子组件的数据</up-input> -->
 		</template>
 	</z-paging>
 </template>
@@ -24,6 +20,11 @@
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import CommonDrawTem from "../../components/CommonDrawTem"
+	const IamgeTypes = {
+		type: 'text2image',
+		historyType: 'txt2img_task_json',
+		api: 'api/v1/img/txt2img'
+	}
 </script>
 
 <style lang="scss" scoped>

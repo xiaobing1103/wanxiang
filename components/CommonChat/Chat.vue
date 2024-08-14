@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
-	import { defineProps, defineModel, ModelRef } from 'vue';
+	import { defineModel, ModelRef } from 'vue';
 	const chatValue = defineModel<string>("chatValue")
 	const dataValue = defineModel<string>("dataValue")
 	// 定义 defineModel 的返回类型

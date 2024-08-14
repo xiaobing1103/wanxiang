@@ -99,11 +99,6 @@
 			</view>
 		</view>
 	</view>
-	<!-- <up-loading-page :loading="true"></up-loading-page> -->
-	<!-- 	<view class="footer">
-		<view class="footer_box">
-			<up-button class="footerButton" text="AI生成(消耗1次)"></up-button>
-		</view> -->
 
 
 </template>
@@ -119,27 +114,9 @@
 	import CanvasProportion from './CanvasProportion'
 	import ImageSimpler from './ImageSimpler'
 	const { $api } = useGlobalProperties()
-
+	const parmas = defineModel<Image2TextParmas>("parmas")
 	const models = ref<modelsDTO[]>([])
 	const styles = ref<modelsDTO[]>([])
-	const parmas = ref<Image2TextParmas>({
-		cfg_scale: 7,
-		height: 512,
-		hire: 0,
-		loraId: "fc1be0561c11fe7019f4424f5e7b2c85",
-		loraScale: 66,
-		model: "fd422ef3f7285ee610eee4d150ca87c9",
-		negative_prompt:
-			"easynegative, (worst quality:1.3), (low quality:1), (normal quality:1.4), lowres,skin spots, acnes, skin blemishes, age spot, glan, extra fingers, fewer fingers, strange fingers, bad hand, bad anatomy, fused fingers, missing leg, mutated hand, malformed limbs, missing feet,multiple legs,men,boy,logo, loli,3d,extra hands,extra foots",
-		num: 2,
-		prompt:
-			"最高画质，超高清，杰作，精美的CG，一只可爱的白色博美，小狗，圆圆的脑袋，又大又圆的眼睛，微笑，可爱呆萌，大眼睛，可爱的笑容",
-		seed: -1,
-		simpler: "DPM++ SDE Karras",
-		step: 20,
-		width: 512,
-		textScale: 6
-	})
 	onMounted(async () => {
 		await getModels()
 		await getStyles()

@@ -1,9 +1,24 @@
 {
-    "id": "kevinrong-http",
-    "name": "封装的 request 使用方式，可动态率刷新token，支持请求和响应的拦截，",
-    "version": "1.0.1",
-    "description": "封装的 request 使用方式，可动态率刷新token，支持请求和响应的拦截，",
+    "id": "hao-slider",
+    "name": "滑块选择器，slider ，视频播放进度条，等多场景应用，可以用图片滑块，功能高",
+    "displayName": "滑块选择器，slider ，视频播放进度条，等多场景应用，可以用图片滑块，功能高",
+    "version": "1.0.0",
+    "description": "滑块选择器，slider ，视频播放进度条，等多场景应用，可以用图片滑块，功能高度自定义",
     "keywords": [
-        "request,http,拦截处理，token"
-    ]
+        "滑块选择器",
+        "slider",
+        "进度条",
+        "图片滑块",
+        "高度自定义"
+    ],
+    "dcloudext": {
+        "category": [
+            "前端组件",
+            "通用组件"
+        ]
+    },
+    "dependencies": {
+        "flyio": "^0.6.14",
+        "uview-plus": "^3.3.19"
+    }
 }

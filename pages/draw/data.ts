@@ -154,7 +154,8 @@ export interface Image2TextParmas {
 	simpler : string;
 	step : number;
 	width : number;
-	textScale : number
+	textScale : number,
+	image : null | any
 }
 export const sizeList : {
 	label : string

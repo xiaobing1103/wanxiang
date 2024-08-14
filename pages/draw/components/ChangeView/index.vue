@@ -1,10 +1,8 @@
 <template>
 	<view class="view">
-		<Teleport to="body">
-			<!-- 	<up-loading-page :loading="true">
-				<view>4158641561561</view>
-			</up-loading-page> -->
-		</Teleport>
+		<!-- <Teleport to="body">
+	
+		</Teleport> -->
 		<view class="changeView">
 			<up-tabs :list="list4" lineWidth="30" :lineWidth="0" :lineHeight="0" :activeStyle="{
 				fontSize:'25rpx',
@@ -26,7 +24,7 @@
 		</view>
 		<view class="tab-content">
 			<template v-if="activeTabs == 0">
-				<BaseTem />
+				<BaseTem v-model:parmas="parmas" />
 			</template>
 			<template v-if="activeTabs == 1">
 				<ArtStyleCheatSheet />
@@ -34,12 +32,6 @@
 			<template v-if="activeTabs == 2">
 				<OnlinePrompts />
 			</template>
-		</view>
-	</view>
-
-	<view class="footer">
-		<view class="footer_box">
-			<up-button class="footerButton" text="AI生成(消耗1次)"></up-button>
 		</view>
 	</view>
 
@@ -53,7 +45,10 @@
 		ref,
 		reactive
 	} from 'vue';
+	import { Image2TextParmas } from '../../data';
 	const activeTabs = ref(0)
+
+	const parmas = defineModel<Image2TextParmas>("parmas")
 	const list4 = reactive([{
 		name: '基础',
 		keyName: 'Tab1',
@@ -101,29 +96,5 @@
 	.tab-content {
 		width: 100%;
 		height: 100%;
-	}
-
-	.footer {
-		position: sticky;
-		bottom: 0;
-		z-index: 1;
-		height: 80rpx;
-		width: 100%;
-		background: $aichat-golbal-background;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		&_box {
-			width: 60%;
-
-		}
-	}
-
-	.footerButton {
-		border-radius: 35rpx !important;
-		height: 60rpx !important;
-		color: $uni-bg-color !important;
-		background: linear-gradient(to right, #1cd8ba, #06c0f9)
 	}
 </style>

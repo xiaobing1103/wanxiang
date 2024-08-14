@@ -160,7 +160,26 @@
 						"navigationBarTitleText": "线稿上色",
 						"navigationStyle": "custom"
 					}
+				},
+
+				{
+					"path": "PreviewPage/index",
+					"name": "PreviewPage",
+					"style": {
+						"navigationBarTitleText": "预览页面",
+						"navigationStyle": "custom"
+					}
+				},
+
+				{
+					"path": "QueueQueryPage/index",
+					"name": "QueueQueryPage",
+					"style": {
+						"navigationBarTitleText": "任务查询",
+						"navigationStyle": "custom"
+					}
 				}
+
 
 
 			]

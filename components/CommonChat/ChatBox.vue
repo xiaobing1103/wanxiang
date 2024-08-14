@@ -39,17 +39,17 @@
 
 					<template v-else>
 						<view class="chatBox_main_View_main" :class="{
-							'chatBox_main_View_main_userMessage': item.target == 'user',
-							'chatBox_main_View_main_systemMessage': item.target == 'assistant',
-							'chatBox_main_View_main_echarts': model == 'echarts'
-						}
-							" :style="{
-								marginLeft: item.target === 'user' ? '0' : '20rpx',
-								marginRight: item.target === 'user' ? '20rpx' : '0',
-								padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
-								background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'white',
-								minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%'
-							}">
+			'chatBox_main_View_main_userMessage': item.target == 'user',
+			'chatBox_main_View_main_systemMessage': item.target == 'assistant',
+			'chatBox_main_View_main_echarts': model == 'echarts'
+		}
+			" :style="{
+			marginLeft: item.target === 'user' ? '0' : '20rpx',
+			marginRight: item.target === 'user' ? '20rpx' : '0',
+			padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
+			background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'white',
+			minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%'
+		}">
 							<template v-if="item.state == 'waite' && item.message.length <= 0">
 								<!-- 在消息为等待请求完成时候 -->
 								<up-loading-icon mode="semicircle"></up-loading-icon>
@@ -108,11 +108,14 @@ import { storeToRefs } from "pinia"
 import { TemplateConfig } from '../../pages/chat/chatConfig';
 const ChatStore = useChatStore()
 const { model, selectChatId } = storeToRefs(ChatStore)
+
 // const itemMessages = defineModel<MessageItems>('itemMessages')
 // const props = defineProps<{ config : chatConfigProps }>()
 const receivedFun = (e) => {
 	console.log(e)
+
 }
+
 const onTemplates = (e) => {
 	console.log(e)
 }
