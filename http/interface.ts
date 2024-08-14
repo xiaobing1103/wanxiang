@@ -1,7 +1,7 @@
 import fly from 'flyio';
 import { BaseApi } from '@/http/baseApi';
 // !// #ifdef MP-WEIXIN
-import FormData from '@/tools/FormData'
+import FormData from '@/tools/FormData';
 // #endif
 
 export default {
@@ -13,11 +13,11 @@ export default {
 		data: {},
 		method: 'GET',
 		dataType: 'json',
-		responseType: 'text',
+		responseType: 'text'
 	},
 	interceptor: {
 		request: null,
-		response: null,
+		response: null
 	},
 	// request(options) {
 	// 	if (!options) {
@@ -89,7 +89,6 @@ export default {
 	// 	});
 	// }	// async fetchStream(options) {
 
-
 	request(options) {
 		if (!options) {
 			options = {};
@@ -101,12 +100,10 @@ export default {
 		options.method = options.method || this.config.method;
 		// #ifdef MP-WEIXIN
 		if (options.data?.contentType?.includes('form-data')) {
-			options.data = options.data.buffer
-			options.header = options.data.contentType
+			options.data = options.data.buffer;
+			options.header = options.data.contentType;
 		}
 		// #endif
-
-
 		const isFormData = options.data instanceof FormData;
 
 		if (!isFormData) {
@@ -117,14 +114,11 @@ export default {
 				options.header['Content-Type'] = 'application/json';
 			}
 		}
-
 		if (this.interceptor.request) {
 			options = this.interceptor.request(options) || options;
 		}
-
 		return new Promise((resolve, reject) => {
 			let _config = Object.assign({}, this.config, options);
-
 			_config.requestId = new Date().getTime();
 			_config.complete = (response) => {
 				let statusCode = response.statusCode;
@@ -136,47 +130,32 @@ export default {
 						response = newResponse;
 					}
 				}
-
 				if (statusCode === 200) {
 					resolve(response);
 				} else {
 					reject(response);
 				}
 			};
-
 			if (isFormData) {
+				fly.interceptors.request.use(this.interceptor.request(_config));
 				fly.request({
 					method: _config.method,
 					url: _config.url,
 					headers: _config.header,
-					body: _config.data,
-				}).then((response) => {
-					_config.complete(response);
-				}).catch((error) => {
-					reject(error);
-				});
-
-				// // #ifdef MP-WEIXIN
-				// fly.request({
-				// 	method: _config.method,
-				// 	url: _config.url,
-				// 	headers: _config.data.contentType,
-				// 	body: _config.data.buffer,
-				// }).then((response) => {
-				// 	_config.complete(response);
-				// }).catch((error) => {
-				// 	reject(error);
-				// });
-				// // #endif
+					body: _config.data
+				})
+					.then((response) => {
+						fly.interceptors.response.use(this.interceptor.response(response));
+						resolve(response);
+					})
+					.catch((error) => {
+						reject(error);
+					});
 			} else {
 				uni.request(_config);
 			}
 		});
 	},
-
-
-
-
 
 	// 	const { url, method, data, header, success, fail } = options;
 	// 	let _config = Object.assign({}, this.config, options);
@@ -256,9 +235,7 @@ export default {
 	// 	}
 	// },
 
-
 	async fetchStream(options) {
-
 		const { url, method, data, header, success, fail } = options;
 		let _config = Object.assign({}, this.config, options);
 		_config.url = this.config.baseUrl + url || options.baseUrl + url;
@@ -273,7 +250,7 @@ export default {
 			const response = await fetch(_config.url, {
 				method: _config.method,
 				headers: _config.headers,
-				body: _config.body,
+				body: _config.body
 			});
 			const reader = response.body.getReader();
 			const decoder = new TextDecoder();
@@ -309,7 +286,7 @@ export default {
 			let responseData = {
 				statusCode: response.status,
 				data: result,
-				config: _config,
+				config: _config
 			};
 
 			if (this.interceptor.response) {
@@ -325,7 +302,7 @@ export default {
 
 			await processStream();
 		} catch (error) {
-			fail(error.message)
+			fail(error.message);
 			// if (error.message.includes('401')) {
 			// 	console.error('Unauthorized access - maybe redirect to login?');
 			// 	if (fail) fail('Unauthorized access - maybe redirect to login?');
@@ -362,13 +339,13 @@ export default {
 							response = newResponse;
 						}
 					}
-					await success(response)
+					await success(response);
 				},
-				fail: fail,
+				fail: fail
 			});
 			resolve(response);
 		});
-	},
+	}
 };
 
 function _reqlog(req) {

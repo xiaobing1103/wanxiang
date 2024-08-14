@@ -1,58 +1,56 @@
-
-import { useUserStore } from '../store'
+import { useUserStore } from '../store';
 import { UserInfoDTO } from '../type/userTypes';
-import http from './interface'
+import http from './interface';
 
-export const $http = (url : string, method : string, data ?: any, isJson ?: boolean, isStream ?: boolean, callback ?: () => void, errorCallback ?: () => void) => {
+export const $http = (url: string, method: string, data?: any, isJson?: boolean, isStream?: boolean, callback?: () => void, errorCallback?: () => void) => {
 	//设置请求前拦截器
 	const userStore = useUserStore();
-	const userInfo = userStore.userInfo
-	const defaultTimeout = 20000
+	const userInfo = userStore.userInfo;
+	const defaultTimeout = 20000;
 	const headers = {
 		uid: userInfo?.id || '',
 		token: userInfo?.token || '',
 		App: userInfo?.appid || '',
 		'Access-Token': userInfo?.access_token || '',
-		Vt: userInfo?.vip || '',
-	}
+		Vt: userInfo?.vip || ''
+	};
 	http.interceptor.request = (config) => {
 		uni.showLoading({
 			title: '加载中...'
-		})
+		});
 
 		config.header = {
 			'content-type': isJson ? 'application/json' : 'multipart/form-data;',
-			"Authorization": uni.getStorageSync('token'),
+			Authorization: uni.getStorageSync('token'),
 			...headers
-		}
-		console.log(config)
+		};
+		console.log(config);
 		config.timeout = config.timeout || defaultTimeout;
-	}
+	};
 	http.interceptor.response = (response) => {
-		uni.hideLoading()
-		console.log(response)
+		uni.hideLoading();
+		console.log(response);
 		if (response.data.code === 401 || response.statusCode === 401) {
 			uni.navigateTo({
 				url: '/pages/login/index'
-			})
+			});
 
-			// return response.data = await doRequest(response, url) 
-
+			// return response.data = await doRequest(response, url)
 		} else {
 			if (response.data.code !== 200 && response.data.message) {
 				uni.showToast({
 					title: response.data.message,
 					icon: 'none',
 					duration: 1500
-				})
+				});
 			}
 		}
 
 		return response;
-	}
+	};
 
 	if (isStream) {
-		let isDelopMent
+		let isDelopMent;
 		// #ifdef MP-WEIXIN
 		isDelopMent = http.StreamRequest({
 			url,
@@ -61,7 +59,7 @@ export const $http = (url : string, method : string, data ?: any, isJson ?: bool
 			header: headers,
 			success: callback,
 			fail: errorCallback
-		})
+		});
 		// #endif
 		//  #ifdef H5
 		isDelopMent = http.fetchStream({
@@ -71,28 +69,44 @@ export const $http = (url : string, method : string, data ?: any, isJson ?: bool
 			header: { ...headers },
 			success: callback,
 			fail: errorCallback
-		})
+		});
 		// #endif
-		return isDelopMent
+		return isDelopMent;
 	} else {
 		return new Promise((resolvce, reject) => {
 			http.request({
 				method: method,
 				url: url,
 				dataType: isJson ? 'json' : '',
-				data,
-			}).then((res) => {
-				resolvce(res.data)
-			}).catch((err) => {
-				reject(err)
+				data
 			})
+				.then((res) => {
+					resolvce(res.data);
+				})
+				.catch((err) => {
+					if (err.response) {
+						let response = err.response;
+						if (response.data.code === 401 || response.data.code === 4001 || response.statusCode === 401) {
+							uni.hideLoading();
+							uni.navigateTo({
+								url: '/pages/login/index'
+							});
+						} else {
+							if (response.data.code !== 200 && response.data.message) {
+								uni.showToast({
+									title: response.data.message,
+									icon: 'none',
+									duration: 1500
+								});
+							}
+						}
+					}
 
-		})
+					reject(err);
+				});
+		});
 	}
-
-
-
-}
+};
 
 // async function login() {
 // 	return new Promise(resolve => {
@@ -132,33 +146,31 @@ export const $http = (url : string, method : string, data ?: any, isJson ?: bool
 // }
 
 function postJson(url, data) {
-	return $http(url, 'POST', data, true)
+	return $http(url, 'POST', data, true);
 }
 
 function get(url, data) {
-
-	return $http(url, 'GET', data, true)
+	return $http(url, 'GET', data, true);
 }
 
-function post(url, data, isjson : boolean = true) {
-
-	return $http(url, 'POST', data, isjson, false, null, null)
+function post(url, data, isjson: boolean = true) {
+	return $http(url, 'POST', data, isjson, false, null, null);
 }
 
 function put(url, data) {
-	return $http(url, 'PUT', data, true)
+	return $http(url, 'PUT', data, true);
 }
 
 function del(url, data) {
-	return $http(url, 'DELETE', data, true)
+	return $http(url, 'DELETE', data, true);
 }
 
 function request(url, method, data) {
-	return $http(url, method, data, true)
+	return $http(url, method, data, true);
 }
 
 function getStream(url, data, isStream, callback, errorCallback) {
-	return $http(url, 'POST', data, true, isStream, callback, errorCallback)
+	return $http(url, 'POST', data, true, isStream, callback, errorCallback);
 }
 
 export default {
@@ -169,4 +181,4 @@ export default {
 	del,
 	request,
 	getStream
-}
+};
