@@ -2,8 +2,7 @@ import { useUserStore } from '../store';
 import { UserInfoDTO } from '../type/userTypes';
 import http from './interface';
 
-export const $http = (url: string, method: string, data?: any, isJson?: boolean, isStream?: boolean, callback?: () => void, errorCallback?: () => void) => {
-	//设置请求前拦截器
+export const $http = (url : string, method : string, data ?: any, isJson ?: boolean, isStream ?: boolean, callback ?: () => void, errorCallback ?: () => void) => {
 	const userStore = useUserStore();
 	const userInfo = userStore.userInfo;
 	const defaultTimeout = 20000;
@@ -12,7 +11,8 @@ export const $http = (url: string, method: string, data?: any, isJson?: boolean,
 		token: userInfo?.token || '',
 		App: userInfo?.appid || '',
 		'Access-Token': userInfo?.access_token || '',
-		Vt: userInfo?.vip || ''
+		Vt: userInfo?.vip || '',
+		plaintext: 'true'
 	};
 	http.interceptor.request = (config) => {
 		uni.showLoading({
@@ -153,9 +153,11 @@ function get(url, data) {
 	return $http(url, 'GET', data, true);
 }
 
-function post(url, data, isjson: boolean = true) {
+function post(url, data, isjson : boolean = true) {
+	
 	return $http(url, 'POST', data, isjson, false, null, null);
 }
+
 
 function put(url, data) {
 	return $http(url, 'PUT', data, true);

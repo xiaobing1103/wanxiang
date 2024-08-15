@@ -75,24 +75,24 @@
 		let newParmas: FormData | Image2TextParmas = parmas.value
 		if (props.IamgeTypes.historyType == "img2img_task_json") {
 			let formdata = new FormData()
-			// #ifdef MP-WEIXIN
-			for (const key in parmas.value) {
-				formdata.append(key, parmas.value[key])
-			}
-			formdata.appendFile('image', parmas.value.image)
-			const data = formdata.getData();
-			newParmas = data
-			// #endif
+
+			// for (const key in parmas.value) {
+			// 	if (key !== 'image') {
+			// 		formdata.append(key, parmas.value[key])
+			// 	}
+			// }
+			// formdata.appendFile('image', parmas.value.image)
+			// const data = formdata.getData();
+			// newParmas = data
 
 			// #ifdef H5
 			for (const key in parmas.value) {
 				formdata.append(key, parmas.value[key])
 			}
-			formdata.append('image', parmas.value.image)
 			newParmas = formdata
 			// #endif
-
 		}
+		
 		const taskDTO = await $api.post < Image2TextParmas > (props.IamgeTypes.api, newParmas, false)
 		if (taskDTO.code == 200) {
 			TaskID.value = taskDTO.data.task_id
@@ -101,38 +101,15 @@
 		}
 	}
 
-
 	const submit = async () => {
-		// if (props.IamgeTypes.historyType == 'img2img_task_json' && parmas.value.image) {
-		// 	console.log(parmas)
-		// 	uni.$u.toast('请上传图片后再继续！')
-		// 	return
-		// }
+		if (props.IamgeTypes.historyType == 'img2img_task_json' && !parmas.value.image) {
+			uni.$u.toast('请上传图片后再继续！')
+			return
+		}
 		if (props.IamgeTypes.historyType !== 'img2img_task_json' && !parmas.value.prompt) {
 			uni.$u.toast('请输入生成文案！')
 			return
 		}
-
-		// let data = {
-		// 	'userId': 'a85e5678-419d-4e8f-8da0-c961b4186333',
-		// 	'package': 'io.changchun.app',
-		// 	'taskId': 1,
-		// 	'taskName': 'test2',
-		// 	// "injectObject":'{"url":"/pages/myMission/myMission"}'
-		// }
-		// let formData = new FormData()
-		// Object.keys(data).forEach((index) => {
-		// 	formData.append(index, data[index])
-		// })
-
-		// fly.post('https://ai1foo.com/api/v1/img/img2img', {
-		// 	...formData
-		// }, {
-		// 	headers: {
-
-		// 		"content-type": "multipart/form-data"
-		// 	}
-		// })
 
 		await getQueueTask()
 		// 查询队列
