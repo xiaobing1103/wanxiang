@@ -1,7 +1,7 @@
 <template>
 	<z-paging ref="pagingRef">
 		<template #top>
-			<up-navbar title="AI一键生成PPT" :fixed="false"></up-navbar>
+			<up-navbar :auto-back="true" title="AI一键生成PPT" :fixed="false"></up-navbar>
 		</template>
 		<view class="body">
 			<stepTemplate v-if="currentStep == stepEnum.STEP_TEMPLATE"/>
