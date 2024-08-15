@@ -1,8 +1,5 @@
 <template>
 	<view class="view">
-		<!-- <Teleport to="body">
-	
-		</Teleport> -->
 		<view class="changeView">
 			<up-tabs :list="list4" lineWidth="30" :lineWidth="0" :lineHeight="0" :activeStyle="{
 				fontSize:'25rpx',
@@ -24,7 +21,7 @@
 		</view>
 		<view class="tab-content">
 			<template v-if="activeTabs == 0">
-				<BaseTem v-model:parmas="parmas" />
+				<BaseTem v-model:parmas="parmas" :IamgeTypes='IamgeTypes' />
 			</template>
 			<template v-if="activeTabs == 1">
 				<ArtStyleCheatSheet />
@@ -46,6 +43,14 @@
 		reactive
 	} from 'vue';
 	import { Image2TextParmas } from '../../data';
+	import { taskIdTypeKey } from '@/store/draw';
+	defineProps<{
+		IamgeTypes : {
+			type : string,
+			historyType : taskIdTypeKey,
+			api : string
+		}
+	}>()
 	const activeTabs = ref(0)
 
 	const parmas = defineModel<Image2TextParmas>("parmas")

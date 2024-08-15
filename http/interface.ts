@@ -128,7 +128,7 @@ export default {
 		try {
 			const response = await fetch(_config.url, {
 				method: _config.method,
-				headers: _config.headers,
+				headers: _config.header,
 				body: _config.body
 			});
 			const reader = response.body.getReader();

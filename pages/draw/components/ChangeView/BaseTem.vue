@@ -52,6 +52,16 @@
 				<ImageLoraScale v-model:parmas="parmas" min='1' max='100' type="loraScale" />
 			</view>
 		</view>
+
+		<view class="BaseTem_loraScale">
+			<view class="label">
+				<text class="label_tops"> 变化强度 </text>
+			</view>
+			<view class="content">
+				<ImageLoraScale v-model:parmas="parmas" min='1' max='100' type="denoising_strength" />
+			</view>
+		</view>
+
 		<view class="BaseTem_step">
 			<view class="label">
 				<text class="label_tops"> 迭代数 </text>
@@ -65,7 +75,16 @@
 				<text class="label_tops"> 文本强度 </text>
 			</view>
 			<view class="content">
-				<ImageLoraScale v-model:parmas="parmas" min='1' max='10' type="textScale" />
+				<ImageLoraScale v-model:parmas="parmas" min='1' max='10' type="cfg_scale" />
+			</view>
+		</view>
+
+		<view class="BaseTem_textScale" v-if="IamgeTypes.historyType == 'coloringLineArt_task_json'">
+			<view class="label">
+				<text class="label_tops"> 权重 </text>
+			</view>
+			<view class="content">
+				<ImageLoraScale v-model:parmas="parmas" min='1' max='200' type="weight" />
 			</view>
 		</view>
 		<view class="BaseTem_simpler">
@@ -113,8 +132,16 @@
 	import ImageLoraScale from './ImageLoraScale'
 	import CanvasProportion from './CanvasProportion'
 	import ImageSimpler from './ImageSimpler'
+	import { taskIdTypeKey } from '@/store/draw';
 	const { $api } = useGlobalProperties()
 	const parmas = defineModel<Image2TextParmas>("parmas")
+	const props = defineProps<{
+		IamgeTypes : {
+			type : string,
+			historyType : taskIdTypeKey,
+			api : string
+		}
+	}>()
 	const models = ref<modelsDTO[]>([])
 	const styles = ref<modelsDTO[]>([])
 	onMounted(async () => {
@@ -124,10 +151,52 @@
 	const getModels = async () => {
 		const res = await $api.get<modelsDTO[]>('api/v1/img/get_models')
 		if (res.code == 200) {
-			models.value = res.data
+			let modelArr : modelsDTO[]
+			if (props.IamgeTypes.historyType == 'coloringLineArt_task_json') {
+				const modelsIds = [
+					{ name: '局部重绘模型1', id: 'b49012a9071407209652d332517a182e' },
+					{ name: '局部重绘模型2', id: 'fd422ef3f7285ee610eee4d150ca87c9' },
+					{ name: '局部重绘模型3', id: '1fea14929fbb9f9c1ed8b476846321fd' }
+				]
+				modelArr = reservedModels(res.data, modelsIds)
+			}
+			if (props.IamgeTypes.historyType == 'image2cartoon_task_json') {
+				const modelsIds = [
+					{ name: '卡通模型1', id: 'f5d0ca1136c4ad76bfea44a3647ca773' },
+					{ name: '卡通模型2', id: '3ee5312de41b73edafc3bb7aab39e231' },
+					{ name: '卡通模型3', id: '613849e5bfa7850f4d8af46103e610fe' },
+					{ name: '卡通模型4', id: '9e3cd7a5ea80540d329084ae41b820e6' },
+					{ name: '卡通模型5', id: '18932d336b165cb6b945bf3e72eb3802' }
+				]
+				modelArr = reservedModels(res.data, modelsIds)
+			}
+			if (props.IamgeTypes.historyType == 'partialRepaint_task_json') {
+				const modelsIds = [
+					{ id: 'b49012a9071407209652d332517a182e', name: '通用上色模型1' },
+					{ id: '7f772e53d91b0ffe53af17934b9ece40', name: '真人上色模型2' },
+					{ id: '613849e5bfa7850f4d8af46103e610fe', name: '卡通上色模型3' }
+				]
+				modelArr = reservedModels(res.data, modelsIds)
+			}
+			models.value = modelArr
 		} else {
 			uni.$u.toast(res.msg)
 		}
+	}
+
+	const reservedModels = (
+		models : modelsDTO[],
+		modelsIds : { id : string; name : string }[]
+	) => {
+		const base = models.filter((item) => modelsIds.some((modelId) => modelId.id === item.id)).map((item) => {
+			const matchedModel = modelsIds.find((modelId) => modelId.id === item.id)
+			return {
+				...item,
+				name: matchedModel?.name
+			}
+		})
+
+		return base as modelsDTO[]
 	}
 	const getStyles = async () => {
 		const res = await $api.get<stylesDTO[]>('api/v1/img/get_styles')

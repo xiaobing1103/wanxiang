@@ -1,9 +1,9 @@
 <template>
-
+	tuya
 </template>
 
 <script setup lang="ts">
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 </style>

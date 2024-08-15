@@ -14,6 +14,9 @@
 <script setup lang="ts">
 	import { ref } from 'vue';
 	import { Image2TextParmas } from '../data';
+	import { taskIdTypeKey } from '@/store/draw';
+	import { fileToBase64, wxBase64 } from "@/utils/file2Base64"
+	const props = defineProps<{ type : taskIdTypeKey }>()
 	const parmas = defineModel<Image2TextParmas>("parmas");
 	const fileList1 = ref([]);
 	// 删除图片
@@ -22,8 +25,6 @@
 	};
 	// 新增图片
 	const afterRead = async (event) => {
-
-
 		// 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
 		let lists = [].concat(event.file);
 
@@ -48,11 +49,22 @@
 		}
 		if (fileList1.value[0].status == "success") {
 			// #ifdef H5
-			parmas.value.image = fileList1.value[0].file
+			if (props.type == 'coloringLineArt_task_json') {
+				fileToBase64(fileList1.value[0].file, (base64) => {
+					parmas.value.image = base64
+				})
+			} else {
+				parmas.value.image = fileList1.value[0].file
+			}
 			// #endif
-
 			// #ifdef MP-WEIXIN
-			parmas.value.image = fileList1.value[0].url
+			debugger
+			if (props.type == 'coloringLineArt_task_json') {
+				const file = await wxBase64({ url: fileList1.value[0].url, type: 'png' })
+				parmas.value.image = file
+			} else {
+				parmas.value.image = fileList1.value[0].file
+			}
 			// #endif
 
 		}

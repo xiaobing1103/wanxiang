@@ -141,21 +141,74 @@ export interface stylesDTO {
 }
 
 export interface Image2TextParmas {
+	/**
+	 *  文本强度
+	 */
 	cfg_scale : number;
+	/**
+	 *   高度 
+	 */
 	height : number;
+	/**
+	 *   图片分辨率 0 普通  1 高清
+	   */
 	hire : number;
+	/**
+	 *  图片风格id
+	 */
 	loraId : string;
+	/**
+	 *    风格强度  线稿上色 是 60 到 70 
+	 */
 	loraScale : number;
+	/**
+	 *    变化强度  
+	 */
+	denoising_strength ?: number
+	/**
+	 *     模型id
+	 */
 	model : string;
+	/**
+	 *   负标签
+	 */
 	negative_prompt : string;
+	/**
+	 *     图片张数
+	 */
 	num : number;
+	/**
+	 *     输入参数
+	 */
 	prompt : string;
+	/**
+	 *    随机种子
+	 */
 	seed : number;
+	/**
+	 * 采样器
+	 */
 	simpler : string;
+	/**
+	 * 迭代数
+	 */
 	step : number;
+	/**
+	 * 宽度
+	 */
 	width : number;
-	textScale : number,
+	/**
+	 * 未知参数
+	 */
+	type ?: '0' | '1',
+	/**
+	 * 图片参数
+	 */
 	image ?: null | any
+	/**
+	 * 权重 1.0 到 2.0 一般显示为 0 - 200
+	 */
+	weight ?: 1.0,
 }
 export const sizeList : {
 	label : string

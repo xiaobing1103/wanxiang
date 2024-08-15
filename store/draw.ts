@@ -16,7 +16,7 @@ export interface drawTaskJson {
 	wait_for : number
 }
 
-export type taskIdTypeKey = 'txt2img_task_json' | 'img2img_task_json';
+export type taskIdTypeKey = 'txt2img_task_json' | 'img2img_task_json' | 'coloringLineArt_task_json' | 'image2cartoon_task_json' | 'partialRepaint_task_json';
 
 // 定义每种任务类型的历史记录数据
 export type taskIdTypesData = {
@@ -35,7 +35,22 @@ const useDrawStore = defineStore("wanxiang_drawStore", () => {
 			task_id: '',
 			historyTasks: [
 			] as drawTaskJson[]
-		}
+		},
+		'coloringLineArt_task_json': {
+			task_id: '',
+			historyTasks: [
+			] as drawTaskJson[]
+		},
+		'image2cartoon_task_json': {
+			task_id: '',
+			historyTasks: [
+			] as drawTaskJson[]
+		},
+		'partialRepaint_task_json': {
+			task_id: '',
+			historyTasks: [
+			] as drawTaskJson[]
+		},
 	});
 
 	// 更新任务 ID 参数的方法

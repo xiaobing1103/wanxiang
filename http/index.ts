@@ -12,7 +12,7 @@ export const $http = (url : string, method : string, data ?: any, isJson ?: bool
 		App: userInfo?.appid || '',
 		'Access-Token': userInfo?.access_token || '',
 		Vt: userInfo?.vip || '',
-		plaintext: 'true'
+		// plaintext: 'true'
 	};
 	http.interceptor.request = (config) => {
 		uni.showLoading({

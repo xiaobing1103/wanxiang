@@ -1,11 +1,12 @@
 <template>
-	<template v-if="IamgeTypes.type == 'image2image'">
-		<ImageUpload v-model:parmas="parmas" />
+	<template
+		v-if="IamgeTypes.historyType == 'img2img_task_json' || IamgeTypes.historyType == 'coloringLineArt_task_json' ">
+		<ImageUpload v-model:parmas="parmas" :type="IamgeTypes.historyType" />
 	</template>
 	<PreviewImageArae v-model:parmas="parmas" />
 	<UseAiChatConfirm />
 	<ReversePromptUploadedImage />
-	<ChangeView v-model:parmas="parmas" />
+	<ChangeView v-model:parmas="parmas" :IamgeTypes='IamgeTypes' />
 	<view class="footer">
 		<view class="footer_box">
 			<up-button @click="submit" class="footerButton" text="AI生成(消耗1次)"></up-button>
@@ -45,9 +46,11 @@
 			type: string,
 			historyType: taskIdTypeKey,
 			api: string
-		}
+		},
+		parmas ? : Image2TextParmas
 	} > ()
-	const parmas = ref < Image2TextParmas > ({
+
+	const parmas = ref < Image2TextParmas > (props.parmas ? props.parmas : {
 		cfg_scale: 7,
 		height: 512,
 		hire: 0,
@@ -61,7 +64,6 @@
 		simpler: "DPM++ SDE Karras",
 		step: 20,
 		width: 512,
-		textScale: 6
 	})
 
 	const drawStore = useDrawStore()
@@ -97,12 +99,19 @@
 	}
 
 	const submit = async () => {
+		// 图生图
 		if (props.IamgeTypes.historyType == 'img2img_task_json' && !parmas.value.image) {
 			uni.$u.toast('请上传图片后再继续！')
 			return
 		}
-		if (props.IamgeTypes.historyType !== 'img2img_task_json' && !parmas.value.prompt) {
+		// 文生图
+		if (props.IamgeTypes.historyType == 'txt2img_task_json' && !parmas.value.prompt) {
 			uni.$u.toast('请输入生成文案！')
+			return
+		}
+		// 线稿生徒
+		if (props.IamgeTypes.historyType == 'coloringLineArt_task_json' && !parmas.value.image) {
+			uni.$u.toast('请上传图片后再继续！')
 			return
 		}
 
