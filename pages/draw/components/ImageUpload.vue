@@ -27,7 +27,6 @@
 	const afterRead = async (event) => {
 		// 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
 		let lists = [].concat(event.file);
-
 		let fileListLen = fileList1.value.length;
 		lists.map((item) => {
 			fileList1.value.push({
@@ -63,7 +62,7 @@
 				const file = await wxBase64({ url: fileList1.value[0].url, type: 'png' })
 				parmas.value.image = file
 			} else {
-				parmas.value.image = fileList1.value[0].file
+				parmas.value.image = fileList1.value[0].url
 			}
 			// #endif
 

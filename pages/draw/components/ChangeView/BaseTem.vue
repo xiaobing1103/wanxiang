@@ -151,7 +151,7 @@
 	const getModels = async () => {
 		const res = await $api.get<modelsDTO[]>('api/v1/img/get_models')
 		if (res.code == 200) {
-			let modelArr : modelsDTO[]
+			let modelArr : modelsDTO[] = res.data
 			if (props.IamgeTypes.historyType == 'coloringLineArt_task_json') {
 				const modelsIds = [
 					{ name: '局部重绘模型1', id: 'b49012a9071407209652d332517a182e' },

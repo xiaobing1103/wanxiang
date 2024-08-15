@@ -56,6 +56,7 @@
 		hire: 0,
 		loraId: "fc1be0561c11fe7019f4424f5e7b2c85",
 		loraScale: 66,
+		'denoising_strength': 65,
 		model: "fd422ef3f7285ee610eee4d150ca87c9",
 		negative_prompt: "easynegative, (worst quality:1.3), (low quality:1), (normal quality:1.4), lowres,skin spots, acnes, skin blemishes, age spot, glan, extra fingers, fewer fingers, strange fingers, bad hand, bad anatomy, fused fingers, missing leg, mutated hand, malformed limbs, missing feet,multiple legs,men,boy,logo, loli,3d,extra hands,extra foots",
 		num: 2,
