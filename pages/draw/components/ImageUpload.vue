@@ -59,27 +59,11 @@
 
 	};
 
-
 	const uploadFilePromise = (url) => {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				resolve(url);
 			}, 2000);
-
-
-			// 	let a = uni.uploadFile({
-			// 		url: '', // 仅为示例，非真实的接口地址
-			// 		filePath: url,
-			// 		name: 'file',
-			// 		formData: {
-			// 			user: 'test',
-			// 		},
-			// 		success: (res) => {
-			// 			setTimeout(() => {
-			// 				resolve(res.data.data);
-			// 			}, 1000);
-			// 		},
-			// 	});
 		});
 	};
 </script>

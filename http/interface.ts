@@ -82,8 +82,6 @@ export default {
 						reject(error);
 					});
 			} else {
-
-				console.log(options.data)
 				if (options.data?.image?.includes('.webp')) {
 					const parmas = options.data
 					const {
@@ -99,7 +97,7 @@ export default {
 						},
 						name: 'image',
 						success: (uploadFileRes) => {
-							resolve(uploadFileRes.data);
+							resolve(uploadFileRes);
 						},
 						formData: {
 							...others,

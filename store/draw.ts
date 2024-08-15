@@ -25,6 +25,7 @@ export type taskIdTypesData = {
 };
 
 const useDrawStore = defineStore("wanxiang_drawStore", () => {
+	const seletedDrawProject = ref<taskIdTypeKey>('txt2img_task_json')
 	const taskIdParmas = ref<Record<taskIdTypeKey, taskIdTypesData>>({
 		'txt2img_task_json': {
 			task_id: '',
@@ -42,9 +43,16 @@ const useDrawStore = defineStore("wanxiang_drawStore", () => {
 		taskIdParmas.value[key] = data;
 	};
 
+	// 设置当前的绘画项目
+	const setSeletedDrawProject = (value : taskIdTypeKey) => {
+		seletedDrawProject.value = value
+	}
+
 	return {
 		taskIdParmas,
-		setTaskIdParmas
+		setTaskIdParmas,
+		setSeletedDrawProject,
+		seletedDrawProject
 	}
-}, { unistorage: { paths: ['taskIdParmas'] } })
+}, { unistorage: { paths: ['taskIdParmas', 'seletedDrawProject'] } })
 export default useDrawStore

@@ -20,9 +20,20 @@
 			<text class="circle_view_desc">{{message}}</text>
 		</view>
 
-		<!-- <template #bottom>
-			<button @click="increaseProgress">增加进度</button>
-		</template> -->
+		<view class="tips">
+			<text class="tips_top"> 如果一直图片没有加载完成可能是因为服务器压力过大的原因，请您耐心等待，您也可以尝试其他图片生成项目
+			</text>
+			<view class="tips_bottom">
+				切换项目
+			</view>
+		</view>
+		<template #bottom>
+			<!-- <button @click="increaseProgress">增加进度</button> -->
+		</template>
+
+
+		<ChangeDrawProject />
+
 	</z-paging>
 </template>
 
@@ -31,6 +42,7 @@
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import ChangeDrawProject from '../../components/ChangeDrawProject'
 	import { onLoad } from '@dcloudio/uni-app'
 	import { useDrawStore } from '@/store';
 	import { drawTaskJson, taskIdTypeKey } from '@/store/draw';
@@ -38,30 +50,24 @@
 	const intervalId = ref<number | null>(null);
 	const { $api } = useGlobalProperties()
 	const drawStore = useDrawStore()
+
 	const gradientTexture = [
-		// 前景纹理：从亮粉色到深紫色的线性渐变
 		[
-			45,  // 渐变角度
-			'#FF66B2', // 起始颜色
-			'#6A0D91'  // 结束颜色
+			45,
+			'#FF66B2',
+			'#6A0D91'
 		],
-		// 背景纹理：从浅蓝色到深蓝色的线性渐变
 		[
-			135, // 渐变角度
-			'#E0F7FA', // 起始颜色
-			'#00796B'  // 结束颜色
+			135,
+			'#E0F7FA',
+			'#00796B'
 		]
 	];
-	const task_id = ref('')
-	const historyTask = ref<drawTaskJson>()
+
 	const message = ref('')
-	// const increaseProgress = () => {
-	// 	if (progress.value < 1) {
-	// 		progress.value += 0.01
-	// 	}
-	// }
+
 	onMounted(() => {
-		const taskId = drawStore.taskIdParmas.txt2img_task_json.task_id
+		const taskId = drawStore.taskIdParmas[drawStore.seletedDrawProject].task_id
 		if (taskId) {
 			queryTask(taskId)
 
@@ -90,11 +96,11 @@
 			if (data.state === '0') {
 				message.value = '正在排队，预计需要' + r + '秒';
 				progress.value = m / 100;
-				setTimeout(() => queryTask(taskId), 2000);
+				intervalId.value = setTimeout(() => queryTask(taskId), 5000);
 			} else if (data.state === '1') {
 				message.value = '生成成功，正在取回图片，预计需要5-10秒';
 				progress.value = m / 100;
-				setTimeout(() => queryTask(taskId), 2000);
+				intervalId.value = setTimeout(() => queryTask(taskId), 5000);
 			} else if (data.state === '1' && data.do_use > 60) {
 				message.value = '请求超时';
 			} else if (data.state === '2') {
@@ -118,7 +124,7 @@
 	});
 
 	const handlerImages = (data : drawTaskJson) => {
-		const taskType : taskIdTypeKey = 'txt2img_task_json';
+		const taskType : taskIdTypeKey = drawStore.seletedDrawProject;
 		// 获取当前的任务数据
 		const currentData = drawStore.taskIdParmas[taskType];
 		// 检查是否已经存在相同任务的数据
@@ -179,6 +185,35 @@
 			padding: 25rpx;
 			font-size: 30rpx;
 			text-align: center;
+		}
+	}
+
+
+	.tips {
+		padding: 25rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+
+		&_top {
+			font-size: 25rpx;
+			color: $aichat-border-color;
+		}
+
+		&_bottom {
+			width: 80%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 100rpx 0;
+			padding: 25rpx;
+			font-size: 30rpx;
+			border-radius: 1.09375rem !important;
+			height: 80rpx !important;
+			color: #ffffff !important;
+			background: linear-gradient(to right, #1cd8ba, #06c0f9);
+			cursor: pointer;
 		}
 	}
 </style>

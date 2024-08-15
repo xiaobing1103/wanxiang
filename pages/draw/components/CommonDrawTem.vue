@@ -23,6 +23,7 @@
 		Image2TextParmas
 	} from '../data';
 	import {
+		onMounted,
 		ref
 	} from 'vue';
 	import {
@@ -35,10 +36,6 @@
 		drawTaskJson,
 		taskIdTypeKey
 	} from '../../../store/draw';
-	import fly from 'flyio'
-	// !// #ifdef MP-WEIXIN
-	import FormData from '@/tools/FormData.js'
-	// #endif
 
 	const {
 		$api
@@ -64,36 +61,34 @@
 		simpler: "DPM++ SDE Karras",
 		step: 20,
 		width: 512,
-		textScale: 6,
-		image: null
+		textScale: 6
 	})
-
 
 	const drawStore = useDrawStore()
 	const TaskID = ref('')
+	onMounted(() => {
+		// 设置当前绘画项目
+		drawStore.setSeletedDrawProject(props.IamgeTypes.historyType)
+	})
+
 	const getQueueTask = async () => {
 		let newParmas: FormData | Image2TextParmas = parmas.value
+		let isMoFormData = true
 		if (props.IamgeTypes.historyType == "img2img_task_json") {
-			let formdata = new FormData()
-
-			// for (const key in parmas.value) {
-			// 	if (key !== 'image') {
-			// 		formdata.append(key, parmas.value[key])
-			// 	}
-			// }
-			// formdata.appendFile('image', parmas.value.image)
-			// const data = formdata.getData();
-			// newParmas = data
-
+			isMoFormData = false
+			let formdata: Image2TextParmas | FormData
 			// #ifdef H5
+			formdata = new FormData()
 			for (const key in parmas.value) {
 				formdata.append(key, parmas.value[key])
 			}
 			newParmas = formdata
 			// #endif
 		}
-		
-		const taskDTO = await $api.post < Image2TextParmas > (props.IamgeTypes.api, newParmas, false)
+		let taskDTO = await $api.post < Image2TextParmas > (props.IamgeTypes.api, newParmas, isMoFormData)
+		if (typeof taskDTO == 'string') {
+			taskDTO = JSON.parse(taskDTO)
+		}
 		if (taskDTO.code == 200) {
 			TaskID.value = taskDTO.data.task_id
 		} else {

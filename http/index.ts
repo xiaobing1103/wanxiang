@@ -154,7 +154,7 @@ function get(url, data) {
 }
 
 function post(url, data, isjson : boolean = true) {
-	
+
 	return $http(url, 'POST', data, isjson, false, null, null);
 }
 
