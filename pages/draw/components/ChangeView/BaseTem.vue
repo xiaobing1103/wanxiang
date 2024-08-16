@@ -44,47 +44,53 @@
 			</view>
 		</view>
 
-		<view class="BaseTem_loraScale">
+		<view class="BaseTem_loraScale" v-if="IamgeTypes.loraScaleStepList">
 			<view class="label">
 				<text class="label_tops"> 风格强度 </text>
 			</view>
 			<view class="content">
-				<ImageLoraScale v-model:parmas="parmas" min='1' max='100' type="loraScale" />
+				<ImageLoraScale v-model:sliderValue="parmas.loraScale" :stepList="IamgeTypes.loraScaleStepList" min='1'
+					max='100' type="loraScale" />
 			</view>
 		</view>
 
-		<view class="BaseTem_loraScale">
+		<view class="BaseTem_loraScale" v-if="IamgeTypes.denoising_strengthStepList">
 			<view class="label">
 				<text class="label_tops"> 变化强度 </text>
 			</view>
 			<view class="content">
-				<ImageLoraScale v-model:parmas="parmas" min='1' max='100' type="denoising_strength" />
+				<ImageLoraScale v-model:sliderValue="parmas.denoising_strength"
+					:stepList="IamgeTypes.denoising_strengthStepList" :min='IamgeTypes.denoising_strengthStepMin'
+					:max='IamgeTypes.denoising_strengthStepMax' type="denoising_strength" />
 			</view>
 		</view>
-
-		<view class="BaseTem_step">
+		<view class="BaseTem_step" v-if="IamgeTypes.stepStepList">
 			<view class="label">
 				<text class="label_tops"> 迭代数 </text>
 			</view>
 			<view class="content">
-				<ImageLoraScale v-model:parmas="parmas" min='15' max='30' type="step" />
+				<ImageLoraScale v-model:sliderValue="parmas.step" :stepList="IamgeTypes.stepStepList" min='15' max='30'
+					type="step" />
 			</view>
 		</view>
-		<view class="BaseTem_textScale">
+
+		<view class="BaseTem_textScale" v-if="IamgeTypes.cfg_scaleStepList">
 			<view class="label">
 				<text class="label_tops"> 文本强度 </text>
 			</view>
 			<view class="content">
-				<ImageLoraScale v-model:parmas="parmas" min='1' max='10' type="cfg_scale" />
+				<ImageLoraScale v-model:sliderValue="parmas.cfg_scale" :stepList="IamgeTypes.cfg_scaleStepList" min='1'
+					max='10' type="cfg_scale" />
 			</view>
 		</view>
 
-		<view class="BaseTem_textScale" v-if="IamgeTypes.historyType == 'coloringLineArt_task_json'">
+		<view class="BaseTem_textScale" v-if="IamgeTypes.weightStepList">
 			<view class="label">
 				<text class="label_tops"> 权重 </text>
 			</view>
 			<view class="content">
-				<ImageLoraScale v-model:parmas="parmas" min='1' max='200' type="weight" />
+				<ImageLoraScale :stepList="IamgeTypes.weightStepList" v-model:sliderValue="parmas.weight" min='1'
+					max='200' type="weight" />
 			</view>
 		</view>
 		<view class="BaseTem_simpler">
@@ -125,7 +131,7 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
-	import { Image2TextParmas, modelsDTO, stylesDTO } from '../../data';
+	import { Image2TextParmas, ImageProjectTypes, modelsDTO, stylesDTO } from '../../data';
 	import TemImages from './TemImages'
 	import ImageNums from './ImageNums'
 	import ImageQuality from './ImageQuality'
@@ -136,12 +142,10 @@
 	const { $api } = useGlobalProperties()
 	const parmas = defineModel<Image2TextParmas>("parmas")
 	const props = defineProps<{
-		IamgeTypes : {
-			type : string,
-			historyType : taskIdTypeKey,
-			api : string
-		}
+		IamgeTypes : ImageProjectTypes
 	}>()
+
+
 	const models = ref<modelsDTO[]>([])
 	const styles = ref<modelsDTO[]>([])
 	onMounted(async () => {

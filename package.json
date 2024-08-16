@@ -1,24 +1,20 @@
 {
-    "id": "hao-slider",
-    "name": "滑块选择器，slider ，视频播放进度条，等多场景应用，可以用图片滑块，功能高",
-    "displayName": "滑块选择器，slider ，视频播放进度条，等多场景应用，可以用图片滑块，功能高",
-    "version": "1.0.0",
-    "description": "滑块选择器，slider ，视频播放进度条，等多场景应用，可以用图片滑块，功能高度自定义",
-    "keywords": [
-        "滑块选择器",
-        "slider",
-        "进度条",
-        "图片滑块",
-        "高度自定义"
-    ],
-    "dcloudext": {
-        "category": [
-            "前端组件",
-            "通用组件"
-        ]
-    },
-    "dependencies": {
-        "flyio": "^0.6.14",
-        "uview-plus": "^3.3.19"
-    }
+	"id": "jerry-slider",
+	"name": "圆环slider",
+	"version": "1.0.0",
+	"description": "基于官方slider内置组件，定义圆环slider",
+	"keywords": [
+		"slider",
+		"circle-slidere"
+	],
+	"dcloudext": {
+		"category": [
+			"前端组件",
+			"通用组件"
+		]
+	},
+	"dependencies": {
+		"flyio": "^0.6.14",
+		"uview-plus": "^3.3.21"
+	}
 }

@@ -42,14 +42,9 @@
 		ref,
 		reactive
 	} from 'vue';
-	import { Image2TextParmas } from '../../data';
-	import { taskIdTypeKey } from '@/store/draw';
+	import { Image2TextParmas, ImageProjectTypes } from '../../data';
 	defineProps<{
-		IamgeTypes : {
-			type : string,
-			historyType : taskIdTypeKey,
-			api : string
-		}
+		IamgeTypes : ImageProjectTypes
 	}>()
 	const activeTabs = ref(0)
 
@@ -64,7 +59,7 @@
 	},
 	{
 		name: '在线提示词',
-		keyName: 'Tab134',
+		keyName: 'Tab13',
 	},
 	]);
 	const handlerClick = (tabs : {

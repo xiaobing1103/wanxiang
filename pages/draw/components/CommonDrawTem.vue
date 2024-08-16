@@ -1,6 +1,5 @@
 <template>
-	<template
-		v-if="IamgeTypes.historyType == 'img2img_task_json' || IamgeTypes.historyType == 'coloringLineArt_task_json' ">
+	<template v-if="IamgeTypes.historyType !== 'txt2img_task_json'">
 		<ImageUpload v-model:parmas="parmas" :type="IamgeTypes.historyType" />
 	</template>
 	<PreviewImageArae v-model:parmas="parmas" />
@@ -9,7 +8,7 @@
 	<ChangeView v-model:parmas="parmas" :IamgeTypes='IamgeTypes' />
 	<view class="footer">
 		<view class="footer_box">
-			<up-button @click="submit" class="footerButton" text="AI生成(消耗1次)"></up-button>
+			<view @click="submit" class="footerButton">AI生成(消耗1次)</view>
 		</view>
 	</view>
 </template>
@@ -21,7 +20,8 @@
 	import ReversePromptUploadedImage from './ReversePromptUploadedImage'
 	import ChangeView from './ChangeView/index'
 	import {
-		Image2TextParmas
+		Image2TextParmas,
+		ImageProjectTypes
 	} from '../data';
 	import {
 		onMounted,
@@ -32,62 +32,63 @@
 	} from '@/hooks/useGlobalHooks';
 	import {
 		useDrawStore
-	} from '../../../store';
+	} from '@/store';
 	import {
 		drawTaskJson,
 		taskIdTypeKey
-	} from '../../../store/draw';
+	} from '@/store/draw';
 
+	import {
+		deepClone
+	} from '@/utils/deepClone';
 	const {
 		$api
 	} = useGlobalProperties()
 	const props = defineProps < {
-		IamgeTypes: {
-			type: string,
-			historyType: taskIdTypeKey,
-			api: string
-		},
+		IamgeTypes: ImageProjectTypes,
 		parmas ? : Image2TextParmas
 	} > ()
 
-	const parmas = ref < Image2TextParmas > (props.parmas ? props.parmas : {
-		cfg_scale: 7,
-		height: 512,
-		hire: 0,
-		loraId: "fc1be0561c11fe7019f4424f5e7b2c85",
-		loraScale: 66,
-		'denoising_strength': 65,
-		model: "fd422ef3f7285ee610eee4d150ca87c9",
-		negative_prompt: "easynegative, (worst quality:1.3), (low quality:1), (normal quality:1.4), lowres,skin spots, acnes, skin blemishes, age spot, glan, extra fingers, fewer fingers, strange fingers, bad hand, bad anatomy, fused fingers, missing leg, mutated hand, malformed limbs, missing feet,multiple legs,men,boy,logo, loli,3d,extra hands,extra foots",
-		num: 2,
-		prompt: "",
-		seed: -1,
-		simpler: "DPM++ SDE Karras",
-		step: 20,
-		width: 512,
-	})
-
+	const parmas = ref < Image2TextParmas > (props.parmas)
 	const drawStore = useDrawStore()
 	const TaskID = ref('')
 	onMounted(() => {
-		// 设置当前绘画项目
 		drawStore.setSeletedDrawProject(props.IamgeTypes.historyType)
 	})
+	// 	
+	const reversNums = (newParmas: Image2TextParmas) => {
+		if (props.IamgeTypes.DifferenceStrength) {
+			newParmas.denoising_strength += props.IamgeTypes.DifferenceStrength
+		}
+	}
 
 	const getQueueTask = async () => {
-		let newParmas: FormData | Image2TextParmas = parmas.value
+		let file = parmas.value.image
+		parmas.value.image = undefined
+		let newParmas: Image2TextParmas = deepClone(parmas.value)
+		reversNums(newParmas)
 		let isMoFormData = true
-		if (props.IamgeTypes.historyType == "img2img_task_json") {
+		if (props.IamgeTypes.historyType == "img2img_task_json" || props.IamgeTypes.historyType ==
+			"image2cartoon_task_json") {
 			isMoFormData = false
 			let formdata: Image2TextParmas | FormData
 			// #ifdef H5
 			formdata = new FormData()
-			for (const key in parmas.value) {
-				formdata.append(key, parmas.value[key])
+			for (const key in newParmas) {
+				if (key !== 'image') {
+					formdata.append(key, newParmas[key])
+				}
 			}
+			formdata.append('image', file)
 			newParmas = formdata
 			// #endif
+			// #ifdef MP-WEIXIN
+			newParmas.image = file
+			// #endif
+		} else {
+			newParmas.image = file
 		}
+
 		let taskDTO = await $api.post < Image2TextParmas > (props.IamgeTypes.api, newParmas, isMoFormData)
 		if (typeof taskDTO == 'string') {
 			taskDTO = JSON.parse(taskDTO)
@@ -141,6 +142,7 @@
 		bottom: 0;
 		z-index: 1;
 		height: 80rpx;
+		z-index: 1000;
 		width: 100%;
 		background: $aichat-golbal-background;
 		display: flex;
@@ -154,9 +156,18 @@
 	}
 
 	.footerButton {
-		border-radius: 35rpx !important;
-		height: 60rpx !important;
-		color: $uni-bg-color !important;
-		background: linear-gradient(to right, #1cd8ba, #06c0f9)
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		padding: 25rpx;
+		font-size: 30rpx;
+		border-radius: 1.09375rem;
+		height: 60rpx;
+		color: #ffffff;
+
+		background: linear-gradient(to right, #1cd8ba, #06c0f9);
+		cursor: pointer;
 	}
 </style>

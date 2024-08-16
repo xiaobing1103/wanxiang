@@ -1,5 +1,5 @@
 {
-    "name" : "123456",
+    "name" : "万象ai",
     "appid" : "__UNI__AD2CAD9",
     "description" : "",
     "versionName" : "1.0.0",
@@ -50,7 +50,7 @@
     },
     "quickapp" : {},
     "mp-weixin" : {
-        "appid" : "wxfb06465e87daf871",
+        "appid" : "wxd3212d16084b902d",
         "setting" : {
             "urlCheck" : false
         },
