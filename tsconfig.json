@@ -5,7 +5,8 @@
 			"miniprogram-api-typings",
 			"mini-types",
 			"vite/client",
-			"vue"
+			"vue",
+			"z-paging/global.d.ts"
 		],
 		"esModuleInterop": true,
 		"moduleResolution": "node",

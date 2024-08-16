@@ -72,7 +72,6 @@ export const useStreamHooks = (options?:Options) =>{
 			appStreamRequest(options)
 		// #endif
 	}
-	
 	return {
 		streamRequest,
 		isRecive

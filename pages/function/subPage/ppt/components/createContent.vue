@@ -1,9 +1,10 @@
 <template>
-	<view class="ppt-con">
-		<text class="description">
-			 AI赋能,释放内容创造力，一键生成PPT.省去大量的时间,自动由人工智能驱动为你的主题/课题/论点生成大量:标题.大纲,子纲,要点,内容等,并自动生成一份简洁大气的PPT(可手动插入内容后由Ai帮你制造PPT演示文件)
-		</text>
-		<view class="create-type">
+	<z-paging :scroll-with-animation="true" :show-scrollbar="false" ref="pagingRef" :pagingStyle="{padding:'24rpx'}">
+		<template #top>
+			<up-navbar :auto-back="true" title="AI一键生成PPT" :fixed="false"></up-navbar>
+			<text class="description">
+				 AI赋能,释放内容创造力，一键生成PPT.省去大量的时间,自动由人工智能驱动为你的主题/课题/论点生成大量:标题.大纲,子纲,要点,内容等,并自动生成一份简洁大气的PPT(可手动插入内容后由Ai帮你制造PPT演示文件)
+			</text>
 			<!-- 顶部切换 -->
 			<view class="head">
 				<text
@@ -13,24 +14,40 @@
 					{{item.name}}
 				</text>
 			</view>
-			<!-- 输入框 -->
-			<view class="input-box">
-				<u-textarea v-model="currentCreateItem.content"  :placeholder="currentCreateItem.placeholder"></u-textarea>
-			</view>
-			<!-- 开始按钮 -->
-			<view class="btn">
-				<u-button @click="onCreateContent" style="border-radius: 15rpx;height: 88rpx;" type="primary">第二步:开始生成内容</u-button>
-			</view>
-			<!-- 内容 -->
-			<view v-if="contentStr" class="content">
-				<u-textarea :maxlength="-1" :autoHeight="true" v-model="contentStr"></u-textarea>
+		</template>
+		<view class="ppt-con">
+			<view class="create-type">
+				<!-- 输入框 -->
+				<view class="input-box">
+					<u-textarea height="150" v-model="currentCreateItem.content"  :placeholder="currentCreateItem.placeholder"></u-textarea>
+				</view>
+				<!-- 开始按钮 -->
+				<view class="btn">
+					<u-button @click="onCreateContent" style="border-radius: 15rpx;height: 88rpx;" type="primary">第二步:开始生成内容</u-button>
+				</view>
+				<view v-if="contentStr" class="content">
+					<u-textarea
+						:disabled="true"
+						v-model="contentStr"
+						:adjustPosition="false"
+						:auto-height="true"
+						 border="surround"
+						:maxlength="-1"
+					></u-textarea>
+				</view>
 			</view>
 		</view>
-	</view>
+		<template #bottom>
+			<view v-if="contentStr && isRecive == false" class="btn">
+				<u-button @click="onNext" style="border-radius: 15rpx;height: 88rpx;" type="primary">第三步:修改AI生成内容</u-button>
+			</view>
+		</template>
+	</z-paging>
 </template>
 
 <script setup lang="ts">
-	import {ref} from 'vue'
+	import {ref,nextTick} from 'vue'
+	import {debounce} from '@/utils/index.ts'
 	import {useStreamHooks} from '@/hooks/useStreamHooks.ts'
 	enum createEnum{
 		'TITLE' = 'title',
@@ -43,7 +60,13 @@
 	  content:string;
 	  placeholder:string;
 	}
+	const emit = defineEmits<{
+		(e:'next',val:{content:string,type:createEnum}):void
+	}>()
 	const {streamRequest,isRecive} = useStreamHooks()
+	const pagingRef = ref()
+	//当前输出的内容
+	const contentStr = ref('')
 	//类型列表
 	const typeList: Record<createEnum,TypeItem> = {
 		[createEnum.TITLE]:{
@@ -61,10 +84,13 @@
 			placeholder:"你可以输入一片文章/演讲稿/新闻/报道/任意长的文字,AI会帮你整理该段文本,适配PPT演示格式"
 		}
 	}
-	//发射事件
-	const emit = defineEmits<{
-		(e:'scrollToBottom'):void
-	}>()
+	//滚动到底部
+	const onScroolToBottom = debounce(() =>{
+		nextTick(() =>{
+			pagingRef.value.scrollToBottom()
+		})
+	},500)
+	
 	//当前创建类型
 	const currentCreateItem = ref<TypeItem>(typeList[createEnum.TITLE])
 	
@@ -72,9 +98,13 @@
 	const onTabChange = (item:TypeItem) =>{
 		currentCreateItem.value = item
 	}
-	//当前输出的内容
-	const contentStr = ref('')
-	
+	//第三步
+	const onNext = () =>{
+		emit('next',{
+			content:contentStr.value,
+			type:currentCreateItem.value.key
+		})
+	}
 	//开始生成内容
 	const onCreateContent = () =>{
 		const {key,content} = currentCreateItem.value
@@ -95,7 +125,7 @@
 			data: data,
 			onmessage(text) {
 				contentStr.value+=text
-				emit('scrollToBottom')
+				onScroolToBottom()
 			},
 			onfinish() {
 				console.log('成功')
@@ -108,50 +138,49 @@
 </script>
 
 <style lang="scss" scoped>
-	.ppt-con{
-		.description{
-			font-size: 24rpx;
-			color: $uni-text-color-grey;
+	.head{
+		font-size: 32rpx;
+		display: flex;
+		width:100%;
+		gap: 30rpx;
+		margin:40rpx 0;
+		.head-item{
+			position: relative;
 		}
+		.active-item{
+			&::after{
+				content: '';
+				position: absolute;
+				width: 50rpx;
+				height: 6rpx;
+				border-radius: 4rpx;
+				bottom: -10rpx;
+				left: 0;
+				background-color: $uni-color-primary;
+			}
+		}
+	}
+	.description{
+		font-size: 24rpx;
+		color: $uni-text-color-grey;
+	}
+	.ppt-con{
+		margin-bottom: 24rpx;
 		.create-type{
-			padding-top: 40rpx;
 			.input-box{
-				margin-top: 60rpx;
-				height: 300rpx;
 				overflow: hidden;
 				border-radius: 20rpx;
 				border: 1px solid $uni-border-color;
 			}
 			.content{
 				margin-top: 20rpx;
-				min-height: 300rpx;
 				border-radius: 20rpx;
 				overflow: hidden;
-				padding: 20rpx;
-				border: 1px solid $uni-border-color;
+				box-sizing: border-box;
+				border: 2rpx solid $uni-border-color;
 			}
 			.btn{
 				margin-top: 20rpx;
-			}
-			.head{
-				font-size: 32rpx;
-				display: flex;
-				gap: 30rpx;
-				.head-item{
-					position: relative;
-				}
-				.active-item{
-					&::after{
-						content: '';
-						position: absolute;
-						width: 50rpx;
-						height: 6rpx;
-						border-radius: 4rpx;
-						bottom: -10rpx;
-						left: 0;
-						background-color: $uni-color-primary;
-					}
-				}
 			}
 		}
 	}

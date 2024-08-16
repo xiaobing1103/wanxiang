@@ -1,11 +1,22 @@
+import { config } from 'process';
 import { useUserStore } from '../store';
 import { UserInfoDTO } from '../type/userTypes';
 import http from './interface';
 
-export const $http = (url : string, method : string, data ?: any, isJson ?: boolean, isStream ?: boolean, callback ?: () => void, errorCallback ?: () => void) => {
+export const $http = (
+url : string, 
+method : string,
+data ?: any, 
+isJson ?: boolean, 
+isStream ?: boolean, 
+callback ?: () => void, 
+errorCallback ?: () => void,
+config?:any
+) => {
 	const userStore = useUserStore();
 	const userInfo = userStore.userInfo;
 	const defaultTimeout = 20000;
+	console.log(config,"sssssssss")
 	const headers = {
 		uid: userInfo?.id || '',
 		token: userInfo?.token || '',
@@ -13,6 +24,7 @@ export const $http = (url : string, method : string, data ?: any, isJson ?: bool
 		'Access-Token': userInfo?.access_token || '',
 		Vt: userInfo?.vip || '',
 		// plaintext: 'true'
+		...config
 	};
 	http.interceptor.request = (config) => {
 		uni.showLoading({
@@ -24,12 +36,10 @@ export const $http = (url : string, method : string, data ?: any, isJson ?: bool
 			Authorization: uni.getStorageSync('token'),
 			...headers
 		};
-		console.log(config);
 		config.timeout = config.timeout || defaultTimeout;
 	};
 	http.interceptor.response = (response) => {
 		uni.hideLoading();
-		console.log(response);
 		if (response.data.code === 401 || response.statusCode === 401) {
 			uni.navigateTo({
 				url: '/pages/login/index'
@@ -149,15 +159,14 @@ function postJson(url, data) {
 	return $http(url, 'POST', data, true);
 }
 
-function get(url, data) {
-	return $http(url, 'GET', data, true);
+function get(url, data,config:any) {
+	return $http(url, 'GET', data, true,null,null,null,config);
 }
 
-function post(url, data, isjson : boolean = true) {
+function post(url, data, isjson : boolean = true,header:any) {
 
-	return $http(url, 'POST', data, isjson, false, null, null);
+	return $http(url, 'POST', data, isjson, false, null, null,header);
 }
-
 
 function put(url, data) {
 	return $http(url, 'PUT', data, true);

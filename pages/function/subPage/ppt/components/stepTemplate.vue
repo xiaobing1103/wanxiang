@@ -1,20 +1,30 @@
 <template>
-	<view class="ppt-con">
-		<text class="description">
-			AI赋能,释放内容创造力，一键生成PPT.省去大量的时间,自动由人工智能驱动为你的主题/课题/论点生成大量:标题.大纲,子纲,要点,内容等,并自动生成一份简洁大气的PPT(可手动插入内容后由Ai帮你制造PPT演示文件)
-		</text>
-		<view class="list">
-			<view v-for="(item,index) in operationList" :key="index" class="list-item">
-				<view class="left-icon">
-					<image class="icon" :src="item.icon"></image>
-				</view>
-				<view class="right-info">
-					<text class="title">{{item.title}}</text>
-					<text class="contnet">{{item.contnet}}</text>
+	<z-paging>
+		<template #top>
+			<up-navbar :auto-back="true" title="AI一键生成PPT" :fixed="false"></up-navbar>
+		</template>
+		<view class="ppt-con">
+			<text class="description">
+				AI赋能,释放内容创造力，一键生成PPT.省去大量的时间,自动由人工智能驱动为你的主题/课题/论点生成大量:标题.大纲,子纲,要点,内容等,并自动生成一份简洁大气的PPT(可手动插入内容后由Ai帮你制造PPT演示文件)
+			</text>
+			<view class="list">
+				<view v-for="(item,index) in operationList" :key="index" class="list-item">
+					<view class="left-icon">
+						<image class="icon" :src="item.icon"></image>
+					</view>
+					<view class="right-info">
+						<text class="title">{{item.title}}</text>
+						<text class="contnet">{{item.contnet}}</text>
+					</view>
 				</view>
 			</view>
 		</view>
-	</view>
+		<template #bottom>
+			<view class="btn">
+				<u-button @click="onNextStep" style="height: 88rpx;border-radius: 15rpx;" type="primary">开始生成PPT吧</u-button>
+			</view>
+		</template>
+	</z-paging>
 </template>
 
 <script setup lang="ts">
@@ -47,10 +57,20 @@
 	    icon: "//file.1foo.com/2023/11/03/c744fef5c00f065642460095a9f4ed05.png",
 	  },
 	];
+	const emit = defineEmits<{
+		(e:'next'):void
+	}>()
+	const onNextStep = () =>{
+		emit('next')
+	}
 </script>
 
 <style lang="scss" scoped>
+	.btn{
+		padding: 28rpx;
+	}
 	.ppt-con{
+		padding: 28rpx;
 		.description{
 			font-size: 24rpx;
 			color: $uni-text-color-grey;

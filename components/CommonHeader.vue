@@ -34,10 +34,7 @@
 							</template>
 						</up-navbar>
 					</template>
-
-
 				</template>
-
 			</view>
 		</view>
 
