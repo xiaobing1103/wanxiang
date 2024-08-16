@@ -64,9 +64,9 @@
 
 
 			&_images {
-				height: 100rpx;
+				height: 140rpx;
 				border-radius: 10rpx;
-				width: 100rpx;
+				width: 140rpx;
 
 
 			}
@@ -79,7 +79,7 @@
 				border-radius: 0 0 10rpx 10rpx;
 				justify-content: center;
 				background-color: rgba(0, 0, 0, .5);
-				font-size: 15rpx;
+				font-size: 20rpx;
 				bottom: 0;
 				color: $uni-bg-color;
 			}

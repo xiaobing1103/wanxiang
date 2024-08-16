@@ -1,4 +1,5 @@
 import $assets from "@/config/assets.config";
+import { taskIdTypeKey } from "@/store/draw";
 
 export const menuList = [
 	{
@@ -251,3 +252,54 @@ export const sizeList : {
 			parent: '16 : 9'
 		}
 	]
+
+
+export interface ImageProjectTypes {
+	type : string
+	historyType : taskIdTypeKey
+	api : string
+	loraScaleStepList ?: number[]
+	denoising_strengthStepList ?: number[]
+	stepStepList ?: number[]
+	cfg_scaleStepList ?: number[]
+	weightStepList ?: number[]
+	denoising_strengthStepMin ?: string
+	denoising_strengthStepMax ?: string
+	DifferenceStrength ?: number
+}
+interface TaskConfig {
+	title : string;
+	icons : string;
+	path : string
+}
+
+export interface DrawProjectConfig {
+	[taskIdTypeKey : string] : TaskConfig;
+}
+export const drawProjectConfig : DrawProjectConfig = {
+	txt2img_task_json: {
+		title: '文字生成图片',
+		icons: '//file.1foo.com/2024/02/28/9461b8e0963772622b040442b1ec5213.png',
+		path: '/pages/draw/subPage/text2image/index'
+	},
+	img2img_task_json: {
+		title: '图片生成图片',
+		icons: '//file.1foo.com/2024/02/28/556b893875c846a0e27a96ccf2228847.png',
+		path: '/pages/draw/subPage/image2image/index'
+	},
+	coloringLineArt_task_json: {
+		title: '线稿上色',
+		icons: '//file.1foo.com/2024/07/05/e87075cd8bc3d216bfae25a93c1ffa2b.png',
+		path: '/pages/draw/subPage/coloringLineArt/index'
+	},
+	image2cartoon_task_json: {
+		title: '图片转卡通',
+		icons: '//file.1foo.com/2024/07/05/2104a26010ef6ba3df218a3ba54ac016.png',
+		path: '/pages/draw/subPage/image2cartoon/index'
+	},
+	partialRepaint_task_json: {
+		title: '局部重绘',
+		icons: '//file.1foo.com/2024/07/05/abf3c1f40ec88f783ee6c6f332893e88.png',
+		path: '/pages/draw/subPage/partialRepaint/index'
+	}
+}

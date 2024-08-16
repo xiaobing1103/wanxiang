@@ -20,10 +20,20 @@
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import CommonDrawTem from "../../components/CommonDrawTem"
-	const IamgeTypes = {
+	import { ImageProjectTypes } from '../../data';
+	const IamgeTypes : ImageProjectTypes = {
 		type: 'coloringLineArt',
 		historyType: 'coloringLineArt_task_json',
-		api: 'api/v1/img/lines2img'
+		api: 'api/v1/img/lines2img',
+		loraScaleStepList: [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+		// loraScaleStepList: [1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0],
+		denoising_strengthStepList: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+		stepStepList: [15, 18, 21, 24, 27, 30],
+		cfg_scaleStepList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+		weightStepList: [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200],
+		denoising_strengthStepMin: '0',
+		denoising_strengthStepMax: '10',
+		DifferenceStrength: 60
 	}
 
 	const parmas = {
@@ -37,10 +47,10 @@
 		'prompt': '',
 		// 图片风格
 		'loraId': '',
-		// 线稿上色 是 60 到 70  风格强度
+		// 风格强度 线稿上色 是 60 到 70
 		'loraScale': 66,
 		//变化强度
-		'denoising_strength': 65,
+		'denoising_strength': 1,
 		//文本强度
 		'cfg_scale': 7,
 		//迭代数
@@ -58,7 +68,7 @@
 		//（去除）
 		'type': 0,
 		// 权重 
-		'weight': 1.0,
+		'weight': 100,
 	}
 </script>
 

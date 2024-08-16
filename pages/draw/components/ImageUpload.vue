@@ -1,11 +1,16 @@
 <template>
 	<view class="ImageUploadCom">
-		<view class="ImageUploadCom_content">
-			<up-upload previewFullImage :customStyle="{width:'100%',height:'100%',padding:'20rpx',}" width="300"
-				height="200" :fileList="fileList1" @afterRead="afterRead" @delete="deletePic" name="3" :maxCount="1">
+		<view class="ImageUploadCom_content" @click="uploadImages">
+			<template v-if="url">
+				<image :src="url"></image>
+			</template>
+			<template v-else>
 				<up-icon :custom-style="{justifyContent: 'center', display: 'block',width:'100%',textAlign:'center'}"
 					name="photo-fill" size="100"></up-icon>
-				<text class="ImageUploadCom_text">点击上传图片</text></up-upload>
+				<text class="ImageUploadCom_text">点击上传图片</text>
+			</template>
+
+			<!-- </up-upload> -->
 		</view>
 	</view>
 
@@ -18,66 +23,96 @@
 	import { fileToBase64, wxBase64 } from "@/utils/file2Base64"
 	const props = defineProps<{ type : taskIdTypeKey }>()
 	const parmas = defineModel<Image2TextParmas>("parmas");
-	const fileList1 = ref([]);
+	const url = ref('');
+
+	const uploadImages = () => {
+		uni.chooseImage({
+			count: 1,
+			sizeType: ['original'],
+			success: async (options) => {
+				const { tempFilePaths, tempFiles } = options
+				url.value = tempFilePaths[0]
+				// #ifdef H5
+				if (props.type == 'coloringLineArt_task_json') {
+					fileToBase64(tempFiles[0], (base64) => {
+						parmas.value.image = base64
+					})
+				} else {
+					parmas.value.image = tempFiles[0]
+				}
+				// #endif
+				// #ifdef MP-WEIXIN
+				if (props.type == 'coloringLineArt_task_json') {
+					const file = await wxBase64({ url: tempFilePaths[0], type: 'png' })
+					parmas.value.image = file
+				} else {
+					parmas.value.image = tempFilePaths[0]
+				}
+				// #endif
+			},
+			fail: (err) => {
+				console.log(err)
+			}
+		})
+	}
 	// 删除图片
 	const deletePic = (event) => {
-		fileList1.value.splice(event.index, 1);
+
 	};
 	// 新增图片
-	const afterRead = async (event) => {
-		// 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
-		let lists = [].concat(event.file);
+	// const afterRead = async (event) => {
+	// 	// 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
+	// 	let lists = [].concat(event.file);
+	// 	let fileListLen = fileList1.value.length;
+	// 	lists.map((item) => {
+	// 		fileList1.value.push({
+	// 			...item,
+	// 			status: 'uploading',
+	// 			message: '上传中',
+	// 		});
+	// 	});
+	// 	for (let i = 0; i < lists.length; i++) {
+	// 		const result = await uploadFilePromise(lists[i].url);
+	// 		let item = fileList1.value[fileListLen];
+	// 		fileList1.value.splice(fileListLen, 1, {
+	// 			...item,
+	// 			status: 'success',
+	// 			message: '',
+	// 			url: result,
+	// 		});
+	// 		fileListLen++;
+	// 	}
+	// 	if (fileList1.value[0].status == "success") {
+	// 		// #ifdef H5
+	// 		if (props.type == 'coloringLineArt_task_json') {
+	// 			fileToBase64(fileList1.value[0].file, (base64) => {
+	// 				parmas.value.image = base64
+	// 			})
+	// 		} else {
+	// 			parmas.value.image = fileList1.value[0].file
+	// 		}
+	// 		// #endif
+	// 		// #ifdef MP-WEIXIN
+	// 		debugger
+	// 		if (props.type == 'coloringLineArt_task_json') {
+	// 			const file = await wxBase64({ url: fileList1.value[0].url, type: 'png' })
+	// 			parmas.value.image = file
+	// 		} else {
+	// 			parmas.value.image = fileList1.value[0].url
+	// 		}
+	// 		// #endif
 
-		let fileListLen = fileList1.value.length;
-		lists.map((item) => {
-			fileList1.value.push({
-				...item,
-				status: 'uploading',
-				message: '上传中',
-			});
-		});
-		for (let i = 0; i < lists.length; i++) {
-			const result = await uploadFilePromise(lists[i].url);
-			let item = fileList1.value[fileListLen];
-			fileList1.value.splice(fileListLen, 1, {
-				...item,
-				status: 'success',
-				message: '',
-				url: result,
-			});
-			fileListLen++;
-		}
-		if (fileList1.value[0].status == "success") {
-			// #ifdef H5
-			if (props.type == 'coloringLineArt_task_json') {
-				fileToBase64(fileList1.value[0].file, (base64) => {
-					parmas.value.image = base64
-				})
-			} else {
-				parmas.value.image = fileList1.value[0].file
-			}
-			// #endif
-			// #ifdef MP-WEIXIN
-			debugger
-			if (props.type == 'coloringLineArt_task_json') {
-				const file = await wxBase64({ url: fileList1.value[0].url, type: 'png' })
-				parmas.value.image = file
-			} else {
-				parmas.value.image = fileList1.value[0].file
-			}
-			// #endif
+	// 	}
 
-		}
+	// };
 
-	};
-
-	const uploadFilePromise = (url) => {
-		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				resolve(url);
-			}, 2000);
-		});
-	};
+	// const uploadFilePromise = (url) => {
+	// 	return new Promise((resolve, reject) => {
+	// 		setTimeout(() => {
+	// 			resolve(url);
+	// 		}, 2000);
+	// 	});
+	// };
 </script>
 
 <style lang="scss">
@@ -87,6 +122,7 @@
 		height: 100%;
 
 		&_content {
+			padding: 50rpx 0;
 			width: 100%;
 			height: 100%;
 			display: flex;

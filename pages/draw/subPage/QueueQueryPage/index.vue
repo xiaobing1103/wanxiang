@@ -23,7 +23,7 @@
 		<view class="tips">
 			<text class="tips_top"> 如果一直图片没有加载完成可能是因为服务器压力过大的原因，请您耐心等待，您也可以尝试其他图片生成项目
 			</text>
-			<view class="tips_bottom">
+			<view class="tips_bottom" @click="changeProject">
 				切换项目
 			</view>
 		</view>
@@ -32,7 +32,7 @@
 		</template>
 
 
-		<ChangeDrawProject />
+		<ChangeDrawProject :Config="config" v-model:intervalId="intervalId" />
 
 	</z-paging>
 </template>
@@ -46,6 +46,9 @@
 	import { onLoad } from '@dcloudio/uni-app'
 	import { useDrawStore } from '@/store';
 	import { drawTaskJson, taskIdTypeKey } from '@/store/draw';
+	import { DrawProjectConfig, drawProjectConfig } from '../../data';
+
+	const config = ref<DrawProjectConfig>(drawProjectConfig)
 	const progress = ref(0.01)
 	const intervalId = ref<number | null>(null);
 	const { $api } = useGlobalProperties()
@@ -65,7 +68,9 @@
 	];
 
 	const message = ref('')
-
+	const changeProject = () => {
+		drawStore.setChangeProject(true)
+	}
 	onMounted(() => {
 		const taskId = drawStore.taskIdParmas[drawStore.seletedDrawProject].task_id
 		if (taskId) {
@@ -96,11 +101,15 @@
 			if (data.state === '0') {
 				message.value = '正在排队，预计需要' + r + '秒';
 				progress.value = m / 100;
-				intervalId.value = setTimeout(() => queryTask(taskId), 5000);
+				if (isRequesting) {
+					intervalId.value = setTimeout(() => queryTask(taskId), 5000);
+				}
 			} else if (data.state === '1') {
 				message.value = '生成成功，正在取回图片，预计需要5-10秒';
 				progress.value = m / 100;
-				intervalId.value = setTimeout(() => queryTask(taskId), 5000);
+				if (isRequesting) {
+					intervalId.value = setTimeout(() => queryTask(taskId), 5000);
+				}
 			} else if (data.state === '1' && data.do_use > 60) {
 				message.value = '请求超时';
 			} else if (data.state === '2') {
@@ -118,6 +127,7 @@
 	};
 
 	onUnmounted(() => {
+		console.log('卸载组件')
 		if (intervalId.value) {
 			clearInterval(intervalId.value);
 		}

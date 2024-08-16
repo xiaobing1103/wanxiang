@@ -26,6 +26,8 @@ export type taskIdTypesData = {
 
 const useDrawStore = defineStore("wanxiang_drawStore", () => {
 	const seletedDrawProject = ref<taskIdTypeKey>('txt2img_task_json')
+	const changeProject = ref(false)
+
 	const taskIdParmas = ref<Record<taskIdTypeKey, taskIdTypesData>>({
 		'txt2img_task_json': {
 			task_id: '',
@@ -62,12 +64,16 @@ const useDrawStore = defineStore("wanxiang_drawStore", () => {
 	const setSeletedDrawProject = (value : taskIdTypeKey) => {
 		seletedDrawProject.value = value
 	}
-
+	const setChangeProject = (value : boolean) => {
+		changeProject.value = value
+	}
 	return {
 		taskIdParmas,
 		setTaskIdParmas,
 		setSeletedDrawProject,
-		seletedDrawProject
+		seletedDrawProject,
+		changeProject,
+		setChangeProject
 	}
 }, { unistorage: { paths: ['taskIdParmas', 'seletedDrawProject'] } })
 export default useDrawStore
