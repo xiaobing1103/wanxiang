@@ -31,9 +31,7 @@
 				"app-plus": {
 					"titleNView": false
 				}
-
 			}
-
 		},
 		{
 			"path": "pages/draw/index",
@@ -68,7 +66,6 @@
 				}
 			}
 		},
-
 		{
 			"path": "pages/loginAccount/index",
 			"style": {
@@ -80,20 +77,24 @@
 			}
 		}
 	],
-	"subPackages": [{
+	"subPackages": [
+		{
 			"root": "pages/my/subPage",
-			"pages": [{
-				"path": "vip/index",
-				"name": "vip",
-				"style": {
-					"navigationBarTitleText": "会员信息",
-					"navigationStyle": "custom"
+			"pages": [
+				{
+					"path": "vip/index",
+					"name": "vip",
+					"style": {
+						"navigationBarTitleText": "会员信息",
+						"navigationStyle": "custom"
+					}
 				}
-			}]
+			]
 		},
 		{
 			"root": "pages/draw/subPage",
-			"pages": [{
+			"pages": [
+				{
 					"path": "text2image/index",
 					"name": "text2image",
 					"style": {
@@ -133,7 +134,6 @@
 						"navigationStyle": "custom"
 					}
 				},
-
 				{
 					"path": "aiFaceSwapping/index",
 					"name": "aiFaceSwapping",
@@ -142,8 +142,6 @@
 						"navigationStyle": "custom"
 					}
 				},
-
-
 				{
 					"path": "image2cartoon/index",
 					"name": "image2cartoon",
@@ -152,7 +150,6 @@
 						"navigationStyle": "custom"
 					}
 				},
-
 				{
 					"path": "coloringLineArt/index",
 					"name": "coloringLineArt",
@@ -161,7 +158,6 @@
 						"navigationStyle": "custom"
 					}
 				},
-
 				{
 					"path": "PreviewPage/index",
 					"name": "PreviewPage",
@@ -170,7 +166,6 @@
 						"navigationStyle": "custom"
 					}
 				},
-
 				{
 					"path": "QueueQueryPage/index",
 					"name": "QueueQueryPage",
@@ -178,24 +173,29 @@
 						"navigationBarTitleText": "任务查询",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "Doodles/index",
+					"name": "Doodles",
+					"style": {
+						"navigationBarTitleText": "涂鸦",
+						"navigationStyle": "custom"
+					}
 				}
-
-
-
 			]
 		},
-
-
 		{
 			"root": "pages/function/subPage",
-			"pages": [{
-				"path": "ppt/index",
-				"name": "ppt",
-				"style": {
-					"navigationBarTitleText": "一键生成ppt",
-					"navigationStyle": "custom"
+			"pages": [
+				{
+					"path": "ppt/index",
+					"name": "ppt",
+					"style": {
+						"navigationBarTitleText": "一键生成ppt",
+						"navigationStyle": "custom"
+					}
 				}
-			}]
+			]
 		}
 	],
 	"globalStyle": {
@@ -211,7 +211,8 @@
 			"iconWidth": "70rpx",
 			"height": "85rpx"
 		},
-		"list": [{
+		"list": [
+			{
 				"pagePath": "pages/index/index",
 				"text": "对话"
 			},

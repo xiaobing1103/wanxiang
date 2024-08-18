@@ -107,6 +107,7 @@ export default {
 						}
 					});
 				} else {
+					console.log(_config)
 					uni.request(_config);
 				}
 

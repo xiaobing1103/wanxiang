@@ -1,22 +1,30 @@
-import { config } from 'process';
 import { useUserStore } from '../store';
 import { UserInfoDTO } from '../type/userTypes';
 import http from './interface';
+export interface httpDTO {
+	url: string;
+	method: string;
+	data?: any;
+	isJson?: boolean;
+	isStream?: boolean;
+	callback?: () => void;
+	errorCallback?: () => void;
+	config?: any;
+	LoadingConfig?: LoadingConfigTypes
+}
 
-export const $http = (
-url : string, 
-method : string,
-data ?: any, 
-isJson ?: boolean, 
-isStream ?: boolean, 
-callback ?: () => void, 
-errorCallback ?: () => void,
-config?:any
-) => {
+export interface LoadingConfigTypes {
+	showLoading: boolean
+	title: String | "加载中..."
+}
+export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig }: httpDTO) => {
+	LoadingConfig = LoadingConfig ? LoadingConfig : {
+		showLoading: true,
+		title: "加载中..."
+	}
 	const userStore = useUserStore();
 	const userInfo = userStore.userInfo;
 	const defaultTimeout = 20000;
-	console.log(config,"sssssssss")
 	const headers = {
 		uid: userInfo?.id || '',
 		token: userInfo?.token || '',
@@ -27,10 +35,9 @@ config?:any
 		...config
 	};
 	http.interceptor.request = (config) => {
-		uni.showLoading({
-			title: '加载中...'
-		});
-
+		if (LoadingConfig.showLoading) {
+			uni.showLoading({ title: LoadingConfig.title });
+		}
 		config.header = {
 			'content-type': isJson ? 'application/json' : 'multipart/form-data;',
 			Authorization: uni.getStorageSync('token'),
@@ -40,7 +47,7 @@ config?:any
 	};
 	http.interceptor.response = (response) => {
 		uni.hideLoading();
-		if (response.data.code === 401 || response.statusCode === 401) {
+		if (response.data.code === 401 || response.data.code === 4001 || response.statusCode === 401) {
 			uni.navigateTo({
 				url: '/pages/login/index'
 			});
@@ -156,32 +163,103 @@ config?:any
 // }
 
 function postJson(url, data) {
-	return $http(url, 'POST', data, true);
+	const httpDTO = {
+		url,
+		method: 'POST',
+		data,
+		isJson: true,
+		isStream: null,
+		callback: null,
+		errorCallback: null,
+		config: null
+	};
+	return $http(httpDTO);
 }
 
-function get(url, data,config:any) {
-	return $http(url, 'GET', data, true,null,null,null,config);
+function get(url, data, config: any) {
+	const httpDTO = {
+		url,
+		method: 'GET',
+		data,
+		isJson: true,
+		isStream: null,
+		callback: null,
+		errorCallback: null,
+		config: config
+	};
+	return $http(httpDTO);
 }
 
-function post(url, data, isjson : boolean = true,header:any) {
-
-	return $http(url, 'POST', data, isjson, false, null, null,header);
+function post(url, data, isjson: boolean = true, header: any, LoadingConfig: LoadingConfigTypes) {
+	const httpDTO = {
+		url,
+		method: 'POST',
+		data,
+		isJson: isjson,
+		isStream: null,
+		callback: null,
+		errorCallback: null,
+		config: header,
+		LoadingConfig
+	};
+	return $http(httpDTO);
 }
 
 function put(url, data) {
-	return $http(url, 'PUT', data, true);
+	const httpDTO = {
+		url,
+		method: 'PUT',
+		data,
+		isJson: true,
+		isStream: null,
+		callback: null,
+		errorCallback: null,
+		config: null
+	};
+	return $http(httpDTO);
 }
 
 function del(url, data) {
-	return $http(url, 'DELETE', data, true);
+	const httpDTO = {
+		url,
+		method: 'DEL',
+		data,
+		isJson: true,
+		isStream: null,
+		callback: null,
+		errorCallback: null,
+		config: null
+	};
+	return $http(httpDTO);
 }
 
 function request(url, method, data) {
-	return $http(url, method, data, true);
+	const httpDTO = {
+		url,
+		method: method,
+		data,
+		isJson: true,
+		isStream: null,
+		callback: null,
+		errorCallback: null,
+		config: null
+	};
+	return $http(httpDTO);
 }
 
-function getStream(url, data, isStream, callback, errorCallback) {
-	return $http(url, 'POST', data, true, isStream, callback, errorCallback);
+function getStream(url, data, isStream, callback, errorCallback, LoadingConfig: LoadingConfigTypes) {
+	const httpDTO = {
+		url,
+		method: 'POST',
+		data,
+		isJson: true,
+		isStream: isStream,
+		callback: callback,
+		errorCallback: errorCallback,
+		config: null,
+		LoadingConfig: LoadingConfig
+	};
+	return $http(httpDTO);
 }
 
 export default {

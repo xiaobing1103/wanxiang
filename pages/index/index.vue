@@ -20,223 +20,238 @@
 </template>
 
 <script setup lang="ts">
-	import Chat from "@/components/CommonChat/Chat.vue"
-	import CommonModelSeleted from "@/components/CommonChat/CommonModelSeleted.vue"
-	import HistoryMessage from "@/components/CommonChat/HistoryMessage.vue"
-	import CommonHeader from '@/components/CommonHeader.vue'
-	import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue'
-	import { nextTick, onMounted, ref, watch } from "vue";
-	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
-	import { TemplateConfig } from '../chat/chatConfig'
-	import { useChatStore } from "../../store";
-	import { ItemMessage, MessageItems, MessageType, MessagesTemplate, TargetType, chatConfigProps } from "../../type/chatData";
-	import { GenNonDuplicateID, generateUUID } from "../../tools/uuid";
-	import ChatBox from '@/components/CommonChat/ChatBox.vue'
-	// import { HttpStatusMessage } from "../../api/http";
-	import { storeToRefs } from "pinia"
+import Chat from "@/components/CommonChat/Chat.vue"
+import CommonModelSeleted from "@/components/CommonChat/CommonModelSeleted.vue"
+import HistoryMessage from "@/components/CommonChat/HistoryMessage.vue"
+import CommonHeader from '@/components/CommonHeader.vue'
+import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue'
+import { nextTick, onMounted, ref, watch } from "vue";
+import { useGlobalProperties } from '../../hooks/useGlobalHooks';
+import { TemplateConfig } from '../chat/chatConfig'
+import { useChatStore } from "../../store";
+import { ItemMessage, MessageItems, MessageType, MessagesTemplate, TargetType, chatConfigProps } from "../../type/chatData";
+import { GenNonDuplicateID, generateUUID } from "../../tools/uuid";
+import ChatBox from '@/components/CommonChat/ChatBox.vue'
+// import { HttpStatusMessage } from "../../api/http";
+import { storeToRefs } from "pinia"
 
-	import { commonModel } from "../../config/modelConfig"
-	import { ToolTipItem } from "@/type/userTypes"
-	const { $api } = useGlobalProperties()
-	const ChatStore = useChatStore();
-	const { addchats, setChatInfo } = ChatStore
-	const { model, selectChatId } = storeToRefs(ChatStore);
-	const chatValue = ref('')
-	const data = ref("Hello World")
-	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null)
-	const changeData = (value : string) => {
-		data.value = value
-	}
-	const srollRef = ref(null)
+import { commonModel } from "../../config/modelConfig"
+import { ToolTipItem } from "@/type/userTypes"
+const { $api } = useGlobalProperties()
+const ChatStore = useChatStore();
+const { addchats, setChatInfo } = ChatStore
+const { model, selectChatId } = storeToRefs(ChatStore);
+const chatValue = ref('')
+const data = ref("Hello World")
+const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null)
+const changeData = (value: string) => {
+	data.value = value
+}
+const srollRef = ref(null)
 
 
-	onMounted(() => {
-		const initMessage = ChatStore.getCurrentInfo(ChatStore.selectChatId)
-		if (initMessage.data.length > 0) {
-			const newMap = new Map()
-			initMessage.data.forEach((item : ItemMessage) => {
-				newMap.set(item.id, item)
-			})
-			ChatBoxRef.value.messageList = newMap
-		} else {
-			ChatBoxRef.value.clearAllMessage()
-		}
-		scrollToBottom()
-	})
-
-	const scrollToBottom = () => {
-		nextTick(() => {
-			if (srollRef.value) {
-				srollRef.value.scrollToBottom()
-			}
+onMounted(() => {
+	const initMessage = ChatStore.getCurrentInfo(ChatStore.selectChatId)
+	if (initMessage.data.length > 0) {
+		const newMap = new Map()
+		initMessage.data.forEach((item: ItemMessage) => {
+			newMap.set(item.id, item)
 		})
+		ChatBoxRef.value.messageList = newMap
+	} else {
+		ChatBoxRef.value.clearAllMessage()
 	}
+	scrollToBottom()
+})
 
-	const sendValue = (val : ToolTipItem) => {
-		onSend(val.prompt)
-	}
-	// const getMessagesTemplate = () => {
-	// 	const messages : MessageItems = new Map()
-	// 	if (TemplateConfig[model]?.messagesTemplate) {
-	// 		const id = createId()
-	// 		TemplateConfig[model]?.messagesTemplate.map((item : MessagesTemplate) => {
-	// 			messages.set(id, {
-	// 				id: id,
-	// 				state: 'waite',
-	// 				target: item.role,
-	// 				message: item.message || item.template,
-	// 				messageType: item.messageType || 'template',
-	// 			})
-	// 		})
-
-	// 	}
-	// 	return messages
-	// }
-	// const itemMessages = ref<MessageItems>(getMessagesTemplate())
-
-	// const addMessage = (state : StateType, target : TargetType, message : any, messageType : MessageType = 'text', id ?: string,) => {
-	// 	id = id ? id : createId()
-	// 	itemMessages.value = [...itemMessages.value, { id: id, state, target, message, messageType }]
-	// 	scrollToBottom();
-	// 	return id
-	// }
-	const onSend = async (val) => {
-		if (!val) {
-			uni.$u.toast('请先输入内容！')
-			return
+const scrollToBottom = () => {
+	nextTick(() => {
+		if (srollRef.value) {
+			srollRef.value.scrollToBottom()
 		}
-		const msgId = generateUUID()
-		const msgObj : ItemMessage = { id: msgId, state: "ok", target: 'user', message: val, messageType: 'text' }
+	})
+}
 
-		ChatBoxRef.value.addMessage(msgId, msgObj)
+const sendValue = (val: ToolTipItem) => {
+	onSend(val.prompt)
+}
+// const getMessagesTemplate = () => {
+// 	const messages : MessageItems = new Map()
+// 	if (TemplateConfig[model]?.messagesTemplate) {
+// 		const id = createId()
+// 		TemplateConfig[model]?.messagesTemplate.map((item : MessagesTemplate) => {
+// 			messages.set(id, {
+// 				id: id,
+// 				state: 'waite',
+// 				target: item.role,
+// 				message: item.message || item.template,
+// 				messageType: item.messageType || 'template',
+// 			})
+// 		})
 
-		saveHistory(selectChatId.value, msgObj)
-		const requestData = [{
-			role: 'user',
-			content: val
-		}]
+// 	}
+// 	return messages
+// }
+// const itemMessages = ref<MessageItems>(getMessagesTemplate())
 
-		const options = {
-			url: commonModel[model.value].ModelApi,
-			method: "POST",
-			data: {
-				params: JSON.stringify(requestData),
-				prompt: "请以中文回复我 官方设置的默认角度，适用于日常生活工作的询问与回答，权重均衡",
-				type: "Web-推荐对话"
-			}
-		};
-		scrollToBottom()
-		chatValue.value = ''
-
-		handleStream(options)
+// const addMessage = (state : StateType, target : TargetType, message : any, messageType : MessageType = 'text', id ?: string,) => {
+// 	id = id ? id : createId()
+// 	itemMessages.value = [...itemMessages.value, { id: id, state, target, message, messageType }]
+// 	scrollToBottom();
+// 	return id
+// }
+const onSend = async (val) => {
+	if (!val) {
+		uni.$u.toast('请先输入内容！')
+		return
 	}
-	// 解析当前流得判断成分
-	const handlerCurrentStream = (currentMessages : ItemMessage) => {
-		const linesmsg = currentMessages.message
-		if (linesmsg.replaceAll(',', '') === '[SUCCESS]') {
-			uni.$u.toast('网络异常，请重启路由器后重试。')
-		} else if (linesmsg.startsWith('[NO_COUNT]')) {
-			const errorMessage = linesmsg.split(',')[1]
-			uni.$u.toast(errorMessage)
+	const msgId = generateUUID()
+	const msgObj: ItemMessage = { id: msgId, state: "ok", target: 'user', message: val, messageType: 'text' }
 
+	ChatBoxRef.value.addMessage(msgId, msgObj)
+
+	saveHistory(selectChatId.value, msgObj)
+	const requestData = [{
+		role: 'user',
+		content: val
+	}]
+
+	const options = {
+		url: commonModel[model.value].ModelApi,
+		method: "POST",
+		data: {
+			params: JSON.stringify(requestData),
+			prompt: "请以中文回复我 官方设置的默认角度，适用于日常生活工作的询问与回答，权重均衡",
+			type: "Web-推荐对话"
 		}
-	}
-	// 流在进行中进行判断逻辑 	
-	const StreamLoading = (msg : string) => {
-		// let newMsg = msg.replaceAll('\n', '')
-		if (msg !== '[SUCCESS]') {
-			return msg
-		}
+	};
+	scrollToBottom()
+	chatValue.value = ''
+
+	handleStream(options)
+}
+// 解析当前流得判断成分
+const handlerCurrentStream = (currentMessages: ItemMessage) => {
+	const linesmsg = currentMessages.message
+	if (linesmsg.replaceAll(',', '') === '[SUCCESS]') {
+		uni.$u.toast('网络异常，请重启路由器后重试。')
+	} else if (linesmsg.startsWith('[NO_COUNT]')) {
+		const errorMessage = linesmsg.split(',')[1]
+		uni.$u.toast(errorMessage)
 
 	}
-
-	const saveHistory = (id : string, currentMessage : ItemMessage) => {
-		setChatInfo(id, currentMessage)
+}
+// 流在进行中进行判断逻辑 	
+const StreamLoading = (msg: string) => {
+	// let newMsg = msg.replaceAll('\n', '')
+	if (msg !== '[SUCCESS]') {
+		return msg
 	}
 
-	async function handleStream(options) {
-		let result = ''
-		let newMsg = ''
-		const id = generateUUID()
-		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' })
+}
 
-		//#ifdef MP-WEIXIN
-		const requestTask = await $api.getStream(options.url, options.data, true,
-			(response : UniApp.RequestSuccessCallbackResult) => {
-				if (response.statusCode == 200) {
-					const currentMessage = ChatBoxRef.value.getSingelMessage(id)
-					// 存历史记录
-					saveHistory(selectChatId.value, currentMessage)
-				} else {
-					ChatBoxRef.value.deleteMessage(id)
-				}
-			})
+const saveHistory = (id: string, currentMessage: ItemMessage) => {
+	setChatInfo(id, currentMessage)
+}
 
+async function handleStream(options) {
+	let result = ''
+	let newMsg = ''
+	const id = generateUUID()
+	ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' })
+	const LoadingConfig = {
+		showLoading: false,
+		title: "加载中..."
+	}
 
-		requestTask.onChunkReceived(async (res) => {
-			// let decoder = new TextDecoder('utf-8');
-			// let text = decoder.decode(new Uint8Array(res.data));
-			let text = decode(res.data);
-			const lines = text.split('\n')
-			result += lines;
-			for (let i = 0; i < lines.length; i++) {
-				if (lines[i]) {
-					const chunk = lines[i].replaceAll('\\n', '\n')
-					if (result.length != 0 && chunk !== '[SUCCESS]') {
-						newMsg += StreamLoading(chunk)
-					}
-				}
-			}
-			ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: newMsg, messageType: 'text' })
-			scrollToBottom()
-		});
-		// #endif
-		//#ifdef H5
-		await $api.getStream(options.url, options.data, true,
-			(chunk : string) => {
-				result += chunk
-				scrollToBottom()
-				if (chunk !== null) {
-					newMsg = StreamLoading(result)
-					ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: newMsg, messageType: 'text' })
-				}
-				if (chunk == null) {
-					const currentMessage = ChatBoxRef.value.getSingelMessage(id)
-					saveHistory(selectChatId.value, currentMessage)
-					console.log('H5端流获取完成')
-				}
-			},
-			(error : any) => {
-				uni.$u.toast(error)
+	//#ifdef MP-WEIXIN
+	const requestTask = await $api.getStream(
+		options.url,
+		options.data,
+		true,
+		(response: UniApp.RequestSuccessCallbackResult) => {
+			if (response.statusCode == 200) {
+				const currentMessage = ChatBoxRef.value.getSingelMessage(id)
+				// 存历史记录
+				saveHistory(selectChatId.value, currentMessage)
+			} else {
 				ChatBoxRef.value.deleteMessage(id)
-			});
-		//#endif
-	}
+			}
+		},
+		(err) => {
+			console.log(err)
+		},
+		LoadingConfig
+	)
 
 
-	const decode = (text : string) => {
-		// e.data为获取到的流数据
-		const data = text
-		let txt : string = '';
-		// 进行判断返回的对象是Uint8Array（开发者工具）或者ArrayBuffer（真机）
-		// 1.获取对象的准确的类型
-		const type = Object.prototype.toString.call(data); // Uni8Array的原型对象被更改了所以使用字符串的信息进行判断。
-		if (type === "[object Uint8Array]") {
-			console.log("Uint8Array");
-			txt = decodeURIComponent(escape(String.fromCharCode(...data)))
-		} else if (data instanceof ArrayBuffer) {
-			// 将ArrayBuffer转换为Uint8Array
-			console.log("ArrayBuffer");
-			const uint8Array = new Uint8Array(data);
-			txt = decodeURIComponent(escape(String.fromCharCode(...uint8Array)))
+	requestTask.onChunkReceived(async (res) => {
+		// let decoder = new TextDecoder('utf-8');
+		// let text = decoder.decode(new Uint8Array(res.data));
+		let text = decode(res.data);
+		const lines = text.split('\n')
+		result += lines;
+		for (let i = 0; i < lines.length; i++) {
+			if (lines[i]) {
+				const chunk = lines[i].replaceAll('\\n', '\n')
+				if (result.length != 0 && chunk !== '[SUCCESS]') {
+					newMsg += StreamLoading(chunk)
+				}
+			}
 		}
-		return txt
+		ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: newMsg, messageType: 'text' })
+		scrollToBottom()
+	});
+	// #endif
+	//#ifdef H5
+	await $api.getStream(
+		options.url,
+		options.data,
+		true,
+		(chunk: string) => {
+			result += chunk
+			scrollToBottom()
+			if (chunk !== null) {
+				newMsg = StreamLoading(result)
+				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: newMsg, messageType: 'text' })
+			}
+			if (chunk == null) {
+				const currentMessage = ChatBoxRef.value.getSingelMessage(id)
+				saveHistory(selectChatId.value, currentMessage)
+				console.log('H5端流获取完成')
+			}
+		},
+		(error: any) => {
+			uni.$u.toast(error)
+			ChatBoxRef.value.deleteMessage(id)
+		}, LoadingConfig);
+	//#endif
+}
+
+
+const decode = (text: string) => {
+	// e.data为获取到的流数据
+	const data = text
+	let txt: string = '';
+	// 进行判断返回的对象是Uint8Array（开发者工具）或者ArrayBuffer（真机）
+	// 1.获取对象的准确的类型
+	const type = Object.prototype.toString.call(data); // Uni8Array的原型对象被更改了所以使用字符串的信息进行判断。
+	if (type === "[object Uint8Array]") {
+		console.log("Uint8Array");
+		txt = decodeURIComponent(escape(String.fromCharCode(...data)))
+	} else if (data instanceof ArrayBuffer) {
+		// 将ArrayBuffer转换为Uint8Array
+		console.log("ArrayBuffer");
+		const uint8Array = new Uint8Array(data);
+		txt = decodeURIComponent(escape(String.fromCharCode(...uint8Array)))
 	}
+	return txt
+}
 </script>
 
 <style lang="scss">
-	.content {
-		display: flex;
-		flex-direction: column
-	}
+.content {
+	display: flex;
+	flex-direction: column
+}
 </style>
