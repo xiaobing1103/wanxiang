@@ -9,8 +9,6 @@
 					name="photo-fill" size="100"></up-icon>
 				<text class="ImageUploadCom_text">点击上传图片</text>
 			</template>
-
-			<!-- </up-upload> -->
 		</view>
 	</view>
 
@@ -24,7 +22,8 @@
 	const props = defineProps<{ type : taskIdTypeKey }>()
 	const parmas = defineModel<Image2TextParmas>("parmas");
 	const url = ref('');
-
+	const imgWidth = ref(512)
+	const imgheight = ref(512)
 	const uploadImages = () => {
 		uni.chooseImage({
 			count: 1,
@@ -32,6 +31,7 @@
 			success: async (options) => {
 				const { tempFilePaths, tempFiles } = options
 				url.value = tempFilePaths[0]
+				console.log(options)
 				// #ifdef H5
 				if (props.type == 'coloringLineArt_task_json') {
 					fileToBase64(tempFiles[0], (base64) => {
@@ -40,8 +40,28 @@
 				} else {
 					parmas.value.image = tempFiles[0]
 				}
+
+				const img = new Image();
+				img.src = tempFilePaths[0];
+				img.onload = () => {
+					imgWidth.value = img.width
+					imgheight.value = img.height
+					console.log('Image Width:', imgWidth.value);
+					console.log('Image Height:', imgheight.value);
+				};
 				// #endif
+
+
 				// #ifdef MP-WEIXIN
+				wx.getImageInfo({
+					src: tempFilePaths[0],
+					success: (res) => {
+						imgWidth.value = res.width
+						imgheight.value = res.height
+						// console.log('Image Width:', res.width);
+						// console.log('Image Height:', res.height);
+					}
+				});
 				if (props.type == 'coloringLineArt_task_json') {
 					const file = await wxBase64({ url: tempFilePaths[0], type: 'png' })
 					parmas.value.image = file
@@ -49,70 +69,20 @@
 					parmas.value.image = tempFilePaths[0]
 				}
 				// #endif
+				setTimeout(() => {
+					uni.navigateTo({
+						url: `/pages/draw/subPage/Doodles/index?chooseImagePath=${tempFilePaths[0]}&width=${imgWidth.value}&height=${imgheight.value}`
+
+					})
+				}, 1000)
+
 			},
 			fail: (err) => {
 				console.log(err)
+				uni.$u.toast('上传图片失败，请重试！')
 			}
 		})
 	}
-	// 删除图片
-	const deletePic = (event) => {
-
-	};
-	// 新增图片
-	// const afterRead = async (event) => {
-	// 	// 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
-	// 	let lists = [].concat(event.file);
-	// 	let fileListLen = fileList1.value.length;
-	// 	lists.map((item) => {
-	// 		fileList1.value.push({
-	// 			...item,
-	// 			status: 'uploading',
-	// 			message: '上传中',
-	// 		});
-	// 	});
-	// 	for (let i = 0; i < lists.length; i++) {
-	// 		const result = await uploadFilePromise(lists[i].url);
-	// 		let item = fileList1.value[fileListLen];
-	// 		fileList1.value.splice(fileListLen, 1, {
-	// 			...item,
-	// 			status: 'success',
-	// 			message: '',
-	// 			url: result,
-	// 		});
-	// 		fileListLen++;
-	// 	}
-	// 	if (fileList1.value[0].status == "success") {
-	// 		// #ifdef H5
-	// 		if (props.type == 'coloringLineArt_task_json') {
-	// 			fileToBase64(fileList1.value[0].file, (base64) => {
-	// 				parmas.value.image = base64
-	// 			})
-	// 		} else {
-	// 			parmas.value.image = fileList1.value[0].file
-	// 		}
-	// 		// #endif
-	// 		// #ifdef MP-WEIXIN
-	// 		debugger
-	// 		if (props.type == 'coloringLineArt_task_json') {
-	// 			const file = await wxBase64({ url: fileList1.value[0].url, type: 'png' })
-	// 			parmas.value.image = file
-	// 		} else {
-	// 			parmas.value.image = fileList1.value[0].url
-	// 		}
-	// 		// #endif
-
-	// 	}
-
-	// };
-
-	// const uploadFilePromise = (url) => {
-	// 	return new Promise((resolve, reject) => {
-	// 		setTimeout(() => {
-	// 			resolve(url);
-	// 		}, 2000);
-	// 	});
-	// };
 </script>
 
 <style lang="scss">

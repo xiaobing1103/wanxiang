@@ -28,7 +28,10 @@
 					<template v-else>
 						<up-navbar :left-icon="'arrow-left'" @leftClick="backpage">
 							<template v-slot:center>
-								<view>
+								<view class="" v-if="defindTitle">
+									{{defindTitle}}
+								</view>
+								<view v-else>
 									<image src="/static/logo.svg" style=" height: 25px;"></image>
 								</view>
 							</template>
@@ -37,16 +40,6 @@
 				</template>
 			</view>
 		</view>
-
-		<!-- #ifndef MP-WEIXIN -->
-		<!-- <up-navbar placeholder left-icon="clock" @leftClick="leftClick">
-			<template v-slot:center>
-				<view>
-					<image src="/static/logo.svg" style="height: 25px;"></image>
-				</view>
-			</template>
-		</up-navbar> -->
-		<!--  #endif -->
 	</view>
 </template>
 
@@ -60,7 +53,7 @@
 		const routers = getCurrentPages();
 		return routers[routers.length - 1].route
 	})
-	const props = defineProps<{ backPageNum ?: number }>()
+	const props = defineProps<{ backPageNum ?: number, defindTitle ?: string, defindPath ?: 'string' }>()
 	const chatStore = useChatStore()
 	//  #ifdef MP-WEIXIN
 	const system = useCounterStore()
@@ -71,14 +64,19 @@
 	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
 	// #endif
 	const leftClick = () => {
-		console.log('fewfe3244332121 ', chatStore.openHistoryModel + '')
 		chatStore.setopenHistoryModel(true)
 	};
 	const backpage = () => {
+		if (props.defindPath) {
+			uni.navigateTo({
+				url: 'defindPath'
+			})
+		} else {
+			uni.navigateBack({
+				delta: props.backPageNum || 1,//返回层数，2则上上页
+			})
+		}
 
-		uni.navigateBack({
-			delta: props.backPageNum || 1,//返回层数，2则上上页
-		})
 	}
 	const onload = () => {
 		console.log(12)
