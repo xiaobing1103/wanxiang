@@ -33,7 +33,7 @@
 			cover:$assets.aixz_cover,
 			title:'AI长论文写作',
 			description:'千字大纲，万字毕业课题论文',
-			path:''
+			path:'/pages/function/subPage/longText/index'
 		},
 		{
 			cover:$assets.gzzj_cover,

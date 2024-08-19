@@ -10,7 +10,7 @@
 				<text
 					v-for="(item,index) in typeList" 
 					@click="onTabChange(item)"
-					:key="index" :class="['head-item',{'active-item':index == createEnum.TITLE}]">
+					:key="index" :class="['head-item',{'active-item':index == currentCreateItem.key}]">
 					{{item.name}}
 				</text>
 			</view>
@@ -23,7 +23,7 @@
 				</view>
 				<!-- 开始按钮 -->
 				<view class="btn">
-					<u-button @click="onCreateContent" style="border-radius: 15rpx;height: 88rpx;" type="primary">第二步:开始生成内容</u-button>
+					<u-button :disabled="isRecive" @click="onCreateContent" style="border-radius: 15rpx;height: 88rpx;" type="primary">第二步:开始生成内容</u-button>
 				</view>
 				<view v-if="contentStr" class="content">
 					<u-textarea
