@@ -4,33 +4,33 @@
 		<updateContent v-model="createForm.content" @next="onNextStep"  v-else-if="currentStep == stepEnum.UPDATE_CONTENT"/>
 		<selectTheme  @next="onNextStep" v-else-if="currentStep == stepEnum.SELECT_THEME"/>
 		<previewResult @download="onDwonLoad"  @preview="onPreview" v-else-if="currentStep == stepEnum.PREVIEW_RESULT"/>
-		<previewIfream ref="previewRef"  v-else-if="currentStep == stepEnum.PREVIEW_URL"/>
 </template>
 
 <script setup lang="ts">
 	import {ref,nextTick} from 'vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks.ts'
+	import {useUserStore} from '@/store/index'
 	import stepTemplate from './components/stepTemplate.vue'
 	import selectTheme from './components/selectTheme.vue'
 	import createContent from './components/createContent.vue'
 	import previewResult from './components/previewResult.vue'
 	import updateContent from './components/updateContent.vue'
-	import previewIfream from './components/previewIfream.vue'
+	import APP_CONFIG from '@/config/config.ts'
 	
 	enum stepEnum{
 		'STEP_TEMPLATE' = 0,
 		'CREATE_CONTENT' = 1,
 		'UPDATE_CONTENT' = 2,
 		'SELECT_THEME' = 3,
-		'PREVIEW_RESULT' = 4,
-		'PREVIEW_URL' = 5
+		'PREVIEW_RESULT' = 4
 	}
 	const { $api } = useGlobalProperties()
+	const userStore = useUserStore()
 	const previewRef = ref()
 	//当前步骤
 	const currentStep = ref(stepEnum.STEP_TEMPLATE)
 	//任务_id
-	const taskId = ref('_jMZUvjjcqr4GOBi-LqZ9sgPY0aYO1IX')
+	const taskId = ref('')
 	//内容
 	const createForm = ref({
 		id:'',
@@ -50,11 +50,33 @@
 	}
 	//小程序下载
 	const wechatDownLoad = async() =>{
-		const res = await $api.get('api/v1/ppt/down?id='+taskId.value,null,{
-			'Content-Type':'application/x-www-form-urlencoded'
+		const userInfo = userStore.userInfo;
+		uni.downloadFile({
+			url:`https://ai1foo.com/api/v1/ppt/down?id=`+taskId.value,
+			header:{
+				'Access-Token':userInfo.access_token,
+				'App':userInfo.appid,
+				'token':userInfo?.token,
+				'Vt':userInfo?.vip,
+				'uid':userInfo?.id
+			},
+			success(res) {
+				uni.openDocument({
+					filePath:res.tempFilePath,
+					fileType:'ppt',
+					showMenu:true,
+					success(res) {
+						console.log(res,"res")
+					},
+					fail(err) {
+						console.log(err,"err")
+					}
+				})
+			},
+			fail(err) {
+				console.log(err,"err")
+			}
 		})
-		const filePath = `${wx.env.USER_DATA_PATH}/${new Date().getTime()}.pptx`
-		const fileWriter = uni.getFileSystemManager()
 	}
 	//h5下载
 	const h5Download = async () =>{
@@ -94,12 +116,12 @@
 	//预览ppt
 	const onPreview = async () =>{
 		const res = await $api.post('api/v1/ppt/createNewPPT',createForm.value)
-		currentStep.value = stepEnum.PREVIEW_URL
-		nextTick(() =>{
-			if(previewRef.value){
-				previewRef.value.preview(res.data.url)	
-			}
-		})
+		console.log(res,"res.data")
+		if(res.data){
+			uni.navigateTo({
+				url:'/pages/function/subPage/webview/index?url='+res.data.url
+			})	
+		}
 	}
 	//下一个步骤
 	const onNextStep = async (val?:any) =>{

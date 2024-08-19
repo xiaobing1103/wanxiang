@@ -11,7 +11,7 @@
  *
  * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
  */
-
+@import 'uview-plus/theme.scss';
 /* 颜色变量 */
 $aichat-button-color: rgb(9,224,171);
 $aichat-border-color: rgb(9,224,171);
@@ -25,8 +25,15 @@ $aichat-golbal-background :rgb(246, 247, 249);
 
 
 /* 行为相关颜色 */
-$uni-color-primary: #007aff;
+// $uni-color-primary: #007aff;
+$uni-color-primary: rgb(9,224,171);
 $uni-color-success: #4cd964;
+
+$u-primary: rgb(9,224,171);
+$u-primary-dark: #08d09e;
+$u-primary-disabled: #0affc2;
+$u-primary-light: #ecf5ff;
+
 
 $uni-color-warning: #f0ad4e;
 $uni-color-error: #dd524d;
@@ -86,7 +93,6 @@ $uni-font-size-subtitle:26px;
 $uni-color-paragraph: #3F536E; // 文章段落颜色
 $uni-font-size-paragraph:15px;
 
-@import 'uview-plus/theme.scss';
 
 .scroll-container {
   width: 100%;

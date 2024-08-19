@@ -194,6 +194,29 @@
 						"navigationBarTitleText": "一键生成ppt",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "webview/index",
+					"name": "webview",
+					"style": {
+						"navigationBarTitleText": "文件预览"
+					}
+				},
+				{
+					"path": "longText/index",
+					"name": "longText",
+					"style": {
+						"navigationBarTitleText": "AI长文写作系统",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "longText/write",
+					"name": "write",
+					"style": {
+						"navigationBarTitleText": "AI长文写作系统",
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		}
