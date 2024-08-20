@@ -33,9 +33,18 @@
 						<text>导出文档</text>
 					</view>
 				</view>
-				<AreaText @reload="createContent" :autoHeight="true" :show-action="true" placeholder="" height="300"
-					v-model="contentStr" />
-				<text v-if="isContentComplete" class="btn">复制全文</text>
+				<template v-for="(item,index) in contentExtraArr" :key="index" >
+					<AreaText
+						 @reload="onRelaod(index)" 
+						:autoHeight="true" 
+						 v-if="item.show" 
+						:show-action="true"
+						 placeholder=""
+						height="300"
+						v-model="item.content" />
+				</template>
+				<text @click="onCopy" v-if="outLineIndex == splitOutLineArr.length" class="btn">复制全文</text>
+				<text  @click="onGoOnCreate" v-else class="btn">继续生成</text>
 			</view>
 		</view>
 	</z-paging>
@@ -45,31 +54,65 @@
 	import { ref, computed } from 'vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks.ts'
 	import AreaText from '@/components/areaText/index.vue'
-
+	import {toCopyText} from '@/utils/index.ts'
+	interface ContentArr{
+		content:string;
+		show?:boolean;
+		outLine?:string
+	}
 	const pagingRef = ref()
 	const { streamRequest, isRecive } = useStreamHooks()
 	const showContent = ref(false)
 	const themeStr = ref('')
 	const outlineStr = ref('')
 	const contentStr = ref('')
-	const contentList = ref([])
+	const splitOutLineArr = ref<string[]>([])
+	const outLineIndex = ref(0)
 	const isContentComplete = ref(false)
+	const contentExtraArr = ref<ContentArr[]>([])
+	
+	const outLine = computed(() =>{
+		return contentExtraArr.value[outLineIndex.value]
+	})
+	//复制
+	const onCopy = () =>{
+		let str = ''
+		contentExtraArr.value.forEach(item =>{
+			str+=item.content
+		})
+		toCopyText(str)
+	}
+	
+	const onRelaod = (index:number) =>{
+		outLineIndex.value = index
+		contentExtraArr.value[index].content = ''
+		createContent(false)
+	}
+	const onGoOnCreate = () =>{
+		const items = contentExtraArr.value.filter(item =>item.show)
+		const length = items.length - 1
+		outLineIndex.value = length
+		outLineIndex.value++
+		createContent()
+	}
 	//生成正文
-	const createContent = () => {
+	const createContent = (isScroll = true) => {
+		contentExtraArr.value[outLineIndex.value].show = true
 		const params = [
 			{
 				role: 'user',
-				content: `你扮演一名作家，帮我为标题为:${themeStr.value},大纲为:${outlineStr.value},基于上述要求帮我写一段文字，输出时不能使用首先-其次-此外-总之等没有可读性文章逻辑`,
+				content: `你扮演一名作家，帮我为标题为:${themeStr.value},大纲为:${outLine.value.outLine},基于上述要求帮我写一段文字，输出时不能使用首先-其次-此外-总之等没有可读性文章逻辑`,
 			},
 		]
-		contentStr.value = ''
 		const data = {
 			params: JSON.stringify(params),
 			prompt: "",
 			type: "Web-长文写作",
 		}
 		showContent.value = true
-		pagingRef.value.scrollToBottom()
+		if(isScroll){
+			pagingRef.value.scrollToBottom()	
+		}
 		uni.showLoading({
 			title: '正文生成中...'
 		})
@@ -84,22 +127,21 @@
 				uni.hideLoading()
 			},
 			onmessage(text : string) {
-				contentStr.value += text
-				pagingRef.value.scrollToBottom()
+				contentExtraArr.value[outLineIndex.value].content+=text
+				if(isScroll){
+					pagingRef.value.scrollToBottom()	
+				}
 			}
 		})
 	}
 	const contentLength = computed<number>(() => {
-		return contentStr.value.length
+		let length = 0
+		contentExtraArr.value.forEach(item =>{
+			length+=item.content.length
+		})
+		return length
 	})
-	  const convertTextToArray = (text: string): string[] => {
-		// 分割文本为行数组，基于换行符
-		const lines = text.split('\n')
-		// 过滤掉空行和以"#"开头的行
-		const filteredLines = lines.filter((line) => line.trim())
-		// 返回处理后的行数组
-		return filteredLines
-	  }
+
 	// 生成大纲
 	const onCreateContent = () => {
 		if (!themeStr.value) {
@@ -158,11 +200,17 @@
 			url: 'api/v1/chat2/v35',
 			data,
 			onfinish() {
-				let paragraphs = outlineStr.value.split('\n##');
-				paragraphs = paragraphs.map(paragraph => {
-				  return paragraph.trim().replace(/^## /, '').trim();
-				});
-				console.log(outlineStr.value)
+				contentExtraArr.value = []
+				splitOutLineArr.value = splitText(outlineStr.value)
+				splitOutLineArr.value.forEach(item =>{
+					const obj:ContentArr = {
+						show:false,
+						content:'',
+						outLine:item
+					}
+					contentExtraArr.value.push(obj)
+				})
+				console.log(splitOutLineArr.value,"分割后的大纲")
 				uni.hideLoading()
 			},
 			onerror() {
@@ -174,6 +222,27 @@
 			}
 		})
 
+	}
+	function splitText(str:string) {
+		const reg = /^##\s(.*)/g
+		const result = []
+		let tempStr = ''
+		const strArray = str.split(/\n/).map(item => item.trim())
+		strArray.forEach((item, index) => {
+			if (reg.test(item)) {
+				tempStr += item
+				for (let i = index; i < strArray.length; i++) {
+					if (reg.test(strArray[i])) {
+						result.push(tempStr)
+						tempStr = ''
+						break
+					} else {
+						tempStr += strArray[i] + '\n'
+					}
+				}
+			}
+		})
+		return result
 	}
 </script>
 

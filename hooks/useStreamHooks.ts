@@ -123,7 +123,6 @@ const decode = (text: string) => {
 const resloveResponseText = (content: string): string => {
 	let newMsg: string = ''
 	let text = decode(content);
-	console.log(text, "text")
 	let result = ''
 	const lines = text.split('\n')
 	result += lines;

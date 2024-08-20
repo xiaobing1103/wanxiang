@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 	import {computed,CSSProperties} from 'vue'
-	
+	import {toCopyText} from '@/utils/index.ts'
 	interface Props{
 		height?:string | number
 		radius?:string | number
@@ -52,7 +52,7 @@
 	}
 	//复制
 	const onCopy = () =>{
-		
+		toCopyText(value.value)
 	}
 </script>
 
