@@ -15,15 +15,54 @@
 </template>
 
 <script setup lang="ts">
-	import { ref } from 'vue';
+	import { ref, defineExpose } from 'vue';
 	import { Image2TextParmas } from '../data';
-	import { taskIdTypeKey } from '@/store/draw';
+	import useDrawStore, { taskIdTypeKey } from '@/store/draw';
 	import { fileToBase64, wxBase64 } from "@/utils/file2Base64"
+	import { base64ToFile } from '@/utils/base642file';
 	const props = defineProps<{ type : taskIdTypeKey }>()
 	const parmas = defineModel<Image2TextParmas>("parmas");
-	const url = ref('');
+	const url = defineModel<string>("url");
+	const DrawStore = useDrawStore()
 	const imgWidth = ref(512)
 	const imgheight = ref(512)
+	// 赋值image
+	const hanlderImages = async (url : string) => {
+		console.log('处理的 URL:', url);
+		// #ifdef H5
+		if (props.type == 'coloringLineArt_task_json') {
+			parmas.value.image = DrawStore.currentIamgeBase64
+		} else {
+			parmas.value.image = base64ToFile(DrawStore.currentIamgeBase64, '涂鸦后图片')
+		}
+
+		const img = new Image();
+		img.src = url;
+		img.onload = () => {
+			imgWidth.value = img.width
+			imgheight.value = img.height
+		};
+		// #endif
+
+		// #ifdef MP-WEIXIN
+		wx.getImageInfo({
+			src: url,
+			success: (res) => {
+				imgWidth.value = res.width
+				imgheight.value = res.height
+			}
+		});
+		if (props.type == 'coloringLineArt_task_json') {
+			const file = await wxBase64({ url: url, type: 'png' })
+			parmas.value.image = file
+		} else {
+			parmas.value.image = url
+		}
+		// #endif
+	}
+	defineExpose({
+		hanlderImages
+	})
 	const uploadImages = () => {
 		uni.chooseImage({
 			count: 1,
@@ -31,13 +70,13 @@
 			success: async (options) => {
 				const { tempFilePaths, tempFiles } = options
 				url.value = tempFilePaths[0]
-				console.log(options)
 				// #ifdef H5
 				if (props.type == 'coloringLineArt_task_json') {
-					fileToBase64(tempFiles[0], (base64) => {
+					fileToBase64(tempFiles[0], (base64 : any) => {
 						parmas.value.image = base64
 					})
 				} else {
+		
 					parmas.value.image = tempFiles[0]
 				}
 
@@ -46,8 +85,6 @@
 				img.onload = () => {
 					imgWidth.value = img.width
 					imgheight.value = img.height
-					console.log('Image Width:', imgWidth.value);
-					console.log('Image Height:', imgheight.value);
 				};
 				// #endif
 

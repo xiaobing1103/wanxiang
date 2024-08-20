@@ -2,22 +2,22 @@ import { useUserStore } from '../store';
 import { UserInfoDTO } from '../type/userTypes';
 import http from './interface';
 export interface httpDTO {
-	url: string;
-	method: string;
-	data?: any;
-	isJson?: boolean;
-	isStream?: boolean;
-	callback?: () => void;
-	errorCallback?: () => void;
-	config?: any;
-	LoadingConfig?: LoadingConfigTypes
+	url : string;
+	method : string;
+	data ?: any;
+	isJson ?: boolean;
+	isStream ?: boolean;
+	callback ?: () => void;
+	errorCallback ?: () => void;
+	config ?: any;
+	LoadingConfig ?: LoadingConfigTypes
 }
 
 export interface LoadingConfigTypes {
-	showLoading: boolean
-	title: String | "加载中..."
+	showLoading : boolean
+	title : String | "加载中..."
 }
-export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig }: httpDTO) => {
+export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig } : httpDTO) => {
 	LoadingConfig = LoadingConfig ? LoadingConfig : {
 		showLoading: true,
 		title: "加载中..."
@@ -98,9 +98,11 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 				data
 			})
 				.then((res) => {
+					console.log(res)
 					resolvce(res.data);
 				})
 				.catch((err) => {
+					console.log(err)
 					if (err.response) {
 						let response = err.response;
 						if (response.data.code === 401 || response.data.code === 4001 || response.statusCode === 401) {
@@ -176,7 +178,7 @@ function postJson(url, data) {
 	return $http(httpDTO);
 }
 
-function get(url, data, config: any) {
+function get(url, data, config : any) {
 	const httpDTO = {
 		url,
 		method: 'GET',
@@ -190,7 +192,7 @@ function get(url, data, config: any) {
 	return $http(httpDTO);
 }
 
-function post(url, data, isjson: boolean = true, header: any, LoadingConfig: LoadingConfigTypes) {
+function post(url, data, isjson : boolean = true, header : any, LoadingConfig : LoadingConfigTypes) {
 	const httpDTO = {
 		url,
 		method: 'POST',
@@ -247,7 +249,7 @@ function request(url, method, data) {
 	return $http(httpDTO);
 }
 
-function getStream(url, data, isStream, callback, errorCallback, LoadingConfig: LoadingConfigTypes) {
+function getStream(url, data, isStream, callback, errorCallback, LoadingConfig : LoadingConfigTypes) {
 	const httpDTO = {
 		url,
 		method: 'POST',

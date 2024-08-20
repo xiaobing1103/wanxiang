@@ -21,7 +21,7 @@
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import CommonDrawTem from "../../components/CommonDrawTem"
 	import { ref } from 'vue'
-import { ImageProjectTypes } from '../../data';
+	import { ImageProjectTypes } from '../../data';
 
 	const IamgeTypes : ImageProjectTypes = {
 		type: 'image2image',
@@ -30,12 +30,14 @@ import { ImageProjectTypes } from '../../data';
 		loraScaleStepList: [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
 		denoising_strengthStepList: [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
 		stepStepList: [15, 18, 21, 24, 27, 30],
-		cfg_scaleStepList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+		cfg_scaleStepList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+		denoising_strengthStepMin: '1',
+		denoising_strengthStepMax: '100'
 	}
 	const parmas = ref({
 		// 文本强度
 		cfg_scale: 7,
-		// 线稿上色风格强度 为 60 - 70 但是显示为 0 - 10
+		// 变化强度 为 60 - 70 但是显示为 0 - 10
 		denoising_strength: 60,
 		// 图片画质
 		hire: 0,

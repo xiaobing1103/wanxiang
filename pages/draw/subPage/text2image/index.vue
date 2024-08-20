@@ -21,6 +21,7 @@
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import CommonDrawTem from "../../components/CommonDrawTem"
 	import { ref } from 'vue';
+	import { ImageProjectTypes } from '../../data';
 	const IamgeTypes : ImageProjectTypes = {
 		type: 'text2image',
 		historyType: 'txt2img_task_json',

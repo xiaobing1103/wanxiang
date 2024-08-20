@@ -1,6 +1,6 @@
 <template>
 	<template v-if="IamgeTypes.historyType !== 'txt2img_task_json'">
-		<ImageUpload v-model:parmas="parmas" :type="IamgeTypes.historyType" />
+		<ImageUpload v-model:parmas="parmas" v-model:url="url" :type="IamgeTypes.historyType" ref="ImageUploadRef" />
 	</template>
 	<PreviewImageArae v-model:parmas="parmas" />
 	<UseAiChatConfirm />
@@ -18,6 +18,9 @@
 	import UseAiChatConfirm from './UseAiChatConfirm'
 	import ImageUpload from './ImageUpload'
 	import ReversePromptUploadedImage from './ReversePromptUploadedImage'
+	import {
+		onLoad
+	} from '@dcloudio/uni-app'
 	import ChangeView from './ChangeView/index'
 	import {
 		Image2TextParmas,
@@ -48,7 +51,8 @@
 		IamgeTypes: ImageProjectTypes,
 		parmas ? : Image2TextParmas
 	} > ()
-
+	const url = ref('');
+	const ImageUploadRef = ref(null)
 	const parmas = ref < Image2TextParmas > (props.parmas)
 	const drawStore = useDrawStore()
 	const TaskID = ref('')
@@ -64,13 +68,15 @@
 
 	const getQueueTask = async () => {
 		let file = parmas.value.image
-		parmas.value.image = undefined
-		let newParmas: Image2TextParmas = deepClone(parmas.value)
+		let newParmas: Image2TextParmas = deepClone({
+			...parmas.value,
+			image: undefined
+		})
 		reversNums(newParmas)
-		let isMoFormData = true
+
 		if (props.IamgeTypes.historyType == "img2img_task_json" || props.IamgeTypes.historyType ==
 			"image2cartoon_task_json") {
-			isMoFormData = false
+
 			let formdata: Image2TextParmas | FormData
 			// #ifdef H5
 			formdata = new FormData()
@@ -82,22 +88,27 @@
 			formdata.append('image', file)
 			newParmas = formdata
 			// #endif
+
 			// #ifdef MP-WEIXIN
 			newParmas.image = file
 			// #endif
 		} else {
 			newParmas.image = file
 		}
+		// 把当前的请求parmas保存到vuex 为了再来一次功能
+		drawStore.setCurrentParmasData(newParmas)
+		drawStore.getTask(newParmas)
 
-		let taskDTO = await $api.post < Image2TextParmas > (props.IamgeTypes.api, newParmas, isMoFormData)
-		if (typeof taskDTO == 'string') {
-			taskDTO = JSON.parse(taskDTO)
-		}
-		if (taskDTO.code == 200) {
-			TaskID.value = taskDTO.data.task_id
-		} else {
-			uni.$u.toast(taskDTO.msg)
-		}
+		// let taskDTO = await $api.post < Image2TextParmas > (props.IamgeTypes.api, newParmas, isMoFormData)
+		// console.log(taskDTO)
+		// if (typeof taskDTO == 'string') {
+		// 	taskDTO = JSON.parse(taskDTO)
+		// }
+		// if (taskDTO.code == 200) {
+		// 	TaskID.value = taskDTO.data.task_id
+		// } else {
+		// 	uni.$u.toast(taskDTO.message)
+		// }
 	}
 
 	const submit = async () => {
@@ -119,21 +130,33 @@
 
 		await getQueueTask()
 		// 查询队列
-		if (TaskID.value) {
-			const taskType: taskIdTypeKey = props.IamgeTypes.historyType;
-			// 获取当前的任务数据
-			const currentData = drawStore.taskIdParmas[taskType];
-			drawStore.setTaskIdParmas(taskType, {
-				'task_id': TaskID.value,
-				historyTasks: currentData.historyTasks as drawTaskJson[]
-			})
-			uni.navigateTo({
-				url: `/pages/draw/subPage/QueueQueryPage/index`
-			})
-		} else {
-			uni.$u.toast('任务id错误！')
-		}
+
+		// if (TaskID.value) {
+		// 	const taskType: taskIdTypeKey = props.IamgeTypes.historyType;
+		// 	// 获取当前的任务数据
+		// 	const currentData = drawStore.taskIdParmas[taskType];
+		// 	drawStore.setTaskIdParmas(taskType, {
+		// 		'task_id': TaskID.value,
+		// 		historyTasks: currentData.historyTasks as drawTaskJson[]
+		// 	})
+		// 	uni.navigateTo({
+		// 		url: `/pages/draw/subPage/QueueQueryPage/index`
+		// 	})
+		// }
 	}
+
+
+	onLoad((query) => {
+		if (query.temImages) {
+			url.value = query.temImages
+		}
+	});
+
+	onMounted(() => {
+		if (ImageUploadRef.value && url.value) {
+			ImageUploadRef.value.hanlderImages(url.value)
+		}
+	})
 </script>
 
 <style lang="scss">

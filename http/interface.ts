@@ -1,5 +1,6 @@
 import fly from 'flyio';
 import { BaseApi } from '@/http/baseApi';
+import { isWeChatTempPath } from '@/utils/isWeChatTempPath'
 // #ifdef MP-WEIXIN
 import FormData from '@/tools/FormData';
 // #endif
@@ -82,7 +83,7 @@ export default {
 						reject(error);
 					});
 			} else {
-				if (options.data?.image?.includes('.webp')) {
+				if (typeof options.data?.image == 'string' && isWeChatTempPath(options.data?.image)) {
 					const parmas = options.data
 					const {
 						image,
@@ -97,7 +98,8 @@ export default {
 						},
 						name: 'image',
 						success: (uploadFileRes) => {
-							resolve(uploadFileRes);
+							const response = this.interceptor.response(uploadFileRes)
+							resolve(response);
 						},
 						formData: {
 							...others,

@@ -69,7 +69,7 @@
 	const backpage = () => {
 		if (props.defindPath) {
 			uni.navigateTo({
-				url: 'defindPath'
+				url: props.defindPath
 			})
 		} else {
 			uni.navigateBack({
