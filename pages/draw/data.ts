@@ -306,6 +306,6 @@ export const drawProjectConfig : DrawProjectConfig = {
 		title: '局部重绘',
 		icons: '//file.1foo.com/2024/07/05/abf3c1f40ec88f783ee6c6f332893e88.png',
 		path: '/pages/draw/subPage/partialRepaint/index',
-		api: 'api/v1/img/txt2img'
+		api: 'api/v1/img/img2img'
 	}
 }

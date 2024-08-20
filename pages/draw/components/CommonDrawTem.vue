@@ -75,7 +75,7 @@
 		reversNums(newParmas)
 
 		if (props.IamgeTypes.historyType == "img2img_task_json" || props.IamgeTypes.historyType ==
-			"image2cartoon_task_json") {
+			"image2cartoon_task_json" || props.IamgeTypes.historyType == "partialRepaint_task_json") {
 
 			let formdata: Image2TextParmas | FormData
 			// #ifdef H5
@@ -127,6 +127,7 @@
 			uni.$u.toast('请上传图片后再继续！')
 			return
 		}
+		
 
 		await getQueueTask()
 		// 查询队列

@@ -6,10 +6,21 @@
  */
 export function base64ToFile(base64String, fileName) {
 	// 检查 Base64 字符串是否包含 MIME 类型前缀
-	const [header, data] = base64String.split(',');
+	let mimeType = '';
+	let data = '';
 
-	// 提取 MIME 类型
-	const mimeType = header.match(/data:(.*);base64/)[1];
+	// 判断 base64String 是否包含前缀
+	if (base64String.includes(',')) {
+		// 如果包含前缀，分离 header 和 data
+		const [header, base64Data] = base64String.split(',');
+		data = base64Data;
+		// 提取 MIME 类型
+		mimeType = header.match(/data:(.*);base64/)[1];
+	} else {
+		// 如果不包含前缀，假设 MIME 类型为通用二进制文件类型
+		data = base64String;
+		mimeType = 'application/octet-stream';
+	}
 
 	// 解码 Base64 字符串为二进制字符串
 	const byteCharacters = atob(data);

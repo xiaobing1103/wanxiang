@@ -40,13 +40,15 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		}
 		config.header = {
 			'content-type': isJson ? 'application/json' : 'multipart/form-data;',
-			Authorization: uni.getStorageSync('token'),
+			// Authorization: uni.getStorageSync('token'),
 			...headers
 		};
 		config.timeout = config.timeout || defaultTimeout;
 	};
 	http.interceptor.response = (response) => {
+		console.log(response)
 		uni.hideLoading();
+		
 		if (response.data.code === 401 || response.data.code === 4001 || response.statusCode === 401) {
 			uni.navigateTo({
 				url: '/pages/login/index'

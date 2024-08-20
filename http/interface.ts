@@ -1,6 +1,6 @@
 import fly from 'flyio';
 import { BaseApi } from '@/http/baseApi';
-import { isWeChatTempPath } from '@/utils/isWeChatTempPath'
+import { isWeChatTempPath } from '@/utils/isWeChatTempPath';
 // #ifdef MP-WEIXIN
 import FormData from '@/tools/FormData';
 // #endif
@@ -31,9 +31,6 @@ export default {
 		options.method = options.method || this.config.method;
 
 		const isFormData = options.data instanceof FormData;
-
-
-
 
 		if (!isFormData) {
 			options.header = options.header || {};
@@ -69,6 +66,14 @@ export default {
 			// h5端发送formdata的情况
 			if (isFormData) {
 				fly.interceptors.request.use(this.interceptor.request(_config));
+				fly.interceptors.response.use(
+					(response, promise) => {
+						return response;
+					},
+					(err, promise) => {
+						this.interceptor.response(err);
+					}
+				);
 				fly.request({
 					method: _config.method,
 					url: _config.url,
@@ -76,7 +81,6 @@ export default {
 					body: _config.data
 				})
 					.then((response) => {
-						fly.interceptors.response.use(this.interceptor.response(response));
 						resolve(response);
 					})
 					.catch((error) => {
@@ -84,11 +88,8 @@ export default {
 					});
 			} else {
 				if (typeof options.data?.image == 'string' && isWeChatTempPath(options.data?.image)) {
-					const parmas = options.data
-					const {
-						image,
-						...others
-					} = parmas
+					const parmas = options.data;
+					const { image, ...others } = parmas;
 					uni.uploadFile({
 						url: _config.url,
 						filePath: image,
@@ -98,22 +99,20 @@ export default {
 						},
 						name: 'image',
 						success: (uploadFileRes) => {
-							const response = this.interceptor.response(uploadFileRes)
+							const response = this.interceptor.response(uploadFileRes);
 							resolve(response);
 						},
 						formData: {
-							...others,
+							...others
 						},
 						fail(err) {
 							reject(err.errMsg);
 						}
 					});
 				} else {
-					console.log(_config)
+					console.log(_config);
 					uni.request(_config);
 				}
-
-
 			}
 		});
 	},
