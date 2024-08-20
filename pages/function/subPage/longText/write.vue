@@ -203,7 +203,7 @@
 				contentExtraArr.value = []
 				splitOutLineArr.value = splitText(outlineStr.value)
 				splitOutLineArr.value.forEach(item =>{
-					const obj:ContentArr = {
+					const obj:ContentArr = {  
 						show:false,
 						content:'',
 						outLine:item
