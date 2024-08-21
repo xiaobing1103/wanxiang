@@ -1,13 +1,16 @@
 <template>
 	<z-paging ref="srollRef" :pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx'}">
 		<template #top>
-			<CommonHeader />
+			<CommonHeader defindPath="/pages/draw/index" />
 		</template>
 		<!-- 对话框 -->
 		<!-- v-model:itemMessages="itemMessages" -->
 		<view class="body">
 			<CommonTitle title="文字生成图片" desc="在线AI绘画,创作你的专属作品" />
+			
 			<CommonDrawTem :IamgeTypes="IamgeTypes" :parmas="parmas" />
+			
+			
 		</view>
 
 		<template #bottom>

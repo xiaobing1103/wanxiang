@@ -26,14 +26,14 @@ function debounce(fn : Function, delay : number) {
 	}
 	return _debounce
 }
-const toCopyText = (content:string) => {
+const toCopyText = (content : string) => {
 	//#ifndef H5
 	uni.setClipboardData({
 		data: String(content), // 必须字符串
 		success: function () {
 			uni.showToast({
-				title:'复制成功',
-				icon:'success'
+				title: '复制成功',
+				icon: 'success'
 			})
 		},
 		fail(err) {
@@ -55,7 +55,7 @@ const toCopyText = (content:string) => {
 	if (result) {
 		uni.showToast({
 			title: '复制成功',
-			icon:'success'
+			icon: 'success'
 		});
 	}
 	textarea.remove()

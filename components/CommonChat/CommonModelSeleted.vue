@@ -2,9 +2,12 @@
 	<up-popup :show="chatStore.openSeletedModel" :round="25" mode="bottom" @close="close" @open="open">
 
 		<view class="viewBox">
-			<view class="change">
-				切换项目
+			<view class="viewBox_changeHeader">
+				<text class="viewBox_changeHeader_top">选择模型</text>
+				<text class="viewBox_changeHeader_desc">全网首个超十种多模型/多语言/多媒体大模型</text>
+
 			</view>
+
 			<view class="CommonPopup">
 				<template v-for="(item,key) in commonModel" :key="key">
 					<view :style="{background:key == chatStore.model ? '#eaeaea':''}" class="CommonPopup_view"
@@ -52,29 +55,44 @@
 </script>
 
 <style lang="scss" scoped>
-	.change {
-		display: flex;
-		justify-content: center;
-		font-size: 30rpx;
-		padding: 25rpx 0;
-	}
-
 	.viewBox {
 		display: flex;
 		flex-direction: column;
+
+		&_changeHeader {
+			display: flex;
+			justify-content: flex-start;
+			font-size: 30rpx;
+			padding: 25rpx 30rpx;
+			flex-direction: column;
+
+			&_top {
+				font-size: 35rpx;
+				font-weight: 700;
+			}
+
+			&_desc {
+				font-size: 25rpx;
+				padding-top: 25rpx;
+			}
+		}
 	}
 
 	.CommonPopup {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(1, 1fr);
+		padding: 30rpx;
 
 		&_view {
 
 			display: flex;
 			align-items: center;
-			justify-content: center;
+			justify-content: flex-start;
 			box-sizing: border-box;
 			padding: 25rpx;
+			border: 1rpx solid #ccc;
+			border-radius: 15rpx;
+			margin-top: 10rpx;
 
 			&_image {
 

@@ -67,10 +67,19 @@
 		chatStore.setopenHistoryModel(true)
 	};
 	const backpage = () => {
+		const filterArr = ["/pages/index/index", "/pages/draw/index", "/pages/chat/index", "/pages/function/index", "/pages/my/index"]
 		if (props.defindPath) {
-			uni.navigateTo({
-				url: props.defindPath
-			})
+			if (filterArr.includes(props.defindPath)) {
+				uni.switchTab({
+					url: props.defindPath,
+				})
+			} else {
+				uni.navigateTo({
+					url: props.defindPath
+				})
+			}
+
+
 		} else {
 			uni.navigateBack({
 				delta: props.backPageNum || 1,//返回层数，2则上上页

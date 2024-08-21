@@ -23,9 +23,9 @@
 		<view class="tips">
 			<text class="tips_top"> 如果一直图片没有加载完成可能是因为服务器压力过大的原因，请您耐心等待，您也可以尝试其他图片生成项目
 			</text>
-			<view class="tips_bottom" @click="changeProject">
+			<!-- <view class="tips_bottom" @click="changeProject">
 				切换项目
-			</view>
+			</view> -->
 		</view>
 		<template #bottom>
 			<!-- <button @click="increaseProgress">增加进度</button> -->

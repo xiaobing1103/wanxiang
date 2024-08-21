@@ -117,7 +117,8 @@ export default {
 		});
 	},
 	async fetchStream(options) {
-		const { url, method, data, header, success, fail } = options;
+		const { url, method, data, header, success, fail, controller } = options;
+		console.log(controller)
 		let _config = Object.assign({}, this.config, options);
 		_config.url = this.config.baseUrl + url || options.baseUrl + url;
 		_config.method = method;
@@ -128,10 +129,12 @@ export default {
 			this.interceptor.request(_config);
 		}
 		try {
+
 			const response = await fetch(_config.url, {
 				method: _config.method,
 				headers: _config.header,
-				body: _config.body
+				body: _config.body,
+				signal: controller.signal // 传递 controller.signal 而不是 controller 本身
 			});
 			const reader = response.body.getReader();
 			const decoder = new TextDecoder();

@@ -55,7 +55,6 @@
 	const ImageUploadRef = ref(null)
 	const parmas = ref < Image2TextParmas > (props.parmas)
 	const drawStore = useDrawStore()
-	const TaskID = ref('')
 	onMounted(() => {
 		drawStore.setSeletedDrawProject(props.IamgeTypes.historyType)
 	})
@@ -98,17 +97,6 @@
 		// 把当前的请求parmas保存到vuex 为了再来一次功能
 		drawStore.setCurrentParmasData(newParmas)
 		drawStore.getTask(newParmas)
-
-		// let taskDTO = await $api.post < Image2TextParmas > (props.IamgeTypes.api, newParmas, isMoFormData)
-		// console.log(taskDTO)
-		// if (typeof taskDTO == 'string') {
-		// 	taskDTO = JSON.parse(taskDTO)
-		// }
-		// if (taskDTO.code == 200) {
-		// 	TaskID.value = taskDTO.data.task_id
-		// } else {
-		// 	uni.$u.toast(taskDTO.message)
-		// }
 	}
 
 	const submit = async () => {
@@ -127,30 +115,25 @@
 			uni.$u.toast('请上传图片后再继续！')
 			return
 		}
-		
+
 
 		await getQueueTask()
-		// 查询队列
 
-		// if (TaskID.value) {
-		// 	const taskType: taskIdTypeKey = props.IamgeTypes.historyType;
-		// 	// 获取当前的任务数据
-		// 	const currentData = drawStore.taskIdParmas[taskType];
-		// 	drawStore.setTaskIdParmas(taskType, {
-		// 		'task_id': TaskID.value,
-		// 		historyTasks: currentData.historyTasks as drawTaskJson[]
-		// 	})
-		// 	uni.navigateTo({
-		// 		url: `/pages/draw/subPage/QueueQueryPage/index`
-		// 	})
-		// }
 	}
 
 
-	onLoad((query) => {
+	onLoad(async (query) => {
 		if (query.temImages) {
 			url.value = query.temImages
 		}
+
+		// if (query.id) {
+		// 	const res = await $api.get(`api/v1/img/publishInfo?id=${query.id}`)
+		// 	debugger
+		// 	if (res.code == 200) {
+		// 		console.log(res)
+		// 	}
+		// }
 	});
 
 	onMounted(() => {

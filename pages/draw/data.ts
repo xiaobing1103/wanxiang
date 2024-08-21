@@ -15,18 +15,6 @@ export const menuList = [
 		path: "/pages/draw/subPage/image2cartoon/index",
 	},
 	{
-		cover: $assets.aihl_cover,
-		title: "AI换脸",
-		description: "一账图片让你当明星",
-		path: "/pages/draw/subPage/aiFaceSwapping/index",
-	},
-	{
-		cover: $assets.paintAixz_cover,
-		title: "AI写真",
-		description: "在线写真馆",
-		path: "/pages/draw/subPage/aiPhotoShoots/index",
-	},
-	{
 		cover: $assets.tpst_cover,
 		title: "图片生图",
 		description: "导入照片,AI百变风格",
@@ -45,10 +33,24 @@ export const menuList = [
 		path: "/pages/draw/subPage/partialRepaint/index",
 	},
 	{
+		cover: $assets.aihl_cover,
+		title: "AI换脸",
+		description: "一账图片让你当明星",
+		// path: "/pages/draw/subPage/aiFaceSwapping/index",
+	},
+	{
+		cover: $assets.paintAixz_cover,
+		title: "AI写真",
+		description: "在线写真馆",
+		// path: "/pages/draw/subPage/aiPhotoShoots/index",
+	},
+
+
+	{
 		cover: $assets.rxkt_cover,
 		title: "人像抠图",
 		description: "只能提取人像，精确到发丝",
-		path: "/pages/draw/subPage/portraitCutout/index",
+		// path: "/pages/draw/subPage/portraitCutout/index",
 	},
 ];
 // 定义键名的联合类型

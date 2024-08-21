@@ -83,7 +83,6 @@ const useDrawStore = defineStore(
 				isformDataRequest = false;
 			}
 			let taskDTO = await $api.post<Image2TextParmas>(drawProjectConfig[seletedDrawProject.value].api, parmas, isformDataRequest);
-			console.log(taskDTO);
 			if (taskDTO && typeof taskDTO == 'string') {
 				taskDTO = JSON.parse(taskDTO);
 			}

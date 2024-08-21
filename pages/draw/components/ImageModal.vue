@@ -4,8 +4,8 @@
 		<view class="ImageModal">
 			<view class="ImageModal_imageBox">
 				<!-- <image src="" mode="aspectFit"></image> -->
-				<up-swiper indicator indicatorActiveColor="skyblue"  :list="currentImages?.images"
-					@click="openImages" keyName="image"></up-swiper>
+				<up-swiper indicator indicatorActiveColor="skyblue" :list="currentImages?.images" @click="openImages"
+					keyName="image"></up-swiper>
 				<view class="ImageModal_imageBox_form">
 					<view class="ImageModal_imageBox_form_label">
 						提示词：
@@ -82,7 +82,7 @@
 		</view>
 		<template #confirmButton>
 			<view class="imageBox_footer">
-				<up-button text="立即生成" type="primary"></up-button>
+				<up-button @click="createImage" text="立即生成" type="primary"></up-button>
 			</view>
 		</template>
 	</up-modal>
@@ -104,6 +104,8 @@
 <script setup lang="ts">
 	import { ref } from 'vue';
 	import { ImageListDTO } from '../data';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import { useDrawStore } from '@/store';
 	const props = defineProps<{ showImageModal : boolean, currentImages : ImageListDTO }>()
 	const emit = defineEmits<{
 		(event : 'closeImage') : void;
@@ -114,18 +116,35 @@
 	// const fileType = ref('')
 	const indexNum = ref(0)
 
-	console.log(props.currentImages)
 	const confirm = () => {
 		console.log(123123, props.showImageModal + '')
 	};
+	const {
+		$api
+	} = useGlobalProperties()
 	const openImages = (index : number) => {
 		indexNum.value = index
 		showImages.value = true
 	}
-	// const toDownload = () => {
-	// 	fileType.value = '1'
-	// 	fileUrl.value = props.currentImages.images[indexNum.value]
-	// }
+	const DrawStore = useDrawStore()
+	const createImage = async () => {
+		// uni.navigateTo({
+		// 	url: `/pages/draw/subPage/text2image/index?id=${props.currentImages.id}`
+		// })
+
+		// 拿到parmas拼装后直接生成图片
+
+		const res = await $api.get(`api/v1/img/publishInfo?id=${props.currentImages.id}`)
+
+		if (res.code == 200) {
+			DrawStore.setSeletedDrawProject('txt2img_task_json')
+			DrawStore.setCurrentParmasData(res.data.param)
+			DrawStore.getTask(res.data.param)
+		} else {
+			uni.$u.toast('生成失败请重试！');
+		}
+
+	}
 </script>
 
 <style lang='scss' scoped>
