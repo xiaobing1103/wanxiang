@@ -17,7 +17,7 @@
 					<text>文章大纲</text>
 					<text class="tips">(请确认提纲无误后在点击"生成正文")</text>
 				</view>
-				<AreaText @reload="onCreateContent" :autoHeight="true" :show-action="true" placeholder="" height="300"
+				<AreaText @export="onExport" @reload="onCreateContent" :autoHeight="true" :show-action="true" placeholder="" height="300"
 					v-model="outlineStr" />
 				<text
 					class="description">文章大纲往往对文章生成的质量有着很大的关系，如AI生成的大纲不满意或不符合文章主题，建议点击重新生成!否则AI创作的文章水平会参差不齐，请知悉!</text>
@@ -36,6 +36,7 @@
 				<template v-for="(item,index) in contentExtraArr" :key="index" >
 					<AreaText
 						 @reload="onRelaod(index)" 
+						 @export="onExport"
 						:autoHeight="true" 
 						 v-if="item.show" 
 						:show-action="true"
@@ -61,7 +62,7 @@
 		outLine?:string
 	}
 	const pagingRef = ref()
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive,onCancel } = useStreamHooks()
 	const showContent = ref(false)
 	const themeStr = ref('')
 	const outlineStr = ref('')
@@ -141,6 +142,10 @@
 		})
 		return length
 	})
+	const onExport = () =>{
+		console.log('ssssss')
+		onCancel()
+	}
 
 	// 生成大纲
 	const onCreateContent = () => {
@@ -216,6 +221,12 @@
 			onerror() {
 				uni.hideLoading()
 			},
+			oncancel() {
+				uni.showToast({
+					title:'任务已取消'   
+				})
+				uni.hideLoading()
+			},
 			onmessage(text : string) {
 				outlineStr.value += text
 				pagingRef.value.scrollToBottom()
@@ -244,8 +255,8 @@
 		})
 		return result
 	}
+	
 </script>
-
 <style lang="scss" scoped>
 	.body {
 		margin: 24rpx;

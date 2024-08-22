@@ -7,12 +7,17 @@ const LoadingConfig = {
 	showLoading: false,
 	title: "加载中..."
 }
+interface RequestTask extends UniApp.RequestTask{
+	onChunkReceived:(callback:(res:any) =>Promise<void>) =>void
+}
+
 export const useStreamHooks = (options?: Options) => {
 	interface StreamOptions {
 		url: string;
 		data?: any;
 		onmessage?: (text: string) => void
 		onerror?: (err?: any) => void
+		oncancel?:() =>void
 		onfinish?: (response?: UniApp.RequestSuccessCallbackResult) => void
 	}
 	enum ErrorCode {
@@ -20,6 +25,8 @@ export const useStreamHooks = (options?: Options) => {
 	}
 	const { $api } = useGlobalProperties()
 	const isRecive = ref(false)
+	let cancelFn
+	let requestInstance:RequestTask
 	//统一处理错误
 	const handleResloveError = (code: ErrorCode, options: StreamOptions, response?: UniApp.RequestSuccessCallbackResult) => {
 		switch (code) {
@@ -35,8 +42,8 @@ export const useStreamHooks = (options?: Options) => {
 	//用于微信
 	const wechatStreamRequest = async (options: StreamOptions) => {
 		isRecive.value = true
-
-		const requestTask = await $api.getStream(
+		cancelFn = options.oncancel
+		requestInstance = await $api.getStream(
 			options.url,
 			options.data,
 			true,
@@ -48,10 +55,15 @@ export const useStreamHooks = (options?: Options) => {
 			},
 			LoadingConfig
 		)
-		requestTask.onChunkReceived(async res => {
+		requestInstance.onChunkReceived(async res => {
 			const message = resloveResponseText(res.data)
 			options.onmessage && options.onmessage(message)
 		})
+	}
+	const onCancel = () =>{
+		isRecive.value = false
+		requestInstance.abort()
+		cancelFn && cancelFn()
 	}
 	//用于H5
 	const h5StreamRequest = async (options: StreamOptions) => {
@@ -92,7 +104,8 @@ export const useStreamHooks = (options?: Options) => {
 	}
 	return {
 		streamRequest,
-		isRecive
+		isRecive,
+		onCancel
 	}
 }
 // 流在进行中进行判断逻辑 	

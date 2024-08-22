@@ -32,7 +32,7 @@
 	})
 	const emit = defineEmits<{
 		(e:'reload'):void,
-		(e:'share'):void
+		(e:'export'):void
 	}>()
 	const value = defineModel<string>()
 	
@@ -48,7 +48,7 @@
 	}
 	//分享
 	const onShare = () =>{
-		emit('share')
+		emit('export')
 	}
 	//复制
 	const onCopy = () =>{
