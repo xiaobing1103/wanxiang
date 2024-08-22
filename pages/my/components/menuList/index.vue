@@ -30,6 +30,7 @@
 
 <script lang="ts" setup>
 	import FormCell from '@/components/FormCell/index.vue'
+	
 </script>
 
 <style lang="scss" scoped>

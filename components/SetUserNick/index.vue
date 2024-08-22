@@ -9,18 +9,11 @@
 			</view>
 			<view class="bindPhone_main">
 				<view class="bindPhone_main_inputBox">
-					<up-input class="bindPhone_main_input" clearable border="bottom" :placeholder="UserStore.userInfo.email || '请输入邮箱'" v-model="email"></up-input>
-				</view>
-
-				<view class="bindPhone_main_inputBox">
-					<up-input class="bindPhone_main_input" clearable border="bottom" placeholder="请输入验证码" v-model="vierfCode"></up-input>
-					<text class="bindPhone_main_input_else" @click="sendCode">
-						{{ timerActive ? countdown + '秒后重试' : '获取验证码' }}
-					</text>
+					<up-input class="bindPhone_main_input" clearable border="bottom" :placeholder="UserStore.userInfo?.nick" v-model="NickName"></up-input>
 				</view>
 			</view>
 			<view class="bindPhone_footer">
-				<view class="bindPhone_footer_button" @click="onsendEmail">确定</view>
+				<view class="bindPhone_footer_button" @click="resetNickName">确定</view>
 			</view>
 		</view>
 	</up-popup>
@@ -31,12 +24,10 @@ import { ref } from 'vue';
 import { useUserStore } from '../../store';
 import { useGlobalProperties } from '../../hooks/useGlobalHooks';
 const popupShow = defineModel<boolean>('popupShow');
-const email = ref('');
-const vierfCode = ref('');
+const NickName = ref('');
+
 const { $api } = useGlobalProperties();
-const timerActive = ref(false);
-const countdown = ref(120);
-const checkCode = ref('');
+
 defineProps<{ title: string; titleIcon?: string }>();
 const UserStore = useUserStore();
 const close = () => {
@@ -46,54 +37,19 @@ const open = () => {
 	popupShow.value = true;
 };
 
-const sendCode = async () => {
-	const regu = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/;
-	if (!regu.test(email.value)) {
-		uni.$u.toast('你输入的邮箱格式不正确！');
-		return;
-	}
-	const result = await $api.post('api/v1/user/sendEmailCode', { email: email.value });
+const resetNickName = async () => {
+	const result = await $api.post('api/v1/user/editNick', { newNick: NickName.value });
 	if (result.code == 200) {
-		uni.$u.toast('发送验证码成功！');
-		checkCode.value = result.data;
-		startCountdown();
-	} else {
-		uni.$u.toast(result.msg);
-	}
-};
+		uni.$u.toast('修改用戶名成功！');
 
-const onsendEmail = async () => {
-	if (!email.value || !vierfCode.value) {
-		uni.$u.toast('请输入手机号和验证码再提交！');
-		return;
-	}
-	const result = await $api.post('api/v1/user/bindEmail', {
-		check: checkCode.value,
-		code: vierfCode.value,
-		email: email.value
-	});
-	if (result.code == 200) {
-		uni.$u.toast('绑定邮箱成功！');
 		const users = await $api.get('api/v1/user/info');
 		if (users.code == 200) {
 			UserStore.userInfo = users.data;
+			close();
 		}
 	} else {
 		uni.$u.toast(result.msg);
 	}
-};
-
-const startCountdown = () => {
-	timerActive.value = true;
-	const timer = setInterval(() => {
-		if (countdown.value > 0) {
-			countdown.value--;
-		} else {
-			clearInterval(timer);
-			countdown.value = 120;
-			timerActive.value = false;
-		}
-	}, 1000);
 };
 </script>
 
