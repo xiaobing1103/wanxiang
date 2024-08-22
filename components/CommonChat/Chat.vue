@@ -24,38 +24,22 @@
 	import { defineModel, ModelRef } from 'vue';
 	import { useChatStore } from '@/store';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
-	// import { debounce } from '@/utils';
+	
 	const chatValue = defineModel<string>("chatValue")
 	const ChatStore = useChatStore()
 	const { onCancelRequest } = useStreamHooks()
-	// const dataValue = defineModel<string>("dataValue")
-	// 定义 defineModel 的返回类型
-	// type DefineModelReturnType = ReturnType<typeof defineModel>;
-
-	// const props = defineProps<{ dataValue : string, chatValue : string, onSend : () => void, data : string, update : () => void }>();
+	
 	const emit = defineEmits<{
-		// (e : 'update:chatValue', val : string) : void
 		(e : 'onSend', val : string) : void
-		// (e : "update:dataValue", value : string) : void
+		(e : 'onCancel') : void
 
 	}>()
-	// const value = computed({
-	// 	get() {
-	// 		return chatValue
-	// 	},
-	// 	set(val : string) {
-	// 		emit('update:chatValue', val)
-	// 		console.log(val)
-	// 	}
-	// })
-	// const sendFn = () => {
-	// 	debounce(SendMessage, 2000)
-	// }
 	const SendMessage = async () => {
 		// 走暂停逻辑
 		if (ChatStore.loadingMessage) {
-			onCancelRequest()
-			ChatStore.setLoadingMessage(false)
+			// onCancelRequest()
+			emit('onCancel')
+			// ChatStore.setLoadingMessage(false)
 		} else {
 			emit('onSend', chatValue.value)
 		}

@@ -1,7 +1,7 @@
 import { useGlobalProperties } from './useGlobalHooks'
 import { ref } from 'vue'
 interface Options {
-	oncancel ?: () => void
+
 }
 const LoadingConfig = {
 	showLoading: false,
@@ -20,7 +20,7 @@ export const useStreamHooks = (options ?: Options) => {
 			showLoading : boolean;
 			title : string;
 		},
-		onRequestTaskReady ?: () => void
+		oncancel?:() =>void
 	}
 	enum ErrorCode {
 		'SUCCESS' = 200
@@ -28,10 +28,11 @@ export const useStreamHooks = (options ?: Options) => {
 	const { $api } = useGlobalProperties()
 	const isRecive = ref(false)
 	let requestTask = null;
-
+	let cancelFn
 	//用于微信
 	const wechatStreamRequest = async (options : StreamOptions) => {
 		isRecive.value = true;
+		cancelFn = options.oncancel
 		try {
 			requestTask = await $api.getStream(
 				options.url,
@@ -39,10 +40,10 @@ export const useStreamHooks = (options ?: Options) => {
 				true,
 				async (response : UniApp.RequestSuccessCallbackResult) => {
 					handleResloveError(response.statusCode, options, response);
-					console.log(response);
 				},
 				async (err) => {
 					console.log(err);
+					options.onerror()
 				},
 				LoadingConfig
 			);
@@ -55,9 +56,6 @@ export const useStreamHooks = (options ?: Options) => {
 			} else {
 				console.error('requestTask is null or does not have onChunkReceived method');
 			}
-
-			// 通知外部任务已经准备好
-			options?.onRequestTaskReady();
 
 		} catch (error) {
 			console.error('Error in getStream:', error);
@@ -75,6 +73,7 @@ export const useStreamHooks = (options ?: Options) => {
 				options.onerror && options.onerror()
 		}
 	}
+	
 	const h5StreamRequest = async (options : StreamOptions) => {
 		isRecive.value = true
 		console.log('Controller before request:', controller.value);
@@ -123,23 +122,20 @@ export const useStreamHooks = (options ?: Options) => {
 
 	const onCancelRequest = () => {
 		// #ifdef MP-WEIXIN
-		requestTask.abort();
+			requestTask.abort();
+			cancelFn && cancelFn()
+			uni.$u.toast('已暂停请求！');
 		// #endif
-
+		
 		// #ifdef H5
-
 		if (controller.value) {
-			console.log('Aborting request:', controller.value);
 			controller.value.abort();
-			console.log('Request aborted:', controller.value.signal.aborted); // 应该为 true
+			cancelFn && cancelFn()
 			uni.$u.toast('已暂停请求！');
 		} else {
 			console.warn('No active request to cancel');
 		}
-
 		// #endif
-
-		uni.$u.toast('已暂停请求！');
 	};
 	return {
 		streamRequest,

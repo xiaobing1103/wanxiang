@@ -11,7 +11,7 @@
 			<!-- 气泡选择 -->
 			<ChatInputToolTipVue @change="sendValue" />
 			<!-- 聊天输入框 -->
-			<Chat v-model:chatValue="chatValue" @onSend="onSend" />
+			<Chat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 			<!-- <up-input v-model="chatValue" @changeData="changeData">修改子组件的数据</up-input> -->
 			<!-- <button @click="abort">取消·请求</button> -->
 		</template>
@@ -80,6 +80,10 @@
 	const sendValue = (val : ToolTipItem) => {
 		onSend(val.prompt);
 	};
+	const onCancel = () =>{
+		onCancelRequest()
+		ChatStore.setLoadingMessage(false)
+	}
 	const saveHistory = (id : string, currentMessage : ItemMessage) => {
 		setChatInfo(id, currentMessage);
 	};
