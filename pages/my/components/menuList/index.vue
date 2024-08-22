@@ -5,7 +5,8 @@
 				<text class="title">会员中心</text>
 			</view>
 			<view class="list">
-				<form-cell label="个人中心" description="手机、邮箱、特权" :expand="true"></form-cell>
+				<form-cell label="个人中心" description="手机、邮箱、特权" :expand="true"
+					path="/pages/my/subPage/PersonalCenter/index"></form-cell>
 				<form-cell label="我的会员" description="2024-7-21号到期" :expand="true" path="/pages/my/subPage/vip/index">
 					<template #extra>
 						<text class="vip-desc">高级办公会员</text>
@@ -20,10 +21,10 @@
 			</view>
 			<view class="list">
 				<form-cell label="协议" description="用户协议隐私协议" :expand="true"></form-cell>
-				<form-cell label="关于万象"  :expand="true"></form-cell>
+				<form-cell label="关于万象" :expand="true"></form-cell>
 				<form-cell label="联系我们" description="在线客服" :expand="true"></form-cell>
 			</view>
-		</view>			
+		</view>
 	</view>
 </template>
 
@@ -32,19 +33,23 @@
 </script>
 
 <style lang="scss" scoped>
-	.menu-list{
-		.menu-module{
+	.menu-list {
+		.menu-module {
 			padding-bottom: 40rpx;
-			.list{
+
+			.list {
 				border-radius: 20rpx;
 				overflow: hidden;
-				.vip-desc{
-					color:#FE6938;
+
+				.vip-desc {
+					color: #FE6938;
 				}
 			}
-			.head{
+
+			.head {
 				padding: 20rpx 0;
-				.title{
+
+				.title {
 					font-size: 30rpx;
 					font-weight: 700;
 				}

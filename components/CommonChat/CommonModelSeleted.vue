@@ -13,7 +13,12 @@
 					<view :style="{background:key == chatStore.model ? '#eaeaea':''}" class="CommonPopup_view"
 						@click="changeModel(key)">
 						<image class="CommonPopup_view_image" :src="item.modelIcon" mode=""></image>
-						<text class="CommonPopup_view_text"> {{item.title}}</text>
+						<view class="CommonPopup_view_right">
+							<text class="CommonPopup_view_text"> {{item.title}}</text>
+							<text class="CommonPopup_view_desc"> {{item.modelDesc}}</text>
+						</view>
+
+
 					</view>
 				</template>
 			</view>
@@ -65,6 +70,7 @@
 			font-size: 30rpx;
 			padding: 25rpx 30rpx;
 			flex-direction: column;
+			box-sizing: border-box;
 
 			&_top {
 				font-size: 35rpx;
@@ -72,6 +78,8 @@
 			}
 
 			&_desc {
+
+
 				font-size: 25rpx;
 				padding-top: 25rpx;
 			}
@@ -79,9 +87,10 @@
 	}
 
 	.CommonPopup {
-		display: grid;
-		grid-template-columns: repeat(1, 1fr);
+		display: flex;
+		flex-direction: column;
 		padding: 30rpx;
+		box-sizing: border-box;
 
 		&_view {
 
@@ -98,11 +107,29 @@
 
 				height: 40rpx;
 				width: 40rpx;
-				padding: 0 20rpx;
+				padding: 0 10rpx;
+			}
+
+			&_right {
+				display: flex;
+				flex-direction: column;
+				width: 285px;
+				overflow: hidden;
+
+
 			}
 
 			&_text {
-				font-size: 25rpx;
+
+				font-size: 20rpx;
+			}
+
+			&_desc {
+				font-size: 20rpx;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				max-width: 100%;
 			}
 		}
 	}

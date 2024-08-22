@@ -25,13 +25,15 @@ const iconConfig : IconConfig = {
 
 	// 所有模型icon
 	v35ModelIcon: getUrl('/2023/12/12/941983dadec37a257e67974675d21734.png'),
-	v40ModelIcon: getUrl('/2023/12/12/ce9426096ab671825e0ba57c750a14d8.png'),
+	v40ModelIcon: getUrl('/2024/08/21/3095dc6c36fb1cf9d7f59f0237b4faf0.svg'),
+	vfastModelIcon: getUrl('/2023/12/12/ce9426096ab671825e0ba57c750a14d8.png'),
 	netModelIcon: getUrl('/2023/12/12/ce9426096ab671825e0ba57c750a14d8.png'),
 	echartsModelIcon: getUrl('/2024/01/02/d4169bfc46ee0d0a29c6c9c8653ebc06.png'),
 
-	// 对话页面icon
+	glmModelIcon: getUrl('/2024/08/21/04e13289b698355ad1e76adef3ef4d83.svg'),
 
-	// 切换模型
+
+	baiduModelIcon: getUrl('/2024/08/21/040bdf5efc10359ba47df6f0b608ad78.svg'),
 	Change_Model_Icon: getUrl('/2024/08/06/1a164d08dfe054b06dac984aecf187ad.svg')
 
 }

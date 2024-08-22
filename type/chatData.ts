@@ -12,7 +12,7 @@ export type StateType = 'ok' | 'waite' | 'error'
 export type MessageType = 'text' | 'text2' | 'image' | 'assistant' | 'template'
 
 export type TargetType = 'system' | 'user' | 'assistant'
-export type ModelType = 'v35' | 'v40' | 'net' | 'echarts'
+export type ModelType = 'v35' | 'v40' | 'net' | 'echarts' | 'vfast' | 'video' | 'voice' | 'image' | 'web' | 'talkV2' | 'glm' | 'baidu';
 export interface chatConfigProps {
 	placeholder ?: string // 输入框提示内容 
 	setting ?: boolean // 底部设置回复角度等显示
