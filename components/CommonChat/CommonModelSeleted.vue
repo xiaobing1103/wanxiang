@@ -91,6 +91,7 @@
 		flex-direction: column;
 		padding: 30rpx;
 		box-sizing: border-box;
+		width: 100%;
 
 		&_view {
 
@@ -113,7 +114,6 @@
 			&_right {
 				display: flex;
 				flex-direction: column;
-				width: 285px;
 				overflow: hidden;
 
 
@@ -129,7 +129,6 @@
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
-				max-width: 100%;
 			}
 		}
 	}

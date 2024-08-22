@@ -9,7 +9,7 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/v35',
 		modelIcon: $assets.v35ModelIcon,
-		modelDesc: '推荐模型基座训练数据超50亿T，是目前大语言模型中最全面的模型'
+		modelDesc: '推荐模型基座训练数据超50亿T，是目前大语言模型中...'
 	},
 	'v40': {
 		title: '智慧4.0模式',
@@ -36,29 +36,29 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/vfast',
 		modelIcon: $assets.vfastModelIcon,
-		modelDesc: '本模式以推荐模型为底座，在对话过程中语义和基础常识基本无区别，个别模型微调参数，联想长度和速度是多模型中速度最快的！'
+		modelDesc: '本模式以推荐模型为底座，在对话过程中语义和基础常...'
 	},
 	'talkV2': {
 		title: '普通模型',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/v35',
 		modelIcon: $assets.v35ModelIcon,
-		modelDesc: '本模式以推荐模型为底座，在对话过程中语义和基础常识会更为精准，但token限制比较小，联想长度和速度不及默认推荐模型。'
+		modelDesc: '本模式以推荐模型为底座，在对话过程中语义和基础常识会...'
 	},
 	'glm': {
 		title: '智谱 · 清华ChatGlm',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/zhipu',
 		modelIcon: $assets.glmModelIcon,
-		modelDesc: '本模型由清华大学人工智能团队开发，训练资料大量为中文资料，但也支持英语，为双语对话模型，对中文逻辑、中文文化背景属于国际领先。'
+		modelDesc: '本模型由清华大学人工智能团队开发，训练资料大量为中...'
 	},
 	'baidu': {
 		title: '文心一言',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/baidu',
 		modelIcon: $assets.baiduModelIcon,
-		modelDesc: '基于飞桨深度学习平台和文心知识增强大模型，持续从海量数据和大规模知识中融合学习具备知识增强、检索增强和对话增强的技术特色。'
-		
+		modelDesc: '基于飞桨深度学习平台和文心知识增强大模型，持续从海量...'
+
 	}
 };
 
