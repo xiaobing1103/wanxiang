@@ -144,8 +144,6 @@
 	const props = defineProps<{
 		IamgeTypes : ImageProjectTypes
 	}>()
-
-
 	const models = ref<modelsDTO[]>([])
 	const styles = ref<modelsDTO[]>([])
 	onMounted(async () => {
@@ -156,7 +154,7 @@
 		const res = await $api.get<modelsDTO[]>('api/v1/img/get_models')
 		if (res.code == 200) {
 			let modelArr : modelsDTO[] = res.data
-			if (props.IamgeTypes.historyType == 'coloringLineArt_task_json') {
+			if (props.IamgeTypes.historyType == 'partialRepaint_task_json') {
 				const modelsIds = [
 					{ name: '局部重绘模型1', id: 'b49012a9071407209652d332517a182e' },
 					{ name: '局部重绘模型2', id: 'fd422ef3f7285ee610eee4d150ca87c9' },
@@ -174,7 +172,7 @@
 				]
 				modelArr = reservedModels(res.data, modelsIds)
 			}
-			if (props.IamgeTypes.historyType == 'partialRepaint_task_json') {
+			if (props.IamgeTypes.historyType == 'coloringLineArt_task_json') {
 				const modelsIds = [
 					{ id: 'b49012a9071407209652d332517a182e', name: '通用上色模型1' },
 					{ id: '7f772e53d91b0ffe53af17934b9ece40', name: '真人上色模型2' },

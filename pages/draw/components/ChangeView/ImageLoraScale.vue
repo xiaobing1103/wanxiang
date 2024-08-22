@@ -2,8 +2,8 @@
 	<view class="bigBox">
 		<view class="ImageLoraScale_left">
 			<view class="m-slider-container">
-				<slider block-size="10" :value="sliderValue" class="m-slider" :min="min" :max="max"
-					@changing="change" />
+				<slider block-size="10" activeColor="#4072ff" :value="sliderValue" class="m-slider" :min="min"
+					:max="max" @changing="change" />
 				<view class="step-text">
 					<text v-for="(item, index) in stepList" :key="item" class="text" :class="{ active: isActive(item) }"
 						:style="{ left: left(index) }">{{ item }}</text>
@@ -100,15 +100,16 @@
 				font-size: 20rpx;
 				color: #333;
 
-				:before {
-					content: "";
-					position: absolute;
-					top: -50rpx;
-					border-radius: 50%;
-					width: 20rpx;
-					height: 20rpx;
-					background-color: rgb(233, 233, 233);
-				}
+				// :before {
+				// 	content: "";
+				// 	position: absolute;
+				// 	top: -48rpx;
+				// 	z-index: 0;
+				// 	border-radius: 50%;
+				// 	width: 20rpx;
+				// 	height: 20rpx;
+				// 	background-color: rgb(233, 233, 233);
+				// }
 
 				&.active {
 					color: #4072ff;

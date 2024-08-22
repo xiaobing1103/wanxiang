@@ -62,7 +62,7 @@
 		outLine?:string
 	}
 	const pagingRef = ref()
-	const { streamRequest, isRecive,onCancel } = useStreamHooks()
+	const { streamRequest, isRecive,onCancelRequest } = useStreamHooks()
 	const showContent = ref(false)
 	const themeStr = ref('')
 	const outlineStr = ref('')
@@ -143,8 +143,7 @@
 		return length
 	})
 	const onExport = () =>{
-		console.log('ssssss')
-		onCancel()
+		onCancelRequest()
 	}
 
 	// 生成大纲
@@ -222,9 +221,6 @@
 				uni.hideLoading()
 			},
 			oncancel() {
-				uni.showToast({
-					title:'任务已取消'   
-				})
 				uni.hideLoading()
 			},
 			onmessage(text : string) {

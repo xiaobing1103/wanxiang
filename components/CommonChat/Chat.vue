@@ -7,9 +7,11 @@
 				<up-input placeholder="请输入内容" border="surround" v-model="chatValue"></up-input>
 			</view>
 			<view class="chatInput_right">
-				<image @click="SendMessage" class="chatInput_right_image" :src="chatValue ? 
+				<image @click="SendMessage" class="chatInput_right_image"
+					:src="chatValue ? 
 					'//file.1foo.com/2024/07/31/00043f53937f16cc083f142cf4cdf257.svg' : 
-					'//file.1foo.com/2024/07/31/137536c06dd024e2703c8cb7ec146af9.svg'" mode=""></image>
+					ChatStore.loadingMessage?  'http://file.1foo.com/2024/08/21/4f18ab8afa893936ecea4d431ab42f82.svg': '//file.1foo.com/2024/07/31/137536c06dd024e2703c8cb7ec146af9.svg'"
+					mode=""></image>
 			</view>
 		</view>
 	</view>
@@ -20,29 +22,28 @@
 <script setup lang="ts">
 	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
 	import { defineModel, ModelRef } from 'vue';
+	import { useChatStore } from '@/store';
+	import { useStreamHooks } from '@/hooks/useStreamHooks';
+	
 	const chatValue = defineModel<string>("chatValue")
-	const dataValue = defineModel<string>("dataValue")
-	// 定义 defineModel 的返回类型
-	// type DefineModelReturnType = ReturnType<typeof defineModel>;
-
-	// const props = defineProps<{ dataValue : string, chatValue : string, onSend : () => void, data : string, update : () => void }>();
+	const ChatStore = useChatStore()
+	const { onCancelRequest } = useStreamHooks()
+	
 	const emit = defineEmits<{
-		// (e : 'update:chatValue', val : string) : void
 		(e : 'onSend', val : string) : void
-		// (e : "update:dataValue", value : string) : void
+		(e : 'onCancel') : void
 
 	}>()
-	// const value = computed({
-	// 	get() {
-	// 		return chatValue
-	// 	},
-	// 	set(val : string) {
-	// 		emit('update:chatValue', val)
-	// 		console.log(val)
-	// 	}
-	// })
 	const SendMessage = async () => {
-		emit('onSend', chatValue.value)
+		// 走暂停逻辑
+		if (ChatStore.loadingMessage) {
+			// onCancelRequest()
+			emit('onCancel')
+			// ChatStore.setLoadingMessage(false)
+		} else {
+			emit('onSend', chatValue.value)
+		}
+
 	}
 </script>
 

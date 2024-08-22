@@ -35,21 +35,18 @@
 					</template>
 					<!-- 如果不为模板的情况 -->
 
-
-
 					<template v-else>
 						<view class="chatBox_main_View_main" :class="{
-			'chatBox_main_View_main_userMessage': item.target == 'user',
-			'chatBox_main_View_main_systemMessage': item.target == 'assistant',
-			'chatBox_main_View_main_echarts': model == 'echarts'
-		}
-			" :style="{
-			marginLeft: item.target === 'user' ? '0' : '20rpx',
-			marginRight: item.target === 'user' ? '20rpx' : '0',
-			padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
-			background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'white',
-			minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%'
-		}">
+								chatBox_main_View_main_userMessage: item.target == 'user',
+								chatBox_main_View_main_systemMessage: item.target == 'assistant',
+								chatBox_main_View_main_echarts: model == 'echarts'
+							}" :style="{
+								marginLeft: item.target === 'user' ? '0' : '20rpx',
+								marginRight: item.target === 'user' ? '20rpx' : '0',
+								padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
+								background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'white',
+								minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%'
+							}">
 							<template v-if="item.state == 'waite' && item.message.length <= 0">
 								<!-- 在消息为等待请求完成时候 -->
 								<up-loading-icon mode="semicircle"></up-loading-icon>
@@ -69,8 +66,15 @@
 									<template v-if="item.messageType === 'text' || item.messageType === 'text2'">
 										<!-- 消息不为用户 且 消息是系统发送的 需要遍历循环消息显示的 且消息状态不为等待 -->
 										<template v-if="item.target == 'assistant' && item.state !== 'waite'">
-											<view style="width: 100%;">
+											<view style="width: 100%">
+
 												<MessageItem :content="item.message" />
+
+
+												<!-- 模版下面逻辑组件 -->
+												<ChatEelseHandler ref="ChatEelseHandlerRef" @passUp="handlePassUp"
+													:msgId="item.id" :text="item.message" />
+												<!--  v-model:currentAsk="currentAsk"  -->
 											</view>
 										</template>
 										<template v-else>
@@ -79,7 +83,7 @@
 												<view v-html="item.message"></view>
 											</template>
 											<template v-else>
-												<view style="width: 100%;">
+												<view style="width: 100%">
 													<MessageItem :content="item.message" />
 												</view>
 											</template>
@@ -91,193 +95,229 @@
 					</template>
 				</view>
 			</template>
-
 		</view>
 	</view>
 </template>
 
 <script lang="ts" setup>
-import useChatStore from '@/store/chat';
-import V35Template from "@/components/ChatTemplate/V35Template.vue"
-import MessageItem from "@/components/CommonChat/MessageItem.vue"
-// import V40Template from "@/components/ChatTemplate/V40Template.vue"
-import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
-import { GenNonDuplicateID, generateUUID } from '../../tools/uuid';
-import { storeToRefs } from "pinia"
-import { TemplateConfig } from '../../pages/chat/chatConfig';
-const ChatStore = useChatStore()
-const { model, selectChatId } = storeToRefs(ChatStore)
+	import useChatStore from '@/store/chat';
+	import V35Template from '@/components/ChatTemplate/V35Template.vue';
+	import MessageItem from '@/components/CommonChat/MessageItem.vue';
+	import ChatEelseHandler from '@/components/CommonChat/ChatEelseHandler.vue';
 
-// const itemMessages = defineModel<MessageItems>('itemMessages')
-// const props = defineProps<{ config : chatConfigProps }>()
-const receivedFun = (e) => {
-	console.log(e)
-
-}
-
-const onTemplates = (e) => {
-	console.log(e)
-}
-// 获取初始消息模版 
-const getInitTemplate = () => {
-	const maps = new Map()
-	TemplateConfig[model.value].messagesTemplate.map((item, index) => {
-		const id = generateUUID()
-		item.id = id
-		maps.set(item.id, {
-			id: id,
-			state: 'ok',
-			target: item.role,
-			message: item.message || item.template,
-			messageType: item.messageType || 'template',
-		})
-	})
-	return maps
-}
-//所有的消息集合
-const messageList = ref<MessageItems>(new Map())
-// 切换模型的监听
-// watch(model, (val) => {
-// 	messageList.value = getInitTemplate()
-// }, { immediate: true })
-
-//清空全部message
-const clearAllMessage = () => {
-	// messageList.value.clear()
-	messageList.value = getInitTemplate()
-}
-watch(selectChatId, (val) => {
-	const currentMsg = ChatStore.chats.find((item) => item.id == val).data
-	if (currentMsg.length > 0) {
-		messageList.value.clear()
-		setTimeout(() => {
-			currentMsg.forEach((item: ItemMessage, index: number) => {
-				messageList.value.set(item.id, item);
+	// import V40Template from "@/components/ChatTemplate/V40Template.vue"
+	import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
+	import { computed, nextTick, onMounted, ref, watch } from 'vue';
+	import { GenNonDuplicateID, generateUUID } from '../../tools/uuid';
+	import { storeToRefs } from 'pinia';
+	import { TemplateConfig } from '../../pages/chat/chatConfig';
+	import { toCopyText } from '@/utils';
+	const ChatStore = useChatStore();
+	const { model, selectChatId } = storeToRefs(ChatStore);
+	// const currentAsk = defineModel<string>('currentAsk')
+	// const itemMessages = defineModel<MessageItems>('itemMessages')
+	// const props = defineProps<{ config : chatConfigProps }>()
+	const emit = defineEmits(['passToGrandparent']);
+	const handlePassUp = (value) => {
+		emit('passToGrandparent', value);
+	};
+	const ChatEelseHandlerRef = ref(null);
+	const onTemplates = (e) => {
+		console.log(e);
+	};
+	// 获取初始消息模版
+	const getInitTemplate = () => {
+		const maps = new Map();
+		TemplateConfig[model.value].messagesTemplate.map((item, index) => {
+			const id = generateUUID();
+			item.id = id;
+			maps.set(item.id, {
+				id: id,
+				state: 'ok',
+				target: item.role,
+				message: item.message || item.template,
+				messageType: item.messageType || 'template'
 			});
-		}, 500)
+		});
+		return maps;
+	};
+	//所有的消息集合
+	const messageList = ref<MessageItems>(new Map());
+	// 切换模型的监听
+	// watch(model, (val) => {
+	// 	messageList.value = getInitTemplate()
+	// }, { immediate: true })
 
+	//清空全部message
+	const clearAllMessage = () => {
+		// messageList.value.clear()
+		messageList.value = getInitTemplate();
+	};
+	watch(
+		selectChatId,
+		(val) => {
+			const currentMsg = ChatStore.chats.find((item) => item.id == val).data;
+			if (currentMsg.length > 0) {
+				messageList.value.clear();
+				setTimeout(() => {
+					currentMsg.forEach((item : ItemMessage, index : number) => {
+						messageList.value.set(item.id, item);
+					});
+				}, 500);
+			} else {
+				messageList.value = getInitTemplate();
+			}
+		},
+		{ immediate: true }
+	);
 
-	} else {
-		messageList.value = getInitTemplate()
+	//新增一个消息
+	const addMessage = (id : string, value : ItemMessage) => {
+		messageList.value.set(id, value);
+	};
+	//改变message内容
+	const setMessage = (id : string, setItems : ItemMessage) => {
+		const currentMessage = messageList.value.get(id);
+		if (!currentMessage) return;
+		const newMessage : ItemMessage = {
+			message: currentMessage.message + setItems.message,
+			...setItems
+		};
+		messageList.value.set(id, newMessage);
+	};
+	//删除一个message
+	const deleteMessage = (id : string) => {
+		messageList.value.delete(id);
+	};
+
+	// 获取单个消息
+	const getSingelMessage = (id : string) => {
+		return messageList.value.get(id);
+	};
+
+	// 获取上一个消息
+	const getPrevSingelMessage = (id) => {
+		let prevMessage = null; // 用来存储上一个消息
+		for (let [key, value] of messageList.value) {
+			if (key === id) {
+				return prevMessage; // 如果找到当前消息，返回上一个消息
+			}
+			prevMessage = value; // 更新上一个消息为当前的 value
+		}
+		return null; // 如果没找到返回 null
+	};
+
+	// 获取所有消息历史记录并拼装
+	const getAllHistoryMessage = (requestData : {
+		role : string;
+		content : string;
+	}[], id : string) => {
+		const historyData = []
+		messageList.value.forEach((value, key) => {
+			// 过滤掉 role 等于 system 的数据
+			if (value.target !== 'system' && id !== key) {
+				const paramItem = {
+					role: value.target,
+					content: value.message
+				};
+				historyData.push(paramItem);
+			}
+		});
+		const combinedData = [...historyData, ...requestData];
+		const paramsString = JSON.stringify(combinedData);
+		return paramsString
 	}
-}, { immediate: true })
 
 
-//新增一个消息
-const addMessage = (id: string, value: ItemMessage) => {
-	messageList.value.set(id, value)
-}
-//改变message内容
-const setMessage = (id: string, setItems: ItemMessage) => {
-	const currentMessage = messageList.value.get(id)
-	if (!currentMessage) return
-	const newMessage: ItemMessage = {
-		message: currentMessage.message + setItems.message,
-		...setItems
-	}
-	messageList.value.set(id, newMessage)
-}
-//删除一个message
-const deleteMessage = (id: string) => {
-	messageList.value.delete(id)
-}
-
-// 获取单个消息
-const getSingelMessage = (id: string) => {
-	return messageList.value.get(id)
-}
-
-
-onMounted(() => {
-	messageList.value = getInitTemplate()
-})
-defineExpose({
-	addMessage,
-	deleteMessage,
-	clearAllMessage,
-	setMessage,
-	getSingelMessage,
-	messageList
-})
+	onMounted(() => {
+		messageList.value = getInitTemplate();
+	});
+	defineExpose({
+		addMessage,
+		deleteMessage,
+		clearAllMessage,
+		setMessage,
+		getSingelMessage,
+		messageList,
+		getPrevSingelMessage,
+		getAllHistoryMessage
+	});
 </script>
 
 <style lang="scss" scoped>
-.chatBox {
-	height: 100%;
-	position: relative;
-	padding: 20rpx 0;
-	box-sizing: border-box;
-}
-
-.chatBox_main_View {
-	display: flex;
-	flex-direction: column;
-
-	&_header {
-		display: flex;
-		padding: 10rpx;
-
-		&_image {
-			height: 30rpx;
-			width: 100rpx;
-		}
-	}
-
-	&_main {
-		display: flex;
+	.chatBox {
+		height: 100%;
+		position: relative;
+		padding: 20rpx 0;
 		box-sizing: border-box;
-		font-size: 25rpx;
-		border-radius: 10rpx;
+	}
 
-		&_userMessage {
-			min-width: 4% !important;
-			max-width: 70% !important;
-			background: #95ec69 !important;
-		}
+	.chatBox_main_View {
+		display: flex;
+		flex-direction: column;
 
-		&_systemMessage {
-			max-width: 80% !important;
-			min-width: 6% !important;
-		}
-
-		&_echarts {
-			min-width: 80% !important;
-		}
-
-		&_image {
-			height: 200rpx;
-			width: 300rpx;
-		}
-
-		&_view {
+		&_header {
 			display: flex;
+			padding: 10rpx;
+
+			&_image {
+				height: 30rpx;
+				width: 100rpx;
+			}
+		}
+
+		&_main {
+			display: flex;
+			box-sizing: border-box;
+			font-size: 25rpx;
+			border-radius: 10rpx;
+
+			&_userMessage {
+				min-width: 4% !important;
+				max-width: 70% !important;
+				background: #95ec69 !important;
+			}
+
+			&_systemMessage {
+				max-width: 80% !important;
+				min-width: 6% !important;
+			}
+
+			&_echarts {
+				min-width: 80% !important;
+			}
+
+			&_image {
+				height: 200rpx;
+				width: 300rpx;
+			}
+
+			&_view {
+				display: flex;
+			}
 		}
 	}
-}
 
-.iamge_album {
-	height: max-content;
-	width: 500rpx;
+	.iamge_album {
+		height: max-content;
+		width: 500rpx;
+	}
 
-}
+	.messageTemplate {
+		background-color: white;
+		padding: 10rpx;
+		border-radius: 10rpx;
+	}
 
-.messageTemplate {
-	background-color: white;
-	padding: 10rpx;
-	border-radius: 10rpx;
-}
-
-.avatar {
-	background-color: #a324ec;
-	font-size: 30rpx;
-	border-radius: 30rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: wheat;
-	height: 60rpx !important;
-	width: 60rpx !important;
-
-}
+	.avatar {
+		background-color: #a324ec;
+		font-size: 30rpx;
+		border-radius: 30rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: wheat;
+		height: 60rpx !important;
+		width: 60rpx !important;
+	}
 </style>

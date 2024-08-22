@@ -17,15 +17,19 @@ export interface IconConfig {
 	rxkt_cover : string;
 	v35ModelIcon : string;
 	v40ModelIcon : string;
+	vfastModelIcon : string;
 	netModelIcon : string;
 	Change_Model_Icon : string
 	echartsModelIcon : string
+	glmModelIcon : string
+	baiduModelIcon : string
 }
 export interface ModelConfig {
 	title : string;
 	ModelPath : string;
 	modelIcon : string;
-	ModelApi : string
+	ModelApi : string;
+	modelDesc : string
 }
 
-export type CommonModelKeys = 'v35' | 'v40' | 'net' | 'echarts';
+export type CommonModelKeys = 'v35' | 'v40' | 'net' | 'echarts' | 'vfast';

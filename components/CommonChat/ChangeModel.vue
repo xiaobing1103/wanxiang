@@ -62,7 +62,8 @@
 		}
 
 		&_text {
-			font-size: 25rpx;
+			font-size: 20rpx;
+			
 		}
 	}
 </style>

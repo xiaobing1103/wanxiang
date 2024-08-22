@@ -19,6 +19,10 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const setModel = (val : CommonModelKeys) => {
 		model.value = val
 	}
+
+	const setLoadingMessage = (val : boolean) => {
+		loadingMessage.value = val
+	}
 	const setOpenSeletedModel = (val : boolean) => {
 		openSeletedModel.value = val
 	}
@@ -104,7 +108,8 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		setPersonaId,
 		setChatInfo,
 		initChatInfo,
-		getCurrentInfo
+		getCurrentInfo,
+		setLoadingMessage
 	}
 }, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id'] } }
 );

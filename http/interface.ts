@@ -1,5 +1,6 @@
 import fly from 'flyio';
 import { BaseApi } from '@/http/baseApi';
+import { isWeChatTempPath } from '@/utils/isWeChatTempPath';
 // #ifdef MP-WEIXIN
 import FormData from '@/tools/FormData';
 // #endif
@@ -30,9 +31,6 @@ export default {
 		options.method = options.method || this.config.method;
 
 		const isFormData = options.data instanceof FormData;
-
-
-
 
 		if (!isFormData) {
 			options.header = options.header || {};
@@ -68,6 +66,14 @@ export default {
 			// h5端发送formdata的情况
 			if (isFormData) {
 				fly.interceptors.request.use(this.interceptor.request(_config));
+				fly.interceptors.response.use(
+					(response, promise) => {
+						return response;
+					},
+					(err, promise) => {
+						this.interceptor.response(err);
+					}
+				);
 				fly.request({
 					method: _config.method,
 					url: _config.url,
@@ -75,19 +81,15 @@ export default {
 					body: _config.data
 				})
 					.then((response) => {
-						fly.interceptors.response.use(this.interceptor.response(response));
 						resolve(response);
 					})
 					.catch((error) => {
 						reject(error);
 					});
 			} else {
-				if (options.data?.image?.includes('.webp')) {
-					const parmas = options.data
-					const {
-						image,
-						...others
-					} = parmas
+				if (typeof options.data?.image == 'string' && isWeChatTempPath(options.data?.image)) {
+					const parmas = options.data;
+					const { image, ...others } = parmas;
 					uni.uploadFile({
 						url: _config.url,
 						filePath: image,
@@ -97,26 +99,26 @@ export default {
 						},
 						name: 'image',
 						success: (uploadFileRes) => {
-							resolve(uploadFileRes);
+							const response = this.interceptor.response(uploadFileRes);
+							resolve(response);
 						},
 						formData: {
-							...others,
+							...others
 						},
 						fail(err) {
 							reject(err.errMsg);
 						}
 					});
 				} else {
-					console.log(_config)
+					console.log(_config);
 					uni.request(_config);
 				}
-
-
 			}
 		});
 	},
 	async fetchStream(options) {
-		const { url, method, data, header, success, fail } = options;
+		const { url, method, data, header, success, fail, controller } = options;
+		console.log(controller)
 		let _config = Object.assign({}, this.config, options);
 		_config.url = this.config.baseUrl + url || options.baseUrl + url;
 		_config.method = method;
@@ -127,10 +129,12 @@ export default {
 			this.interceptor.request(_config);
 		}
 		try {
+
 			const response = await fetch(_config.url, {
 				method: _config.method,
 				headers: _config.header,
-				body: _config.body
+				body: _config.body,
+				signal: controller.signal // 传递 controller.signal 而不是 controller 本身
 			});
 			const reader = response.body.getReader();
 			const decoder = new TextDecoder();

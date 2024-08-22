@@ -1,7 +1,7 @@
 <template>
 	<view class="view">
 		<view class="changeView">
-			<up-tabs :list="list4" lineWidth="30" :lineWidth="0" :lineHeight="0" :activeStyle="{
+			<!-- <up-tabs :list="list4" lineWidth="30" :lineWidth="0" :lineHeight="0" :activeStyle="{
 				fontSize:'25rpx',
 				border: '2rpx solid var(--border-color)',
 				background:'var(--primary-color)',
@@ -17,7 +17,7 @@
 						justifyContent: 'center',
 			            transform: 'scale(1)'
 			        }" itemStyle="padding: 10rpx; " @click="handlerClick">
-			</up-tabs>
+			</up-tabs> -->
 		</view>
 		<view class="tab-content">
 			<template v-if="activeTabs == 0">
@@ -53,14 +53,14 @@
 		name: '基础',
 		keyName: 'Tab1',
 	},
-	{
-		name: '艺术风格速查表',
-		keyName: 'Tab12',
-	},
-	{
-		name: '在线提示词',
-		keyName: 'Tab13',
-	},
+	// {
+	// 	name: '艺术风格速查表',
+	// 	keyName: 'Tab12',
+	// },
+	// {
+	// 	name: '在线提示词',
+	// 	keyName: 'Tab13',
+	// },
 	]);
 	const handlerClick = (tabs : {
 		name : string;

@@ -77,15 +77,21 @@
 			}
 		}
 	],
-	"subPackages": [
-		{
+	"subPackages": [{
 			"root": "pages/my/subPage",
-			"pages": [
-				{
+			"pages": [{
 					"path": "vip/index",
 					"name": "vip",
 					"style": {
 						"navigationBarTitleText": "会员信息",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "PersonalCenter/index",
+					"name": "PersonalCenter",
+					"style": {
+						"navigationBarTitleText": "个人中心",
 						"navigationStyle": "custom"
 					}
 				}
@@ -93,8 +99,7 @@
 		},
 		{
 			"root": "pages/draw/subPage",
-			"pages": [
-				{
+			"pages": [{
 					"path": "text2image/index",
 					"name": "text2image",
 					"style": {
@@ -186,8 +191,7 @@
 		},
 		{
 			"root": "pages/function/subPage",
-			"pages": [
-				{
+			"pages": [{
 					"path": "ppt/index",
 					"name": "ppt",
 					"style": {
@@ -234,8 +238,7 @@
 			"iconWidth": "70rpx",
 			"height": "85rpx"
 		},
-		"list": [
-			{
+		"list": [{
 				"pagePath": "pages/index/index",
 				"text": "对话"
 			},

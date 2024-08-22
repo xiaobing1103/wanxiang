@@ -15,18 +15,6 @@ export const menuList = [
 		path: "/pages/draw/subPage/image2cartoon/index",
 	},
 	{
-		cover: $assets.aihl_cover,
-		title: "AI换脸",
-		description: "一账图片让你当明星",
-		path: "/pages/draw/subPage/aiFaceSwapping/index",
-	},
-	{
-		cover: $assets.paintAixz_cover,
-		title: "AI写真",
-		description: "在线写真馆",
-		path: "/pages/draw/subPage/aiPhotoShoots/index",
-	},
-	{
 		cover: $assets.tpst_cover,
 		title: "图片生图",
 		description: "导入照片,AI百变风格",
@@ -45,10 +33,24 @@ export const menuList = [
 		path: "/pages/draw/subPage/partialRepaint/index",
 	},
 	{
+		cover: $assets.aihl_cover,
+		title: "AI换脸",
+		description: "一账图片让你当明星",
+		// path: "/pages/draw/subPage/aiFaceSwapping/index",
+	},
+	{
+		cover: $assets.paintAixz_cover,
+		title: "AI写真",
+		description: "在线写真馆",
+		// path: "/pages/draw/subPage/aiPhotoShoots/index",
+	},
+
+
+	{
 		cover: $assets.rxkt_cover,
 		title: "人像抠图",
 		description: "只能提取人像，精确到发丝",
-		path: "/pages/draw/subPage/portraitCutout/index",
+		// path: "/pages/draw/subPage/portraitCutout/index",
 	},
 ];
 // 定义键名的联合类型
@@ -270,7 +272,8 @@ export interface ImageProjectTypes {
 interface TaskConfig {
 	title : string;
 	icons : string;
-	path : string
+	path : string;
+	api : string
 }
 
 export interface DrawProjectConfig {
@@ -280,26 +283,31 @@ export const drawProjectConfig : DrawProjectConfig = {
 	txt2img_task_json: {
 		title: '文字生成图片',
 		icons: '//file.1foo.com/2024/02/28/9461b8e0963772622b040442b1ec5213.png',
-		path: '/pages/draw/subPage/text2image/index'
+		path: '/pages/draw/subPage/text2image/index',
+		api: 'api/v1/img/txt2img'
 	},
 	img2img_task_json: {
 		title: '图片生成图片',
 		icons: '//file.1foo.com/2024/02/28/556b893875c846a0e27a96ccf2228847.png',
-		path: '/pages/draw/subPage/image2image/index'
+		path: '/pages/draw/subPage/image2image/index',
+		api: 'api/v1/img/img2img'
 	},
 	coloringLineArt_task_json: {
 		title: '线稿上色',
 		icons: '//file.1foo.com/2024/07/05/e87075cd8bc3d216bfae25a93c1ffa2b.png',
-		path: '/pages/draw/subPage/coloringLineArt/index'
+		path: '/pages/draw/subPage/coloringLineArt/index',
+		api: 'api/v1/img/lines2img'
 	},
 	image2cartoon_task_json: {
 		title: '图片转卡通',
 		icons: '//file.1foo.com/2024/07/05/2104a26010ef6ba3df218a3ba54ac016.png',
-		path: '/pages/draw/subPage/image2cartoon/index'
+		path: '/pages/draw/subPage/image2cartoon/index',
+		api: 'api/v1/img/img2img'
 	},
 	partialRepaint_task_json: {
 		title: '局部重绘',
 		icons: '//file.1foo.com/2024/07/05/abf3c1f40ec88f783ee6c6f332893e88.png',
-		path: '/pages/draw/subPage/partialRepaint/index'
+		path: '/pages/draw/subPage/partialRepaint/index',
+		api: 'api/v1/img/img2img'
 	}
 }
