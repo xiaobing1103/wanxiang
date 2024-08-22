@@ -66,7 +66,7 @@
 	const handleValue = (value) => {
 		// console.log(ChatBoxRef.value.messageList)
 		const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId)
-		onSend(messages.message, true, value)
+		onSend(messages.message, value)
 	};
 	const scrollToBottom = () => {
 		nextTick(() => {
@@ -79,19 +79,19 @@
 	const sendValue = (val : ToolTipItem) => {
 		onSend(val.prompt)
 	}
-	const onSend = async (val, againSend ?: boolean, config : { currentAsk : string, msgId : string } = {
+	const onSend = async (val, config : { currentAsk : string, msgId : string } = {
 		currentAsk: '默认', msgId: ''
 	}) => {
 		if (!val) {
 			uni.$u.toast('请先输入内容！')
 			return
 		}
-		if (!againSend) {
-			const msgId = generateUUID()
-			const msgObj : ItemMessage = { id: msgId, state: "ok", target: 'user', message: val, messageType: 'text' }
-			ChatBoxRef.value.addMessage(msgId, msgObj)
-			saveHistory(selectChatId.value, msgObj)
-		}
+
+		const msgId = generateUUID()
+		const msgObj : ItemMessage = { id: msgId, state: "ok", target: 'user', message: val, messageType: 'text' }
+		ChatBoxRef.value.addMessage(msgId, msgObj)
+		saveHistory(selectChatId.value, msgObj)
+
 
 		const requestData = [{
 			role: 'user',
