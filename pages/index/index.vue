@@ -21,141 +21,145 @@
 </template>
 
 <script setup lang="ts">
-	import Chat from "@/components/CommonChat/Chat.vue"
-	import CommonModelSeleted from "@/components/CommonChat/CommonModelSeleted.vue"
-	import HistoryMessage from "@/components/CommonChat/HistoryMessage.vue"
-	import CommonHeader from '@/components/CommonHeader.vue'
-	import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue'
-	import { nextTick, onMounted, reactive, ref, watch } from "vue";
-	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
-	import { useChatStore } from "../../store";
-	import { ItemMessage } from "../../type/chatData";
-	import { generateUUID } from "../../tools/uuid";
-	import ChatBox from '@/components/CommonChat/ChatBox.vue'
-	import { storeToRefs } from "pinia"
-	// import { angelItem } from "@/config/modelConfig"
-	import { commonModel } from "../../config/modelConfig"
-	import { ToolTipItem } from "@/type/userTypes"
-	import { useStreamHooks } from "@/hooks/useStreamHooks"
-	const { $api } = useGlobalProperties()
-	const ChatStore = useChatStore();
-	const { setChatInfo } = ChatStore
-	const { model, selectChatId } = storeToRefs(ChatStore);
-	const chatValue = ref('')
-	const { streamRequest, isRecive, onCancelRequest } = useStreamHooks()
-	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null)
+import Chat from '@/components/CommonChat/Chat.vue';
+import CommonModelSeleted from '@/components/CommonChat/CommonModelSeleted.vue';
+import HistoryMessage from '@/components/CommonChat/HistoryMessage.vue';
+import CommonHeader from '@/components/CommonHeader.vue';
+import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue';
+import { nextTick, onMounted, reactive, ref, watch } from 'vue';
+import { useGlobalProperties } from '../../hooks/useGlobalHooks';
+import { useChatStore } from '../../store';
+import { ItemMessage } from '../../type/chatData';
+import { generateUUID } from '../../tools/uuid';
+import ChatBox from '@/components/CommonChat/ChatBox.vue';
+import { storeToRefs } from 'pinia';
+// import { angelItem } from "@/config/modelConfig"
+import { commonModel } from '../../config/modelConfig';
+import { ToolTipItem } from '@/type/userTypes';
+import { useStreamHooks } from '@/hooks/useStreamHooks';
+const { $api } = useGlobalProperties();
+const ChatStore = useChatStore();
+const { setChatInfo } = ChatStore;
+const { model, selectChatId } = storeToRefs(ChatStore);
+const chatValue = ref('');
+const { streamRequest, isRecive, onCancelRequest } = useStreamHooks();
+const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
 
-	const srollRef = ref(null)
+const srollRef = ref(null);
 
-	// 当前选择回答角度 
-	// const currentAsk = ref('默认')
-	onMounted(() => {
-		const initMessage = ChatStore.getCurrentInfo(ChatStore.selectChatId)
-		if (initMessage.data.length > 0) {
-			const newMap = new Map()
-			initMessage.data.forEach((item : ItemMessage) => {
-				newMap.set(item.id, item)
-			})
-			ChatBoxRef.value.messageList = newMap
-		} else {
-			ChatBoxRef.value.clearAllMessage()
+// 当前选择回答角度
+// const currentAsk = ref('默认')
+onMounted(() => {
+	const initMessage = ChatStore.getCurrentInfo(ChatStore.selectChatId);
+	if (initMessage.data.length > 0) {
+		const newMap = new Map();
+		initMessage.data.forEach((item: ItemMessage) => {
+			newMap.set(item.id, item);
+		});
+		ChatBoxRef.value.messageList = newMap;
+	} else {
+		ChatBoxRef.value.clearAllMessage();
+	}
+	scrollToBottom();
+});
+
+const handleValue = (value) => {
+	// console.log(ChatBoxRef.value.messageList)
+	const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId);
+	onSend(messages.message, value);
+};
+const scrollToBottom = () => {
+	nextTick(() => {
+		if (srollRef.value) {
+			srollRef.value.scrollToBottom();
 		}
-		scrollToBottom()
-	})
+	});
+};
 
-	const handleValue = (value) => {
-		// console.log(ChatBoxRef.value.messageList)
-		const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId)
-		onSend(messages.message, value)
-	};
-	const scrollToBottom = () => {
-		nextTick(() => {
-			if (srollRef.value) {
-				srollRef.value.scrollToBottom()
-			}
-		})
+const sendValue = (val: ToolTipItem) => {
+	onSend(val.prompt);
+};
+const saveHistory = (id: string, currentMessage: ItemMessage) => {
+	setChatInfo(id, currentMessage);
+};
+const onSend = async (
+	val,
+	config: { currentAsk: string; msgId: string } = {
+		currentAsk: '默认',
+		msgId: ''
+	}
+) => {
+	if (!val) {
+		uni.$u.toast('请先输入内容！');
+		return;
 	}
 
-	const sendValue = (val : ToolTipItem) => {
-		onSend(val.prompt)
-	}
-	const onSend = async (val, config : { currentAsk : string, msgId : string } = {
-		currentAsk: '默认', msgId: ''
-	}) => {
-		if (!val) {
-			uni.$u.toast('请先输入内容！')
-			return
-		}
+	const msgId = generateUUID();
+	const msgObj: ItemMessage = { id: msgId, state: 'ok', target: 'user', message: val, messageType: 'text' };
+	ChatBoxRef.value.addMessage(msgId, msgObj);
+	saveHistory(selectChatId.value, msgObj);
 
-		const msgId = generateUUID()
-		const msgObj : ItemMessage = { id: msgId, state: "ok", target: 'user', message: val, messageType: 'text' }
-		ChatBoxRef.value.addMessage(msgId, msgObj)
-		saveHistory(selectChatId.value, msgObj)
-
-
-		const requestData = [{
+	const requestData = [
+		{
 			role: 'user',
 			content: val
-		}]
-
-
-		const options = {
-			url: commonModel[model.value].ModelApi,
-			method: "POST",
-			data: {
-				params: JSON.stringify(requestData),
-				prompt: `请以中文回复我 官方设置的${config.currentAsk}角度，适用于日常生活工作的询问与回答，权重均衡`,
-				type: "Web-推荐对话"
-			}
-		};
-		scrollToBottom()
-		chatValue.value = ''
-		handleStream(options)
-	}
-
-	const saveHistory = (id : string, currentMessage : ItemMessage) => {
-		setChatInfo(id, currentMessage)
-	}
-
-	async function handleStream(options) {
-		let result = ''
-		const id = generateUUID()
-		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' })
-		ChatStore.setLoadingMessage(true)
-		const LoadingConfig = {
-			showLoading: false,
-			title: "加载中..."
 		}
-		const requestOptions = {
-			url: options.url,
-			data: options.data,
-			onmessage: (text : UniApp.RequestSuccessCallbackResult) => {
-				result += text
-				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text' })
-				scrollToBottom()
-			},
-			onerror: (err) => {
-				console.log(err)
-				const currentMessage = ChatBoxRef.value.getSingelMessage(id)
-				console.log(currentMessage)
-				// ChatBoxRef.value.deleteMessage(id)
-			},
-			onfinish: (response) => {
-				const currentMessage = ChatBoxRef.value.getSingelMessage(id)
-				// 存历史记录
-				saveHistory(selectChatId.value, currentMessage)
-				ChatStore.setLoadingMessage(false)
-			},
-			LoadingConfig
-		}
-		streamRequest(requestOptions)
+	];
+	// 获取所有历史记录拼装data
+	
 
-	}
+	const options = {
+		url: commonModel[model.value].ModelApi,
+		method: 'POST',
+		data: {
+			params: JSON.stringify(requestData),
+			prompt: `请以中文回复我 官方设置的${config.currentAsk}角度，适用于日常生活工作的询问与回答，权重均衡`,
+			type: 'Web-推荐对话'
+		}
+	};
+	scrollToBottom();
+	chatValue.value = '';
+	handleStream(options);
+};
+
+async function handleStream(options) {
+	let result = '';
+	const id = generateUUID();
+	ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
+	ChatStore.setLoadingMessage(true);
+	const LoadingConfig = {
+		showLoading: false,
+		title: '加载中...'
+	};
+	const requestOptions = {
+		url: options.url,
+		data: options.data,
+		onmessage: (text: UniApp.RequestSuccessCallbackResult) => {
+			result += text;
+			ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text' });
+			scrollToBottom();
+		},
+		onerror: (err) => {
+			console.log(err);
+			const currentMessage = ChatBoxRef.value.getSingelMessage(id);
+			console.log(currentMessage);
+			// ChatBoxRef.value.deleteMessage(id)
+		},
+		onfinish: (response) => {
+			const currentMessage = ChatBoxRef.value.getSingelMessage(id);
+			// 存历史记录
+			saveHistory(selectChatId.value, currentMessage);
+			ChatStore.setLoadingMessage(false);
+		},
+		LoadingConfig
+	};
+	streamRequest(requestOptions);
+}
 </script>
 
 <style lang="scss">
-	.content {
-		display: flex;
-		flex-direction: column
-	}
+.content {
+	display: flex;
+	flex-direction: column;
+}
 </style>
