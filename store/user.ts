@@ -14,7 +14,7 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 	const showVip = ref(true)
 	//退出登录
 	const exitLogin = () => {
-
+		
 	}
 	// 用户名密码登录
 	const login = async (parmas, type : 'login' | 'register' | 'phone') => {

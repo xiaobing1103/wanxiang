@@ -34,8 +34,19 @@ const iconConfig : IconConfig = {
 
 
 	baiduModelIcon: getUrl('/2024/08/21/040bdf5efc10359ba47df6f0b608ad78.svg'),
-	Change_Model_Icon: getUrl('/2024/08/06/1a164d08dfe054b06dac984aecf187ad.svg')
+	Change_Model_Icon: getUrl('/2024/08/06/1a164d08dfe054b06dac984aecf187ad.svg'),
 
+
+	// 个人中心图标
+	phoneIcon: getUrl('/2024/08/22/70d5a0aece7b0fb07c33ab7f0aa353ee.svg'),
+	emailIcon: getUrl('/2024/08/22/7370adddc50c34d2edf3d53e5f296dad.svg'),
+	userIcon: getUrl('/2024/08/22/2f4d498b3830367e37d45046f5f2f55a.svg'),
+	qqIcon: getUrl('/2024/08/22/4560fb29d2d25aa6b0de77868e58af5b.svg'),
+	weixinIcon: getUrl('/2024/08/22/dac0f6fc6b22a50aa1f70c9f58b7cfc3.svg'),
+	miyaoIcon: getUrl('/2024/08/22/ba0406c40d7f38bd852d2da4cbfd36fd.svg'),
+	resetPassWord: getUrl('/2024/08/22/db274fec18803c9d60422966b1c92d53.svg'),
+	deleteAccount: getUrl('/2024/08/22/babdfe9f886b76e2fcd6958075990e44.svg'),
+	emailChangeIcon: getUrl('/2024/03/12/4e02841dd340f136b52718f489c34de2.png')
 }
 
 export default iconConfig

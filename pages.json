@@ -6,8 +6,10 @@
 				"navigationBarTitleText": "对话",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom",
+
 				"app-plus": {
-					"titleNView": false
+					"titleNView": false,
+					"softinputmode": "adjustPan"
 				}
 			}
 		},

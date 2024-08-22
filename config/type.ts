@@ -23,6 +23,15 @@ export interface IconConfig {
 	echartsModelIcon : string
 	glmModelIcon : string
 	baiduModelIcon : string
+	phoneIcon : string
+	emailIcon : string
+	userIcon : string
+	qqIcon : string
+	weixinIcon : string
+	miyaoIcon : string
+	resetPassWord : string
+	deleteAccount : string
+	emailChangeIcon : string
 }
 export interface ModelConfig {
 	title : string;

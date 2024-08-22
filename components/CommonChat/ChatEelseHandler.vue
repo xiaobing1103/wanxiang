@@ -23,7 +23,7 @@
 		<up-modal :showConfirmButton="false" :show="show" @cancel="oncancel" closeOnClickOverlay @close="oncancel">
 			<view class="juibaoModal">
 				<view class="juibaoModal_header">举报该内容涉嫌一下违规</view>
-				<template v-for="item in juBaoList">
+				<template v-for="item in juBaoList" :key="item">
 					<view class="juibaoModal_items" @click="jubao(item)">
 						{{ item }}
 					</view>
@@ -39,7 +39,7 @@
 					<text class="showAngel_header_bottom">选择后会重新再次向认知模型在此请求获取与之相应的回复。众所周知，回复质量往往与人们提问的文字息息相关</text>
 				</view>
 				<view class="showAngel_main">
-					<template v-for="item in angelItem">
+					<template v-for="(item,index) in angelItem" :key="index">
 						<view
 							:style="{ background: item.name == currentAsk ? '#3c9cff' : '#f1f1f1', color: item.name == currentAsk ? '#f1f1f1' : '' }"
 							class="showAngel_items" @click="setAngle(item.name)">
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-	import { inject, ref } from 'vue';
+	import { ref } from 'vue';
 	import { angelItem } from '@/config/modelConfig';
 	import { exportTxt, toCopyText } from '@/utils';
 	const show = ref(false);
