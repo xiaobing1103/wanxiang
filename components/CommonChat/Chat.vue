@@ -23,11 +23,9 @@
 	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
 	import { defineModel } from 'vue';
 	import { useChatStore } from '@/store';
-	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	// import { debounce } from '@/utils';
 	const chatValue = defineModel<string>("chatValue")
 	const ChatStore = useChatStore()
-	const { onCancelRequest } = useStreamHooks()
 	// const dataValue = defineModel<string>("dataValue")
 	// 定义 defineModel 的返回类型
 	// type DefineModelReturnType = ReturnType<typeof defineModel>;
@@ -36,6 +34,7 @@
 	const emit = defineEmits<{
 		// (e : 'update:chatValue', val : string) : void
 		(e : 'onSend', val : string) : void
+		(e : 'onCancel') : void
 		// (e : "update:dataValue", value : string) : void
 
 	}>()
@@ -54,7 +53,7 @@
 	const SendMessage = async () => {
 		// 走暂停逻辑
 		if (ChatStore.loadingMessage) {
-			onCancelRequest()
+			emit('onCancel')
 			ChatStore.setLoadingMessage(false)
 		} else {
 			emit('onSend', chatValue.value)
