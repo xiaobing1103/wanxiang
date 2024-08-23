@@ -14,7 +14,10 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 	const showVip = ref(true)
 	//退出登录
 	const exitLogin = () => {
-		
+		userInfo.value = null
+		uni.navigateTo({
+			url: '/pages/login/index'
+		})
 	}
 	// 用户名密码登录
 	const login = async (parmas, type : 'login' | 'register' | 'phone') => {

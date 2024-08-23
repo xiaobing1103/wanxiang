@@ -129,14 +129,7 @@
 	}
 	const exprotFile = () => {
 		if (typeof props.text == 'string') {
-			// #ifdef MP-WEIXIN
-			saveTextToFile(props.text);
-
-			// #endif
-
-			// #ifdef H5
 			exportTxt(props.text);
-			// #endif
 		}
 	};
 </script>

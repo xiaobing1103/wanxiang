@@ -9,8 +9,16 @@
 			</view>
 			<view class="bindPhone_main">
 				<view class="bindPhone_main_inputBox">
-					<up-input class="bindPhone_main_input" clearable border="bottom"
-						:placeholder="UserStore.userInfo?.nick" v-model="NickName"></up-input>
+					<up-input :customStyle="{width:'100%'}" class="bindPhone_main_input" clearable border="bottom"
+						placeholder="新密码" v-model="passWord"></up-input>
+					<text class="bindPhone_main_text">密码由6-16位任意字符组成</text>
+				</view>
+			</view>
+			<view class="bindPhone_main">
+				<view class="bindPhone_main_inputBox">
+					<up-input :customStyle="{width:'100%'}" class="bindPhone_main_input" clearable border="bottom"
+						placeholder="确认新密码" v-model="newPassWord"></up-input>
+
 				</view>
 			</view>
 			<view class="bindPhone_footer">
@@ -25,7 +33,8 @@
 	import { useUserStore } from '../../store';
 	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
 	const popupShow = defineModel<boolean>('popupShow');
-	const NickName = ref('');
+	const passWord = ref('');
+	const newPassWord = ref('');
 
 	const { $api } = useGlobalProperties();
 
@@ -37,27 +46,37 @@
 	const open = () => {
 		popupShow.value = true;
 	};
-
+	function validatePassword(password) {
+		const regex = /^.{6,16}$/;
+		return regex.test(password);
+	}
 	const resetNickName = async () => {
-		const result = await $api.post('api/v1/user/editNick', { newNick: NickName.value });
-		if (result.code == 200) {
-			uni.$u.toast('修改用戶名成功！');
+		if (passWord.value !== newPassWord.value) {
+			uni.$u.toast('两次输入密码不一致,请重新输入！');
+			return
+		}
+		if (!validatePassword(newPassWord.value)) {
+			uni.$u.toast('密码由6-16位任意字符组成！');
+			return
+		}
 
-			const users = await $api.get('api/v1/user/info');
-			if (users.code == 200) {
-				UserStore.userInfo = users.data;
-				NickName.value = ''
-				close();
-			}
+
+		const result = await $api.post('api/v1/user/editPass', { newPass: newPassWord.value });
+		if (result.code == 200) {
+			uni.$u.toast('修改密码成功！');
+			passWord.value = ''
+			newPassWord.value = ''
+			close()
 		} else {
 			uni.$u.toast(result.msg);
 		}
 	};
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 	.bindPhone {
 		padding: 20rpx;
+		width: 100%;
 
 		&_header {
 			display: flex;
@@ -76,19 +95,33 @@
 		}
 
 		&_main {
+			width: 100%;
+
 			&_inputBox {
 				display: flex;
+				flex-direction: column;
 				align-items: center;
+				width: 100%;
 				padding: 10rpx 0;
 			}
 
 			&_input {
+				width: 100%;
 				border-bottom: 1rpx solid #ccc;
+				font-size: 25rpx;
 
 				&_else {
 					color: $u-primary;
 					font-size: 25rpx;
 				}
+			}
+
+			&_text {
+
+				padding: 0 40rpx;
+				width: 100%;
+				font-size: 25rpx;
+				color: $uni-text-color-disable;
 			}
 		}
 

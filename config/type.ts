@@ -32,13 +32,19 @@ export interface IconConfig {
 	resetPassWord : string
 	deleteAccount : string
 	emailChangeIcon : string
+	gongZhongHao : string
+	resetPassWordLock : string
+	defineAvatar : string
+	weiXinQun : string
+	weiXinKeFu : string
 }
 export interface ModelConfig {
 	title : string;
 	ModelPath : string;
 	modelIcon : string;
 	ModelApi : string;
-	modelDesc : string
+	modelDesc : string;
+	resetPassWord : string
 }
 
 export type CommonModelKeys = 'v35' | 'v40' | 'net' | 'echarts' | 'vfast';

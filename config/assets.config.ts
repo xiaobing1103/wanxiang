@@ -46,7 +46,15 @@ const iconConfig : IconConfig = {
 	miyaoIcon: getUrl('/2024/08/22/ba0406c40d7f38bd852d2da4cbfd36fd.svg'),
 	resetPassWord: getUrl('/2024/08/22/db274fec18803c9d60422966b1c92d53.svg'),
 	deleteAccount: getUrl('/2024/08/22/babdfe9f886b76e2fcd6958075990e44.svg'),
-	emailChangeIcon: getUrl('/2024/03/12/4e02841dd340f136b52718f489c34de2.png')
+	emailChangeIcon: getUrl('/2024/03/12/4e02841dd340f136b52718f489c34de2.png'),
+	gongZhongHao: getUrl('/2024/08/23/d5ae18cfe91fe606991ae0eff484e9d0.jpg'),
+	resetPassWordLock: getUrl('/2024/03/12/ce0a123619c14302caddd7cc934c498b.png'),
+	defineAvatar: getUrl('/2024/08/23/70f89ca27f79ef1ae2217960604257da.jpg'),
+
+	// 客服部分
+	weiXinQun: getUrl('/2024/08/23/96a9187a2fba2d9ddb065e63a9ef0fe3.jpg'),
+	weiXinKeFu: getUrl('/2024/08/23/d3d0d0745124cb68033b27b05dc542f9.png')
+
 }
 
 export default iconConfig

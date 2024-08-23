@@ -90,6 +90,30 @@
 					}
 				},
 				{
+					"path": "PrivacyPolicy/index",
+					"name": "PrivacyPolicy",
+					"style": {
+						"navigationBarTitleText": "隐私协议",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AboutWe/index",
+					"name": "AboutWe",
+					"style": {
+						"navigationBarTitleText": "关于我们",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "UserAgreement/index",
+					"name": "UserAgreement",
+					"style": {
+						"navigationBarTitleText": "用户协议",
+						"navigationStyle": "custom"
+					}
+				},
+				{
 					"path": "PersonalCenter/index",
 					"name": "PersonalCenter",
 					"style": {
@@ -235,11 +259,11 @@
 	},
 	"tabBar": {
 		"fontSize": "15",
-		"midButton": {
-			"iconPath": "static/middle.svg",
-			"iconWidth": "70rpx",
-			"height": "85rpx"
-		},
+		// "midButton": {
+		// 	"iconPath": "static/middle.svg",
+		// 	"iconWidth": "70rpx",
+		// 	"height": "85rpx"
+		// },
 		"list": [{
 				"pagePath": "pages/index/index",
 				"text": "对话"

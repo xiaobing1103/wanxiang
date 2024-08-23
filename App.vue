@@ -1,11 +1,8 @@
 <script lang="ts" setup>
-	import { onLaunch, onLoad, onHide, onShow } from '@dcloudio/uni-app'
-	import { useScreenStore, useChatStore, useUserStore } from '@/store'
-	import { generateUUID } from './tools/uuid';
-	import { commonModel } from './config/modelConfig';
+	import { onLaunch } from '@dcloudio/uni-app'
+	import { useScreenStore, useChatStore } from '@/store'
 	const screenStore = useScreenStore()
 	const ChatStore = useChatStore()
-	const UserStore = useUserStore()
 	const initPageSystem = async () => {
 		const systemInfo = await uni.getSystemInfo()
 		// #ifdef MP-WEIXIN

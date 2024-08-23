@@ -17,8 +17,8 @@
 					<text>文章大纲</text>
 					<text class="tips">(请确认提纲无误后在点击"生成正文")</text>
 				</view>
-				<AreaText @export="onExport" @reload="onCreateContent" :autoHeight="true" :show-action="true" placeholder="" height="300"
-					v-model="outlineStr" />
+				<AreaText @export="onExport" @reload="onCreateContent" :autoHeight="true" :show-action="true"
+					placeholder="" height="300" v-model="outlineStr" />
 				<text
 					class="description">文章大纲往往对文章生成的质量有着很大的关系，如AI生成的大纲不满意或不符合文章主题，建议点击重新生成!否则AI创作的文章水平会参差不齐，请知悉!</text>
 				<text class="btn" @click="createContent">生成正文</text>
@@ -29,23 +29,16 @@
 					<text>正文内容</text>
 					<view class="action">
 						<text class="item">当前字数：{{contentLength}}</text>
-						<text class="item">复制全文</text>
-						<text>导出文档</text>
+						<text class="item" @click="onCopy">复制全文</text>
+						<text @click="onExport(allContent)">导出文档</text>
 					</view>
 				</view>
-				<template v-for="(item,index) in contentExtraArr" :key="index" >
-					<AreaText
-						 @reload="onRelaod(index)" 
-						 @export="onExport"
-						:autoHeight="true" 
-						 v-if="item.show" 
-						:show-action="true"
-						 placeholder=""
-						height="300"
-						v-model="item.content" />
+				<template v-for="(item,index) in contentExtraArr" :key="index">
+					<AreaText @reload="onRelaod(index)" @export="onExport" :autoHeight="true" v-if="item.show"
+						:show-action="true" placeholder="" height="300" v-model="item.content" />
 				</template>
 				<text @click="onCopy" v-if="outLineIndex == splitOutLineArr.length" class="btn">复制全文</text>
-				<text  @click="onGoOnCreate" v-else class="btn">继续生成</text>
+				<text @click="onGoOnCreate" v-else class="btn">继续生成</text>
 			</view>
 		</view>
 	</z-paging>
@@ -55,14 +48,14 @@
 	import { ref, computed } from 'vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks.ts'
 	import AreaText from '@/components/areaText/index.vue'
-	import {toCopyText} from '@/utils/index.ts'
-	interface ContentArr{
-		content:string;
-		show?:boolean;
-		outLine?:string
+	import { exportTxt, toCopyText } from '@/utils';
+	interface ContentArr {
+		content : string;
+		show ?: boolean;
+		outLine ?: string
 	}
 	const pagingRef = ref()
-	const { streamRequest, isRecive,onCancelRequest } = useStreamHooks()
+	const { streamRequest, isRecive, onCancelRequest } = useStreamHooks()
 	const showContent = ref(false)
 	const themeStr = ref('')
 	const outlineStr = ref('')
@@ -71,31 +64,38 @@
 	const outLineIndex = ref(0)
 	const isContentComplete = ref(false)
 	const contentExtraArr = ref<ContentArr[]>([])
-	
-	const outLine = computed(() =>{
+
+	const outLine = computed(() => {
 		return contentExtraArr.value[outLineIndex.value]
 	})
 	//复制
-	const onCopy = () =>{
+	const onCopy = () => {
 		let str = ''
-		contentExtraArr.value.forEach(item =>{
-			str+=item.content
+		contentExtraArr.value.forEach(item => {
+			str += item.content
 		})
 		toCopyText(str)
 	}
-	
-	const onRelaod = (index:number) =>{
+
+	const onRelaod = (index : number) => {
 		outLineIndex.value = index
 		contentExtraArr.value[index].content = ''
 		createContent(false)
 	}
-	const onGoOnCreate = () =>{
-		const items = contentExtraArr.value.filter(item =>item.show)
+	const onGoOnCreate = () => {
+		const items = contentExtraArr.value.filter(item => item.show)
 		const length = items.length - 1
 		outLineIndex.value = length
 		outLineIndex.value++
 		createContent()
 	}
+	const allContent = computed(() => {
+		let str = ''
+		contentExtraArr.value.forEach(item => {
+			str += item.content
+		})
+		return str
+	})
 	//生成正文
 	const createContent = (isScroll = true) => {
 		contentExtraArr.value[outLineIndex.value].show = true
@@ -111,8 +111,8 @@
 			type: "Web-长文写作",
 		}
 		showContent.value = true
-		if(isScroll){
-			pagingRef.value.scrollToBottom()	
+		if (isScroll) {
+			pagingRef.value.scrollToBottom()
 		}
 		uni.showLoading({
 			title: '正文生成中...'
@@ -128,22 +128,26 @@
 				uni.hideLoading()
 			},
 			onmessage(text : string) {
-				contentExtraArr.value[outLineIndex.value].content+=text
-				if(isScroll){
-					pagingRef.value.scrollToBottom()	
+				contentExtraArr.value[outLineIndex.value].content += text
+				if (isScroll) {
+					pagingRef.value.scrollToBottom()
 				}
 			}
 		})
 	}
 	const contentLength = computed<number>(() => {
 		let length = 0
-		contentExtraArr.value.forEach(item =>{
-			length+=item.content.length
+		contentExtraArr.value.forEach(item => {
+			length += item.content.length
 		})
 		return length
 	})
-	const onExport = () =>{
-		onCancelRequest()
+	const onExport = (val : string) => {
+		if (!val) {
+			uni.$u.toast('内容为空无法导出！')
+			return
+		}
+		exportTxt(val);
 	}
 
 	// 生成大纲
@@ -206,15 +210,15 @@
 			onfinish() {
 				contentExtraArr.value = []
 				splitOutLineArr.value = splitText(outlineStr.value)
-				splitOutLineArr.value.forEach(item =>{
-					const obj:ContentArr = {  
-						show:false,
-						content:'',
-						outLine:item
+				splitOutLineArr.value.forEach(item => {
+					const obj : ContentArr = {
+						show: false,
+						content: '',
+						outLine: item
 					}
 					contentExtraArr.value.push(obj)
 				})
-				console.log(splitOutLineArr.value,"分割后的大纲")
+				console.log(splitOutLineArr.value, "分割后的大纲")
 				uni.hideLoading()
 			},
 			onerror() {
@@ -230,7 +234,7 @@
 		})
 
 	}
-	function splitText(str:string) {
+	function splitText(str : string) {
 		const reg = /^##\s(.*)/g
 		const result = []
 		let tempStr = ''
@@ -251,7 +255,6 @@
 		})
 		return result
 	}
-	
 </script>
 <style lang="scss" scoped>
 	.body {

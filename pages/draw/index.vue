@@ -28,11 +28,11 @@
 	import type { MenuItem } from '@/pages/function/type.ts'
 	import { ref } from 'vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
-	
+
 	const { $api } = useGlobalProperties()
 	const paging = ref(null)
 	// 创建响应式数据
-	
+
 	const toPage = (item : MenuItem) => {
 		if (!item.path) {
 			uni.$u.toast('尚未开放')

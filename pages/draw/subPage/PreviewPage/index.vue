@@ -178,21 +178,20 @@
 	const fileType = ref('');
 
 	const toDownload = async (url : string, type : string) => {
+		// #ifdef H5
 		const res = await $api.get('api/v1/img/getbase64', { url: url });
 		if (res.code == 200) {
 			fileUrl.value = res.data;
 			fileType.value = type;
-
-			// #ifdef H5
 			downloadBase64Image(res.data, 'image');
-			// #endif
-
-			// #ifdef MP-WEIXIN
-			saveImage(url);
-			// #endif
 		} else {
 			uni.$u.toast('获取图片链接失败请重试！');
 		}
+		// #endif
+		// #ifdef MP-WEIXIN
+		saveImage(url);
+		// #endif
+
 	};
 
 	const deleteImages = () => {
