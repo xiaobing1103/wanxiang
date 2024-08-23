@@ -80,7 +80,7 @@
 	const sendValue = (val : ToolTipItem) => {
 		onSend(val.prompt);
 	};
-	const onCancel = () =>{
+	const onCancel = () => {
 		onCancelRequest()
 		ChatStore.setLoadingMessage(false)
 	}
