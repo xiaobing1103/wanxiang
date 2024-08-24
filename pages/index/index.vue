@@ -47,7 +47,7 @@
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
 
 	const srollRef = ref(null);
-
+	
 	// 当前选择回答角度
 	// const currentAsk = ref('默认')
 	onMounted(() => {

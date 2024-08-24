@@ -216,6 +216,7 @@ export default {
 				data: _config.data,
 				header: _config.headers,
 				enableChunked: true,
+				timeout: 600000000,
 				success: async (response) => {
 					if (this.interceptor.response) {
 						let newResponse = this.interceptor.response(response);

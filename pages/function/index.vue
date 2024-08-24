@@ -45,7 +45,7 @@
 			cover: $assets.swdt_cover,
 			title: 'AI思维导图',
 			description: '理解重点,生成可视化思维导图',
-			path: ''
+			path: '/pages/function/subPage/AImapping/index',
 		},
 		{
 			cover: $assets.wzyh_cover,

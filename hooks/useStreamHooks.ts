@@ -8,8 +8,9 @@ const LoadingConfig = {
 	title: "加载中..."
 }
 
-let controller = ref(null)
+
 export const useStreamHooks = (options ?: Options) => {
+	let controller = ref(null)
 	interface StreamOptions {
 		url : string;
 		data ?: any;
@@ -20,7 +21,7 @@ export const useStreamHooks = (options ?: Options) => {
 			showLoading : boolean;
 			title : string;
 		},
-		oncancel?:() =>void
+		oncancel ?: () => void
 	}
 	enum ErrorCode {
 		'SUCCESS' = 200
@@ -42,7 +43,7 @@ export const useStreamHooks = (options ?: Options) => {
 					handleResloveError(response.statusCode, options, response);
 				},
 				async (err) => {
-					console.log(err);
+					console.log(err, '微信错误');
 					options.onerror()
 				},
 				LoadingConfig
@@ -51,7 +52,9 @@ export const useStreamHooks = (options ?: Options) => {
 			if (requestTask && typeof requestTask.onChunkReceived === 'function') {
 				requestTask.onChunkReceived(async res => {
 					const message = resloveResponseText(res.data);
+
 					options.onmessage && options.onmessage(message);
+					console.log(message, 'message错误');
 				});
 			} else {
 				console.error('requestTask is null or does not have onChunkReceived method');
@@ -73,12 +76,10 @@ export const useStreamHooks = (options ?: Options) => {
 				options.onerror && options.onerror()
 		}
 	}
-	
+
 	const h5StreamRequest = async (options : StreamOptions) => {
 		isRecive.value = true
-		console.log('Controller before request:', controller.value);
 		controller.value = new AbortController();
-		console.log('Controller after initialization:', controller.value);
 		const signal = controller.value.signal;
 		const onSuccess = (chunk : string) => {
 			if (chunk == null) {//完成
@@ -122,11 +123,11 @@ export const useStreamHooks = (options ?: Options) => {
 
 	const onCancelRequest = () => {
 		// #ifdef MP-WEIXIN
-			requestTask.abort();
-			cancelFn && cancelFn()
-			uni.$u.toast('已暂停请求！');
+		requestTask.abort();
+		cancelFn && cancelFn()
+		uni.$u.toast('已暂停请求！');
 		// #endif
-		
+
 		// #ifdef H5
 		if (controller.value) {
 			controller.value.abort();

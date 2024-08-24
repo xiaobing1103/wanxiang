@@ -2,17 +2,13 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 // import api from '../api/api'
 import { LoginReq, UserInfoDTO } from '../type/userTypes'
-import { useGlobalProperties } from '../hooks/useGlobalHooks'
+import $api from '@/http'
 
 const useUserStore = defineStore("wanxiang_userInfo", () => {
 	const userInfo = ref<UserInfoDTO | null>(null)//用户信息
-	const token = ref('')//token
-	// const appId = ref('')//appid
-	// 用户唯一id
-	const { $api } = useGlobalProperties()
-	// const uid = ref('')
+	const token = ref('')
+
 	const showVip = ref(true)
-	//退出登录
 	const exitLogin = () => {
 		userInfo.value = null
 		uni.navigateTo({

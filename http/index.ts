@@ -103,7 +103,6 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 				data
 			})
 				.then((res) => {
-					console.log(res)
 					resolvce(res.data);
 				})
 				.catch((err) => {
@@ -197,12 +196,12 @@ function get(url, data, config : any) {
 	return $http(httpDTO);
 }
 
-function post(url, data, isjson : boolean = true, header : any, LoadingConfig : LoadingConfigTypes) {
+function post(url : string, data : any, isjson ?: boolean, header ?: any, LoadingConfig ?: LoadingConfigTypes) {
 	const httpDTO = {
 		url,
 		method: 'POST',
 		data,
-		isJson: isjson,
+		isJson: isjson || true,
 		isStream: null,
 		callback: null,
 		errorCallback: null,

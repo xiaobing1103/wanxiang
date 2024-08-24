@@ -247,6 +247,14 @@
 						"navigationBarTitleText": "AI长文写作系统",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "AImapping/index",
+					"name": "AImapping",
+					"style": {
+						"navigationBarTitleText": "AI思维导图",
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		}

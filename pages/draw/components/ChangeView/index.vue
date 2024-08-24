@@ -53,14 +53,14 @@
 		name: '基础',
 		keyName: 'Tab1',
 	},
-	// {
-	// 	name: '艺术风格速查表',
-	// 	keyName: 'Tab12',
-	// },
-	// {
-	// 	name: '在线提示词',
-	// 	keyName: 'Tab13',
-	// },
+	{
+		name: '艺术风格速查表',
+		keyName: 'Tab12',
+	},
+	{
+		name: '在线提示词',
+		keyName: 'Tab13',
+	},
 	]);
 	const handlerClick = (tabs : {
 		name : string;
