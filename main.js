@@ -22,7 +22,7 @@ import {
 } from 'vue'
 import uviewPlus from 'uview-plus'
 import * as Pinia from 'pinia';
-
+import '@/assets/css/index.scss';
 export function createApp() {
 	const app = createSSRApp(App)
 	setupStore(app)

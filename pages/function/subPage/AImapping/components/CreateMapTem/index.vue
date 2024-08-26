@@ -8,8 +8,13 @@
 				<u-textarea height="150" v-model="currentCreateItem.content"
 					:placeholder="currentCreateItem.placeholder"></u-textarea>
 			</view>
-			<view class="btn" @click="onCreateContent">
-				<view class="btn_top" :disabled="isRecive" type="primary">生成思维导图</view>
+			<view class="btn">
+				<view class="btn_top" @click="onCreateContent" :style="{
+					background:isRecive ? 'var(--u-primary-disabled)' : 'var(--aichat-button-color)',
+					color:isRecive?'var(--uni-text-color-disable)': 'var(--uni-bg-color)'
+					}" type="primary">
+					生成思维导图
+				</view>
 			</view>
 
 			<view class="contentHeader">
@@ -18,7 +23,7 @@
 			<view class="content">
 				<!-- <u-textarea :disabled="true" autoHeight v-model="contentStr" :adjustPosition="false" border="surround"
 					:maxlength="-1"></u-textarea> -->
-				<textarea class="" auto-height :value="contentStr" maxlength='-1'>
+				<textarea class="content_textarea" auto-height :value="contentStr" maxlength='-1'>
 				</textarea>
 			</view>
 		</view>
@@ -45,7 +50,8 @@
 	}>()
 	const { streamRequest, isRecive } = useStreamHooks()
 
-	const contentStr = ref('')
+	const contentStr = defineModel<string>('contentStr')
+
 	//类型列表
 	const typeList : Record<createEnum, TypeItem> = {
 		[createEnum.TITLE]: {
@@ -64,14 +70,18 @@
 		}
 	}
 
-
-	//当前创建类型
 	const currentCreateItem = ref<TypeItem>(typeList[createEnum.TITLE])
-
-
-	//开始生成内容
 	const onCreateContent = () => {
+		if (isRecive.value) {
+			uni.$u.toast('正在输出中请等待！')
+			return
+		}
 		const { key, content } = currentCreateItem.value
+		if (!content) {
+			uni.$u.toast('输入内容为空！')
+			return
+		}
+		contentStr.value = '';
 		const endContent = key == createEnum.TITLE ? `我的标题是:${content}` : `我的内容是:${content}`
 		const params = [
 			{
@@ -89,10 +99,12 @@
 			data: data,
 			onmessage(text) {
 				contentStr.value += text
+				uni.$emit('update', { msg: contentStr.value })
 				emit('scrollBottom')
 			},
 			onfinish() {
 				console.log('成功')
+
 			},
 			onerror(err) {
 				console.log(err, "错误")
@@ -125,7 +137,12 @@
 				border-radius: 20rpx;
 				overflow: auto;
 				box-sizing: border-box;
+				padding: 20rpx;
 				border: 2rpx solid $uni-border-color;
+
+				&_textarea {
+					font-size: 25rpx;
+				}
 			}
 
 			.btn {
@@ -135,11 +152,9 @@
 				align-items: center;
 
 				&_top {
-					background-color: $aichat-button-color;
 					height: 60rpx;
 					width: 60%;
 					font-size: 25rpx;
-					color: $uni-bg-color;
 					display: flex;
 					justify-content: center;
 					align-items: center;

@@ -255,7 +255,15 @@
 						"navigationBarTitleText": "AI思维导图",
 						"navigationStyle": "custom"
 					}
-				}
+				},
+				{
+					"path": "AImappingPreview/index",
+					"name": "AImapping",
+					"style": {
+						"navigationBarTitleText": "思维导图预览",
+						"navigationStyle": "custom"
+					}
+				},
 			]
 		}
 	],
