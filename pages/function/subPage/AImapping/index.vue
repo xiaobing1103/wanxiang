@@ -35,18 +35,18 @@
 	import MappingContent from './components/MappingContent'
 	import { debounce } from '@/utils';
 	const initValue = `# ChatGptWeb系统
-	## 基础功能
-	- 支持AI聊天
-	- 支持GPT4
-	- 支持DLLAE2
-	- 支持Midjourney
-	- 支持mind思维导图生成
-	- 更多功能等你探索......
+## 基础功能
+- 支持AI聊天
+- 支持GPT4
+- 支持DLLAE2
+- 支持Midjourney
+- 支持mind思维导图生成
+- 更多功能等你探索......
 	
-	## 更多内容
-	-  在上面输入您想要生成的内容
-	- 点击生成即可
-	`
+## 更多内容
+-  在上面输入您想要生成的内容
+- 点击生成即可
+`
 	const current = ref(0)
 	const pagingRef = ref(null)
 	const list1 = reactive([
@@ -74,13 +74,20 @@
 	}, 500)
 	const handlerClick = (index : number) => {
 		if (index) {
+			// #ifdef H5
 			uni.navigateTo({
 				url: '/pages/function/subPage/AImappingPreview/index'
 			})
+			// #endif
+			// #ifdef MP-WEIXIN
+			uni.navigateTo({
+				url: '/pages/function/subPage/H5CreateAImappingPreview/index'
+			})
+			// #endif
+
 		} else {
 			current.value = index
 		}
-
 	}
 </script>
 

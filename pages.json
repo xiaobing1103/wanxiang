@@ -1,6 +1,5 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
+	"pages": [{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "对话",
@@ -264,6 +263,16 @@
 						"navigationStyle": "custom"
 					}
 				},
+
+				{
+					"path": "H5CreateAImappingPreview/index",
+					"name": "AImapping",
+					"style": {
+						"navigationBarTitleText": "思维导图预览",
+						"navigationStyle": "custom"
+					}
+				}
+
 			]
 		}
 	],

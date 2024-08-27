@@ -7,6 +7,30 @@
 		"slider",
 		"circle-slidere"
 	],
+	"uni-app": {
+		"scripts": {
+			"weixin:test": {
+				"title": "微信测试环境",
+				"env": {
+					"UNI_PLATFORM": "mp-weixin",
+					"APP_ENV": "development"
+				},
+				"define": {
+					"WXCS-PLATFORM": true
+				}
+			},
+			"weixin:pro": {
+				"title": "微信生产环境",
+				"env": {
+					"UNI_PLATFORM": "mp-weixin",
+					"APP_ENV": "production"
+				},
+				"define": {
+					"WXSC-PLATFORM": true
+				}
+			}
+		}
+	},
 	"dcloudext": {
 		"category": [
 			"前端组件",
