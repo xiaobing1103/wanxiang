@@ -1,18 +1,14 @@
 <template>
 	<z-paging ref="pagingRef" :show-scrollbar="false" :scroll-with-animation="true"
 		:pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx'}">
-		<!-- #ifdef H5 -->
 		<template #top>
 			<CommonHeader defindPath="/pages/function/subPage/AImapping/index" defindTitle="AI思维导图" />
 		</template>
-		<!-- #endif -->
 		<view class="MappingContent">
 			<view class="MappingContent_header">
-				<!-- #ifdef H5 -->
 				<iframe class="MappingContent_header_webview" ref="iframeRef"
 					:src="`https://api-view.java68.cn/mindmap/#/?mindValue=${encodeURIComponent(MappingStore.contentStr)}`"
 					style="width: 100%; height: 90vh;border: none;" />
-				<!-- #endif -->
 			</view>
 		</view>
 	</z-paging>

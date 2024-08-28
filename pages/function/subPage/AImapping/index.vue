@@ -50,8 +50,8 @@
 	const current = ref(0)
 	const pagingRef = ref(null)
 	const list1 = reactive([
-		{ name: '生成', keyName: 'Tab1', },
-		{ name: '预览', keyName: 'Tab2', }
+		// { name: '生成', keyName: 'Tab1', },
+		// { name: '预览', keyName: 'Tab2', }
 	]);
 	const contentStr = ref(initValue)
 	const showMappingContent = ref(false);
@@ -81,7 +81,7 @@
 			// #endif
 			// #ifdef MP-WEIXIN
 			uni.navigateTo({
-				url: '/pages/function/subPage/H5CreateAImappingPreview/index'
+				url: '/pages/function/subPage/WeChatWebview/index'
 			})
 			// #endif
 

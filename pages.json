@@ -271,7 +271,20 @@
 						"navigationBarTitleText": "思维导图预览",
 						"navigationStyle": "custom"
 					}
+				},
+
+				{
+					"path": "WeChatWebview/index",
+					"name": "AImapping",
+					"style": {
+						"navigationBarTitleText": "思维导图预览",
+						"navigationStyle": "custom"
+					}
 				}
+
+
+
+
 
 			]
 		}

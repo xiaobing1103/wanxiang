@@ -118,7 +118,7 @@
 
 		// #ifdef MP-WEIXIN
 		uni.navigateTo({
-			url: `/pages/function/subPage/H5CreateAImappingPreview/index?sendMsg=${contentStr.value}`
+			url: `/pages/function/subPage/WeChatWebview/index?sendMsg=${contentStr.value}`
 		})
 		// #endif
 

@@ -31,7 +31,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		token: userInfo?.token || '',
 		App: userInfo?.appid || '',
 		'Access-Token': userInfo?.access_token || '',
-		Vt: userInfo?.vip || '',
+		Vt: userInfo?.vip || '0',
 		// plaintext: 'true'
 		...config
 	};

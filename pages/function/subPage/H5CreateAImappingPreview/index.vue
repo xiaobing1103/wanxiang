@@ -1,7 +1,11 @@
 <template>
-	<iframe class="MappingContent_header_webview" ref="iframeRef"
-		:src="`https://api-view.java68.cn/mindmap/#/?mindValue=${encodeURIComponent(contentStr )}`"
-		style="width: 100%; height: 90vh;border: none;" />
+	<z-paging ref="pagingRef" :show-scrollbar="false" :scroll-with-animation="true"
+		:pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx'}">
+		<iframe class="MappingContent_header_webview" ref="iframeRef"
+			:src="`https://api-view.java68.cn/mindmap/#/?mindValue=${encodeURIComponent(contentStr)}`"
+			style="width: 100%; height: 90vh;border: none;" />
+	</z-paging>
+
 </template>
 
 <script setup lang="ts">
@@ -12,7 +16,6 @@
 	const iframeRef = ref(null)
 	const contentStr = ref('')
 	onLoad((query) => {
-		debugger
 		if (query.sendMsg) {
 			onCreateContent(query.sendMsg)
 		}
@@ -68,57 +71,3 @@
 		})
 	}
 </script>
-
-<style lang="scss" scoped>
-	.ppt-con {
-		padding: 25rpx;
-		margin-bottom: 24rpx;
-
-		.create-type {
-			&_header {
-				padding: 15rpx 0;
-				font-size: 25rpx;
-			}
-
-			.input-box {
-				overflow: hidden;
-				border-radius: 20rpx;
-				border: 1px solid $uni-border-color;
-			}
-
-			.content {
-				height: 100%;
-				min-height: 400rpx;
-				margin-top: 20rpx;
-				border-radius: 20rpx;
-				overflow: auto;
-				box-sizing: border-box;
-				padding: 20rpx;
-				border: 2rpx solid $uni-border-color;
-
-				&_textarea {
-					font-size: 25rpx;
-				}
-			}
-
-			.btn {
-				margin-top: 20rpx;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-
-				&_top {
-					height: 60rpx;
-					width: 60%;
-					font-size: 25rpx;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					border-radius: 15rpx;
-				}
-			}
-		}
-	}
-
-	.contentHeader {}
-</style>
