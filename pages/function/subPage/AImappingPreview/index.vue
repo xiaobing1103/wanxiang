@@ -1,81 +1,92 @@
 <template>
 	<z-paging ref="pagingRef" :show-scrollbar="false" :scroll-with-animation="true"
 		:pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx'}">
-		<template #top>
-			<CommonHeader defindPath="/pages/function/subPage/AImapping/index" defindTitle="AI思维导图" />
-		</template>
-		<view class="MappingContent">
-			<view class="MappingContent_header">
-				<iframe class="MappingContent_header_webview" ref="iframeRef"
-					:src="`https://api-view.java68.cn/mindmap/#/?mindValue=${encodeURIComponent(MappingStore.contentStr)}`"
-					style="width: 100%; height: 90vh;border: none;" />
-			</view>
-		</view>
+		<iframe class="MappingContent_header_webview" ref="iframeRef"
+			:src="`https://api-view.java68.cn/mindmap/#/?mindValue=${encodeURIComponent(contentStr)}`"
+			style="width: 100%; height: 90vh;border: none;" />
 	</z-paging>
+
 </template>
 
-<script lang="ts" setup>
-	import CommonHeader from '@/components/CommonHeader.vue'
-	import { ref, onMounted, onUnmounted, nextTick } from 'vue';
-	import { useMappingStore } from '@/store';
-	const MappingStore = useMappingStore()
-	const iframeRef = ref(null);
-	const count = ref(0);
-	onUnmounted(() => {
-		uni.$off('update', updateHandler);
-		MappingStore.setContentStr(MappingStore.initValue)
-		MappingStore.setUrl()
+<script setup lang="ts">
+	import { ref, nextTick } from 'vue';
+	import { useStreamHooks } from '@/hooks/useStreamHooks'
+	import { onLoad } from '@dcloudio/uni-app';
+	const { streamRequest, isRecive } = useStreamHooks()
+	const iframeRef = ref(null)
+	const contentStr = ref('')
+	onLoad((query) => {
+		if (query.sendMsg) {
+			onCreateContent(query.sendMsg)
+		}
 	});
-
-	const updateHandler = (data : { msg : string; }) => {
-		let result = '';
-		let num = 10
-		result += data.msg;
-		count.value++;
-
-		uni.$u.toast('正在生成思维导图请等待！')
-		if (count.value >= num) {
-			MappingStore.setContentStr(result)
-			if (iframeRef.value) {
-				// #ifdef H5
-				const iframeElement = iframeRef.value;
-				const iframeWindow = iframeElement ? iframeElement.contentWindow : null;
-				nextTick(() => {
-					iframeWindow.postMessage({ type: 'value', value: MappingStore.contentStr }, '*');
-				})
-				// #endif
+	const count = ref(0)
+	const onCreateContent = (currentMsg : string) => {
+		if (isRecive.value) {
+			uni.$u.toast('正在输出中请等待！')
+			return
+		}
+		if (!currentMsg) {
+			uni.$u.toast('输入内容为空！')
+			return
+		}
+		contentStr.value = '';
+		const endContent = `我的标题是:${currentMsg}`
+		const params = [
+			{
+				role: 'user',
+				content: endContent,
 			}
-
-			// #ifdef MP-WEIXIN
-			MappingStore.setUrl(MappingStore.contentStr)
-			nextTick(() => {
-				uni.reLaunch({
-					url: "/pages/function/subPage/AImappingPreview/index"
-				})
-			})
-
-			// #endif
-			count.value = 0;
-
+		]
+		const data = {
+			params: JSON.stringify(params),
+			type: "Web-AI思维导图",
+			prompt: '请根据下面的主题生成思维导图:\'' +
+				currentMsg +
+				'\'，回答的时候不要有任何其他内容，你只需要输出markdown，请严格按照我的格式模版要求执行。' +
+				` 
+        格式模版
+        # 周报
+        - 日期：[填写日期]
+        - 目标：[填写本周目标]
+        - 进展：
+          - [填写任务1进展]
+          - [填写任务2进展]
+          - [填写任务3进展]
+        - 问题：
+          - [填写问题1]
+          - [填写问题2]
+          - [填写问题3]
+        - 下周计划：
+          - [填写任务1计划]
+          - [填写任务2计划]
+          - [填写任务3计划]`
 		}
+		streamRequest({
+			url: 'api/v1/chat2/v35',
+			data: data,
+			onmessage(text) {
+				contentStr.value += text
+				count.value++;
+				if (count.value >= 10) {
+					if (iframeRef.value) {
+						const iframeElement = iframeRef.value;
+						const iframeWindow = iframeElement ? iframeElement.contentWindow : null;
+						nextTick(() => {
+							iframeWindow.postMessage({ type: 'value', value: contentStr.value }, '*');
+						})
+					}
+					count.value = 0;
+				}
+
+			},
+			onfinish() {
+				console.log('成功')
+
+			},
+			onerror(err) {
+				console.log(err, "错误")
+			}
+		})
 	}
-	onMounted(() => {
-		uni.$on('update', updateHandler)
-	});
 </script>
-
-<style lang="scss" scoped>
-	.MappingContent {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-
-	.MappingContent_header {
-		width: 100%;
-
-		&_webview {
-			border: none;
-		}
-	}
-</style>

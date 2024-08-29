@@ -23,8 +23,14 @@
 				<view class="buttonGroup">
 					<up-button :customStyle="{width: '70%',borderRadius:'40rpx',marginBottom:'20rpx'}" size="small"
 						type="primary" text="账户用户登录" @click="toAccountLogin"></up-button>
+					<!-- #ifdef MP-WEIXIN -->
 					<up-button :customStyle="{width: '70%',borderRadius:'40rpx',marginBottom:'20rpx'}" size="small"
-						type="success" text="一键登录"></up-button>
+						type="success" text="一键登录" open-type="getPhoneNumber"
+						@getphonenumber="decryptPhoneNumber"></up-button>
+					<!-- #endif -->
+
+					<!-- <button :style="{width: '70%',borderRadius:'40rpx',marginBottom:'20rpx'}" type="default"
+						open-type="getPhoneNumber" @getphonenumber="decryptPhoneNumber">获取手机号</button> -->
 				</view>
 				<LoginDecscriptions />
 			</template>
@@ -35,10 +41,42 @@
 </template>
 
 <script setup lang="ts">
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import { useUserStore } from '@/store';
+
 	const toAccountLogin = () => {
 		uni.navigateTo({
 			url: '/pages/loginAccount/index'
 		})
+	}
+	const UserStore = useUserStore()
+	const { $api } = useGlobalProperties();
+	const decryptPhoneNumber = async (e) => {
+		const phoneNumberReq = await $api.post('api/v1/wechat/getPhoneNumber', { "code": e.detail.code })
+		if (phoneNumberReq.phone_info) {
+			const { phoneNumber } = phoneNumberReq.phone_info
+			const parmas = { "code": e.detail.code, "phone": phoneNumber }
+			const data = await UserStore.login(parmas, 'wechat')
+			if (data.code == 200) {
+				UserStore.token = data?.data?.token;
+				UserStore.userInfo = data.data;
+				const users = await $api.get('api/v1/user/info');
+				if (users.code == 200) {
+					UserStore.userInfo = users.data;
+				}
+				uni.switchTab({
+					url: '/pages/my/index'
+				});
+				uni.$u.toast('登录成功！')
+			} else {
+				uni.$u.toast(data.msg);
+			}
+		} else {
+			uni.$u.toast(e.detail.errno);
+		}
+		console.log(e.detail.code)  // 动态令牌
+		console.log(e.detail.errMsg) // 回调信息（成功失败都会返回）
+		console.log(e.detail.errno)  // 错误码（失败时返回）
 	}
 </script>
 

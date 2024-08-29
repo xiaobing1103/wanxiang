@@ -156,7 +156,7 @@
 			uni.switchTab({
 				url: '/pages/my/index'
 			});
-			// uni.$u.toast('登录成功！')
+			uni.$u.toast('登录成功！')
 		} else {
 			show.value = false;
 			uni.$u.toast(data.msg);

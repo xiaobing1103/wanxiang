@@ -16,7 +16,7 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 		})
 	}
 	// 用户名密码登录
-	const login = async (parmas, type : 'login' | 'register' | 'phone') => {
+	const login = async (parmas, type : 'login' | 'register' | 'phone' | 'wechat') => {
 		if (type == 'phone') {
 			return $api.post('api/v1/user/phoneLogin', parmas)
 			// return await api.phoneLogin(parmas)
@@ -28,6 +28,9 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 		if (type == 'register') {
 			return $api.post('api/v1/user/register', parmas)
 			// return await api.register(parmas)
+		}
+		if (type == 'wechat') {
+			return $api.post('api/v1/user/wechatPhoneLogin', parmas)
 		}
 	}
 	//微信授权登录
@@ -59,7 +62,7 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 		})
 		// #endif
 		// #ifndef MP-WEIXIN
-		uni.$u('客户端环境不匹配')
+		uni.$u.toast('客户端环境不匹配')
 		// #endif	
 	}
 	//获取用户code
@@ -79,7 +82,7 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 		})
 		// #endif
 		// #ifndef MP-WEIXIN
-		uni.$u('客户端环境不匹配')
+		uni.$u.toast('客户端环境不匹配')
 		// #endif
 	}
 	return {

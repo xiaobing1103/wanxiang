@@ -11,7 +11,7 @@
 			<view class="btn">
 				<view class="btn_top" @click="onCreateContent" :style="{
 					background:isRecive ? 'var(--u-primary-disabled)' : 'var(--aichat-button-color)',
-					color:isRecive?'var(--uni-text-color-disable)': 'var(--uni-bg-color)'
+					color:isRecive ? 'var(--uni-text-color-disable)' : 'var(--uni-bg-color)'
 					}" type="primary">
 					生成思维导图
 				</view>
@@ -81,44 +81,65 @@
 			uni.$u.toast('输入内容为空！')
 			return
 		}
-		contentStr.value = '';
-		const endContent = key == createEnum.TITLE ? `我的标题是:${content}` : `我的内容是:${content}`
-		const params = [
-			{
-				role: 'user',
-				content: endContent,
-			}
-		]
-		const data = {
-			params: JSON.stringify(params),
-			type: "Web-PPT生成内容",
-			prompt: "我希望你根据我的标题生成文档，以下格式中 ## 为章节、###为大纲、####为小纲、- 为根据\"小纲\"补充的回答，必须对小纲进行回答，严格要求必须有2个以上章节，严格要求每个小纲必须有2个以上的回答，严格按照以下格式输出：\n\n# 标题\n\n## 1\n### 1.1\n#### 1.1.1\n- \n- \n\n#### 1.1.2\n- \n- \n\n#### 1.1.3\n- \n- \n\n### 1.2\n#### 1.2.1\n- \n- \n\n#### 1.2.2\n- \n- \n\n#### 1.2.3\n- \n- \n\n### 1.3\n#### 1.3.1\n- \n- \n\n#### 1.3.2\n- \n- \n\n#### 1.3.3\n- \n- \n\n## 2\n### 2.1\n#### 2.1.1\n- \n- \n\n#### 2.1.2\n- \n- \n\n#### 2.1.3\n- \n- \n\n### 2.2\n#### 2.2.1\n- \n- \n\n#### 2.2.2\n- \n- \n\n#### 2.2.3\n- \n- \n\n### 2.3\n#### 2.3.1\n- \n- \n\n#### 2.3.2\n- \n- \n\n#### 2.3.3\n- \n- \n\n## 3\n### 3.1\n#### 3.1.1\n- \n- \n\n#### 3.1.2\n- \n- \n\n#### 3.1.3\n- \n- \n\n### 3.2\n#### 3.2.1\n- \n- \n\n#### 3.2.2\n- \n- \n\n#### 3.2.3\n- \n- \n\n### 3.3\n#### 3.3.1\n- \n- \n\n#### 3.3.2\n- \n- \n\n#### 3.3.3\n- \n- \n\n\n## 4\n### 4.1\n#### 4.1.1\n- \n- \n\n#### 4.1.2\n- \n- \n\n#### 4.1.3\n- \n- \n\n### 4.2\n#### 4.2.1\n- \n- \n\n#### 4.2.2\n- \n- \n\n#### 4.2.3\n- \n- \n\n### 4.3\n#### 4.3.1\n- \n- \n\n#### 4.3.2\n- \n- \n\n#### 4.3.3\n- \n请严格按照我的设定回答"
-		}
-		// #ifdef H5
-		streamRequest({
-			url: 'api/v1/chat2/v35',
-			data: data,
-			onmessage(text) {
-				contentStr.value += text
-				uni.$emit('update', { msg: contentStr.value })
-				emit('scrollBottom')
-			},
-			onfinish() {
-				console.log('成功')
 
-			},
-			onerror(err) {
-				console.log(err, "错误")
-			}
-		})
+		// const endContent = key == createEnum.TITLE ? `我的标题是:${content}` : `我的内容是:${content}`
+		// const params = [
+		// 	{
+		// 		role: 'user',
+		// 		content: endContent,
+		// 	}
+		// ]
+		// const data = {
+		// 	params: JSON.stringify(params),
+		// 	type: "Web-AI思维导图",
+		// 	prompt:
+		// 		'请根据下面的主题生成思维导图:\'' +
+		// 		content +
+		// 		'\'，回答的时候不要有任何其他内容，你只需要输出markdown，请严格按照我的格式模版要求执行。' +
+		// 		` 
+		//       格式模版
+		//       # 周报
+		//       - 日期：[填写日期]
+		//       - 目标：[填写本周目标]
+		//       - 进展：
+		//         - [填写任务1进展]
+		//         - [填写任务2进展]
+		//         - [填写任务3进展]
+		//       - 问题：
+		//         - [填写问题1]
+		//         - [填写问题2]
+		//         - [填写问题3]
+		//       - 下周计划：
+		//         - [填写任务1计划]
+		//         - [填写任务2计划]
+		//         - [填写任务3计划]`
+		// }
+		// #ifdef H5
+		contentStr.value = ''
+		// streamRequest({
+		// 	url: 'api/v1/chat2/v35',
+		// 	data: data,
+		// 	onmessage(text) {
+		// 		contentStr.value += text
+		// 		uni.$emit('update', { msg: contentStr.value })
+		// 		emit('scrollBottom')
+		// 	},
+		// 	onfinish() {
+		// 		console.log('成功')
+
+		// 	},
+		// 	onerror(err) {
+		// 		console.log(err, "错误")
+		// 	}
+		// })
 		uni.navigateTo({
-			url: `/pages/function/subPage/AImappingPreview/index`
+			url: `/pages/function/subPage/AImappingPreview/index?sendMsg=${content}`
 		})
 		// #endif
 
 		// #ifdef MP-WEIXIN
 		uni.navigateTo({
-			url: `/pages/function/subPage/WeChatWebview/index?sendMsg=${contentStr.value}`
+			url: `/pages/function/subPage/WeChatWebview/index?sendMsg=${content}`
 		})
 		// #endif
 
@@ -129,8 +150,13 @@
 	.ppt-con {
 		padding: 25rpx;
 		margin-bottom: 24rpx;
+		--u-primary-disabled: #{$u-primary-disabled};
+		--aichat-button-color: #{$aichat-button-color};
+		--uni-text-color-disable: #{$uni-text-color-disable};
+		--uni-bg-color: #{$uni-bg-color};
 
 		.create-type {
+
 			&_header {
 				padding: 15rpx 0;
 				font-size: 25rpx;

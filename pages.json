@@ -263,16 +263,6 @@
 						"navigationStyle": "custom"
 					}
 				},
-
-				{
-					"path": "H5CreateAImappingPreview/index",
-					"name": "AImapping",
-					"style": {
-						"navigationBarTitleText": "思维导图预览",
-						"navigationStyle": "custom"
-					}
-				},
-
 				{
 					"path": "WeChatWebview/index",
 					"name": "AImapping",
@@ -280,9 +270,15 @@
 						"navigationBarTitleText": "思维导图预览",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "AiDailyModel/index",
+					"name": "AImapping",
+					"style": {
+						"navigationBarTitleText": "AI工作总结",
+						"navigationStyle": "custom"
+					}
 				}
-
-
 
 
 

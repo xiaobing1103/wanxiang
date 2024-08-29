@@ -39,7 +39,7 @@
 			cover: $assets.gzzj_cover,
 			title: 'AI工作总结',
 			description: '超实用,AI帮写周报月报总结',
-			path: ''
+			path: '/pages/function/subPage/AiDailyModel/index'
 		},
 		{
 			cover: $assets.swdt_cover,

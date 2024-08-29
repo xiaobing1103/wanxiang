@@ -32,7 +32,6 @@
 	import { nextTick, reactive, ref, watch } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CreateMapTem from './components/CreateMapTem'
-	import MappingContent from './components/MappingContent'
 	import { debounce } from '@/utils';
 	const initValue = `# ChatGptWeb系统
 ## 基础功能
