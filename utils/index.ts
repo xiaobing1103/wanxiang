@@ -1,3 +1,8 @@
+import { isValidURL } from './isValidURL'
+import { isWeChatTempPath } from './isWeChatTempPath'
+import { Url2temUrl } from './Url2temUrl'
+import weChatTempPathToBase64 from './weChatTempPathToBase64'
+
 // 页面跳转
 const toPage = (path : string) => {
 	uni.navigateTo({
@@ -123,4 +128,4 @@ const saveTextToFile = (textContent : string) => {
 		}
 	});
 };
-export { toPage, debounce, toCopyText, getRandomInt, exportTxt, saveTextToFile };
+export { toPage, debounce, toCopyText, getRandomInt, exportTxt, saveTextToFile, isValidURL, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64 };

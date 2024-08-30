@@ -3,28 +3,29 @@ import { ref, computed } from 'vue';
 import { Image2TextParmas, drawProjectConfig } from '@/pages/draw/data';
 import { deepClone } from '@/utils/deepClone';
 import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+import { isWeChatTempPath } from '@/utils';
 export interface drawTaskJson {
-	create_time: string;
-	do_use: number;
-	end_in: string;
-	error: null;
-	id: string;
-	images: string[];
-	queue: number;
-	start_in: string;
-	state: string;
-	state_name: string;
-	task_id: string;
-	time: number;
-	wait_for: number;
+	create_time : string;
+	do_use : number;
+	end_in : string;
+	error : null;
+	id : string;
+	images : string[];
+	queue : number;
+	start_in : string;
+	state : string;
+	state_name : string;
+	task_id : string;
+	time : number;
+	wait_for : number;
 }
 
 export type taskIdTypeKey = 'txt2img_task_json' | 'img2img_task_json' | 'coloringLineArt_task_json' | 'image2cartoon_task_json' | 'partialRepaint_task_json';
 
 // 定义每种任务类型的历史记录数据
 export type taskIdTypesData = {
-	task_id: string;
-	historyTasks: drawTaskJson[];
+	task_id : string;
+	historyTasks : drawTaskJson[];
 };
 
 const useDrawStore = defineStore(
@@ -59,30 +60,35 @@ const useDrawStore = defineStore(
 		});
 
 		// 更新任务 ID 参数的方法
-		const setTaskIdParmas = (key: taskIdTypeKey, data: taskIdTypesData) => {
+		const setTaskIdParmas = (key : taskIdTypeKey, data : taskIdTypesData) => {
 			taskIdParmas.value[key] = data;
 		};
 
 		// 设置当前的绘画项目
-		const setSeletedDrawProject = (value: taskIdTypeKey) => {
+		const setSeletedDrawProject = (value : taskIdTypeKey) => {
 			seletedDrawProject.value = value;
 		};
-		const setChangeProject = (value: boolean) => {
+		const setChangeProject = (value : boolean) => {
 			changeProject.value = value;
 		};
-		const setCurrentIamgeBase64 = (value: string) => {
+		const setCurrentIamgeBase64 = (value : string) => {
 			currentIamgeBase64.value = value;
 		};
-		const setCurrentParmasData = (value: any) => {
+		const setCurrentParmasData = (value : any) => {
 			currentParmasData.value = value;
 		};
 
-		const getTask = async (parmas: any) => {
+		const getTask = async (parmas : any) => {
 			let isformDataRequest = true;
+			let isWeChatSendImages = false;
+			if (isWeChatTempPath(parmas.image)) {
+				isWeChatSendImages = true
+			}
 			if (seletedDrawProject.value == 'img2img_task_json' || seletedDrawProject.value == 'image2cartoon_task_json') {
 				isformDataRequest = false;
 			}
-			let taskDTO = await $api.post<Image2TextParmas>(drawProjectConfig[seletedDrawProject.value].api, parmas, isformDataRequest);
+
+			let taskDTO = await $api.post<Image2TextParmas>(drawProjectConfig[seletedDrawProject.value].api, parmas, isformDataRequest, {}, null, isWeChatSendImages);
 			if (taskDTO && typeof taskDTO == 'string') {
 				taskDTO = JSON.parse(taskDTO);
 			}

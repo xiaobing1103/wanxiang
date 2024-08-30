@@ -1,6 +1,6 @@
 <template>
 	<view class="header">
-		<view :style="{height:navBarHeight + 'px'}">
+		<view :style="{height:navBarHeight  + 'px'}">
 			<view class="weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
 				<template v-if="curRoute == 'pages/index/index'">
 					<up-navbar :left-icon="'clock'" @leftClick="leftClick">
@@ -57,7 +57,6 @@
 	const chatStore = useChatStore()
 	//  #ifdef MP-WEIXIN
 	const system = useCounterStore()
-
 	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
 	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
 	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()

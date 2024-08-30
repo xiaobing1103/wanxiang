@@ -12,13 +12,14 @@ export interface httpDTO {
 	config ?: any;
 	LoadingConfig ?: LoadingConfigTypes
 	controller ?: { signal : any }
+	isWechatSendImages ?: boolean
 }
 
 export interface LoadingConfigTypes {
 	showLoading : boolean
 	title : String | "加载中..."
 }
-export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig, controller } : httpDTO) => {
+export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig, controller, isWechatSendImages } : httpDTO) => {
 	LoadingConfig = LoadingConfig ? LoadingConfig : {
 		showLoading: true,
 		title: "加载中..."
@@ -47,14 +48,11 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		config.timeout = config.timeout || defaultTimeout;
 	};
 	http.interceptor.response = (response) => {
-		console.log(response)
 		uni.hideLoading();
-
 		if (response?.status == 401 || response?.data.code === 401 || response?.data.code === 4001 || response?.statusCode === 401) {
 			uni.navigateTo({
 				url: '/pages/login/index'
 			});
-
 			// return response.data = await doRequest(response, url)
 		} else {
 			if (response.data.code !== 200 && response.data.message) {
@@ -100,7 +98,8 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 				method: method,
 				url: url,
 				dataType: isJson ? 'json' : '',
-				data
+				data,
+				isWechatSendImages
 			})
 				.then((res) => {
 					resolvce(res.data);
@@ -196,7 +195,7 @@ function get(url, data, config : any) {
 	return $http(httpDTO);
 }
 
-function post(url : string, data : any, isjson ?: boolean, header ?: any, LoadingConfig ?: LoadingConfigTypes) {
+function post(url : string, data : any, isjson ?: boolean, header ?: any, LoadingConfig ?: LoadingConfigTypes, isWechatSendImages ?: boolean) {
 	const httpDTO = {
 		url,
 		method: 'POST',
@@ -206,7 +205,8 @@ function post(url : string, data : any, isjson ?: boolean, header ?: any, Loadin
 		callback: null,
 		errorCallback: null,
 		config: header,
-		LoadingConfig
+		LoadingConfig,
+		isWechatSendImages
 	};
 	return $http(httpDTO);
 }

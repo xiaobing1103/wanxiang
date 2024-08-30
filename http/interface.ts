@@ -3,6 +3,7 @@ import { BaseApi } from '@/http/baseApi';
 import { isWeChatTempPath } from '@/utils/isWeChatTempPath';
 // #ifdef MP-WEIXIN
 import FormData from '@/tools/FormData';
+import { httpDTO } from '.';
 // #endif
 
 export default {
@@ -20,7 +21,7 @@ export default {
 		request: null,
 		response: null
 	},
-	request(options) {
+	request(options : httpDTO) {
 		if (!options) {
 			options = {};
 		}
@@ -68,9 +69,10 @@ export default {
 				fly.interceptors.request.use(this.interceptor.request(_config));
 				fly.interceptors.response.use(
 					(response, promise) => {
+						uni.hideLoading()
 						return response;
 					},
-					(err, promise) => {
+					(err) => {
 						this.interceptor.response(err);
 					}
 				);
@@ -87,23 +89,38 @@ export default {
 						reject(error);
 					});
 			} else {
-				if (typeof options.data?.image == 'string' && isWeChatTempPath(options.data?.image)) {
-					const parmas = options.data;
-					const { image, ...others } = parmas;
+				if (options.isWechatSendImages) {
+					const { image1, image2, image, ...others } = options.data;
+					let UploadOptions = {}
+					if (image) {
+						UploadOptions = {
+							filePath: image,
+							name: 'image',
+							header: {
+								..._config.header,
+								contentType: image.contentType
+							},
+							formData: {
+								...others
+							},
+						}
+					}
+					if (image1 || image2) {
+						UploadOptions = {
+							files: [image1, image2],
+							header: {
+								..._config.header,
+								'Content-Type': 'multipart/form-data',
+							},
+						}
+					}
+
 					uni.uploadFile({
 						url: _config.url,
-						filePath: image,
-						header: {
-							..._config.header,
-							contentType: image.contentType
-						},
-						name: 'image',
+						...UploadOptions,
 						success: (uploadFileRes) => {
 							const response = this.interceptor.response(uploadFileRes);
 							resolve(response);
-						},
-						formData: {
-							...others
 						},
 						fail(err) {
 							reject(err.errMsg);

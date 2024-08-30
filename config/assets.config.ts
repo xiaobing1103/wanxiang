@@ -53,8 +53,14 @@ const iconConfig : IconConfig = {
 
 	// 客服部分
 	weiXinQun: getUrl('/2024/08/23/96a9187a2fba2d9ddb065e63a9ef0fe3.jpg'),
-	weiXinKeFu: getUrl('/2024/08/23/d3d0d0745124cb68033b27b05dc542f9.png')
+	weiXinKeFu: getUrl('/2024/08/23/d3d0d0745124cb68033b27b05dc542f9.png'),
 
+
+	//涂鸦的画笔图标
+	tuYaDrawIcon: getUrl('/2024/03/04/d91ddc60da14ea8423beb09fa31108ab.png'),
+
+	//涂鸦的调色盘图标 
+	tuYaDrawTiaoseIcon: getUrl('/2024/08/30/de0f35a10c54aec2f376e42ead525fa9.svg')
 }
 
 export default iconConfig

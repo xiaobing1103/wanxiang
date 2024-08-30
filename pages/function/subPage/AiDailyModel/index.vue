@@ -11,8 +11,8 @@
 					请简单描述你的工作内容
 				</view>
 				<view class="input-box">
-					<textarea class="input-box_textarea" autoHeight ref="textareaRef" height="200" v-model="value"
-						placeholder="例如:完成了项目的ppt介绍,送了三天外卖"></textarea>
+					<textarea :style="{fontSize:'30rpx',width:'100%'}" class="input-box_textarea" autoHeight
+						v-model="value" maxlength='-1' placeholder="例如:完成了项目的ppt介绍,送了三天外卖"></textarea>
 				</view>
 				<view class="create_types">
 					<view class="create_types_header">
@@ -28,10 +28,10 @@
 					<view class="create_types_header_carcer">
 						<text>我的职业：</text>
 						<view class="create_types_header_carcer_input">
-							<up-input v-model="career" :customStyle="{height:'50rpx',fontSize:'20rpx'}"
-								placeholderClass="placeClass" :placeholderStyle="{ fontSize:'20rpx' }"
-								class="create_types_header_carcer_input_int" type="text"
-								placeholder="请输入你的职业,生成效果会更好" />
+							<up-input :style="{fontSize:'30rpx'}" v-model="career"
+								:customStyle="{height:'50rpx',fontSize:'30rpx'}" placeholderClass="placeClass"
+								:placeholderStyle="{ fontSize:'30rpx' }" class="create_types_header_carcer_input_int"
+								type="text" placeholder="请输入你的职业,生成效果会更好" />
 						</view>
 					</view>
 
@@ -234,11 +234,12 @@
 			}
 
 			.input-box {
+				width: 100%;
 				overflow: scroll;
 				border-radius: 20rpx;
 				border: 1px solid $uni-border-color;
 				min-height: 400rpx;
-				padding: 10rpx;
+				padding: 20rpx;
 
 				&_textarea {
 					min-height: 400rpx;
@@ -299,7 +300,7 @@
 					border: 1rpx solid #ccc;
 
 					&_int {
-						font-size: 20rpx;
+						font-size: 30rpx !important;
 						display: flex;
 						align-items: center;
 					}

@@ -37,6 +37,8 @@ export interface IconConfig {
 	defineAvatar : string
 	weiXinQun : string
 	weiXinKeFu : string
+	tuYaDrawIcon : string
+	tuYaDrawTiaoseIcon : string
 }
 export interface ModelConfig {
 	title : string;

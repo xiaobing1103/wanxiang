@@ -36,7 +36,7 @@ export const menuList = [
 		cover: $assets.aihl_cover,
 		title: "AI换脸",
 		description: "一账图片让你当明星",
-		// path: "/pages/draw/subPage/aiFaceSwapping/index",
+		path: "/pages/draw/subPage/aiFaceSwapping/index",
 	},
 	{
 		cover: $assets.paintAixz_cover,
@@ -310,4 +310,16 @@ export const drawProjectConfig : DrawProjectConfig = {
 		path: '/pages/draw/subPage/partialRepaint/index',
 		api: 'api/v1/img/img2img'
 	}
+}
+
+export interface ChangeFaceTypesProps {
+	type : string;
+	historyType : string;
+	humanFaceImage : FaceImageTypes[] | [];
+	formworkImage : FaceImageTypes[] | [];
+}
+
+export type FaceImageTypes = {
+	data : string[]
+	name : string
 }
