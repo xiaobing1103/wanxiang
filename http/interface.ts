@@ -90,31 +90,20 @@ export default {
 					});
 			} else {
 				if (options.isWechatSendImages) {
-					const { image1, image2, image, ...others } = options.data;
+					const { image, file, ...others } = options.data;
 					let UploadOptions = {}
-					if (image) {
-						UploadOptions = {
-							filePath: image,
-							name: 'image',
-							header: {
-								..._config.header,
-								contentType: image.contentType
-							},
-							formData: {
-								...others
-							},
-						}
-					}
-					if (image1 || image2) {
-						UploadOptions = {
-							files: [image1, image2],
-							header: {
-								..._config.header,
-								'Content-Type': 'multipart/form-data',
-							},
-						}
-					}
 
+					UploadOptions = {
+						filePath: image ? image : file,
+						name: image ? 'image' : 'file',
+						header: {
+							..._config.header,
+							contentType: image && image.contentType
+						},
+						formData: {
+							...others
+						},
+					}
 					uni.uploadFile({
 						url: _config.url,
 						...UploadOptions,

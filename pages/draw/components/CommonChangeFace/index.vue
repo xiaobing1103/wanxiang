@@ -7,8 +7,10 @@
 		<!-- 自定义上传人脸图 -->
 		<ChangeFaceUploadImage description="请上传自定义人脸图" v-model:images="parmas.image2" />
 		<!-- 第二个模板图库 -->
-		<ChangeFaceTemplates title="人脸图库模板" :faceTems="ChangeFaceTypes.humanFaceImage" v-model:images="parmas.image2" />
-
+		<template v-if="ChangeFaceTypes.humanFaceImage.length > 0">
+			<ChangeFaceTemplates title="人脸图库模板" :faceTems="ChangeFaceTypes.humanFaceImage"
+				v-model:images="parmas.image2" />
+		</template>
 	</view>
 </template>
 

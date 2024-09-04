@@ -8,18 +8,23 @@
 			width: `${canvansWidth}px`,
 			height: `${canvansHeight}px`
 		}"></canvas>
-		<view id="pic-preview" class="pic-preview" :change:init="cropper.initObserver" :init="initData" @touchstart="cropper.touchstart" @touchmove="cropper.touchmove" @touchend="cropper.touchend">
-			<image v-if="imgSrc" id="crop-image" class="crop-image" :style="cropper.imageStyles" :src="imgSrc" webp></image>
-			<view v-for="(item, index) in maskList" :key="item.id" :id="item.id" class="crop-mask-block" :style="cropper.maskStylesList[index]"></view>
+		<view id="pic-preview" class="pic-preview" :change:init="cropper.initObserver" :init="initData"
+			@touchstart="cropper.touchstart" @touchmove="cropper.touchmove" @touchend="cropper.touchend">
+			<image v-if="imgSrc" id="crop-image" class="crop-image" :style="cropper.imageStyles" :src="imgSrc" webp>
+			</image>
+			<view v-for="(item, index) in maskList" :key="item.id" :id="item.id" class="crop-mask-block"
+				:style="cropper.maskStylesList[index]"></view>
 			<view v-if="showBorder" id="crop-border" class="crop-border" :style="cropper.borderStyles"></view>
 			<view v-if="radius > 0" id="crop-circle-box" class="crop-circle-box" :style="cropper.circleBoxStyles">
 				<view class="crop-circle" id="crop-circle" :style="cropper.circleStyles"></view>
 			</view>
 			<block v-if="showGrid">
-				<view v-for="(item, index) in gridList" :key="item.id" :id="item.id" class="crop-grid" :style="cropper.gridStylesList[index]"></view>
+				<view v-for="(item, index) in gridList" :key="item.id" :id="item.id" class="crop-grid"
+					:style="cropper.gridStylesList[index]"></view>
 			</block>
 			<block v-if="showAngle">
-				<view v-for="(item, index) in angleList" :key="item.id" :id="item.id" class="crop-angle" :style="cropper.angleStylesList[index]">
+				<view v-for="(item, index) in angleList" :key="item.id" :id="item.id" class="crop-angle"
+					:style="cropper.angleStylesList[index]">
 					<view :style="[{
 						width: `${angleSize}px`,
 						height: `${angleSize}px`
@@ -38,7 +43,14 @@
 				<view class="rechoose" @click="chooseImage">重选</view>
 				<button class="button" size="mini" @click="cropClick">确定</button>
 			</block>
-			<view v-else class="choose-btn" @click="chooseImage">选择图片</view>
+
+			<!-- <view v-else class="choose-btn" @click="chooseImage">取消</view> -->
+			<view v-else class="choose-btn" @click="chooseImage">
+
+				选择图片
+
+			</view>
+
 		</view>
 	</view>
 </template>
@@ -49,7 +61,7 @@
 	// vue3 app renderjs中条件编译无效
 	cropper.setPlatform('APP');
 	export default {
-		mixins: [ cropper ]
+		mixins: [cropper]
 	}
 </script>
 <!-- #endif -->
@@ -57,7 +69,7 @@
 <script module="cropper" lang="renderjs">
 	import cropper from './qf-image-cropper.render.js';
 	export default {
-		mixins: [ cropper ]
+		mixins: [cropper]
 	}
 </script>
 <!-- #endif -->
@@ -69,9 +81,9 @@
 	const AREA_SIZE = 75;
 	/** 图片默认宽高 */
 	const IMG_SIZE = 300;
- 
+
 	export default {
-		name:"qf-image-cropper",
+		name: "qf-image-cropper",
 		// #ifdef MP-WEIXIN
 		options: {
 			// 表示启用样式隔离，在自定义组件内外，使用 class 指定的样式将不会相互影响
@@ -94,6 +106,8 @@
 				type: Number,
 				default: IMG_SIZE
 			},
+
+
 			/** 是否绘制裁剪区域边框 */
 			showBorder: {
 				type: Boolean,
@@ -206,23 +220,44 @@
 		data() {
 			return {
 				// 用不同 id 使 v-for key 不重复
-				maskList: [
-					{ id: 'crop-mask-block-1' },
-					{ id: 'crop-mask-block-2' },
-					{ id: 'crop-mask-block-3' },
-					{ id: 'crop-mask-block-4' },
+				maskList: [{
+						id: 'crop-mask-block-1'
+					},
+					{
+						id: 'crop-mask-block-2'
+					},
+					{
+						id: 'crop-mask-block-3'
+					},
+					{
+						id: 'crop-mask-block-4'
+					},
 				],
-				gridList: [
-					{ id: 'crop-grid-1' },
-					{ id: 'crop-grid-2' },
-					{ id: 'crop-grid-3' },
-					{ id: 'crop-grid-4' },
+				gridList: [{
+						id: 'crop-grid-1'
+					},
+					{
+						id: 'crop-grid-2'
+					},
+					{
+						id: 'crop-grid-3'
+					},
+					{
+						id: 'crop-grid-4'
+					},
 				],
-				angleList: [
-					{ id: 'crop-angle-1' },
-					{ id: 'crop-angle-2' },
-					{ id: 'crop-angle-3' },
-					{ id: 'crop-angle-4' },
+				angleList: [{
+						id: 'crop-angle-1'
+					},
+					{
+						id: 'crop-angle-2'
+					},
+					{
+						id: 'crop-angle-3'
+					},
+					{
+						id: 'crop-angle-4'
+					},
 				],
 				/** 本地缓存的图片路径 */
 				imgSrc: '',
@@ -317,7 +352,7 @@
 					let canvansHeight = this.imgHeight;
 					let size = Math.max(canvansWidth, canvansHeight)
 					let scalc = 1;
-					if(size > 1365) {
+					if (size > 1365) {
 						scalc = 1365 / size;
 					}
 					this.canvansWidth = canvansWidth * scalc;
@@ -367,14 +402,21 @@
 				const right = left + width;
 				const top = (this.sys.windowHeight + this.sys.windowTop - this.sys.offsetBottom - height) / 2;
 				const bottom = this.sys.windowHeight + this.sys.windowTop - this.sys.offsetBottom - top;
-				this.area = { width, height, left, right, top, bottom };
+				this.area = {
+					width,
+					height,
+					left,
+					right,
+					top,
+					bottom
+				};
 				this.scaleWidth = width;
 				this.scaleHeight = height;
 			},
 			/** 从本地选取图片 */
 			chooseImage(options) {
 				// #ifdef MP-WEIXIN || MP-JD
-				if(uni.chooseMedia) {
+				if (uni.chooseMedia) {
 					uni.chooseMedia({
 						...options,
 						count: 1,
@@ -412,19 +454,22 @@
 				uni.getImageInfo({
 					src: url,
 					success: async (res) => {
-						if (isFirst && this.src === url) await (new Promise((resolve) => setTimeout(resolve, 50)));
+						if (isFirst && this.src === url) await (new Promise((resolve) => setTimeout(resolve,
+							50)));
 						this.imgSrc = res.path;
 						let scale = res.width / res.height;
 						let areaScale = this.area.width / this.area.height;
 						if (scale > 1) { // 横向图片
 							if (scale >= areaScale) { // 图片宽不小于目标宽，则高固定，宽自适应
-								this.scaleWidth = (this.scaleHeight / res.height) * this.scaleWidth * (res.width / this.scaleWidth);
+								this.scaleWidth = (this.scaleHeight / res.height) * this.scaleWidth * (res
+									.width / this.scaleWidth);
 							} else { // 否则宽固定、高自适应
 								this.scaleHeight = res.height * this.scaleWidth / res.width;
 							}
 						} else { // 纵向图片
 							if (scale <= areaScale) { // 图片高不小于目标高，宽固定，高自适应
-								this.scaleHeight = (this.scaleWidth / res.width) * this.scaleHeight / (this.scaleHeight / res.height);
+								this.scaleHeight = (this.scaleWidth / res.width) * this.scaleHeight / (this
+									.scaleHeight / res.height);
 							} else { // 否则高固定，宽自适应
 								this.scaleWidth = res.width * this.scaleHeight / res.height;
 							}
@@ -446,15 +491,15 @@
 			 * @param {Function} drawImage 执行剪切时所调用的绘图方法，入参为是否执行了剪切
 			 */
 			drawClipImage(ctx, radius, scale, drawImage) {
-				if(radius > 0) {
+				if (radius > 0) {
 					ctx.save();
 					ctx.beginPath();
 					const w = this.canvansWidth;
 					const h = this.canvansHeight;
-					if(w === h && radius >= w / 2) { // 圆形
+					if (w === h && radius >= w / 2) { // 圆形
 						ctx.arc(w / 2, h / 2, w / 2, 0, 2 * Math.PI);
 					} else { // 圆角矩形
-						if(w !== h) { // 限制圆角半径不能超过短边的一半
+						if (w !== h) { // 限制圆角半径不能超过短边的一半
 							radius = Math.min(w / 2, h / 2, radius);
 							// radius = Math.min(Math.max(w, h) / 2, radius);
 						}
@@ -479,7 +524,7 @@
 			 * @param {Number} scale 生成图片的实际尺寸与截取区域比
 			 */
 			drawRotateImage(ctx, rotate, scale) {
-				if(rotate !== 0) {
+				if (rotate !== 0) {
 					// 1. 以图片中心点为旋转中心点
 					const x = this.scaleWidth * scale / 2;
 					const y = this.scaleHeight * scale / 2;
@@ -493,8 +538,8 @@
 			drawImage(ctx, image, callback) {
 				// 生成图片的实际尺寸与截取区域比
 				const scale = this.canvansWidth / this.area.width;
-				if(this.backgroundColor) {
-					if(ctx.setFillStyle) ctx.setFillStyle(this.backgroundColor);
+				if (this.backgroundColor) {
+					if (ctx.setFillStyle) ctx.setFillStyle(this.backgroundColor);
 					else ctx.fillStyle = this.backgroundColor;
 					ctx.fillRect(0, 0, this.canvansWidth, this.canvansHeight);
 				}
@@ -529,7 +574,7 @@
 			 */
 			draw2DImage(canvas, ctx, src, callback) {
 				// console.log('draw2DImage', canvas, ctx, src, callback)
-				if(canvas) {
+				if (canvas) {
 					const image = canvas.createImage();
 					image.onload = () => {
 						this.drawImage(ctx, image);
@@ -571,14 +616,20 @@
 					},
 					fail: (err) => {
 						uni.hideLoading();
-						uni.showToast({ title: '裁剪失败，生成图片异常！', icon: 'none' });
+						uni.showToast({
+							title: '裁剪失败，生成图片异常！',
+							icon: 'none'
+						});
 					}
 				}, this);
 			},
 			/** 确认裁剪 */
 			cropClick() {
-				uni.showLoading({ title: '裁剪中...', mask: true });
-				if(!this.use2d) {
+				uni.showLoading({
+					title: '裁剪中...',
+					mask: true
+				});
+				if (!this.use2d) {
 					const ctx = uni.createCanvasContext('imgCanvas', this);
 					ctx.clearRect(0, 0, this.canvansWidth, this.canvansHeight);
 					this.draw2DImage(null, ctx, this.imgSrc, () => {
@@ -589,33 +640,38 @@
 				// #ifdef MP-WEIXIN
 				const query = uni.createSelectorQuery().in(this);
 				query.select('#imgCanvas')
-					.fields({ node: true, size: true })
+					.fields({
+						node: true,
+						size: true
+					})
 					.exec((res) => {
 						const canvas = res[0].node;
-										
+
 						const dpr = uni.getSystemInfoSync().pixelRatio;
 						canvas.width = res[0].width * dpr;
 						canvas.height = res[0].height * dpr;
 						const ctx = canvas.getContext('2d');
 						ctx.scale(dpr, dpr);
 						ctx.clearRect(0, 0, this.canvansWidth, this.canvansHeight);
-						
+
 						this.draw2DImage(canvas, ctx, this.imgSrc, () => {
 							this.canvasToTempFilePath(canvas);
 						});
 					});
 				// #endif
 			},
-			handleImage(tempFilePath){
+			handleImage(tempFilePath) {
 				// 在H5平台下，tempFilePath 为 base64
 				// console.log(tempFilePath)
 				uni.hideLoading();
-				this.$emit('crop', { tempFilePath });
+				this.$emit('crop', {
+					tempFilePath
+				});
 			}
 		}
 	}
 </script>
- 
+
 <style lang="scss" scoped>
 	.image-cropper {
 		position: fixed;
@@ -627,10 +683,12 @@
 		display: flex;
 		flex-direction: column;
 		background-color: #000;
+
 		.img-canvas {
 			position: absolute !important;
 			transform: translateX(-100%);
 		}
+
 		.pic-preview {
 			width: 100%;
 			flex: 1;
@@ -643,17 +701,20 @@
 				box-sizing: border-box;
 				pointer-events: none;
 			}
+
 			.crop-circle-box {
 				position: fixed;
 				box-sizing: border-box;
 				z-index: 2;
 				pointer-events: none;
 				overflow: hidden;
+
 				.crop-circle {
 					width: 100%;
 					height: 100%;
 				}
 			}
+
 			.crop-image {
 				padding: 0 !important;
 				margin: 0 !important;
@@ -661,6 +722,7 @@
 				display: block !important;
 				backface-visibility: hidden;
 			}
+
 			.crop-border {
 				position: fixed;
 				border: 1px solid #fff;
@@ -668,6 +730,7 @@
 				z-index: 3;
 				pointer-events: none;
 			}
+
 			.crop-grid {
 				position: fixed;
 				z-index: 3;
@@ -676,6 +739,7 @@
 				pointer-events: none;
 				opacity: 0.5;
 			}
+
 			.crop-angle {
 				position: fixed;
 				z-index: 3;
@@ -700,6 +764,7 @@
 				top: -90rpx;
 				left: 10rpx;
 				display: flex;
+
 				.rotate-icon {
 					background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAABCFJREFUaEPtml3IpVMUx3//ko/ChTIyiGFSMyhllI8bc4F85yuNC2FCqLmQC1+FZORiEkUMNW7UjKjJULgxV+NzSkxDhEkZgwsyigv119J63p7zvOc8z37OmXdOb51dz82711r7/99r7bXXXucVi3xokeNnRqCvB20fDmwAlgK/5bcD+FTSr33tHXQP2H4MeHQE0A+B5yRtLiUyDQJrgVc6AAaBpyV93kXkoBMIQLbfBS5NcK8BRwDXNcD+AdwnaVMbiWkRCPBBohpxHuK7M7865sclRdgNHVMhkF6IMIpwirFEUhzo8M7lwIvASTXEqyVtH8ZgagQSbOzsDknv18HZXpHn5IL8+94IOUm7miSmSqAttjPdbgGuTrnNktYsGgLpoYuAD2qg1zRTbG8P2D4SOC6/Q7vSHPALsE/S7wWy80RsPw/ckxMfSTq/LtRJwPbxwF3ASiCUTxwHCPAnEBfVF8AWSTtL7Ng+LfWOTfmlkn6udFsJ5K15R6a4kvX6yGyUFBvTOWzHXXFzCt4g6c1OArYj9iIGh43YgR+BvztXh1PSa4cMkd0jaVmXDduPAE+k3HpJD7cSGFKvfAc8FQUX8IOk/V2L1udtB/hTgdOBW4Aba/M7Ja1qs2f7euCNlHlZUlx4/495IWQ7Jl+qGbxX0gt9AHfJ2o6zFBVoNVrDKe+F3Sm8VdK1bQQ+A85JgXckXdkFaJx527cC9TpnVdvBtl3h2iapuhsGPdBw1b9xnUvaNw7AEh3bnwDnpuwGSfeP0rN9NvAMELXRXFkxEEK2nwQeSiOtRVQJwC4Z29cAW1Nuu6TVXTrN+SaBt4ErUug2Sa/2NdhH3vZy4NvU2S/p6D768w5xI3WOrAD7LtISFpGdIhVXKfaYvjd20wP13L9M0p4DBbaFRKToSLExVkr6qs+aIwlI6iwz+izUQqC+ab29PiMwqRcmPXczD8w8MFj1zg7xXEqbpdHCw7FgWSjafZL+KcQxtpjteCeflwYulFR/J3TabSslVkj6utPChAK2f6q9uZdLitKieLQRuExSvX9ZbLRUMFs09efpUZL+KtUfVo1GW/umNHC3pOhRLtiwfSbwZS6wV9IJfRdreuBBYH0a2STp9r4G+8jbXgc8mzoDT8VSO00ClwDv1ZR7XyylC4ec7ejaLUmdsV6Aw7oSbwFXpdFdks7qA6pU1na0aR6owgeIR/1cx63UzjAC0YXYVjMQHlkn6ZtSo21ytuPZGKFagQ/xsXZ/3iGuFrYdjafXG0DiQMeBi47c9/GV3BO247UV38n5o0UAP6xmu7jFOGxjRr66On5NPBDOCBsDTapxjHY1dyOcolNXnYlx1himE53p2PmNkxosevfavhg4Izt2k7TXPwZ2S6p6QZPin/2rwcQ7OKmBohCadJGF1P8PG6aaQBKVX/8AAAAASUVORK5CYII=');
 					background-size: 60% 60%;
@@ -707,12 +772,13 @@
 					background-position: center;
 					width: 80rpx;
 					height: 80rpx;
+
 					&.is-reverse {
 						transform: rotateY(180deg);
 					}
 				}
 			}
-			 
+
 			.rechoose {
 				color: $uni-color-primary;
 				padding: 0 $uni-spacing-row-lg;
@@ -734,10 +800,10 @@
 		}
 
 		.safe-area-inset-bottom {
-			padding-bottom: 0;  
+			padding-bottom: 0;
 			padding-bottom: constant(safe-area-inset-bottom); // 兼容 IOS<11.2
 			padding-bottom: env(safe-area-inset-bottom); // 兼容 IOS>=11.2
 		}
- 
+
 	}
 </style>

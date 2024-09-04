@@ -60,7 +60,13 @@ const iconConfig : IconConfig = {
 	tuYaDrawIcon: getUrl('/2024/03/04/d91ddc60da14ea8423beb09fa31108ab.png'),
 
 	//涂鸦的调色盘图标 
-	tuYaDrawTiaoseIcon: getUrl('/2024/08/30/de0f35a10c54aec2f376e42ead525fa9.svg')
+	tuYaDrawTiaoseIcon: getUrl('/2024/08/30/de0f35a10c54aec2f376e42ead525fa9.svg'),
+
+	//上传图片的图标
+	uploadImageIcon: getUrl('/2024/03/04/8aed983f23cce83b7190c21c7f9dbef9.png'),
+
+	//预览图片的图标
+	previewImageIcon: getUrl('/2024/03/04/0e1835b5223697f669522ac8c6921088.png')
 }
 
 export default iconConfig

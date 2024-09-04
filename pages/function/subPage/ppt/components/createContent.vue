@@ -26,8 +26,8 @@
 						type="primary">第二步:开始生成内容</u-button>
 				</view>
 				<view v-if="contentStr" class="content">
-					<u-textarea :disabled="true" v-model="contentStr" :adjustPosition="false" :auto-height="true"
-						border="surround" :maxlength="-1"></u-textarea>
+					<textarea :style="{fontSize:'30rpx',width:'100%'}" :disabled="true" v-model="contentStr"
+						:adjustPosition="false" auto-height border="surround" :maxlength="-1"></textarea>
 				</view>
 			</view>
 		</view>
@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 	import { ref, nextTick } from 'vue'
-	import { debounce } from '@/utils/index'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	enum createEnum {
 		'TITLE' = 'title',
@@ -175,6 +174,7 @@
 
 			.content {
 				margin-top: 20rpx;
+				padding: 20rpx;
 				border-radius: 20rpx;
 				overflow: hidden;
 				box-sizing: border-box;

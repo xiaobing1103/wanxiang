@@ -5,16 +5,19 @@
 				<image class="ImageUploadCom_content_image" :src="url" mode="aspectFit"></image>
 			</template>
 			<template v-else>
+
 				<up-icon
 					:custom-style="{ justifyContent: 'center', display: 'block', width: '100%', textAlign: 'center' }"
 					name="photo-fill" size="100"></up-icon>
-				<text class="ImageUploadCom_text">点击上传图片</text>
+
+
+				<text v-if="!isShowPlaceholder" class="ImageUploadCom_text">点击上传图片</text>
 			</template>
 		</view>
 		<up-overlay opacity="0.9" :show="show" :mask-click-able="false">
 			<view class="overlayHandlerImages">
 				<view :style="{height:navBarHeight + 'px',background:'#fff'}">
-					<view class="Doodles_footerBox" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
+					<view class="Doodles_footerBox" :style="{padding:menuButtonInfo?.top + 16 +'px 0'}">
 						<view class="Doodles_footerBox_title">
 							涂鸦
 						</view>
@@ -35,11 +38,11 @@
 						</view>
 
 					</view>
-
 				</view>
-				<view class="Doodles">
-					<view class="Doodles_main">
 
+
+				<view class="Doodles" v-show="!showDrawColor && !showDrawWidth">
+					<view class="Doodles_main">
 						<v-sign :lineWidth="linesWidth" :lineColor="seletedColor" :width="canvasWidth"
 							:height="canvasHeight" :customStyle="{
 								width: canvasWidth + 'px',
@@ -101,12 +104,14 @@
 	const showDrawColor = ref(false)
 	const showDrawWidth = ref(false)
 	const { $assets } = useGlobalProperties()
+
+
 	// #ifdef MP-WEIXIN
 	const system = useCounterStore()
 	const { menuButtonInfo, navBarHeight } = storeToRefs(system)
 	// #endif
 	const ScreenStore = useScreenStore();
-	const props = defineProps<{ type : taskIdTypeKey }>();
+	const props = defineProps<{ type : taskIdTypeKey, isShowPlaceholder : boolean }>();
 	const parmas = defineModel<Image2TextParmas>('parmas');
 	const url = defineModel<string>('url');
 	const DrawStore = useDrawStore();
@@ -189,58 +194,61 @@
 		signContext.value.addImages(currentImage.value, canvasWidth.value, canvasHeight.value);
 	};
 	const uploadImages = () => {
-		uni.chooseImage({
-			count: 1,
-			sizeType: ['original'],
-			success: async (options) => {
-				const { tempFilePaths, tempFiles } = options;
-				url.value = tempFilePaths[0];
+		if (!props.isShowPlaceholder) {
+			uni.chooseImage({
+				count: 1,
+				sizeType: ['original'],
+				success: async (options) => {
+					const { tempFilePaths, tempFiles } = options;
+					url.value = tempFilePaths[0];
 
-				// #ifdef H5
-				if (props.type == 'coloringLineArt_task_json') {
-					fileToBase64(tempFiles[0], (base64) => {
-						parmas.value.image = base64;
-					});
-				} else {
-					parmas.value.image = tempFiles[0];
-				}
-
-				const img = new Image();
-				img.src = tempFilePaths[0];
-				img.onload = async () => {
-					imgWidth.value = img.width;
-					imgheight.value = img.height;
-					updateCanvasSize();
-				};
-				// #endif
-
-				// #ifdef MP-WEIXIN
-				wx.getImageInfo({
-					src: tempFilePaths[0],
-					success: async (res) => {
-						imgWidth.value = res.width;
-						imgheight.value = res.height;
-						updateCanvasSize();
+					// #ifdef H5
+					if (props.type == 'coloringLineArt_task_json') {
+						fileToBase64(tempFiles[0], (base64) => {
+							parmas.value.image = base64;
+						});
+					} else {
+						parmas.value.image = tempFiles[0];
 					}
-				});
 
-				if (props.type == 'coloringLineArt_task_json') {
-					const file = await wxBase64({ url: tempFilePaths[0], type: 'png' });
-					parmas.value.image = file;
-				} else {
-					parmas.value.image = tempFilePaths[0];
+					const img = new Image();
+					img.src = tempFilePaths[0];
+					img.onload = async () => {
+						imgWidth.value = img.width;
+						imgheight.value = img.height;
+						updateCanvasSize();
+					};
+					// #endif
+
+					// #ifdef MP-WEIXIN
+					wx.getImageInfo({
+						src: tempFilePaths[0],
+						success: async (res) => {
+							imgWidth.value = res.width;
+							imgheight.value = res.height;
+							updateCanvasSize();
+						}
+					});
+
+					if (props.type == 'coloringLineArt_task_json') {
+						const file = await wxBase64({ url: tempFilePaths[0], type: 'png' });
+						parmas.value.image = file;
+					} else {
+						parmas.value.image = tempFilePaths[0];
+					}
+					// #endif
+				},
+				fail: (err) => {
+					console.log(err);
+					uni.$u.toast('上传图片失败，请重试！');
 				}
-				// #endif
-			},
-			fail: (err) => {
-				console.log(err);
-				uni.$u.toast('上传图片失败，请重试！');
-			}
-		});
+			});
+
+		}
 	};
 
 	const updateCanvasSize = () => {
-		const isOpenDoodlesArr = ['coloringLineArt_task_json', 'image2cartoon_task_json'];
+		const isOpenDoodlesArr = ['coloringLineArt_task_json', 'image2cartoon_task_json', 'portraitCutout_task_json'];
 
 		if (!isOpenDoodlesArr.includes(DrawStore.seletedDrawProject)) {
 			show.value = true;

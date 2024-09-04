@@ -51,13 +51,13 @@
 			cover: $assets.wzyh_cover,
 			title: 'AI文章纠正',
 			description: 'AI帮你纠正语句错误,优化内容',
-			path: ''
+			path: '/pages/function/subPage/AiarticleReset/index'
 		},
 		{
 			cover: $assets.wddh_cover,
 			title: 'AI文档对话',
 			description: '通过Ai对话快速获取文档信息',
-			path: ''
+			path: '/pages/function/subPage/AidocumentChat/index'
 		}
 	]
 

@@ -39,6 +39,8 @@ export interface IconConfig {
 	weiXinKeFu : string
 	tuYaDrawIcon : string
 	tuYaDrawTiaoseIcon : string
+	uploadImageIcon : string
+	previewImageIcon : string
 }
 export interface ModelConfig {
 	title : string;

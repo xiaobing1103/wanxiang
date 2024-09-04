@@ -53,6 +53,10 @@
 
 
 		&_desc {
+			display: flex;
+			width: 80%;
+			justify-content: center;
+			text-align: center;
 			font-size: 20rpx;
 		}
 	}

@@ -19,8 +19,9 @@
 	<up-overlay :show="showOverlay" opacity="0.8">
 		<view class="aiFaceSwapping_overlay">
 			<view class="aiFaceSwapping_overlay_header" :style="{height:navBarHeight + 'px'}">
-				<view class="aiFaceSwapping_overlay_header_Box" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
-					AI换脸（图片版）结果
+				<view class="aiFaceSwapping_overlay_header_Box" :style="{paddingTop:menuButtonInfo?.top + 10 +  'px'}">
+					<up-icon @click="showOverlay  = false" name="arrow-left" size="20"></up-icon>
+					<text class="aiFaceSwapping_overlay_header_Box_text">AI换脸（图片版）结果</text>
 				</view>
 				<view class="aiFaceSwapping_overlay_main">
 					<image class="aiFaceSwapping_overlay_main_image" :src="currentImage" mode="aspectFit"></image>
@@ -48,10 +49,10 @@
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { ChangeFaceTypesProps } from '../../data';
 	import { base64ToFile } from '@/utils/base642file';
-	import { Url2temUrl, isValidURL, isWeChatTempPath, weChatTempPathToBase64 } from '@/utils';
+	import { downloadReport, isValidURL, isWeChatTempPath, weChatTempPathToBase64 } from '@/utils';
 	import { storeToRefs } from 'pinia';
 	import { useCounterStore } from '@/store';
-	import { saveImage } from '@/utils/saveImages';
+	import { downloadBase64Image } from '@/utils/downLoadLocal';
 	const { $api } = useGlobalProperties();
 	// #ifdef MP-WEIXIN
 	const system = useCounterStore()
@@ -78,11 +79,13 @@
 	})
 
 	const changeFace = async () => {
-		if (!parmas.image1) {
+		const parmasRes = { ...parmas }
+
+		if (!parmasRes.image1) {
 			uni.$u.toast('请上传自定义原图！');
 			return
 		}
-		if (!parmas.image2) {
+		if (!parmasRes.image2) {
 			uni.$u.toast('请上传人脸图！');
 			return
 		}
@@ -90,33 +93,37 @@
 
 		// 区分当前是否是url h5端的时候只有url 和 base64
 		// #ifdef H5
-		if (isValidURL(parmas.image1)) {
-			parmas.image1 = await reverseUrlToBase64(parmas.image1)
+		if (isValidURL(parmasRes.image1)) {
+			parmasRes.image1 = await reverseUrlToBase64(parmasRes.image1)
 		}
-		if (isValidURL(parmas.image2)) {
-			parmas.image2 = await reverseUrlToBase64(parmas.image2)
+		if (isValidURL(parmasRes.image2)) {
+			parmasRes.image2 = await reverseUrlToBase64(parmasRes.image2)
 		}
 		// #endif
 
-		// 微信的时候只有临时路径 和 url 将url转成临时路径
+		// 微信的时候只有临时路径 和 url
 		// #ifdef MP-WEIXIN
-		if (!isWeChatTempPath(parmas.image1)) {
-			parmas.image1 = await Url2temUrl(parmas.image1)
-			parmas.image1 = await weChatTempPathToBase64(parmas.image1)
+
+		if (isWeChatTempPath(parmasRes.image1)) {
+			parmasRes.image1 = await weChatTempPathToBase64(parmasRes.image1)
+		} else {
+			parmasRes.image1 = await reverseUrlToBase64(parmasRes.image1)
 		}
-		if (!isWeChatTempPath(parmas.image2)) {
-			parmas.image2 = await Url2temUrl(parmas.image2)
-			parmas.image2 = await weChatTempPathToBase64(parmas.image2)
+		if (isWeChatTempPath(parmasRes.image2)) {
+			parmasRes.image2 = await weChatTempPathToBase64(parmasRes.image2)
+		} else {
+			parmasRes.image2 = await reverseUrlToBase64(parmasRes.image2)
 		}
-		isWeChatSendImages = true
+
 		// #endif
-		const sendParmas = revasedImages()
+		console.log(parmasRes)
+		const sendParmas = revasedImages(parmasRes)
 		let res
 		// #ifdef H5
 		res = await $api.post('api/v1/img/face', sendParmas, true, {}, null, isWeChatSendImages);
 		// #endif
-		// #ifdef MP-WEIXIN
 
+		// #ifdef MP-WEIXIN
 		res = await $api.post('api/v1/img/face_base64', sendParmas);
 		// #endif
 		if (res.code == 200) {
@@ -128,19 +135,21 @@
 	}
 	const reverseUrlToBase64 = async (url : string) => {
 		const base64Images = await $api.get(`api/v1/img/getbase64?url=${url}`)
-		if (base64Images.code == 200) {
-			return base64Images.data
-		} else {
-			uni.$u.toast('设置图片错误请重试！');
-		}
+		return new Promise((resolve, reject) => {
+			if (base64Images.code == 200) {
+				resolve(base64Images.data)
+			} else {
+				uni.$u.toast('设置图片错误请重试！');
+			}
+		})
 	}
 
-	const revasedImages = () => {
+	const revasedImages = (parmasRes : { image1 : any, image2 : any }) => {
 		let formdata : any | FormData
-		let sendParmas = parmas
+		let sendParmas = parmasRes
 		// #ifdef H5
-		const file1 = base64ToFile(parmas.image1, '图片1')
-		const file2 = base64ToFile(parmas.image2, '图片2')
+		const file1 = base64ToFile(parmasRes.image1, '图片1')
+		const file2 = base64ToFile(parmasRes.image2, '图片2')
 		formdata = new FormData()
 		formdata.append('image1', file1)
 		formdata.append('image2', file2)
@@ -150,8 +159,18 @@
 	}
 
 	const saveImages = () => {
-		saveImage(currentImage.value, '图片')
-		showOverlay.value = false
+		// #ifdef H5
+		downloadBase64Image(currentImage.value, '下载')
+		// #endif
+		// #ifdef MP-WEIXIN
+		downloadReport(currentImage.value).then((res) => {
+			uni.$u.toast(res);
+			showOverlay.value = false
+		}).catch((err) => {
+			console.log(err)
+			uni.$u.toast(err);
+		})
+		// #endif
 	}
 </script>
 
@@ -191,9 +210,15 @@
 
 		&_header {
 			&_Box {
+				display: flex;
+				align-items: center;
 				padding: 20rpx;
 				font-size: 30rpx;
 				font-weight: 800;
+
+				&_text {
+					margin-left: 20rpx;
+				}
 			}
 		}
 
@@ -233,7 +258,7 @@
 				justify-content: center;
 				align-items: center;
 				width: 50%;
-				font-size: 25rpx;
+				font-size: 35rpx;
 				padding: 12rpx;
 				box-sizing: border-box;
 				border-radius: 20rpx;

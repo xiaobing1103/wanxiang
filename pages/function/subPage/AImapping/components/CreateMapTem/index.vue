@@ -28,11 +28,94 @@
 			</view>
 		</view>
 	</view>
+
+
+	<!-- 	<view class="AImapping1">
+		<div class="svg-container" ref="svgWrapRef">
+			<svg ref="svgRef" class="w-full h-full"></svg>
+		</div>
+	</view> -->
 </template>
 
 <script setup lang="ts">
-	import { onMounted, ref } from 'vue'
+	import { nextTick, onMounted, reactive, ref, shallowRef } from 'vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
+	// import { watchThrottled } from '@vueuse/core'
+	// import { Transformer } from 'markmap-lib'
+	// import { Markmap } from 'markmap-view'
+	// 	const transformer = new Transformer();
+	// 	const descInput = ref(`# ChatGptWeb系统
+	// ## 基础功能
+	// - 支持AI聊天
+	// - 支持GPT4
+	// - 支持DLLAE2
+	// - 支持Midjourney
+	// - 支持mind思维导图生成
+	// - 更多功能等你探索......
+
+	// ## 更多内容
+	// -  在上面输入您想要生成的内容
+	// - 点击生成即可
+	// `)
+	// const svgRef = shallowRef<SVGElement>()
+	// const svgWrapRef = shallowRef<HTMLDivElement>()
+	// let markmap : Markmap | null = null
+
+	// const renderMarkMap = () => {
+	// 	const { root } = transformer.transform(descInput.value)
+	// 	markmap?.setData(root)
+	// 	markmap?.fit()
+	// }
+
+
+	// const createMarkmap = () => {
+	// 	markmap?.destroy()
+	// 	if (svgRef.value) {
+	// 		markmap = Markmap.create(svgRef.value)
+	// 	}
+	// }
+
+	// Lifecycle
+	// onMounted(async () => {
+	// 	createMarkmap()
+	// 	renderMarkMap()
+	// })
+
+
+	// watchThrottled(
+	// 	descInput,
+	// 	() => {
+	// 		renderMarkMap()
+	// 	},
+	// 	{
+	// 		throttle: 500
+	// 	}
+	// )
+
+
+	// const exportFile = () => {
+	// 	showExportPopup.value = true
+	// }
+
+	// const handleExport = (index : number) => {
+	// 	const key = exportOptions.value[index].key
+	// 	switch (key) {
+	// 		case 'html':
+	// 			exportHtml()
+	// 			break
+	// 		case 'png':
+	// 			exportImg('png')
+	// 			break
+	// 		case 'jpg':
+	// 			exportImg('jpeg')
+	// 			break
+	// 	}
+	// }
+
+
+
+
+
 	enum createEnum {
 		'TITLE' = 'title',
 		'CONTENT' = 'content'
@@ -48,7 +131,7 @@
 		(e : 'next', val : { content : string, type : createEnum }) : void
 		(e : 'scrollBottom') : void
 	}>()
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { isRecive } = useStreamHooks()
 
 	const contentStr = defineModel<string>('contentStr')
 
@@ -82,56 +165,8 @@
 			return
 		}
 
-		// const endContent = key == createEnum.TITLE ? `我的标题是:${content}` : `我的内容是:${content}`
-		// const params = [
-		// 	{
-		// 		role: 'user',
-		// 		content: endContent,
-		// 	}
-		// ]
-		// const data = {
-		// 	params: JSON.stringify(params),
-		// 	type: "Web-AI思维导图",
-		// 	prompt:
-		// 		'请根据下面的主题生成思维导图:\'' +
-		// 		content +
-		// 		'\'，回答的时候不要有任何其他内容，你只需要输出markdown，请严格按照我的格式模版要求执行。' +
-		// 		` 
-		//       格式模版
-		//       # 周报
-		//       - 日期：[填写日期]
-		//       - 目标：[填写本周目标]
-		//       - 进展：
-		//         - [填写任务1进展]
-		//         - [填写任务2进展]
-		//         - [填写任务3进展]
-		//       - 问题：
-		//         - [填写问题1]
-		//         - [填写问题2]
-		//         - [填写问题3]
-		//       - 下周计划：
-		//         - [填写任务1计划]
-		//         - [填写任务2计划]
-		//         - [填写任务3计划]`
-		// }
 		// #ifdef H5
 		contentStr.value = ''
-		// streamRequest({
-		// 	url: 'api/v1/chat2/v35',
-		// 	data: data,
-		// 	onmessage(text) {
-		// 		contentStr.value += text
-		// 		uni.$emit('update', { msg: contentStr.value })
-		// 		emit('scrollBottom')
-		// 	},
-		// 	onfinish() {
-		// 		console.log('成功')
-
-		// 	},
-		// 	onerror(err) {
-		// 		console.log(err, "错误")
-		// 	}
-		// })
 		uni.navigateTo({
 			url: `/pages/function/subPage/AImappingPreview/index?sendMsg=${content}`
 		})

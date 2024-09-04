@@ -11,9 +11,10 @@
 					请简单描述你的工作内容
 				</view>
 				<view class="input-box">
-					<textarea :style="{fontSize:'30rpx',width:'100%'}" class="input-box_textarea" autoHeight
-						v-model="value" maxlength='-1' placeholder="例如:完成了项目的ppt介绍,送了三天外卖"></textarea>
+					<textarea :style="{fontSize:'30rpx',width:'100%'}" class="input-box_textarea" auto-height
+						v-model="inputValue" maxlength='-1' placeholder="例如:完成了项目的ppt介绍,送了三天外卖"></textarea>
 				</view>
+
 				<view class="create_types">
 					<view class="create_types_header">
 						生成类型：
@@ -30,7 +31,7 @@
 						<view class="create_types_header_carcer_input">
 							<up-input :style="{fontSize:'30rpx'}" v-model="career"
 								:customStyle="{height:'50rpx',fontSize:'30rpx'}" placeholderClass="placeClass"
-								:placeholderStyle="{ fontSize:'30rpx' }" class="create_types_header_carcer_input_int"
+								placeholderStyle="{ fontSize:'30rpx' }" class="create_types_header_carcer_input_int"
 								type="text" placeholder="请输入你的职业,生成效果会更好" />
 						</view>
 					</view>
@@ -46,7 +47,6 @@
 					<text class="create_types_header_desc">（AI无法具体字数，只能大概的字数，建议生成完成自行再检查）</text>
 				</view>
 
-
 				<view class="btn">
 					<u-button :customStyle="{height:'60rpx', borderRadius:'25rpx',width:'80%'}" class="bth_content"
 						:disabled="isRecive" @click="onCreateContent" type="primary">生成报告</u-button>
@@ -56,6 +56,12 @@
 					<u-button :customStyle="{height:'60rpx', borderRadius:'25rpx',width:'80%'}" class="bth_content"
 						:disabled="isRecive" @click="exportFile">导出</u-button>
 				</view>
+			</view>
+			<view class="create-type_header" v-if="contentStr">
+				输出内容:
+			</view>
+			<view class="input-box" v-if="contentStr">
+				<MessageItem :content="contentStr" />
 			</view>
 		</view>
 
@@ -80,10 +86,10 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, nextTick, reactive, onMounted } from 'vue'
+	import { ref, nextTick, reactive } from 'vue'
 	import CommonHeader from '@/components/CommonHeader.vue'
-
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
+	import MessageItem from '@/components/CommonChat/MessageItem.vue';
 	import { debounce, exportTxt } from '@/utils';
 	const show = ref(false)
 	const seletedNums = ref(150)
@@ -91,9 +97,9 @@
 		seletedNums.value = nums
 		show.value = false
 	}
-	const textareaRef = ref(null);
 	const career = ref('')
-	const value = ref('')
+	const inputValue = ref('')
+	const contentStr = ref('')
 	const numList = ref([100, 150, 200, 250, 300, 350, 400, 450, 500])
 	const radiovalue1 = ref('日报');
 	const radiolist1 = reactive([
@@ -112,8 +118,8 @@
 	]);
 
 	const exportFile = () => {
-		if (value.value) {
-			exportTxt(value.value);
+		if (contentStr.value) {
+			exportTxt(contentStr.value);
 		}
 	}
 	const { streamRequest, isRecive } = useStreamHooks()
@@ -126,7 +132,7 @@
 	}, 500)
 	//开始生成内容
 	const onCreateContent = () => {
-		if (!value.value) {
+		if (!inputValue.value) {
 			uni.$u.toast('请输入内容！')
 			return
 		}
@@ -137,7 +143,7 @@
 		const params = [
 			{
 				role: 'user',
-				content: `我的职业是 ${career.value} 我今天的工作内容是 ${value.value}。帮我写一个 ${seletedNums.value} 字左右的日报`
+				content: `我的职业是 ${career.value} 我今天的工作内容是 ${inputValue.value}。帮我写一个 ${seletedNums.value} 字左右的日报`
 			}
 		]
 		const data = {
@@ -161,12 +167,11 @@
         "\n" +
         "回答身份：始终以工作日报助手的口吻回答我的任何问题。`
 		}
-		value.value = ''
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
 			onmessage(text) {
-				value.value += text
+				contentStr.value += text
 				onScroolToBottom()
 			},
 			onfinish() {
@@ -216,7 +221,7 @@
 
 	.ppt-con {
 		margin-bottom: 24rpx;
-
+		
 		.create-type {
 
 			&_header {
@@ -235,14 +240,15 @@
 
 			.input-box {
 				width: 100%;
-				overflow: scroll;
+				overflow-y: scroll;
 				border-radius: 20rpx;
 				border: 1px solid $uni-border-color;
-				min-height: 400rpx;
+				min-height: 200rpx;
 				padding: 20rpx;
+				font-size: 25rpx;
 
 				&_textarea {
-					min-height: 400rpx;
+					min-height: 200rpx;
 				}
 			}
 
@@ -349,6 +355,19 @@
 		&_content {
 			font-size: 25rpx;
 			color: $aichat-text-color;
+		}
+	}
+
+	.input-box {
+		overflow-y: scroll;
+		border-radius: 20rpx;
+		border: 1px solid $uni-border-color;
+		max-height: 400rpx;
+		padding: 20rpx;
+		font-size: 25rpx;
+
+		&_textarea {
+			min-height: 400rpx;
 		}
 	}
 </style>

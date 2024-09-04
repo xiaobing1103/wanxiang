@@ -36,10 +36,6 @@
 	import {
 		useDrawStore
 	} from '@/store';
-	import {
-		drawTaskJson,
-		taskIdTypeKey
-	} from '@/store/draw';
 
 	import {
 		deepClone

@@ -1,4 +1,5 @@
 const APP_CONFIG = {
-	staticPath:'http://file.1foo.com',
+	staticPath: 'http://file.1foo.com',
 }
-export default APP_CONFIG;
+
+export default APP_CONFIG

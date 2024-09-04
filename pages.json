@@ -278,9 +278,24 @@
 						"navigationBarTitleText": "AI工作总结",
 						"navigationStyle": "custom"
 					}
+				},
+
+				{
+					"path": "AiarticleReset/index",
+					"name": "AiarticleReset",
+					"style": {
+						"navigationBarTitleText": "AI文章纠正",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AidocumentChat/index",
+					"name": "AiarticleReset",
+					"style": {
+						"navigationBarTitleText": "AI文档对话",
+						"navigationStyle": "custom"
+					}
 				}
-
-
 
 			]
 		}
