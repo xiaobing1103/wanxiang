@@ -87,7 +87,7 @@
 
 				&_else {
 					color: $u-primary;
-					font-size: 25rpx;
+					font-size: 27rpx;
 				}
 			}
 		}

@@ -162,7 +162,7 @@
 				// color: $u-primary-light;
 				border: 1rpx solid $u-primary;
 				border-radius: 15rpx;
-				font-size: 25rpx;
+				font-size: 27rpx;
 				padding: 5rpx 15rpx;
 				bottom: 15rpx;
 			}

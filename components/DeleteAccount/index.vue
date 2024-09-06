@@ -67,7 +67,7 @@
 			background-color: $aichat-golbal-background;
 			border-radius: 20rpx;
 			padding: 15rpx;
-			font-size: 25rpx;
+			font-size: 27rpx;
 
 			&_header {
 				font-weight: 800;

@@ -49,7 +49,7 @@
 		}
 
 		&_content {
-			font-size: 25rpx;
+			font-size: 27rpx;
 		}
 	}
 </style>

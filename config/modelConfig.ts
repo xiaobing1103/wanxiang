@@ -11,6 +11,13 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelIcon: $assets.v35ModelIcon,
 		modelDesc: '推荐模型基座训练数据超50亿T，是目前大语言模型中...'
 	},
+	'echarts': {
+		title: '图表模型',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/v35',
+		modelIcon: $assets.echartsModelIcon,
+		modelDesc: '可以帮你生成图表，生成表格支持echarts格式...'
+	},
 	'v40': {
 		title: '智慧4.0模式',
 		ModelPath: '',
@@ -52,14 +59,106 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelIcon: $assets.glmModelIcon,
 		modelDesc: '本模型由清华大学人工智能团队开发，训练资料大量为中...'
 	},
+	'GLM-4-Air': {
+		title: 'GLM-4-Air模型',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/glm_4_air',
+		modelIcon: $assets.zhipuModelIcon,
+		modelDesc: '综合性能接近GLM-4，速度更快。'
+	},
+	'glm_4_airx': {
+		title: 'glm_4_airx模型',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/glm_4_airx',
+		modelIcon: $assets.zhipuModelIcon,
+		modelDesc: 'GLM-4-Air 的高性能版本，效果不变，推理速度达到其2.6倍。'
+	},
+	glm_4_0520: {
+		title: 'GLM-4-0520',
+		ModelPath: '',
+		modelIcon: $assets.zhipuModelIcon,
+		ModelApi: "api/v1/chat2/glm_4_0520",
+		modelDesc: '当前智谱最先进最智能的模型，指令遵从能力大幅提升18...'
+	},
+	glm_4_flash: {
+		title: 'GLM-4-Flash',
+		ModelPath: '',
+		modelIcon: $assets.zhipuModelIcon,
+		ModelApi: "api/v1/chat2/glm_4_flash",
+		modelDesc: '综合性能强，适用简单任务，速度最快。'
+	},
+	'zhipu_glm4': {
+		title: '智谱 · GLM-4',
+		ModelPath: '',
+		modelIcon: $assets.zhipu_glm4Icon,
+		ModelApi: "api/v1/chat2/zhipu_glm4",
+		modelDesc: '适用于复杂的对话交互和深度内容创作设计的场景'
+	},
 	'baidu': {
 		title: '文心一言',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/baidu',
 		modelIcon: $assets.baiduModelIcon,
 		modelDesc: '基于飞桨深度学习平台和文心知识增强大模型，持续从海量...'
+	},
+	'baidu_8k_1222': {
+		title: '文心 · 8K-1222',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baidu_8k_1222',
+		modelIcon: $assets.baiduModelIcon,
+		modelDesc: '旗舰级大规模语言模型，覆盖海量中英文语料，具有强...'
+	},
 
-	}
+	'baidu_speed_128k': {
+		title: '文心 · 极速128K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baidu_speed_128k',
+		modelIcon: $assets.baiduModelIcon,
+		modelDesc: '我是由百度2024年最新发布的自研高性能大语言模型，通用...'
+	},
+	baidu_speed: {
+		title: '文心 · 极速',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baidu_speed',
+		modelIcon: $assets.baiduModelIcon,
+		modelDesc: '我是由百度自研的轻量级大语言模型，兼顾优异的模型效果与...'
+	},
+	baidu_lite_8k: {
+		title: '文心 · 轻量8K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baidu_lite_8k',
+		modelIcon: $assets.baiduModelIcon,
+		modelDesc: '我是由百度2024年最新发布的自研高性能大语言模型...'
+	},
+	baidu_tiny_8k: {
+		title: '文心 · 鸿羽8K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baidu_tiny_8k',
+		modelIcon: $assets.baiduModelIcon,
+		modelDesc: '我是由百度自研的超高性能大语言模型。...'
+	},
+	baidu_ai_apaas: {
+		title: '文心 · 千帆',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baidu_ai_apaas',
+		modelIcon: $assets.baiduModelIcon,
+		modelDesc: '我是针对企业级大模型应用进行了专门的指令调优，在问答...'
+	},
+	'doc': {
+		title: '文档理解模型',
+		ModelPath: '',
+		modelIcon: $assets.docModelIcon,
+		ModelApi: "api/v1/chat2/v35",
+		modelDesc: '可以理解任何文档的模型'
+	},
+
+	// net: undefined,
+	// echarts: undefined,
+	// video: undefined,
+	// voice: undefined,
+	// image: undefined,
+	// web: undefined,
+
 };
 
 export type AngleType = {

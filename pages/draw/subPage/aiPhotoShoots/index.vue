@@ -193,7 +193,7 @@
 			justify-content: center;
 			align-items: center;
 			width: 50%;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			padding: 12rpx;
 			box-sizing: border-box;
 			border-radius: 20rpx;
@@ -237,7 +237,7 @@
 					display: flex;
 					justify-content: center;
 					align-items: center;
-					font-size: 25rpx;
+					font-size: 27rpx;
 					padding: 25rpx 0;
 				}
 			}
@@ -272,7 +272,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			font-size: 25rpx;
+			font-size: 27rpx;
 
 		}
 	}

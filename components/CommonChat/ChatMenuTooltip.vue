@@ -1,9 +1,10 @@
 <template>
 	<view class="wrapper">
-		<scroll-view  :show-scrollbar="false" scroll-x style="flex-1">
+		<scroll-view :show-scrollbar="false" scroll-x style="flex-1">
 			<view class="tooltip">
 				<view v-for="(item,index) in rows" :key="index" class="row">
-					<view v-for="(citem,cindex) in item" :key="cindex" :style="{background:citem.color}" class="toolip-item">
+					<view v-for="(citem,cindex) in item" :key="cindex" :style="{background:citem.color}"
+						class="toolip-item" @click="topath(citem.path)">
 						<template v-if="citem.iconType == 'symbol'">
 							<wx-icon :size="12" :name="citem.icon"></wx-icon>
 						</template>
@@ -14,115 +15,110 @@
 					</view>
 				</view>
 			</view>
-		</scroll-view>		
+		</scroll-view>
 	</view>
 </template>
 
 <script setup lang="ts">
-	import {computed} from 'vue'
-	
-	interface ToolipItem{
-		icon:string;
-		text:string;
-		color:string;
-		path:string;
-		iconType:'text' | "symbol"
+	import { computed } from 'vue'
+	const topath = (path : string) => {
+		uni.navigateTo({
+			url: path
+		})
 	}
-	const tooTipList:ToolipItem[] = [
+
+	interface ToolipItem {
+		icon : string;
+		text : string;
+		color : string;
+		path : string;
+		iconType : 'text' | "symbol"
+	}
+	const tooTipList : ToolipItem[] = [
 		{
-			icon:'💯',
-			text:'AI长论文写作',
-			color:'#ECF7EF',
-			path:'',
-			iconType:"text"
+			icon: '💯',
+			text: 'AI长论文写作',
+			color: '#ECF7EF',
+			path: '/pages/function/subPage/longText/index',
+			iconType: "text",
+
 		},
 		{
-			icon:'ppt',
-			text:'一键生成PPT',
-			color:'#FCF2E7',
-			path:'',
-			iconType:"symbol"
+			icon: 'ppt',
+			text: '一键生成PPT',
+			color: '#FCF2E7',
+			path: '/pages/function/subPage/ppt/index',
+			iconType: "symbol"
 		},
 		{
-			icon:'human',
-			text:'图片转卡通',
-			color:'#EEF5FD',
-			path:'',
-			iconType:"symbol"
+			icon: 'human',
+			text: '图片转卡通',
+			color: '#EEF5FD',
+			path: '/pages/draw/subPage/image2cartoon/index',
+			iconType: "symbol"
 		},
 		{
-			icon:'hl',
-			text:'AI换脸',
-			color:'#FCEDF2',
-			path:'',
-			iconType:"symbol"
+			icon: 'hl',
+			text: 'AI换脸',
+			color: '#FCEDF2',
+			path: '/pages/draw/subPage/aiFaceSwapping/index',
+			iconType: "symbol"
 		},
 		{
-			icon:'mianxingmianjijian',
-			text:'图表生成',
-			color:'#ECF7EF',
-			path:'',
-			iconType:"symbol"
+			icon: 'xz',
+			text: 'AI写真',
+			color: '#FCF2E7',
+			path: '/pages/draw/subPage/aiPhotoShoots/index',
+			iconType: "symbol"
 		},
 		{
-			icon:'xz',
-			text:'AI写真',
-			color:'#FCF2E7',
-			path:''	,
-			iconType:"symbol"
+			icon: '💼',
+			text: '工作总结',
+			color: '#FCF2E7',
+			path: '/pages/function/subPage/AiDailyModel/index',
+			iconType: "text"
 		},
 		{
-			icon:'lwss',
-			text:'联网搜索',
-			color:'#EEF5FD',
-			path:'',
-			iconType:"symbol"
+			icon: 'caihong',
+			text: '线稿上色',
+			color: '#ECF7EF',
+			path: '/pages/draw/subPage/coloringLineArt/index',
+			iconType: "symbol"
 		},
 		{
-			icon:'💼',
-			text:'工作总结',
-			color:'#FCF2E7',
-			path:'',
-			iconType:"text"
-		},
-		{
-			icon:'caihong',
-			text:'图片上色',
-			color:'#ECF7EF',
-			path:'',
-			iconType:"symbol"
-		},
-		{
-			icon:'🧠',
-			text:'思维导图',
-			color:'#EEF5FD',
-			path:'',
-			iconType:"text"
-		}													
+			icon: '🧠',
+			text: '思维导图',
+			color: '#EEF5FD',
+			path: '/pages/function/subPage/AImapping/index',
+			iconType: "text"
+		}
 	]
-	
-	const rows = computed<Array<ToolipItem[]>>(() =>{
+
+	const rows = computed<Array<ToolipItem[]>>(() => {
 		const middle = Math.ceil(tooTipList.length / 2)
-		const firstArray = tooTipList.slice(0,middle)
+		const firstArray = tooTipList.slice(0, middle)
 		const secondArray = tooTipList.slice(middle)
-		return [firstArray,secondArray]
+		return [firstArray, secondArray]
 	})
 </script>
 
 <style scoped lang="scss">
-	.wrapper{
+	.wrapper {
 		width: 100%;
 		margin-top: 10rpx;
 		display: flex;
-		.tooltip{
+
+		.tooltip {
 			display: flex;
 			flex-wrap: wrap;
-			.row{
+
+			.row {
 				flex-shrink: 0;
 				display: flex;
 				flex-wrap: nowrap;
 			}
-			.toolip-item{
+
+			.toolip-item {
 				padding: 10rpx 20rpx;
 				margin: 10rpx;
 				align-items: center;
@@ -131,11 +127,12 @@
 				flex-shrink: 0;
 				font-size: 20rpx;
 				border-radius: 40rpx;
-				.name{
+
+				.name {
 					display: block;
 					margin-left: 5rpx;
 				}
 			}
-		}	
+		}
 	}
 </style>

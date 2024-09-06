@@ -238,7 +238,7 @@
 			justify-content: center;
 			margin: 25rpx 0;
 			padding: 25rpx;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			border-radius: 1.09375rem !important;
 			height: 80rpx !important;
 			color: #ffffff !important;

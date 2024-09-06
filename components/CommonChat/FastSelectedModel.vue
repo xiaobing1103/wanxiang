@@ -23,17 +23,20 @@
 	const allTags = [{
 			text: 'AI长论文写作',
 			icon: '💯',
-			bgColor: 'ECF7EF'
+			bgColor: 'ECF7EF',
+			path: "/pages/function/subPage/longText/index"
 		},
 		{
 			text: '一键生成PPT',
 			src: ppt,
-			bgColor: 'FCF2E7'
+			bgColor: 'FCF2E7',
+			path: "/pages/function/subPage/ppt/index"
 		},
 		{
 			text: '图片转卡通',
 			src: anime,
-			bgColor: 'EEF5FD'
+			bgColor: 'EEF5FD',
+			path: "/pages/function/subPage/longText/index"
 		},
 		{
 			text: 'AI换脸',

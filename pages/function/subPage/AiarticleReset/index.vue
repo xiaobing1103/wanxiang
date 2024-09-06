@@ -1,5 +1,5 @@
 <template>
-	<z-paging :scroll-with-animation="true" :show-scrollbar="false" ref="pagingRef" :pagingStyle="{padding:'24rpx'}">
+	<z-paging ref="pagingRef" :pagingStyle="{padding:'24rpx'}">
 		<template #top>
 			<CommonHeader defindTitle="AI文章纠正" />
 		</template>
@@ -7,49 +7,24 @@
 			<view class="create-type">
 				<view class="create-type_header">
 					<image class="create-type_header_image"
-						src="http://file.1foo.com/2024/08/29/81eb525913b77b5dbe01588186b8564b.png" mode=""></image>
-					请简单描述你的工作内容
+						src="//file.1foo.com/2024/02/23/25c6e977e956602478494c328e5dde73.png" mode=""></image>
+					请输入你要纠正的文章
 				</view>
 				<view class="input-box">
 					<textarea :style="{fontSize:'30rpx',width:'100%'}" class="input-box_textarea" auto-height
-						v-model="inputValue" maxlength='-1' placeholder="例如:完成了项目的ppt介绍,送了三天外卖"></textarea>
+						v-model="inputValue" maxlength='-1'
+						placeholder="示例:我们公司最近在开发一款新产品，目的是让用户更容易的使用我们的服务。虽然开发过程中遇到了一些问题，但我们正积极寻找解决方案。比如，我们的后台系统有时候会出现一些未知的错误，这可能导致用户在使用时遇到困难。我们正在努力提高系统的稳定性，以确保用户的体验不会受到影响。"></textarea>
 				</view>
-
-				<view class="create_types">
-					<view class="create_types_header">
-						生成类型：
-					</view>
-					<view class="create_types_header_changes">
-						<up-radio-group v-model="radiovalue1" placement="row">
-							<up-radio :customStyle="{marginRight :'8px'}" v-for="(item, index) in radiolist1"
-								:key="index" :label="item.name" :name="item.name">
-							</up-radio>
-						</up-radio-group>
-					</view>
-					<view class="create_types_header_carcer">
-						<text>我的职业：</text>
-						<view class="create_types_header_carcer_input">
-							<up-input :style="{fontSize:'30rpx'}" v-model="career"
-								:customStyle="{height:'50rpx',fontSize:'30rpx'}" placeholderClass="placeClass"
-								placeholderStyle="{ fontSize:'30rpx' }" class="create_types_header_carcer_input_int"
-								type="text" placeholder="请输入你的职业,生成效果会更好" />
-						</view>
-					</view>
-
-					<view class="create_types_header_carcer">
-						<text>生成字数：</text>
-						<view class="create_types_header_carcer_nums" @click="show = true">
-							<text class="create_types_header_carcer_nums_text">{{seletedNums}} 字</text> <up-icon
-								name="arrow-down"></up-icon>
-						</view>
-					</view>
-
-					<text class="create_types_header_desc">（AI无法具体字数，只能大概的字数，建议生成完成自行再检查）</text>
+				<view class="create-type_header">
+					输出内容:
+				</view>
+				<view class="input-outBox">
+					<MessageItem :content="contentStr" />
 				</view>
 
 				<view class="btn">
 					<u-button :customStyle="{height:'60rpx', borderRadius:'25rpx',width:'80%'}" class="bth_content"
-						:disabled="isRecive" @click="onCreateContent" type="primary">生成报告</u-button>
+						:disabled="isRecive" @click="onCreateContent" type="primary">开始批改</u-button>
 				</view>
 
 				<view class="btn">
@@ -57,67 +32,24 @@
 						:disabled="isRecive" @click="exportFile">导出</u-button>
 				</view>
 			</view>
-			<view class="create-type_header" v-if="contentStr">
-				输出内容:
-			</view>
-			<view class="input-box" v-if="contentStr">
-				<MessageItem :content="contentStr" />
-			</view>
 		</view>
 
-
-		<view class="AiDailyModel_footer">
-			<text class="AiDailyModel_footer_content">特别说明：本页面的所有文章内容为概率模型所生成，同一标题每次点击 “生成”
-				将会产生不同内容。生成内容不代表本应用的观点和立场</text>
-		</view>
 	</z-paging>
-	<up-popup v-model:show="show" round="15">
-		<view class="overPopup">
-			<view class="overPopup_header">
-				请选择
-			</view>
-			<view class="overPopup_main" v-for="(items,index) in numList" :key="index" @click="changeNums(items)">
-				<text>{{items}} 字</text>
-			</view>
-		</view>
-
-	</up-popup>
-
 </template>
 
 <script setup lang="ts">
-	import { ref, nextTick, reactive, onMounted } from 'vue'
+	import { ref, nextTick } from 'vue'
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import MessageItem from '@/components/CommonChat/MessageItem.vue';
 	import { debounce, exportTxt } from '@/utils';
 	import { useGlobalProperties } from '../../../../hooks/useGlobalHooks';
-	const show = ref(false)
-	const seletedNums = ref(150)
-	const changeNums = (nums : number) => {
-		seletedNums.value = nums
-		show.value = false
-	}
 	const { $api } = useGlobalProperties()
-	const career = ref('')
 	const inputValue = ref('')
-	const contentStr = ref('')
-	const numList = ref([100, 150, 200, 250, 300, 350, 400, 450, 500])
-	const radiovalue1 = ref('日报');
-	const radiolist1 = reactive([
-		{
-			name: '日报',
-			disabled: false,
-		},
-		{
-			name: '周报',
-			disabled: false,
-		},
-		{
-			name: '月报',
-			disabled: false,
-		},
-	]);
+	const contentStr = ref(`> **纠正后示例**：
+	> 我们公司最近正在开发一款新产品，旨在让用户更方便地使用我们的服务。尽管开发过程中遇到了一些挑战，但我们正在积极寻找解决方案。例如，我们的后台系统偶尔会出现一些未知错误，可能导致用户使用时遇到问题。我们正努力提升系统的稳定性，确保用户体验不受影响。
+	 `)
+
 
 	const exportFile = () => {
 		if (contentStr.value) {
@@ -126,55 +58,36 @@
 	}
 
 	const { streamRequest, isRecive } = useStreamHooks()
-	const pagingRef = ref()
-	//滚动到底部
-	const onScroolToBottom = debounce(() => {
+	const pagingRef = ref(null)
+	const onScroolToBottom = () => {
 		nextTick(() => {
 			pagingRef.value.scrollToBottom()
 		})
-	}, 500)
-	//开始生成内容
+	}
 	const onCreateContent = () => {
 		if (!inputValue.value) {
 			uni.$u.toast('请输入内容！')
 			return
 		}
-		if (!career.value) {
-			uni.$u.toast('请输入职业！')
-			return
-		}
 		const params = [
 			{
 				role: 'user',
-				content: `我的职业是 ${career.value} 我今天的工作内容是 ${inputValue.value}。帮我写一个 ${seletedNums.value} 字左右的日报`
+				content: `我的文章是： ${inputValue.value}`
 			}
 		]
 		const data = {
 			params: JSON.stringify(params),
 			type: "Web-日报周报月报生成器",
-			prompt: `角色：工作${radiovalue1.value}助手\n" +
-        "能力：你可以根据我给的工作内容，以我的名义写出详细的工作日报。\n" +
-        "输出格式：\n" +
-        "\n" +
-        "## 今日工作内容：\n" +
-        "丰富描述和润色我的工作内容，让其看上去显得做了很多很重要的工作。\n" +
-        "\n" +
-        "## 明日工作计划：\n" +
-        "根据今日工作内容推断明日要做的工作计划，并拆解成5个以上的工作任务。\n" +
-        "\n" +
-        "## 遇到的问题与解决方案：\n" +
-        "请自行推理，尽量丰富点\n" +
-        "\n" +
-        "## 今日心得总结：\n" +
-        "请自行推理，尽量丰富点\n" +
-        "\n" +
-        "回答身份：始终以工作日报助手的口吻回答我的任何问题。`
+			prompt: '1. 语法纠正：检查并纠正文章中的拼写错误、标点错误以及其他语法错误，以确保文章流畅且符合语法规范。2. 句子结构和表达：检查文章中的句子结构和表达方式，提出修改建议，使句子更加清晰、简洁和易于理解。3. 内容逻辑和连贯性：检查文章中的段落顺序和逻辑关系，确保段落之间的过渡自然流畅，整个文章的内容结构紧密有序。4. 词汇和用词准确性：我会检查文章中的词汇使用是否准确、恰当，提出替换词或短语，使文章的表达更加准确、精确。5. 文体与写作风格：检查文章的文体和写作风格是否一致、得体，提出修改建议，使文章的语调和风格与目标读者的期望相符。根据1 2 3 4 5，为我发给你的文章进行修改后输出，结尾处需要列出修改的地方。我发给你的文章：今天跟好友聊天，各自聊到了自己的父母。朋友还哭起来了，觉得自己的父母这些年太偏心了。你输出的文章：今天跟好友聊天，各自聊到了自己的父母。朋友哭诉起来，觉得自己的父母从小到大都太偏心了修改部分：1.将【还哭起来了】改为【哭诉起来】2.将【这些年】改为【从小到大】'
+
 		}
+		contentStr.value = ''
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
 			onmessage(text) {
 				contentStr.value += text
+
 				onScroolToBottom()
 			},
 			onfinish() {
@@ -246,7 +159,7 @@
 				overflow-y: scroll;
 				border-radius: 20rpx;
 				border: 1px solid $uni-border-color;
-				min-height: 200rpx;
+				min-height: 400rpx;
 				padding: 20rpx;
 				font-size: 25rpx;
 
@@ -267,78 +180,6 @@
 		}
 	}
 
-	.create_types {
-
-		&_header {
-			padding: 25rpx 0;
-			font-size: 25rpx;
-
-			&_changes {
-				display: flex;
-				font-size: 20rpx;
-			}
-
-			&_desc {
-				font-size: 20rpx;
-				color: #ccc;
-			}
-
-			&_carcer {
-				display: flex;
-				font-size: 25rpx;
-				align-items: center;
-				padding: 25rpx 0;
-
-				&_nums {
-					height: 50rpx;
-					font-size: 25rpx;
-					display: flex;
-					align-items: center;
-					border: 1rpx solid #ccc;
-					border-radius: 15rpx;
-					padding: 10rpx 15rpx;
-
-					&_text {
-						margin-right: 15rpx;
-					}
-				}
-
-				&_input {
-					width: 80%;
-					border-radius: 15rpx;
-					border: 1rpx solid #ccc;
-
-					&_int {
-						font-size: 30rpx !important;
-						display: flex;
-						align-items: center;
-					}
-				}
-			}
-		}
-	}
-
-
-	.overPopup {
-		display: flex;
-		align-items: center;
-		flex-direction: column;
-
-		&_header {
-			font-size: 30rpx;
-			font-weight: 800;
-			padding: 20rpx 0;
-		}
-
-		&_main {
-			font-size: 25rpx;
-			padding: 10rpx 0;
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			border-bottom: 1rpx solid #f1f1ff;
-		}
-	}
 
 	.btn {
 		margin-top: 30rpx;
@@ -359,6 +200,14 @@
 			font-size: 25rpx;
 			color: $aichat-text-color;
 		}
+	}
+
+	.input-outBox {
+		border: 1px solid $uni-border-color;
+		padding: 20rpx;
+		overflow-y: scroll;
+		border-radius: 20rpx;
+		font-size: 25rpx;
 	}
 
 	.input-box {

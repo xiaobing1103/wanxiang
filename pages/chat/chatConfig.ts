@@ -11,7 +11,10 @@ export const modelTypes : Record<ModelType, string> = {
 	v40: undefined,
 	net: undefined,
 	vfast: undefined,
-	talkV2: 'Web-推荐对话'
+	talkV2: 'Web-推荐对话',
+	glm: "",
+	baidu: "",
+	doc: "Web-AI文档对话"
 }
 
 // 当前模型需要额外携带的参数
@@ -29,7 +32,18 @@ export const exParmas : Record<ModelType, string | any> = {
 		// conversationId: ''
 	},
 	glm: {},
-	baidu: {}
+	baidu: {},
+	doc: {},
+	"GLM-4-Air": {
+		type: "zhipu"
+	},
+	glm_4_airx: { type: "zhipu" },
+	glm_4_0520: { type: "zhipu" },
+	glm_4_flash: { type: "zhipu" },
+	zhipu_glm4: { type: "zhipu" },
+	baidu_8k_1222: {},
+	baidu_speed_128k: {},
+	baidu_speed: {}
 }
 // 当前模型需要转换params的键值
 export const currentModelReversParmas : Record<ModelType, string | any> = {
@@ -44,7 +58,16 @@ export const currentModelReversParmas : Record<ModelType, string | any> = {
 	vfast: undefined,
 	talkV2: undefined,
 	'glm': 'ask',
-	baidu: undefined
+	baidu: undefined,
+	doc: undefined,
+	"GLM-4-Air": 'ask',
+	glm_4_airx: 'ask',
+	glm_4_0520: 'ask',
+	glm_4_flash: 'ask',
+	zhipu_glm4: 'ask',
+	baidu_8k_1222: undefined,
+	baidu_speed_128k: undefined,
+	baidu_speed: undefined
 }
 
 export const TemplateConfig : Record<ModelType, chatConfigProps> = {
@@ -83,8 +106,7 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 			{
 				role: 'system',
 				template: 'echartsTemplate',
-				messageType: 'text2',
-				message: `你好，我是AI-图表模型，试试对话处理表格我可以帮你处理表格信息，并且生成表格。支持Eharts代码数据可视化图表库`
+				messageType: 'template',
 			}
 		]
 	},
@@ -134,5 +156,135 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 				message: `基于飞桨深度学习平台和文心知识增强大模型，持续从海量数据和大规模知识中融合学习具备知识增强、检索增强和对话增强的技术特色。`
 			}
 		]
+	},
+	baidu_8k_1222: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baidu_8k_1222Template',
+				messageType: 'text2',
+				message: `旗舰级大规模语言模型，覆盖海量中英文语料，具有强大的通用能力，可满足绝大部分对话问答、创作生成、插件应用场景要求；支持自动对接百度搜索插件，保障问答信息时效。`
+			}
+		]
+	},
+
+	baidu_speed_128k: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baidu_speed_128kTemplate',
+				messageType: 'text2',
+				message: `我是由百度2024年最新发布的自研高性能大语言模型，通用能力优异，适合作为基座模型进行精调，更好地处理特定场景问题，同时具备极佳的推理性能。`
+			}
+		]
+	},
+	doc: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'docTemplate',
+				messageType: 'text2',
+				message: `文档理解模型,可以理解任意文档类型，支持各种方式对话`
+			}
+		]
+	},
+	video: undefined,
+	voice: undefined,
+	image: undefined,
+	web: undefined,
+	"GLM-4-Air": {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'GLM-4-AirTemplate',
+				messageType: 'text2',
+				message: `综合性能接近GLM-4，速度更快。`
+			}
+		]
+	},
+	glm_4_airx: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'glm_4_airxTemplate',
+				messageType: 'text2',
+				message: `GLM-4-Air 的高性能版本，效果不变，推理速度达到其2.6倍。`
+			}
+		]
+	},
+
+	glm_4_0520: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'glm_4_0520Template',
+				messageType: 'text2',
+				message: `当前智谱最先进最智能的模型，指令遵从能力大幅提升18.6%，发布于20240605。`
+			}
+		]
+	},
+	glm_4_flash: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'glm_4_flashTemplate',
+				messageType: 'text2',
+				message: `综合性能强，适用简单任务，速度最快。`
+			}
+		]
+	},
+	zhipu_glm4: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'zhipu_glm4Template',
+				messageType: 'text2',
+				message: `适用于复杂的对话交互和深度内容创作设计的场景.`
+			}
+		]
+	},
+	baidu_speed: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baidu_speedTemplate',
+				messageType: 'text2',
+				message: `我是由百度自研的轻量级大语言模型，兼顾优异的模型效果与推理性能 .`
+			}
+		]
+	},
+
+	baidu_lite_8k: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baidu_lite_8kTemplate',
+				messageType: 'text2',
+				message: `我是由百度2024年最新发布的自研高性能大语言模型，通用能力优异，适合作为基座模型进行精调，更好地处理特定场景问题，同时具备极佳的推理性能。`
+			}
+		]
+	},
+	baidu_tiny_8k: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baidu_tiny_8kTemplate',
+				messageType: 'text2',
+				message: `我是由百度自研的超高性能大语言模型。`
+			}
+		]
+	},
+	baidu_ai_apaas: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baidu_ai_apaasTemplate',
+				messageType: 'text2',
+				message: `我是针对企业级大模型应用进行了专门的指令调优，在问答场景、智能体相关场景可以获得同等规模模型下更好的效果。`
+			}
+		]
 	}
+
 };
+
+export const noHistoryArr = ['doc']

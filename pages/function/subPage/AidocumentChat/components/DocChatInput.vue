@@ -1,6 +1,5 @@
 <template>
 	<view class="chatAll">
-		<ChangeModel />
 		<view class="chatInput">
 			<image class="chatInput_left" src="@/static/image.svg" mode=""></image>
 			<view class="chatInput_input">
@@ -10,48 +9,23 @@
 				<image @click="SendMessage" class="chatInput_right_image"
 					:src="chatValue ? 
 					'//file.1foo.com/2024/07/31/00043f53937f16cc083f142cf4cdf257.svg' : 
-					ChatStore.loadingMessage?  'http://file.1foo.com/2024/08/21/4f18ab8afa893936ecea4d431ab42f82.svg': '//file.1foo.com/2024/07/31/137536c06dd024e2703c8cb7ec146af9.svg'"
+					ChatStore.loadingMessage ?  'http://file.1foo.com/2024/08/21/4f18ab8afa893936ecea4d431ab42f82.svg': '//file.1foo.com/2024/07/31/137536c06dd024e2703c8cb7ec146af9.svg'"
 					mode=""></image>
 			</view>
 		</view>
 	</view>
-	<!-- <h1>{{ dataValue }}</h1>
-	<button @click="dataValue = '❤❤❤❤' ">修改父组件的数据</button> -->
 </template>
 
 <script setup lang="ts">
-	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
 	import { defineModel } from 'vue';
 	import { useChatStore } from '@/store';
-	// import { debounce } from '@/utils';
 	const chatValue = defineModel<string>("chatValue")
 	const ChatStore = useChatStore()
-	// const dataValue = defineModel<string>("dataValue")
-	// 定义 defineModel 的返回类型
-	// type DefineModelReturnType = ReturnType<typeof defineModel>;
-
-	// const props = defineProps<{ dataValue : string, chatValue : string, onSend : () => void, data : string, update : () => void }>();
 	const emit = defineEmits<{
-		// (e : 'update:chatValue', val : string) : void
 		(e : 'onSend', val : string) : void
 		(e : 'onCancel') : void
-		// (e : "update:dataValue", value : string) : void
-
 	}>()
-	// const value = computed({
-	// 	get() {
-	// 		return chatValue
-	// 	},
-	// 	set(val : string) {
-	// 		emit('update:chatValue', val)
-	// 		console.log(val)
-	// 	}
-	// })
-	// const sendFn = () => {
-	// 	debounce(SendMessage, 2000)
-	// }
 	const SendMessage = async () => {
-		// 走暂停逻辑
 		if (ChatStore.loadingMessage) {
 			emit('onCancel')
 			ChatStore.setLoadingMessage(false)

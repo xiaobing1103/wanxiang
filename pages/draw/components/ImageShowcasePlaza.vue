@@ -61,7 +61,7 @@
 	}
 
 	.ImageShowcasePlazaBox_item_title {
-		font-size: 25rpx;
+		font-size: 27rpx;
 	}
 
 	.ImageShowcasePlazaBox_modelName_tag {

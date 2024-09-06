@@ -53,7 +53,7 @@
 			&_text {
 				width: 100%;
 				border-bottom: 1rpx solid #efefef;
-				font-size: 25rpx;
+				font-size: 27rpx;
 				padding: 20rpx 0;
 				display: flex;
 				justify-content: center;
@@ -65,7 +65,7 @@
 			border-top: 20rpx solid #efefef;
 			display: flex;
 			justify-content: center;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			// background-color: ;
 		}
 	}

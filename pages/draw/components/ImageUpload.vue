@@ -5,12 +5,9 @@
 				<image class="ImageUploadCom_content_image" :src="url" mode="aspectFit"></image>
 			</template>
 			<template v-else>
-
 				<up-icon
 					:custom-style="{ justifyContent: 'center', display: 'block', width: '100%', textAlign: 'center' }"
 					name="photo-fill" size="100"></up-icon>
-
-
 				<text v-if="!isShowPlaceholder" class="ImageUploadCom_text">点击上传图片</text>
 			</template>
 		</view>
@@ -92,8 +89,8 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, defineExpose, nextTick } from 'vue';
-	import { Image2TextParmas, drawProjectConfig } from '../data';
+	import { ref, defineExpose } from 'vue';
+	import { Image2TextParmas } from '../data';
 	import useDrawStore, { taskIdTypeKey } from '@/store/draw';
 	import { fileToBase64, wxBase64 } from '@/utils/file2Base64';
 	import { storeToRefs } from 'pinia';
@@ -104,8 +101,6 @@
 	const showDrawColor = ref(false)
 	const showDrawWidth = ref(false)
 	const { $assets } = useGlobalProperties()
-
-
 	// #ifdef MP-WEIXIN
 	const system = useCounterStore()
 	const { menuButtonInfo, navBarHeight } = storeToRefs(system)
@@ -126,7 +121,7 @@
 	const currentImage = ref('');
 	const seletedColor = ref('#000000');
 	const canvasWidth = ref(0);
-	const onSignInit = (signCtx) => {
+	const onSignInit = (signCtx : any) => {
 		signContext.value = signCtx;
 	};
 

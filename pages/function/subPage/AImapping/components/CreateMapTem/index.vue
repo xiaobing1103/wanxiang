@@ -194,7 +194,7 @@
 
 			&_header {
 				padding: 15rpx 0;
-				font-size: 25rpx;
+				font-size: 27rpx;
 			}
 
 			.input-box {
@@ -214,7 +214,7 @@
 				border: 2rpx solid $uni-border-color;
 
 				&_textarea {
-					font-size: 25rpx;
+					font-size: 27rpx;
 				}
 			}
 
@@ -227,7 +227,7 @@
 				&_top {
 					height: 60rpx;
 					width: 60%;
-					font-size: 25rpx;
+					font-size: 27rpx;
 					display: flex;
 					justify-content: center;
 					align-items: center;

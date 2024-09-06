@@ -36,7 +36,9 @@ const iconConfig : IconConfig = {
 	baiduModelIcon: getUrl('/2024/08/21/040bdf5efc10359ba47df6f0b608ad78.svg'),
 	Change_Model_Icon: getUrl('/2024/08/06/1a164d08dfe054b06dac984aecf187ad.svg'),
 
-
+	zhipuModelIcon: getUrl('/2024/08/21/04e13289b698355ad1e76adef3ef4d83.svg'),
+	docModelIcon: getUrl('/2024/02/22/f8fdbf7ea31f0f5e772dd80f37e5c334.png'),
+	zhipu_glm4Icon: getUrl('/2024/05/21/3eedb54d58430193f016a28bc0d70d9a.svg'),
 	// 个人中心图标
 	phoneIcon: getUrl('/2024/08/22/70d5a0aece7b0fb07c33ab7f0aa353ee.svg'),
 	emailIcon: getUrl('/2024/08/22/7370adddc50c34d2edf3d53e5f296dad.svg'),
@@ -66,7 +68,7 @@ const iconConfig : IconConfig = {
 	uploadImageIcon: getUrl('/2024/03/04/8aed983f23cce83b7190c21c7f9dbef9.png'),
 
 	//预览图片的图标
-	previewImageIcon: getUrl('/2024/03/04/0e1835b5223697f669522ac8c6921088.png')
+	previewImageIcon: getUrl('/2024/03/04/0e1835b5223697f669522ac8c6921088.png'),
 }
 
 export default iconConfig

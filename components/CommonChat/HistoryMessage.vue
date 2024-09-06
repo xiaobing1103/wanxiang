@@ -28,10 +28,8 @@
 </template>
 
 <script setup lang="ts">
-	import { commonModel } from '@/config/modelConfig';
-	import { CommonModelKeys } from '@/config/type';
-	import { generateUUID } from '@/tools/uuid';
 	import { useChatStore, useScreenStore } from '@/store';
+	import { ModelType } from '@/type/chatData';
 	const screenStore = useScreenStore()
 	const chatStore = useChatStore()
 	const open = () => {
@@ -46,7 +44,7 @@
 	const deleteChat = () => {
 		chatStore.delChats(chatStore.selectChatId)
 	}
-	const changeChat = (id : string, model : CommonModelKeys) => {
+	const changeChat = (id : string, model : ModelType) => {
 		chatStore.changeSelectChatId(id)
 		chatStore.setModel(model)
 	}
@@ -72,7 +70,7 @@
 			}
 
 			&_text {
-				font-size: 25rpx;
+				font-size: 27rpx;
 			}
 		}
 

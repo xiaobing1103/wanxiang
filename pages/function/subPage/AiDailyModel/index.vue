@@ -186,7 +186,7 @@
 
 <style lang="scss" scoped>
 	::v-deep .placeClass {
-		font-size: 25rpx;
+		font-size: 27rpx;
 	}
 
 	.head {
@@ -245,7 +245,7 @@
 				border: 1px solid $uni-border-color;
 				min-height: 200rpx;
 				padding: 20rpx;
-				font-size: 25rpx;
+				font-size: 27rpx;
 
 				&_textarea {
 					min-height: 200rpx;
@@ -268,7 +268,7 @@
 
 		&_header {
 			padding: 25rpx 0;
-			font-size: 25rpx;
+			font-size: 27rpx;
 
 			&_changes {
 				display: flex;
@@ -282,13 +282,13 @@
 
 			&_carcer {
 				display: flex;
-				font-size: 25rpx;
+				font-size: 27rpx;
 				align-items: center;
 				padding: 25rpx 0;
 
 				&_nums {
 					height: 50rpx;
-					font-size: 25rpx;
+					font-size: 27rpx;
 					display: flex;
 					align-items: center;
 					border: 1rpx solid #ccc;
@@ -328,7 +328,7 @@
 		}
 
 		&_main {
-			font-size: 25rpx;
+			font-size: 27rpx;
 			padding: 10rpx 0;
 			width: 100%;
 			display: flex;
@@ -353,7 +353,7 @@
 		justify-content: center;
 
 		&_content {
-			font-size: 25rpx;
+			font-size: 27rpx;
 			color: $aichat-text-color;
 		}
 	}
@@ -364,7 +364,7 @@
 		border: 1px solid $uni-border-color;
 		max-height: 400rpx;
 		padding: 20rpx;
-		font-size: 25rpx;
+		font-size: 27rpx;
 
 		&_textarea {
 			min-height: 400rpx;

@@ -9,13 +9,11 @@
 
 <script lang="ts" setup>
 	import ChatMenuTooltip from '@/components/CommonChat/ChatMenuTooltip.vue'
-
 	const props = defineProps<{ onFun : () => void, onTemplates : () => void }>()
 	console.log(props)
 </script>
 
 <style scoped>
-	/* 你的样式 */
 	.V35Template {
 		background-color: white;
 		padding: 15rpx;

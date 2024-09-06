@@ -207,7 +207,7 @@
 		flex-direction: column;
 
 		&_top {
-			font-size: 25rpx;
+			font-size: 27rpx;
 			color: $aichat-border-color;
 		}
 

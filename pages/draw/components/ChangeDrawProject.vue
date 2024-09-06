@@ -60,7 +60,7 @@
 			display: flex;
 			justify-content: center;
 			padding: 15rpx 0;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			font-weight: 700;
 		}
 
@@ -68,7 +68,7 @@
 
 			display: grid;
 			grid-template-columns: repeat(2, 1fr);
-			font-size: 25rpx;
+			font-size: 27rpx;
 
 			&_box {
 				display: flex;

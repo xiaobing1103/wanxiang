@@ -71,7 +71,7 @@
 
 		&_textBox {
 			padding-top: 20rpx;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			box-sizing: border-box;
 			box-sizing: border-box;
 		}

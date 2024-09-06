@@ -146,7 +146,7 @@
 
 	const revasedImages = (parmasRes : { image1 : any, image2 : any }) => {
 		let formdata : any | FormData
-		let sendParmas = parmasRes
+			let sendParmas = parmasRes
 		// #ifdef H5
 		const file1 = base64ToFile(parmasRes.image1, '图片1')
 		const file2 = base64ToFile(parmasRes.image2, '图片2')
@@ -194,7 +194,7 @@
 			justify-content: center;
 			align-items: center;
 			width: 50%;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			padding: 12rpx;
 			box-sizing: border-box;
 			border-radius: 20rpx;
@@ -238,7 +238,7 @@
 					display: flex;
 					justify-content: center;
 					align-items: center;
-					font-size: 25rpx;
+					font-size: 27rpx;
 					padding: 25rpx 0;
 				}
 			}
@@ -273,7 +273,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			font-size: 25rpx;
+			font-size: 27rpx;
 
 		}
 	}

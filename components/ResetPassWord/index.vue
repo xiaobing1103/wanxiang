@@ -108,11 +108,11 @@
 			&_input {
 				width: 100%;
 				border-bottom: 1rpx solid #ccc;
-				font-size: 25rpx;
+				font-size: 27rpx;
 
 				&_else {
 					color: $u-primary;
-					font-size: 25rpx;
+					font-size: 27rpx;
 				}
 			}
 
@@ -120,7 +120,7 @@
 
 				padding: 0 40rpx;
 				width: 100%;
-				font-size: 25rpx;
+				font-size: 27rpx;
 				color: $uni-text-color-disable;
 			}
 		}

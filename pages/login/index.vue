@@ -115,7 +115,7 @@
 			align-items: center;
 
 			&_top {
-				font-size: 25rpx;
+				font-size: 27rpx;
 				padding: 10rpx 0;
 			}
 

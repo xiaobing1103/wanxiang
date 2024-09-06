@@ -55,7 +55,7 @@
 	.ImageLoraScale_right {
 		width: 10%;
 		margin-left: 20rpx;
-		font-size: 25rpx;
+		font-size: 27rpx;
 		color: $uni-text-color;
 	}
 

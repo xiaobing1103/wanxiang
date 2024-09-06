@@ -37,7 +37,8 @@
 	import { commonModel } from '../../config/modelConfig';
 	import { ToolTipItem } from '@/type/userTypes';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
-	import { currentModelReversParmas, exParmas, modelTypes } from '../chat/chatConfig';
+	import { currentModelReversParmas, exParmas, modelTypes, noHistoryArr } from '../chat/chatConfig';
+	import { onShow } from "@dcloudio/uni-app"
 	const { $api } = useGlobalProperties();
 	const ChatStore = useChatStore();
 	const { setChatInfo } = ChatStore;
@@ -47,7 +48,12 @@
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
 
 	const srollRef = ref(null);
-	
+	onShow(() => {
+		if (noHistoryArr.includes(model.value)) {
+			ChatStore.seletedFirstChats()
+			return
+		}
+	})
 	// 当前选择回答角度
 	// const currentAsk = ref('默认')
 	onMounted(() => {
@@ -78,6 +84,7 @@
 	};
 
 	const sendValue = (val : ToolTipItem) => {
+		
 		onSend(val.prompt);
 	};
 	const onCancel = () => {
@@ -166,10 +173,3 @@
 		streamRequest(requestOptions);
 	}
 </script>
-
-<style lang="scss">
-	.content {
-		display: flex;
-		flex-direction: column;
-	}
-</style>

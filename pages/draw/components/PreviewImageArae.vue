@@ -31,7 +31,7 @@
 		&_example {
 			display: flex;
 			align-items: center;
-			font-size: 25rpx;
+			font-size: 27rpx;
 
 			padding: 10rpx;
 			box-sizing: border-box;

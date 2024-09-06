@@ -16,7 +16,7 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const openSeletedModel = ref<boolean>(false)
 	const openHistoryModel = ref<boolean>(false)
 	const chats = ref<ChatHistory[]>([])
-	const setModel = (val : CommonModelKeys) => {
+	const setModel = (val : ModelType) => {
 		model.value = val
 	}
 
@@ -37,6 +37,8 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		}
 		setModel(value.model)
 		changeSelectChatId(value.id)
+		const noHistoryArr = ['doc']
+		if (noHistoryArr.includes(value.model)) return
 		chats.value.unshift({ ...value })
 	}
 
@@ -103,6 +105,11 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const getCurrentInfo = (id : string) => {
 		return chats.value.find((item) => item.id == id)
 	}
+
+	const seletedFirstChats = () => {
+		setModel(chats.value[0].model)
+		changeSelectChatId(chats.value[0].id)
+	}
 	return {
 		model,
 		setModel,
@@ -122,7 +129,8 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		setChatInfo,
 		initChatInfo,
 		getCurrentInfo,
-		setLoadingMessage
+		setLoadingMessage,
+		seletedFirstChats
 	}
 }, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id'] } }
 );

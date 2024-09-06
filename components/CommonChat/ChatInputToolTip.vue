@@ -21,130 +21,136 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
-import { getRandomInt } from '@/utils/index';
-// import Api from '@/api/api'
-import { useGlobalProperties } from '../../hooks/useGlobalHooks';
-import { ToolTipItem } from '../../type/userTypes';
-import { httpDTO } from '@/http';
-const IconArr: string[] = [
-	'http://file.1foo.com/2023/11/30/93cb43c66866d425b4d38c26afbd81c2.png',
-	'http://file.1foo.com/2023/11/30/076d5275f04127103d4f5bfdc4429784.png',
-	'http://file.1foo.com/2023/11/30/8ee944311f04b9d4d75036cebcfc9dbe.png',
-	'http://file.1foo.com/2023/11/30/9588e16ceaccf40feaa88ae4f7ba33f9.png'
-];
-const page = ref(0); //当前页
-const maxPage = ref(50); //最大页码数
-const tipList = ref<ToolTipItem[]>([]); //tips列表
-const { $api } = useGlobalProperties();
-//自定义事件
-const emits = defineEmits<{
-	(e: 'change', val: ToolTipItem): void;
-}>();
+	import { onMounted, ref, computed } from 'vue';
+	import { getRandomInt } from '@/utils/index';
+	// import Api from '@/api/api'
+	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
+	import { ToolTipItem } from '../../type/userTypes';
+	import { httpDTO } from '@/http';
+	import { useChatStore } from '@/store';
+	const IconArr : string[] = [
+		'http://file.1foo.com/2023/11/30/93cb43c66866d425b4d38c26afbd81c2.png',
+		'http://file.1foo.com/2023/11/30/076d5275f04127103d4f5bfdc4429784.png',
+		'http://file.1foo.com/2023/11/30/8ee944311f04b9d4d75036cebcfc9dbe.png',
+		'http://file.1foo.com/2023/11/30/9588e16ceaccf40feaa88ae4f7ba33f9.png'
+	];
+	const page = ref(0); //当前页
+	const maxPage = ref(50); //最大页码数
+	const tipList = ref<ToolTipItem[]>([]); //tips列表
+	const { $api } = useGlobalProperties();
+	//自定义事件
+	const ChatStore = useChatStore()
+	const emits = defineEmits<{
+		(e : 'change', val : ToolTipItem) : void;
+	}>();
 
-//格式化内容
-const textContent = computed(() => {
-	return (text: string) => {
-		return text.slice(0, 20) + '...';
-	};
-});
-//刷新列表
-const refershList = () => {
-	page.value = getRandomInt(0, maxPage.value);
-	getTips();
-};
-//获取tips
-const getTips = async () => {
-	const data: httpDTO = {};
-	const res = await $api.post('api/v1/chat2/getModels', {
-		url: 'getOfficialModels',
-		page: page.value,
-		keyword: ''
+	//格式化内容
+	const textContent = computed(() => {
+		return (text : string) => {
+			return text.slice(0, 20) + '...';
+		};
 	});
-	// const res = await Api.getModels({
-	// 	url: "getOfficialModels",
-	// 	page: page.value,
-	// 	keyword: ""
-	// })
-	console.log(res.data);
-	tipList.value = res.data as ToolTipItem[];
-};
-//点击事件
-const onTipChange = (item: ToolTipItem) => {
-	emits('change', item);
-};
-//获取图标
-const iconUrl = () => {
-	const index = getRandomInt(0, 3);
-	return IconArr[index];
-};
-onMounted(() => {
-	getTips();
-});
+	//刷新列表
+	const refershList = () => {
+		page.value = getRandomInt(0, maxPage.value);
+		getTips();
+	};
+	//获取tips
+	const getTips = async () => {
+		const data : httpDTO = {};
+		const res = await $api.post('api/v1/chat2/getModels', {
+			url: 'getOfficialModels',
+			page: page.value,
+			keyword: ''
+		});
+		// const res = await Api.getModels({
+		// 	url: "getOfficialModels",
+		// 	page: page.value,
+		// 	keyword: ""
+		// })
+		console.log(res.data);
+		tipList.value = res.data as ToolTipItem[];
+	};
+	//点击事件
+	const onTipChange = (item : ToolTipItem) => {
+		if (ChatStore.loadingMessage) {
+			uni.$u.toast('请等待消息回复完成！')
+			return
+		}
+		emits('change', item);
+	};
+	//获取图标
+	const iconUrl = () => {
+		const index = getRandomInt(0, 3);
+		return IconArr[index];
+	};
+	onMounted(() => {
+		getTips();
+	});
 </script>
 
 <style lang="scss" scoped>
-.tip-con {
-	display: flex;
-	width: 100%;
-	margin-bottom: 20rpx;
-	flex-direction: column;
-
-	.tools {
-		font-size: 22rpx;
+	.tip-con {
 		display: flex;
-		justify-content: flex-end;
-		padding-bottom: 5rpx;
+		width: 100%;
+		margin-bottom: 20rpx;
+		flex-direction: column;
 
-		.tools-item {
+		.tools {
+			font-size: 22rpx;
 			display: flex;
+			justify-content: flex-end;
+			padding-bottom: 5rpx;
 
-			.more-text {
-				margin-right: 10rpx;
-			}
-		}
-	}
-
-	.tip-wrapepr {
-		display: flex;
-		flex-wrap: nowrap;
-		gap: 20rpx;
-
-		.toolip-item {
-			width: 200rpx;
-			height: 90rpx;
-			overflow: hidden;
-			border-radius: 20rpx;
-			padding: 6rpx 10rpx;
-			display: flex;
-			justify-content: center;
-			flex-shrink: 0;
-			flex-direction: column;
-			background: white;
-
-			.title {
-				font-size: 22rpx;
+			.tools-item {
 				display: flex;
-				align-items: center;
 
-				.title-text {
-					max-width: 150rpx;
-					padding-bottom: 10rpx;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					overflow: hidden;
+				.more-text {
+					margin-right: 10rpx;
 				}
 			}
+		}
 
-			.content {
-				white-space: nowrap;
+		.tip-wrapepr {
+			display: flex;
+			flex-wrap: nowrap;
+			gap: 20rpx;
+
+			.toolip-item {
+				width: 200rpx;
+				height: 90rpx;
 				overflow: hidden;
-				display: block;
-				max-width: 160rpx;
-				font-size: 20rpx;
-				text-overflow: ellipsis;
+				border-radius: 20rpx;
+				padding: 6rpx 10rpx;
+				display: flex;
+				justify-content: center;
+				flex-shrink: 0;
+				flex-direction: column;
+				background: white;
+
+				.title {
+					font-size: 22rpx;
+					display: flex;
+					align-items: center;
+
+					.title-text {
+						max-width: 150rpx;
+						padding-bottom: 10rpx;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						overflow: hidden;
+					}
+				}
+
+				.content {
+					white-space: nowrap;
+					overflow: hidden;
+					display: block;
+					max-width: 160rpx;
+					font-size: 20rpx;
+					text-overflow: ellipsis;
+				}
 			}
 		}
 	}
-}
 </style>

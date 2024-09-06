@@ -251,7 +251,7 @@
 
 		&_main {
 			padding: 50rpx 0;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			font-weight: 800;
 		}
 
@@ -262,7 +262,7 @@
 			justify-content: center;
 
 			&_tips {
-				font-size: 25rpx;
+				font-size: 27rpx;
 				color: $aichat-border-color;
 				font-weight: 700;
 				padding: 20rpx 0;
@@ -280,7 +280,7 @@
 					padding: 0 35rpx;
 					align-items: center;
 					flex-direction: column;
-					font-size: 25rpx;
+					font-size: 27rpx;
 				}
 			}
 		}

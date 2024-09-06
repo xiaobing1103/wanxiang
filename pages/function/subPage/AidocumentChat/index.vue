@@ -1,118 +1,117 @@
 <template>
-	<z-paging :scroll-with-animation="true" :show-scrollbar="false" ref="pagingRef" :pagingStyle="{padding:'24rpx'}">
+	<z-paging ref="srollRef" :pagingStyle="{padding:'24rpx'}">
 		<template #top>
 			<CommonHeader defindTitle="AI文档对话" />
 		</template>
 		<view class="ppt-con">
 			<view class="upload_file">
-				<view class="upload_file_title">
-					文档上传
+				<view class="upload_file_header">
+					<up-tabs :current="currentProject" :list="list1" @click="changeProject"></up-tabs>
 				</view>
-				<view class="upload_file_main">
-					<!-- :list-styles="listStyles" -->
+				<template v-if="currentProject == 0">
+					<view class="upload_file_title">
+						文档上传
+					</view>
+					<view class="upload_file_main">
+						<up-upload :previewImage="false" :accept="accept" @afterRead="afterRead" @delete="deletePic"
+							:fileList="fileList1" :maxCount="1" name="1" multiple>
+							<view class="up-upload-box">
 
-					<up-upload :previewImage="false" accept="all" @afterRead="afterRead" @delete="deletePic"
-						:fileList="fileList1" :maxCount="1" name="1" multiple>
-						<view class="up-upload-box">
+								<view class="upload_file_main_com">
+									<view class="upload_file_main_comBox">
+										<view class="upload_file_main_comBoxList" v-for="(items,index) in docList"
+											:key="index">
+											<image class="upload_file_main_com_icons" :src="items.icon" mode=""></image>
+											<text class="upload_file_main_com_texts">{{items.title}}</text>
+										</view>
+									</view>
+									<text class="upload_file_main_com_top">请点击上传文档</text>
+									<text
+										class="upload_file_main_com_bottom">您可以上传PDF、Word、Excel、PPTX或ePub文件，快速获取文档总结与分析</text>
+								</view>
+							</view>
+						</up-upload>
+					</view>
+					<view class="create-type">
+						<view class="create-type_header">
+							<image class="create-type_header_image"
+								src="//file.1foo.com/2023/12/29/56f121704e2a971031cd66633fd286b4.svg" mode=""></image>
+							我的文档列表 <text class="create-type_header_text">（最多保存七天）</text>
+						</view>
+						<view class="input-box">
+							<template v-if="fileList.length>0">
+								<view class="input-box_fileListBox" v-for="(items,index) in fileList" :key="index">
 
-							<view class="upload_file_main_com">
-								<view class="upload_file_main_comBox">
-									<view class="upload_file_main_comBoxList" v-for="(items,index) in docList"
-										:key="index">
-										<image class="upload_file_main_com_icons" :src="items.icon" mode=""></image>
-										<text class="upload_file_main_com_texts">{{items.title}}</text>
+									<view class="input-box_fileListBox_leftBox">
+										<image class="input-box_fileListBox_images" :src="getIcon(items?.name)"
+											mode="" />
+										<view class="input-box_fileListBox_items"
+											@click="seletedFileSearch(items.file_id)">
+											<view class="input-box_fileListBox_items">{{items?.name}}</view>
+											<view>{{getStatus(items.status, items.chunk_num, items.complete_chunk_num)}}
+											</view>
+										</view>
+									</view>
+									<view class="input-box_fileListBox_rightBox">
+										<up-icon @click="showModal(items.file_id)" size="20" name="close"></up-icon>
 									</view>
 								</view>
-								<text class="upload_file_main_com_top">请点击上传文档</text>
-								<text
-									class="upload_file_main_com_bottom">您可以上传PDF、Word、Excel、PPTX或ePub文件，快速获取文档总结与分析</text>
-							</view>
-						</view>
-					</up-upload>
-				</view>
-			</view>
-
-			<view class="create-type">
-				<view class="create-type_header">
-					<image class="create-type_header_image"
-						src="//file.1foo.com/2023/12/29/56f121704e2a971031cd66633fd286b4.svg" mode=""></image>
-					我的文档列表 <text class="create-type_header_text">（最多保存七天）</text>
-				</view>
-				<view class="input-box">
-					<template v-if="fileList.length>0">
-						<view class="input-box_fileListBox" v-for="(items,index) in fileList" :key="index">
-
-							<view class="input-box_fileListBox_leftBox">
-								<image class="input-box_fileListBox_images" :src="getIcon(items?.name)" mode=""></image>
-								<view class="input-box_fileListBox_items">
-									<view class="input-box_fileListBox_items">{{items?.name}}</view>
-									<view>{{getStatus(items.status, items.chunk_num, items.complete_chunk_num)}}</view>
+							</template>
+							<template v-else>
+								<view class="nofileList">
+									现在没有上传文档，请先去上传文档
 								</view>
-							</view>
-							<view class="input-box_fileListBox_rightBox">
-								<up-icon @click="showModal(items.file_id)" size="20" name="close"></up-icon>
-							</view>
+							</template>
 						</view>
-					</template>
-					<template v-else>
-						<view class="nofileList">
-							现在没有上传文档，请先去上传文档
-						</view>
-					</template>
-				</view>
-				<view class="btn">
-					<u-button :customStyle="{height:'60rpx', borderRadius:'25rpx',width:'80%'}" class="bth_content"
-						:disabled="isRecive" @click="onCreateContent" type="primary">生成报告</u-button>
-				</view>
-
-				<view class="btn">
-					<u-button :customStyle="{height:'60rpx', borderRadius:'25rpx',width:'80%'}" class="bth_content"
-						:disabled="isRecive" @click="exportFile">导出</u-button>
-				</view>
-			</view>
-			<view class="create-type_header" v-if="contentStr">
-				输出内容:
-			</view>
-			<view class="input-box" v-if="contentStr">
-				<MessageItem :content="contentStr" />
+					</view>
+				</template>
+				<template v-if="currentProject == 1">
+					<DocChatVue :scrollToBottom="scrollToBottom" :currentFileSearch="currentFileSearch"
+						ref="DocChatVueRef" />
+				</template>
+				<template v-if="currentProject == 2">
+					131231321
+				</template>
 			</view>
 		</view>
-
-		<up-overlay :show="showOverlay" opacity="0.9">
-			<view class="overlay_warp">
-				<view :style="{height:navBarHeight + 'px',background:'#fff'}" class="overlay_warp_box"
-					:mask-click-able="false">
-					<view :style="{padding:menuButtonInfo?.top + 16 +'px 0'}">
-						dwqe5d1wq56dwq1
-					</view>
-				</view>
-
-			</view>
-		</up-overlay>
-
 	</z-paging>
 	<up-modal showCancelButton @cancel="show = false" @confirm="deleteFile" :show="show" title="删除文件"
 		content="是否删除此文件？">
-
 	</up-modal>
-
-
 </template>
 
 <script setup lang="ts">
-	import { ref, nextTick, reactive, onMounted } from 'vue'
+	import { ref, reactive, onMounted, nextTick, computed } from 'vue'
 	import CommonHeader from '@/components/CommonHeader.vue'
-	import { useStreamHooks } from '@/hooks/useStreamHooks'
-	import MessageItem from '@/components/CommonChat/MessageItem.vue';
-	import { debounce, exportTxt } from '@/utils';
-	import { useGlobalProperties } from '../../../../hooks/useGlobalHooks';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { iconUrls } from './data'
-	import { useCounterStore } from '../../../../store';
+	import { useCounterStore } from '@/store';
+	import useChatStore from '@/store/chat';
+	import DocChatVue from './components/DocChat.vue';
 	import { storeToRefs } from 'pinia';
+	import { generateUUID } from '@/tools/uuid';
+	import { commonModel } from '@/config/modelConfig';
+	const accept = computed(() => {
+		// #ifdef H5
+		return 'file'
+		// #endif
+		// #ifdef MP-WEIXIN
+		return 'all'
+		// #endif
+	})
+
+	const srollRef = ref(null)
 	const seletedId = ref('')
 	const show = ref(false)
-	const seletedNums = ref(150)
-	const showOverlay = ref(false)
+	const DocChatVueRef = ref(null)
+	const list1 = reactive([
+		{ name: '文档上传' },
+		{ name: '文档对话' },
+		{ name: '使用教程' },
+	]);
+
+	const currentProject = ref(0)
+	const ChatStore = useChatStore();
 	// #ifdef MP-WEIXIN
 	const system = useCounterStore()
 	const { menuButtonInfo, navBarHeight } = storeToRefs(system)
@@ -138,6 +137,13 @@
 		icon: '//file.1foo.com/2023/11/06/25ca3372d739680d19564d170e536bcf.png'
 	},
 	])
+	const scrollToBottom = () => {
+		nextTick(() => {
+			if (srollRef.value) {
+				srollRef.value.scrollToBottom();
+			}
+		});
+	};
 
 	const showModal = (id : string) => {
 		seletedId.value = id
@@ -161,16 +167,39 @@
 	function checkFileType(fileName : string) {
 		// 定义允许上传的文件扩展名
 		const allowedExtensions = ['doc', 'docx', 'csv', 'ppt', 'pdf', 'txt'];
-
 		// 获取文件的扩展名	
 		const fileExtension = fileName.split('.').pop().toLowerCase();
-
 		// 检查文件扩展名是否在允许的列表中
 		if (allowedExtensions.includes(fileExtension)) {
 			return true; // 文件类型允许
 		} else {
 			return false; // 文件类型不允许
 		}
+	}
+	const currentFileSearch = ref({})
+	const seletedFileSearch = async (fileId : string) => {
+		const parmas = {
+			file_id: fileId,
+			query: "总结和问题"
+		}
+		const fileSearchRes = await $api.post('api/v1/doc/fileSearch', parmas)
+		if (fileSearchRes.code == 200) {
+			const list = fileSearchRes.data.find((items : { file_id : string; }) => items.file_id == fileId)
+			currentFileSearch.value = list;
+			currentProject.value = 1;
+			ChatStore?.changeSelectChatId(generateUUID());
+			setTimeout(() => {
+				if (DocChatVueRef.value) {
+					DocChatVueRef.value.onSend(list.question)
+				}
+			}, 100)
+
+		} else {
+			uni.$u.toast('文件查询失败！')
+		}
+	}
+	const changeProject = (e) => {
+		currentProject.value = e.index
 	}
 	// 新增图片
 	const afterRead = async (event : { file : any; }) => {
@@ -187,11 +216,9 @@
 			formData = { file: event.file[0].url }
 			file2textRes = await $api.post('api/v1/files/file2text', formData, true, {}, null, true)
 			// #endif
-
 			if (typeof file2textRes == 'string') {
 				file2textRes = JSON.parse(file2textRes)
 			}
-
 			if (file2textRes.code == 200) {
 				const parmas = {
 					file: {
@@ -241,6 +268,7 @@
 	}
 	onMounted(() => {
 		getfilelist()
+		ChatStore?.setModel('doc')
 	})
 
 	const getIcon = (file_name : string) => {
@@ -266,19 +294,11 @@
 				return '向量化失败'
 		}
 	}
-
-	const exportFile = () => {
-		if (contentStr.value) {
-			exportTxt(contentStr.value);
-		}
-	}
-	const { streamRequest, isRecive } = useStreamHooks()
-	const pagingRef = ref()
 </script>
 
 <style lang="scss" scoped>
 	::v-deep .placeClass {
-		font-size: 25rpx;
+		font-size: 27rpx;
 	}
 
 	.head {
@@ -324,26 +344,26 @@
 				align-items: flex-end;
 
 				&_image {
-					height: 50rpx;
-					width: 50rpx;
+					height: 60rpx;
+					width: 60rpx;
 					margin-right: 10rpx;
 				}
 
 				&_text {
 					font-weight: 500;
-					font-size: 25rpx;
+					font-size: 27rpx;
 				}
 			}
 
 			.input-box {
 				width: 100%;
-				min-height: 400rpx;
+				min-height: 500rpx;
 				overflow-y: scroll;
 				border-radius: 20rpx;
 				border: 1px solid $uni-border-color;
-				max-height: 400rpx;
+				max-height: 500rpx;
 				padding: 20rpx;
-				font-size: 25rpx;
+				font-size: 27rpx;
 
 				&_textarea {
 					overflow-y: scroll;
@@ -374,9 +394,9 @@
 					}
 
 					&_images {
-						width: 40rpx;
+						width: 50rpx;
 						margin-right: 20rpx;
-						height: 40rpx;
+						height: 50rpx;
 					}
 				}
 			}
@@ -407,7 +427,7 @@
 		}
 
 		&_main {
-			font-size: 25rpx;
+			font-size: 27rpx;
 			padding: 10rpx 0;
 			width: 100%;
 			display: flex;
@@ -432,7 +452,7 @@
 		justify-content: center;
 
 		&_content {
-			font-size: 25rpx;
+			font-size: 27rpx;
 			color: $aichat-text-color;
 		}
 	}
@@ -444,7 +464,7 @@
 		border: 1px solid $uni-border-color;
 		max-height: 400rpx;
 		padding: 20rpx;
-		font-size: 25rpx;
+		font-size: 27rpx;
 
 		&_textarea {
 			min-height: 400rpx;
@@ -459,6 +479,11 @@
 	}
 
 	.upload_file {
+		&_header {
+			display: flex;
+			justify-content: center;
+		}
+
 		&_title {
 			padding: 25rpx 0;
 			font-size: 35rpx;
@@ -504,7 +529,7 @@
 				}
 
 				&_bottom {
-					font-size: 25rpx;
+					font-size: 27rpx;
 					text-align: center;
 				}
 

@@ -238,7 +238,7 @@
 	.vertifyStuas {
 		display: flex;
 		width: 88%;
-		font-size: 25rpx;
+		font-size: 27rpx;
 		color: $u-primary;
 		justify-content: flex-end;
 	}

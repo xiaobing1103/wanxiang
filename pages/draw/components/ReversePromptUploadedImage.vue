@@ -30,7 +30,7 @@
 			border-radius: 20rpx;
 			padding: 25rpx;
 			display: flex;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			align-items: center;
 		}
 

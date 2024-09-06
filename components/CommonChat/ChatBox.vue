@@ -45,7 +45,8 @@
 								marginRight: item.target === 'user' ? '20rpx' : '0',
 								padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
 								background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'white',
-								minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%'
+								minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%',
+								wordBreak: 'break-all'
 							}">
 							<template v-if="item.state == 'waite' && item.message.length <= 0">
 								<!-- 在消息为等待请求完成时候 -->
@@ -104,19 +105,13 @@
 	import V35Template from '@/components/ChatTemplate/V35Template.vue';
 	import MessageItem from '@/components/CommonChat/MessageItem.vue';
 	import ChatEelseHandler from '@/components/CommonChat/ChatEelseHandler.vue';
-
-	// import V40Template from "@/components/ChatTemplate/V40Template.vue"
-	import { ItemMessage, MessageItems, MessagesTemplate, chatConfigProps } from '../../type/chatData';
-	import { computed, nextTick, onMounted, ref, watch } from 'vue';
-	import { GenNonDuplicateID, generateUUID } from '../../tools/uuid';
+	import { ItemMessage, MessageItems } from '../../type/chatData';
+	import { onMounted, ref, watch } from 'vue';
+	import { generateUUID } from '../../tools/uuid';
 	import { storeToRefs } from 'pinia';
-	import { TemplateConfig } from '../../pages/chat/chatConfig';
-	import { toCopyText } from '@/utils';
+	import { TemplateConfig, noHistoryArr } from '../../pages/chat/chatConfig';
 	const ChatStore = useChatStore();
 	const { model, selectChatId } = storeToRefs(ChatStore);
-	// const currentAsk = defineModel<string>('currentAsk')
-	// const itemMessages = defineModel<MessageItems>('itemMessages')
-	// const props = defineProps<{ config : chatConfigProps }>()
 	const emit = defineEmits(['passToGrandparent']);
 	const handlePassUp = (value) => {
 		emit('passToGrandparent', value);
@@ -153,9 +148,11 @@
 		// messageList.value.clear()
 		messageList.value = getInitTemplate();
 	};
+
 	watch(
 		selectChatId,
 		(val) => {
+			if (noHistoryArr.includes(model.value)) return
 			const currentMsg = ChatStore.chats.find((item) => item.id == val).data;
 			if (currentMsg.length > 0) {
 				messageList.value.clear();
@@ -231,6 +228,7 @@
 
 	onMounted(() => {
 		messageList.value = getInitTemplate();
+
 	});
 	defineExpose({
 		addMessage,
@@ -269,7 +267,7 @@
 		&_main {
 			display: flex;
 			box-sizing: border-box;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			border-radius: 10rpx;
 
 			&_userMessage {

@@ -44,14 +44,19 @@ export const menuList = [
 		description: "在线写真馆",
 		path: "/pages/draw/subPage/aiPhotoShoots/index",
 	},
-
-
 	{
 		cover: $assets.rxkt_cover,
 		title: "人像抠图",
 		description: "只能提取人像，精确到发丝",
 		path: "/pages/draw/subPage/portraitCutout/index",
 	},
+
+	// {
+	// 	cover: $assets.rxkt_cover,
+	// 	title: "人像抠图",
+	// 	description: "只能提取人像，精确到发丝",
+	// 	path: "/pages/draw/subPage/portraitCutout/index",
+	// },
 ];
 // 定义键名的联合类型
 export type DrawExampleKeys =

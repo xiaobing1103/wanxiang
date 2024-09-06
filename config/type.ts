@@ -23,6 +23,12 @@ export interface IconConfig {
 	echartsModelIcon : string
 	glmModelIcon : string
 	baiduModelIcon : string
+	zhipuModelIcon : string
+	zhipu_glm4Icon : string
+	/*
+		文档理解模型icon
+	*/
+	docModelIcon : string
 	phoneIcon : string
 	emailIcon : string
 	userIcon : string
@@ -48,7 +54,7 @@ export interface ModelConfig {
 	modelIcon : string;
 	ModelApi : string;
 	modelDesc : string;
-	resetPassWord : string
+	resetPassWord ?: string
 }
 
 export type CommonModelKeys = 'v35' | 'v40' | 'net' | 'echarts' | 'vfast';

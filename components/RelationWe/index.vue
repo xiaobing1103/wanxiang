@@ -73,7 +73,7 @@
 			}
 
 			&_textdesc {
-				font-size: 25rpx;
+				font-size: 27rpx;
 				text-align: center;
 				padding: 20rpx;
 			}
@@ -83,7 +83,7 @@
 			background-color: $aichat-golbal-background;
 			border-radius: 20rpx;
 			padding: 15rpx;
-			font-size: 25rpx;
+			font-size: 27rpx;
 			display: flex;
 			justify-content: space-evenly;
 
