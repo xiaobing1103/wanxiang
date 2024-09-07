@@ -5,7 +5,7 @@
 		</template>
 		<!-- 对话框 -->
 		<!-- v-model:itemMessages="itemMessages" -->
-		<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" />
+		<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" @echartsOnsendMessage="echartsOnsendMessage" />
 		<!--  v-model:currentAsk="currentAsk"  -->
 		<template #bottom>
 			<!-- 气泡选择 -->
@@ -26,7 +26,7 @@
 	import HistoryMessage from '@/components/CommonChat/HistoryMessage.vue';
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue';
-	import { nextTick, onMounted, reactive, ref, watch } from 'vue';
+	import { nextTick, onMounted, ref } from 'vue';
 	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
 	import { useChatStore } from '../../store';
 	import { ItemMessage } from '../../type/chatData';
@@ -69,9 +69,17 @@
 		}
 		scrollToBottom();
 	});
-
+	const echartsOnsendMessage = (val : any) => {
+		const { messages } = val
+		onSend(messages[1].content, {
+			currentAsk: '默认',
+			msgId: '',
+			isEcharts: true
+		}, [messages[0]])
+	}
 	const handleValue = (value) => {
 		// console.log(ChatBoxRef.value.messageList)
+
 		const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId);
 		onSend(messages.message, value);
 	};
@@ -84,7 +92,6 @@
 	};
 
 	const sendValue = (val : ToolTipItem) => {
-		
 		onSend(val.prompt);
 	};
 	const onCancel = () => {
@@ -96,22 +103,23 @@
 	};
 	const onSend = async (
 		val,
-		config : { currentAsk : string; msgId : string } = {
+		config : { currentAsk : string; msgId : string, isEcharts : boolean } = {
 			currentAsk: '默认',
-			msgId: ''
-		}
+			msgId: '',
+			isEcharts: false
+		},
+		extraMessage ?: any
 	) => {
 		if (!val) {
 			uni.$u.toast('请先输入内容！');
 			return;
 		}
-
 		const msgId = generateUUID();
 		const msgObj : ItemMessage = { id: msgId, state: 'ok', target: 'user', message: val, messageType: 'text' };
 		ChatBoxRef.value.addMessage(msgId, msgObj);
 		saveHistory(selectChatId.value, msgObj);
-
 		const requestData = [
+			...(Array.isArray(extraMessage) && extraMessage.length ? extraMessage : []),
 			{
 				role: 'user',
 				content: val

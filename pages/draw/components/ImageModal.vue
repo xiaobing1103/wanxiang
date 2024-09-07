@@ -198,7 +198,7 @@
 	}
 
 	.ImageModal_imageBox_form {
-		font-size: 25rpx;
+		font-size: 27rpx;
 
 		&_label {
 			padding: 10rpx;
@@ -224,7 +224,7 @@
 		width: 100%;
 		display: flex;
 		justify-content: flex-start;
-		font-size: 25rpx;
+		font-size: 27rpx;
 		padding-top: 10rpx;
 
 		&_label {

@@ -83,6 +83,6 @@
 	.description {
 		display: flex;
 		justify-content: center;
-		font-size: 25rpx;
+		font-size: 27rpx;
 	}
 </style>

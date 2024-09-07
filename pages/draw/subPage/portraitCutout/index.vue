@@ -168,7 +168,7 @@
 					justify-content: center;
 					align-items: center;
 					width: 40%;
-					font-size: 25rpx;
+					font-size: 27rpx;
 					padding: 12rpx;
 					box-sizing: border-box;
 					border-radius: 25rpx;
@@ -191,7 +191,7 @@
 				justify-content: center;
 				align-items: center;
 				width: 70%;
-				font-size: 25rpx;
+				font-size: 27rpx;
 				padding: 12rpx;
 				box-sizing: border-box;
 				border-radius: 25rpx;

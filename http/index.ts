@@ -34,6 +34,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		'Access-Token': userInfo?.access_token || '',
 		Vt: userInfo?.vip || '0',
 		// plaintext: 'true'
+		'app-name': 'wanxiang',
 		...config
 	};
 	http.interceptor.request = (config) => {

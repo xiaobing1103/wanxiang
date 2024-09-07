@@ -19,7 +19,7 @@
 					<template v-if="item.target == 'system'">
 						<view v-if="messageList.size == 1" class="chatBox_main_View_main">
 							<template v-if="item.messageType == 'template'">
-								<V35Template @onFun="receivedFun" @onTemplates="onTemplates" />
+								<ChatTemplate @ChatTemplateOnSend="ChatTemplateOnSend" />
 							</template>
 							<template v-if="item.messageType == 'image'">
 								<view class="iamge_album">
@@ -68,10 +68,7 @@
 										<!-- 消息不为用户 且 消息是系统发送的 需要遍历循环消息显示的 且消息状态不为等待 -->
 										<template v-if="item.target == 'assistant' && item.state !== 'waite'">
 											<view style="width: 100%">
-
-												<MessageItem :content="item.message" />
-
-
+												<MessageItem :uType="uType" :content="item.message" />
 												<!-- 模版下面逻辑组件 -->
 												<ChatEelseHandler ref="ChatEelseHandlerRef" @passUp="handlePassUp"
 													:msgId="item.id" :text="item.message" />
@@ -85,7 +82,7 @@
 											</template>
 											<template v-else>
 												<view style="width: 100%">
-													<MessageItem :content="item.message" />
+													<MessageItem :uType="uType" :content="item.message" />
 												</view>
 											</template>
 										</template>
@@ -103,6 +100,7 @@
 <script lang="ts" setup>
 	import useChatStore from '@/store/chat';
 	import V35Template from '@/components/ChatTemplate/V35Template.vue';
+	import ChatTemplate from './ChatTemplate.vue';
 	import MessageItem from '@/components/CommonChat/MessageItem.vue';
 	import ChatEelseHandler from '@/components/CommonChat/ChatEelseHandler.vue';
 	import { ItemMessage, MessageItems } from '../../type/chatData';
@@ -112,14 +110,11 @@
 	import { TemplateConfig, noHistoryArr } from '../../pages/chat/chatConfig';
 	const ChatStore = useChatStore();
 	const { model, selectChatId } = storeToRefs(ChatStore);
-	const emit = defineEmits(['passToGrandparent']);
+	const emit = defineEmits(['passToGrandparent', 'echartsOnsendMessage']);
 	const handlePassUp = (value) => {
 		emit('passToGrandparent', value);
 	};
 	const ChatEelseHandlerRef = ref(null);
-	const onTemplates = (e) => {
-		console.log(e);
-	};
 	// 获取初始消息模版
 	const getInitTemplate = () => {
 		const maps = new Map();
@@ -142,6 +137,13 @@
 	// watch(model, (val) => {
 	// 	messageList.value = getInitTemplate()
 	// }, { immediate: true })
+	const uType = ref('')
+
+	const ChatTemplateOnSend = (val : any) => {
+		const { uchartsType } = val
+		uType.value = uchartsType
+		emit('echartsOnsendMessage', val)
+	}
 
 	//清空全部message
 	const clearAllMessage = () => {

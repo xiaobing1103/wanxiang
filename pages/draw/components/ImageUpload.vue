@@ -424,7 +424,7 @@
 			cursor: pointer;
 
 			&_saveButton {
-				font-size: 25rpx;
+				font-size: 27rpx;
 				padding: 12rpx;
 				box-sizing: border-box;
 				border-radius: 10rpx;

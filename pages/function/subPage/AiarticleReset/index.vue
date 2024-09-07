@@ -102,7 +102,7 @@
 
 <style lang="scss" scoped>
 	::v-deep .placeClass {
-		font-size: 25rpx;
+		font-size: 27rpx;
 	}
 
 	.head {
@@ -161,7 +161,7 @@
 				border: 1px solid $uni-border-color;
 				min-height: 400rpx;
 				padding: 20rpx;
-				font-size: 25rpx;
+				font-size: 27rpx;
 
 				&_textarea {
 					min-height: 200rpx;
@@ -197,7 +197,7 @@
 		justify-content: center;
 
 		&_content {
-			font-size: 25rpx;
+			font-size: 27rpx;
 			color: $aichat-text-color;
 		}
 	}
@@ -207,7 +207,7 @@
 		padding: 20rpx;
 		overflow-y: scroll;
 		border-radius: 20rpx;
-		font-size: 25rpx;
+		font-size: 27rpx;
 	}
 
 	.input-box {
@@ -216,7 +216,7 @@
 		border: 1px solid $uni-border-color;
 		max-height: 400rpx;
 		padding: 20rpx;
-		font-size: 25rpx;
+		font-size: 27rpx;
 
 		&_textarea {
 			min-height: 400rpx;
