@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 // import api from '../api/api'
-import { LoginReq, UserInfoDTO } from '../type/userTypes'
+import { UserInfoDTO } from '../type/userTypes'
 import $api from '@/http'
 
 const useUserStore = defineStore("wanxiang_userInfo", () => {
 	const userInfo = ref<UserInfoDTO | null>(null)//用户信息
 	const token = ref('')
-
 	const showVip = ref(true)
 	const exitLogin = () => {
 		userInfo.value = null

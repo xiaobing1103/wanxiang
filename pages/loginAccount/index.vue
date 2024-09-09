@@ -152,11 +152,12 @@
 			const users = await $api.get('api/v1/user/info');
 			if (users.code == 200) {
 				userStore.userInfo = users.data;
+				uni.switchTab({
+					url: '/pages/my/index'
+				});
+				uni.$u.toast('登录成功！')
 			}
-			uni.switchTab({
-				url: '/pages/my/index'
-			});
-			uni.$u.toast('登录成功！')
+
 		} else {
 			show.value = false;
 			uni.$u.toast(data.msg);
