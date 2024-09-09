@@ -48,14 +48,15 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 			uni.$u.toast('只有一个消息，无法删除');
 			return;
 		}
-
 		const newChats = chats.value.filter((val) => val.id !== id);
 		chats.value = newChats;
-
 		if (chats.value.length > 0) {
 			// 如果还有剩余的消息，更新选择的聊天和模型
-			changeSelectChatId(chats.value[0].id);
-			setModel(chats.value[0].model);
+			setTimeout(() => {
+				changeSelectChatId(chats.value[0].id);
+				setModel(chats.value[0].model);
+			}, 100)
+
 		} else {
 			// 如果删除后没有剩余消息，可以处理这种情况
 			uni.$u.toast('没有剩余的消息');

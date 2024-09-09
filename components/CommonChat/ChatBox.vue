@@ -68,7 +68,7 @@
 										<!-- 消息不为用户 且 消息是系统发送的 需要遍历循环消息显示的 且消息状态不为等待 -->
 										<template v-if="item.target == 'assistant' && item.state !== 'waite'">
 											<view style="width: 100%">
-												<MessageItem :uType="uType" :content="item.message" />
+												<MessageItem :uType="item.echartsType" :content="item.message" />
 												<!-- 模版下面逻辑组件 -->
 												<ChatEelseHandler ref="ChatEelseHandlerRef" @passUp="handlePassUp"
 													:msgId="item.id" :text="item.message" />
@@ -82,7 +82,7 @@
 											</template>
 											<template v-else>
 												<view style="width: 100%">
-													<MessageItem :uType="uType" :content="item.message" />
+													<MessageItem :uType="item.echartsType" :content="item.message" />
 												</view>
 											</template>
 										</template>
@@ -162,7 +162,7 @@
 					currentMsg.forEach((item : ItemMessage, index : number) => {
 						messageList.value.set(item.id, item);
 					});
-				}, 500);
+				}, 1000);
 			} else {
 				messageList.value = getInitTemplate();
 			}

@@ -29,7 +29,7 @@ const iconConfig : IconConfig = {
 	vfastModelIcon: getUrl('/2023/12/12/ce9426096ab671825e0ba57c750a14d8.png'),
 	netModelIcon: getUrl('/2023/12/12/ce9426096ab671825e0ba57c750a14d8.png'),
 	echartsModelIcon: getUrl('/2024/01/02/d4169bfc46ee0d0a29c6c9c8653ebc06.png'),
-
+	baidu40ModelIcon: getUrl('/2024/08/21/dc0ef1c1e68965e956d47f5797e80ff8.svg'),
 	glmModelIcon: getUrl('/2024/08/21/04e13289b698355ad1e76adef3ef4d83.svg'),
 
 

@@ -54,6 +54,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 			uni.navigateTo({
 				url: '/pages/login/index'
 			});
+			
 			// return response.data = await doRequest(response, url)
 		} else {
 			if (response.data.code !== 200 && response.data.message) {

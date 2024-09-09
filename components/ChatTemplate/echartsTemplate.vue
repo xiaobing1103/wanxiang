@@ -17,7 +17,7 @@
 			</view>
 		</view>
 	</view>
-	<up-modal :show="showModal" @confirm="confirm">
+	<up-modal :show="showModal" @confirm="confirm" showCancelButton @close="showModal = false" @cancel="showModal = false" closeOnClickOverlay>
 		<view class="echartsModal">
 			<view class="echartsModal_title">
 				请选择你想输出的图表示例
@@ -81,7 +81,7 @@
 		{
 			title: '饼图',
 			desc: '快速生成精美的饼状图表',
-			imgSrc: 'http://file.1foo.com/2024/01/02/d4169bfc46ee0d0a29c6c9c8653ebc06.png',
+			imgSrc: 'http://file.1foo.com/2024/09/09/46232b0a476899d9add36c85cbb48018.svg',
 			getPrompt: function () {
 				return generatePrompt('饼状图表', '饼状图', 'uCharts', '数据从百度、Wikipedia、搜狗、腾讯、网易等网站获取', 'pie', `{
   "series": [
@@ -100,10 +100,36 @@
 			},
 			type: 'pie'
 		},
+
+		{
+			title: '散点图',
+			desc: '快速生成精美的散点图表',
+			imgSrc: 'http://file.1foo.com/2024/09/09/fb1e62647da2d2947b4ec0e8041548de.svg',
+			getPrompt: function () {
+				return generatePrompt('散点图表', '散点图', 'uCharts', '数据从百度、Wikipedia、搜狗、腾讯、网易等网站获取,散点图series的data数据格式是一个二维数组，用来展示每个点的坐标请你按照数据转换成点坐标，series的name是散点的label,输出的时候不要出现注释', 'scatter', `{
+            series: [
+              {
+                name: "散点一",
+                data: [[10,8.04],[8.07,6.95],[13,7.58],[9.05,8.81],[11,8.33],[14,7.66],[13.4,6.81],[10,6.33],[14,8.96],[12.5,6.82]]
+              },
+              {
+                name: "散点二",
+                data: [[9.15,7.2],[11.5,7.2],[3.03,4.23],[12.2,7.83],[2.02,4.47],[1.05,3.33],[4.05,4.96],[6.03,7.24],[12,6.26],[12,8.84],[7.08,5.82],[5.02,5.68]]
+              }
+            ]
+          }
+		`);
+			},
+			type: 'scatter'
+		},
+
+
+
+
 		{
 			title: '折线图',
 			desc: '生成详尽的折线图表',
-			imgSrc: 'http://file.1foo.com/2024/01/02/55fc9915196bae4cca0e0a76559f3b65.png',
+			imgSrc: 'http://file.1foo.com/2024/09/09/26434c5602ca5f9ba5f9ee09ef7a3a4d.svg',
 			getPrompt: function () {
 				return generatePrompt(
 					'折线图表',
@@ -131,18 +157,31 @@
 			},
 			type: 'line'
 		},
-		// {
-		// 	title: '甘特图',
-		// 	desc: '为你生成清晰的项目管理甘特图',
-		// 	imgSrc: 'http://file.1foo.com/2024/01/02/3f7dd0aca8c94e1ca1e2bbe0c943f7ae.png',
-		// 	getPrompt: function () {
-		// 		return generatePrompt('项目进度甘特图', '甘特图', 'gantt', '生成一个具有项目进度的甘特图', '');
-		// 	}
-		// },
+		{
+			title: '玫瑰图',
+			desc: '为你生成清晰的面积玫瑰图',
+			imgSrc: 'http://file.1foo.com/2024/09/09/3e01127f6cad69c7bf7e0f23c057bcc3.svg',
+			getPrompt: function () {
+				return generatePrompt(
+					'玫瑰图表',
+					'玫瑰图',
+					'uCharts',
+					'数据从百度、Wikipedia、搜狗、腾讯、网易等网站获取',
+					'column', `{
+            series: [
+              {
+                data: [{"name":"一班","value":50},{"name":"二班","value":30},{"name":"三班","value":20},{"name":"四班","value":18},{"name":"五班","value":8}]
+              }
+            ]
+          }
+				`)
+			},
+			type: 'rose'
+		},
 		{
 			title: '柱状图',
 			desc: '生成详尽的柱状图表',
-			imgSrc: 'http://file.1foo.com/2024/01/02/c50630c34b51f7645f35285d3b922687.png',
+			imgSrc: 'http://file.1foo.com/2024/09/09/4e28b87e8e13308528b91d822c6fc2fb.svg',
 			getPrompt: function () {
 				return generatePrompt(
 					'柱状图表',
@@ -167,16 +206,16 @@
 			type: 'column'
 		},
 		{
-			title: '流程图',
-			desc: '创建一个可视化流程图的表格',
-			imgSrc: 'http://file.1foo.com/2024/01/02/0b9d59d46ed1146cc962511b5bd858a6.png',
+			title: '区域图',
+			desc: '创建一个可视化区域图的表格',
+			imgSrc: 'http://file.1foo.com/2024/09/09/b491bdcf60bf0b7826adc870bf7480c4.svg',
 			getPrompt: function () {
 				return generatePrompt(
-					'流程图图表',
-					'流程图',
+					'区域图图表',
+					'区域图',
 					'uCharts',
 					'数据从百度、Wikipedia、搜狗、腾讯、网易等网站获取',
-					'mount', `{
+					'extra', `{
   "series": [
     {
       "data": [
@@ -190,16 +229,16 @@
   ]
 }`);
 			},
-			type: 'mount'
+			type: 'extra'
 		},
 		{
-			title: 'Excel表格',
-			desc: '生成一个Excel表格',
-			imgSrc: 'http://file.1foo.com/2024/01/02/5c53392c1643cd310a5816e8d4a26f99.png',
+			title: '条形图',
+			desc: '生成一个条形图表格',
+			imgSrc: 'http://file.1foo.com/2024/09/09/24314d9b22b246916d91d197fca1e013.svg',
 			getPrompt: function () {
 				return generatePrompt(
-					'Excel表格图表',
-					'Excel表格',
+					'条形图表格图表',
+					'条形图',
 					'uCharts',
 					'数据从百度、Wikipedia、搜狗、腾讯、网易等网站获取',
 					'bar', `{

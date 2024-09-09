@@ -59,6 +59,13 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelIcon: $assets.glmModelIcon,
 		modelDesc: '本模型由清华大学人工智能团队开发，训练资料大量为中...'
 	},
+	'zhipu_glm4': {
+		title: '智谱 · GLM-4',
+		ModelPath: '',
+		modelIcon: $assets.zhipu_glm4Icon,
+		ModelApi: "api/v1/chat2/zhipu_glm4",
+		modelDesc: '适用于复杂的对话交互和深度内容创作设计的场景'
+	},
 	'GLM-4-Air': {
 		title: 'GLM-4-Air模型',
 		ModelPath: '',
@@ -87,13 +94,7 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: "api/v1/chat2/glm_4_flash",
 		modelDesc: '综合性能强，适用简单任务，速度最快。'
 	},
-	'zhipu_glm4': {
-		title: '智谱 · GLM-4',
-		ModelPath: '',
-		modelIcon: $assets.zhipu_glm4Icon,
-		ModelApi: "api/v1/chat2/zhipu_glm4",
-		modelDesc: '适用于复杂的对话交互和深度内容创作设计的场景'
-	},
+
 	'baidu': {
 		title: '文心一言',
 		ModelPath: '',
@@ -101,6 +102,16 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelIcon: $assets.baiduModelIcon,
 		modelDesc: '基于飞桨深度学习平台和文心知识增强大模型，持续从海量...'
 	},
+
+	'baiduV40': {
+		title: '文心一言4.0',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baiduV40',
+		modelIcon: $assets.baidu40ModelIcon,
+		modelDesc: '我是基于深度学习技术训练得到的文心一言，媲美ChatGPT4.0...'
+	},
+
+
 	'baidu_8k_1222': {
 		title: '文心 · 8K-1222',
 		ModelPath: '',

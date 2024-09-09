@@ -23,6 +23,7 @@ export interface IconConfig {
 	echartsModelIcon : string
 	glmModelIcon : string
 	baiduModelIcon : string
+	baidu40ModelIcon : string
 	zhipuModelIcon : string
 	zhipu_glm4Icon : string
 	/*

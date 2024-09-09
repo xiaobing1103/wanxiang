@@ -70,12 +70,12 @@
 		scrollToBottom();
 	});
 	const echartsOnsendMessage = (val : any) => {
-		const { messages } = val
+		const { messages, uchartsType } = val
 		onSend(messages[1].content, {
 			currentAsk: '默认',
 			msgId: '',
 			isEcharts: true
-		}, [messages[0]])
+		}, [messages[0]], uchartsType)
 	}
 	const handleValue = (value) => {
 		// console.log(ChatBoxRef.value.messageList)
@@ -108,7 +108,8 @@
 			msgId: '',
 			isEcharts: false
 		},
-		extraMessage ?: any
+		extraMessage ?: any,
+		echartsType ?: string
 	) => {
 		if (!val) {
 			uni.$u.toast('请先输入内容！');
@@ -138,7 +139,8 @@
 		const options = {
 			url: commonModel[model.value].ModelApi,
 			method: 'POST',
-			data: reqData
+			data: reqData,
+			echartsType
 		};
 		scrollToBottom();
 		chatValue.value = '';
@@ -159,7 +161,7 @@
 			data: options.data,
 			onmessage: (text : UniApp.RequestSuccessCallbackResult) => {
 				result += text;
-				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text' });
+				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text', echartsType: options.echartsType });
 				scrollToBottom();
 			},
 			onerror: (err) => {
@@ -173,6 +175,7 @@
 			onfinish: (response) => {
 				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
 				// 存历史记录
+
 				saveHistory(selectChatId.value, currentMessage);
 				ChatStore.setLoadingMessage(false);
 			},
