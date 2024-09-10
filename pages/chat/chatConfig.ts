@@ -11,10 +11,32 @@ export const modelTypes : Record<ModelType, string> = {
 	v40: undefined,
 	net: undefined,
 	vfast: undefined,
+	tongyi: undefined,
 	talkV2: 'Web-推荐对话',
 	glm: "",
 	baidu: "",
-	doc: "Web-AI文档对话"
+	doc: "Web-AI文档对话",
+	baiduV40: "",
+	"GLM-4-Air": "",
+	glm_4_airx: "",
+	glm_4_0520: "",
+	glm_4_flash: "",
+	zhipu_glm4: "",
+	baidu_8k_1222: "",
+	baidu_speed_128k: "",
+	baidu_speed: "",
+	baidu_lite_8k: "",
+	baidu_tiny_8k: "",
+	baidu_ai_apaas: "",
+	qwen_max: "",
+	qwen_turbo: "",
+	qwen_farui: "",
+	baidu_code_llama: "",
+	baidu_llama: "",
+	moonshot_v1_128k: "",
+	moonshot_v1_32k: "",
+	qwen_plus: "",
+	moonshot_v1_8k: ""
 }
 
 // 当前模型需要额外携带的参数
@@ -30,7 +52,7 @@ export const exParmas : Record<ModelType, string | any> = {
 	vfast: {},
 	talkV2: {
 		// conversationId: ''
-	},
+	}, tongyi: {},
 	glm: {},
 	baidu: {},
 	doc: {},
@@ -43,7 +65,14 @@ export const exParmas : Record<ModelType, string | any> = {
 	zhipu_glm4: { type: "zhipu" },
 	baidu_8k_1222: {},
 	baidu_speed_128k: {},
-	baidu_speed: {}
+	baidu_speed: {},
+	baiduV40: {},
+	baidu_lite_8k: {},
+	baidu_tiny_8k: {},
+	baidu_ai_apaas: {},
+	qwen_max: {},
+	qwen_turbo: {},
+	qwen_farui: {}
 }
 // 当前模型需要转换params的键值
 export const currentModelReversParmas : Record<ModelType, string | any> = {
@@ -67,7 +96,21 @@ export const currentModelReversParmas : Record<ModelType, string | any> = {
 	zhipu_glm4: 'ask',
 	baidu_8k_1222: undefined,
 	baidu_speed_128k: undefined,
-	baidu_speed: undefined
+	baidu_speed: undefined,
+	baiduV40: undefined,
+	baidu_lite_8k: undefined,
+	baidu_tiny_8k: undefined,
+	baidu_ai_apaas: undefined,
+	tongyi: undefined,
+	qwen_max: undefined,
+	qwen_turbo: undefined,
+	qwen_farui: undefined,
+	baidu_code_llama: undefined,
+	baidu_llama: undefined,
+	moonshot_v1_128k: undefined,
+	moonshot_v1_32k: undefined,
+	qwen_plus: undefined,
+	moonshot_v1_8k: undefined
 }
 
 export const TemplateConfig : Record<ModelType, chatConfigProps> = {
@@ -188,9 +231,28 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 			}
 		]
 	},
+	image: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'imageTemplate',
+				messageType: 'text2',
+				message: `图片理解模型,可以理解任意图片类型，支持各种方式对话`
+			}
+		]
+	},
+	'tongyi': {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'tongyiTemplate',
+				messageType: 'text2',
+				message: `基于通义千问强大模型，持续从海量数据和大规模知识中融合学习具备知识增强、检索增强和对话增强的技术特色。`
+			}
+		]
+	},
 	video: undefined,
 	voice: undefined,
-	image: undefined,
 	web: undefined,
 	"GLM-4-Air": {
 		messagesTemplate: [
@@ -283,8 +345,108 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 				message: `我是针对企业级大模型应用进行了专门的指令调优，在问答场景、智能体相关场景可以获得同等规模模型下更好的效果。`
 			}
 		]
-	}
+	},
+	baiduV40: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baiduV40Template',
+				messageType: 'text2',
+				message: `我是基于深度学习技术训练得到的文心一言，媲美ChatGPT4.0，我在中文学习上更胜一筹，符合国人使用，我的性能可以通过一些指标来评估，比如语言模型的困惑度（Perplexity）、准确率（Accuracy）、F1指数（F1 Score）等，这些指数可以反映我在处理自然语言任务时的表现和水平。`
+			}
+		]
+	},
+	qwen_max: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'qwen_maxTemplate',
+				messageType: 'text2',
+				message: `我是通义千问2.5系列千亿级别超大规模语言模型，支持中文、英文等不同语言输入。`
+			}
+		]
+	},
+	qwen_turbo: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'qwen_turboTemplate',
+				messageType: 'text2',
+				message: `我是通义千问超大规模语言模型，支持中文英文等不同语言输入。`
+			}
+		]
+	},
+	qwen_farui: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'qwen_faruiTemplate',
+				messageType: 'text2',
+				message: `我是以通义千问为基座经法律行业数据和知识专门训练的法律行业大模型产品，综合运用了模型精调、强化学习、 RAG检索增强、法律Agent技术，具有回答法律问题、推理法律适用、推荐裁判类案、辅助案情分析、生成法律文书、检索法律知识、审查合同条款等功能。`
+			}
+		]
+	},
+	qwen_plus: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'qwen_plusTemplate',
+				messageType: 'text2',
+				message: `我是通义千问超大规模语言模型的增强版，支持中文英文等不同语言输入。`
+			}
+		]
+	},
+	moonshot_v1_8k: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'moonshot_v1_8kTemplate',
+				messageType: 'text2',
+				message: `我是跟KimiAI同款的模型，一款千亿参数的语言模型，具备优秀的语义理解、指令遵循和文本生成能力。支持 8K 上下文窗口，适合长文本的理解和内容生成场景。随着性能的迭代，模型会持续更新。`
+			}
+		]
+	},
 
+	moonshot_v1_32k: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'moonshot_v1_32kTemplate',
+				messageType: 'text2',
+				message: `我是跟KimiAI同款的模型，一款千亿参数的语言模型，具备优秀的语义理解、指令遵循和文本生成能力。支持 32K 上下文窗口，适合长文本的理解和内容生成场景。随着性能的迭代，模型会持续更新。`
+			}
+		]
+	},
+	moonshot_v1_128k: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'moonshot_v1_128kTemplate',
+				messageType: 'text2',
+				message: `我是跟KimiAI同款的模型，一款千亿参数的语言模型，具备优秀的语义理解、指令遵循和文本生成能力。支持 128K 长上下文窗口，适合超长文本的理解和内容生成场景。随着性能的迭代，模型会持续更新。`
+			}
+		]
+	},
+	baidu_llama: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baidu_llamaTemplate',
+				messageType: 'text2',
+				message: `文心一言 · Llama英文是Llama的新一代版本，是其系列大模型发展的自然延续。Llama可以根据提示生成文本和代码的模型，在英文对话中优势于其他模型。`
+			}
+		]
+	},
+	baidu_code_llama: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'baidu_code_llamaTemplate',
+				messageType: 'text2',
+				message: `我是由Meta AI研发并开源的一系列文本生成模型，旨在用于一般代码合成和理解。模型参数规模为70亿。`
+			}
+		]
+	},
 };
 
-export const noHistoryArr = ['doc']
+export const noHistoryArr = ['doc', 'image']

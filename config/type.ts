@@ -26,10 +26,16 @@ export interface IconConfig {
 	baidu40ModelIcon : string
 	zhipuModelIcon : string
 	zhipu_glm4Icon : string
+	tongyiIcon : string
+	kimiIcon : string
+	baidu_llamaIcon : string
+	tongyiMaxIcon : string
 	/*
 		文档理解模型icon
 	*/
 	docModelIcon : string
+	imageModelIcon : string
+
 	phoneIcon : string
 	emailIcon : string
 	userIcon : string

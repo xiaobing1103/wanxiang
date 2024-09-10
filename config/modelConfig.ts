@@ -50,7 +50,7 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/v35',
 		modelIcon: $assets.v35ModelIcon,
-		modelDesc: '本模式以推荐模型为底座，在对话过程中语义和基础常识会...'
+		modelDesc: '本模式以推荐模型为底座，在对话过程中语义和基础...'
 	},
 	'glm': {
 		title: '智谱 · 清华ChatGlm',
@@ -78,14 +78,14 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/glm_4_airx',
 		modelIcon: $assets.zhipuModelIcon,
-		modelDesc: 'GLM-4-Air 的高性能版本，效果不变，推理速度达到其2.6倍。'
+		modelDesc: 'GLM-4-Air 的高性能版本，效果不变，推理速度达到...'
 	},
 	glm_4_0520: {
 		title: 'GLM-4-0520',
 		ModelPath: '',
 		modelIcon: $assets.zhipuModelIcon,
 		ModelApi: "api/v1/chat2/glm_4_0520",
-		modelDesc: '当前智谱最先进最智能的模型，指令遵从能力大幅提升18...'
+		modelDesc: '当前智谱最先进最智能的模型，指令遵从能力大幅...'
 	},
 	glm_4_flash: {
 		title: 'GLM-4-Flash',
@@ -100,7 +100,7 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/baidu',
 		modelIcon: $assets.baiduModelIcon,
-		modelDesc: '基于飞桨深度学习平台和文心知识增强大模型，持续从海量...'
+		modelDesc: '基于飞桨深度学习平台和文心知识增强大模型，持...'
 	},
 
 	'baiduV40': {
@@ -108,7 +108,7 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/baiduV40',
 		modelIcon: $assets.baidu40ModelIcon,
-		modelDesc: '我是基于深度学习技术训练得到的文心一言，媲美ChatGPT4.0...'
+		modelDesc: '我是基于深度学习技术训练得到的文心一言，媲美Chat...'
 	},
 
 
@@ -125,14 +125,14 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/baidu_speed_128k',
 		modelIcon: $assets.baiduModelIcon,
-		modelDesc: '我是由百度2024年最新发布的自研高性能大语言模型，通用...'
+		modelDesc: '我是由百度2024年最新发布的自研高性能大语言模...'
 	},
 	baidu_speed: {
 		title: '文心 · 极速',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/baidu_speed',
 		modelIcon: $assets.baiduModelIcon,
-		modelDesc: '我是由百度自研的轻量级大语言模型，兼顾优异的模型效果与...'
+		modelDesc: '我是由百度自研的轻量级大语言模型，兼顾优异的模型...'
 	},
 	baidu_lite_8k: {
 		title: '文心 · 轻量8K',
@@ -153,16 +153,95 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/baidu_ai_apaas',
 		modelIcon: $assets.baiduModelIcon,
-		modelDesc: '我是针对企业级大模型应用进行了专门的指令调优，在问答...'
+		modelDesc: '我是针对企业级大模型应用进行了专门的指令调优，...'
+	},
+	tongyi: {
+		title: '通义千问',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/qwen',
+		modelIcon: $assets.tongyiIcon,
+		modelDesc: '基于通义千问强大模型，持续从海量数据和大规模...'
+	},
+	qwen_max: {
+		title: '通义千问MAX',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/qwen_max',
+		modelIcon: $assets.tongyiMaxIcon,
+		modelDesc: '我是通义千问2.5系列千亿级别超大规模语言模型，支持...'
+	},
+
+	qwen_turbo: {
+		title: '千问 · Turbo模型',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/qwen_turbo',
+		modelIcon: $assets.tongyiIcon,
+		modelDesc: '我是通义千问超大规模语言模型，支持中文英文等不同'
+	},
+	qwen_farui: {
+		title: '千问 · 法睿',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/qwen_farui',
+		modelIcon: $assets.tongyiIcon,
+		modelDesc: '我是以通义千问为基座经法律行业数据和知识专门训...'
+	},
+	qwen_plus: {
+		title: '千问 · Plus',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/qwen_plus',
+		modelIcon: $assets.tongyiIcon,
+		modelDesc: '我是通义千问超大规模语言模型的增强版，支持中文...'
+	},
+	moonshot_v1_8k: {
+		title: 'KimiAI · 8K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/moonshot_v1_8k',
+		modelIcon: $assets.kimiIcon,
+		modelDesc: '我是跟KimiAI同款的模型，一款千亿参数的语言模...'
+	},
+	moonshot_v1_32k: {
+		title: 'KimiAI · 32K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/moonshot_v1_32k',
+		modelIcon: $assets.kimiIcon,
+		modelDesc: '我是跟KimiAI同款的模型，支持 32K 上下文窗口...'
+	},
+	moonshot_v1_128k: {
+		title: 'KimiAI · 128K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/moonshot_v1_128k',
+		modelIcon: $assets.kimiIcon,
+		modelDesc: '我是跟KimiAI同款的模型,支持 128K 长上下文窗...'
+	},
+
+	baidu_llama: {
+		title: 'Llama · 英文',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baidu_llama',
+		modelIcon: $assets.baidu_llamaIcon,
+		modelDesc: '文心一言 · Llama英文是Llama的新一代版本，是...'
+	},
+
+	baidu_code_llama: {
+		title: 'Llama · 代码',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/baidu_code_llama',
+		modelIcon: $assets.baidu_llamaIcon,
+		modelDesc: '我是由Meta AI研发并开源的一系列文本生成模型...'
 	},
 	'doc': {
 		title: '文档理解模型',
-		ModelPath: '',
+		ModelPath: '/pages/function/subPage/AidocumentChat/index',
 		modelIcon: $assets.docModelIcon,
 		ModelApi: "api/v1/chat2/v35",
 		modelDesc: '可以理解任何文档的模型'
 	},
-
+	'image': {
+		title: '图片理解模型',
+		ModelPath: '/pages/index/subPage/imageModel/index',
+		modelIcon: $assets.imageModelIcon,
+		ModelApi: "api/v1/chat2/v35",
+		modelDesc: '可以理解任何图片的模型'
+	},
 	// net: undefined,
 	// echarts: undefined,
 	// video: undefined,

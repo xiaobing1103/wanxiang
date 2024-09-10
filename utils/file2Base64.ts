@@ -1,3 +1,5 @@
+
+/* 返回不带请求头的BASE64 */
 const fileToBase64 = (file, callback) => {
 	const reader = new FileReader();
 	reader.onloadend = function () {
@@ -9,7 +11,18 @@ const fileToBase64 = (file, callback) => {
 
 export {
 	fileToBase64,
-	wxBase64
+	wxBase64,
+	fileToBase64WithHeader
+}
+
+function fileToBase64WithHeader(file) {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = error => reject(error);
+	});
 }
 
 

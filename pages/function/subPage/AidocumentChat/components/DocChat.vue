@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-	import { nextTick, onMounted, ref } from 'vue';
+	import { ref } from 'vue';
 	import ChatBox from '@/components/CommonChat/ChatBox.vue';
 	import { generateUUID } from '@/tools/uuid';
 	import { ItemMessage } from '@/type/chatData';

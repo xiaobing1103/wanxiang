@@ -39,12 +39,24 @@
 		chatStore.setopenHistoryModel(false)
 	}
 	const addChat = () => {
+		if (chatStore.loadingMessage) {
+			uni.$u.toast('请等待消息回复完成...');
+			return
+		}
 		chatStore.initChatInfo(true)
 	}
 	const deleteChat = () => {
+		if (chatStore.loadingMessage) {
+			uni.$u.toast('请等待消息回复完成...');
+			return
+		}
 		chatStore.delChats(chatStore.selectChatId)
 	}
 	const changeChat = (id : string, model : ModelType) => {
+		if (chatStore.loadingMessage) {
+			uni.$u.toast('请等待消息回复完成...');
+			return
+		}
 		chatStore.changeSelectChatId(id)
 		chatStore.setModel(model)
 	}

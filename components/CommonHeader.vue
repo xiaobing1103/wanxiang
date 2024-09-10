@@ -77,8 +77,6 @@
 					url: props.defindPath
 				})
 			}
-
-
 		} else {
 			uni.navigateBack({
 				delta: props.backPageNum || 1,//返回层数，2则上上页

@@ -196,7 +196,6 @@
 				success: async (options) => {
 					const { tempFilePaths, tempFiles } = options;
 					url.value = tempFilePaths[0];
-
 					// #ifdef H5
 					if (props.type == 'coloringLineArt_task_json') {
 						fileToBase64(tempFiles[0], (base64) => {

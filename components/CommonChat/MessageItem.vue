@@ -23,7 +23,7 @@
 	import { useChatStore } from '@/store';
 	import { saveImage } from '@/utils/saveImages';
 	import { downloadReport } from '@/utils';
-	const props = defineProps<{ content : string, uType : string }>()
+	const props = defineProps<{ content : string, uType ?: string }>()
 	const chartData = ref({})
 	const ChatStore = useChatStore()
 	const hasUchatsBlock = ref(false);
@@ -36,9 +36,8 @@
 			const jsonObj = JSON.parse(validJsonStr);
 			return jsonObj;
 		} catch (error) {
-
-			console.error("JSON 解析失败: ", error);
-			return null;
+			uni.$u.toast('JSON 解析失败')
+			return 'JSON 解析失败'
 		}
 	}
 	const getcharts = (w) => {

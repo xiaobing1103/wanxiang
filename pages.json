@@ -78,7 +78,19 @@
 			}
 		}
 	],
-	"subPackages": [{
+	"subPackages": [
+		{
+			"root": "pages/index/subPage",
+			"pages": [{
+				"path": "imageModel/index",
+				"name": "imageModel",
+				"style": {
+					"navigationBarTitleText": "图文模型",
+					"navigationStyle": "custom"
+				}
+			}]
+		},
+		{
 			"root": "pages/my/subPage",
 			"pages": [{
 					"path": "vip/index",

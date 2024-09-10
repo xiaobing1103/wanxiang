@@ -13,8 +13,9 @@ export type MessageType = 'text' | 'text2' | 'image' | 'assistant' | 'template'
 
 export type TargetType = 'system' | 'user' | 'assistant'
 export type ModelType = 'v35' | 'v40' | 'baiduV40' | 'net' | 'echarts' | 'vfast' | 'video' | 'voice' | 'image' | 'web' | 'talkV2' | 'glm' | 'baidu' | 'doc' | 'GLM-4-Air' | 'glm_4_airx' | 'glm_4_0520' | 'glm_4_flash' | 'zhipu_glm4' | 'baidu_8k_1222' | 'baidu_speed_128k' | 'baidu_speed' | 'baidu_lite_8k' | 'baidu_tiny_8k' | 'baidu_ai_apaas'
-	;
+	| 'baidu_code_llama' | 'baidu_llama' | 'moonshot_v1_128k' | 'tongyi' | 'qwen_max' | 'qwen_turbo' | 'moonshot_v1_32k' | 'qwen_farui' | 'qwen_plus' | 'moonshot_v1_8k';
 export interface chatConfigProps {
+	path ?: string
 	placeholder ?: string // 输入框提示内容 
 	setting ?: boolean // 底部设置回复角度等显示
 	template ?: string //模板类型

@@ -31,14 +31,16 @@ const iconConfig : IconConfig = {
 	echartsModelIcon: getUrl('/2024/01/02/d4169bfc46ee0d0a29c6c9c8653ebc06.png'),
 	baidu40ModelIcon: getUrl('/2024/08/21/dc0ef1c1e68965e956d47f5797e80ff8.svg'),
 	glmModelIcon: getUrl('/2024/08/21/04e13289b698355ad1e76adef3ef4d83.svg'),
-
-
+	tongyiIcon: getUrl('/2024/01/02/974747351ea31ff54ead4818cde5b24b.svg'),
+	tongyiMaxIcon: getUrl('/2024/05/21/8816ccfb5cc11b08f140db94d8a9a187.svg'),
 	baiduModelIcon: getUrl('/2024/08/21/040bdf5efc10359ba47df6f0b608ad78.svg'),
 	Change_Model_Icon: getUrl('/2024/08/06/1a164d08dfe054b06dac984aecf187ad.svg'),
-
+	kimiIcon: getUrl('/2024/08/21/0cc7bd1c98297451f0bba50da466914d.svg'),
 	zhipuModelIcon: getUrl('/2024/08/21/04e13289b698355ad1e76adef3ef4d83.svg'),
 	docModelIcon: getUrl('/2024/02/22/f8fdbf7ea31f0f5e772dd80f37e5c334.png'),
 	zhipu_glm4Icon: getUrl('/2024/05/21/3eedb54d58430193f016a28bc0d70d9a.svg'),
+	baidu_llamaIcon: getUrl('/2024/08/21/2ef38da657fe22609a2dd0ab51c2b80a.svg'),
+	imageModelIcon: getUrl('/2024/02/22/36128b71a39265bebeba2a1abf6484f7.png'),
 	// 个人中心图标
 	phoneIcon: getUrl('/2024/08/22/70d5a0aece7b0fb07c33ab7f0aa353ee.svg'),
 	emailIcon: getUrl('/2024/08/22/7370adddc50c34d2edf3d53e5f296dad.svg'),

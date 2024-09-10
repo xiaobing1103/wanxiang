@@ -204,7 +204,6 @@
 	// 新增图片
 	const afterRead = async (event : { file : any; }) => {
 		if (checkFileType(event.file[0].name)) {
-			console.log(event)
 			let formData : FormData | any
 			let file2textRes : any
 			// #ifdef H5

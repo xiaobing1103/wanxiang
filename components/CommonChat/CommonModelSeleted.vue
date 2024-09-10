@@ -1,6 +1,5 @@
 <template>
 	<up-popup :show="chatStore.openSeletedModel" :round="25" mode="bottom" @close="close" @open="open">
-
 		<view class="viewBox">
 			<view class="viewBox_changeHeader">
 				<text class="viewBox_changeHeader_top">选择模型</text>
@@ -20,6 +19,19 @@
 						</view>
 					</view>
 				</template>
+				<view class="CommonPopup_header">
+					多媒体模型（自研技术打通万物理解）
+				</view>
+				<template v-for="(item,key) in filteredMedieModel" :key="key">
+					<view :style="{background:key == chatStore.model ? '#eaeaea':''}" class="CommonPopup_view"
+						@click="topath(item?.ModelPath)">
+						<image class="CommonPopup_view_image" :src="item.modelIcon" mode=""></image>
+						<view class="CommonPopup_view_right">
+							<text class="CommonPopup_view_text"> {{item.title}}</text>
+							<text class="CommonPopup_view_desc"> {{item.modelDesc}}</text>
+						</view>
+					</view>
+				</template>
 			</view>
 		</view>
 	</up-popup>
@@ -29,23 +41,36 @@
 
 <script setup lang="ts">
 	import { commonModel } from '@/config/modelConfig';
-	import { computed, ref } from 'vue';
+	import { ComputedRef, computed, ref } from 'vue';
 	import { useChatStore } from '@/store';
 	import { CommonModelKeys, ModelConfig } from '../../config/type';
 	import { generateUUID } from '../../tools/uuid';
 	import { noHistoryArr } from '@/pages/chat/chatConfig';
-	import { ModelType } from '@/type/chatData';
+	import { ModelType, chatConfigProps } from '@/type/chatData';
 	const chatStore = useChatStore()
-	const filteredCommonModel = computed(() =>
+	const filteredCommonModel : ComputedRef<Record<ModelType, chatConfigProps> | any> = computed(() =>
 		Object.keys(commonModel).filter(key => !noHistoryArr.includes(key)).reduce((obj, key) => {
 			obj[key] = commonModel[key];
 			return obj;
-		}, {} as Record<ModelType, ModelConfig>)
+		}, {})
 	)
+	const filteredMedieModel : ComputedRef<Record<ModelType, chatConfigProps> | any> = computed(() =>
+		Object.keys(commonModel).filter(key => noHistoryArr.includes(key)).reduce((obj, key) => {
+			obj[key] = commonModel[key];
+			return obj;
+		}, {})
+	)
+
 	const popup = ref(null)
 	const open = () => {
 		chatStore.setOpenSeletedModel(true)
 
+	}
+	const topath = (path : string) => {
+		console.log(path)
+		uni.navigateTo({
+			url: path
+		})
 	}
 	const close = () => {
 		chatStore.setOpenSeletedModel(false)

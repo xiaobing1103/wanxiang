@@ -1,4 +1,4 @@
-import { useUserStore } from '../store';
+import { useChatStore, useUserStore } from '../store';
 import { UserInfoDTO } from '../type/userTypes';
 import http from './interface';
 export interface httpDTO {
@@ -25,6 +25,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		title: "加载中..."
 	}
 	const userStore = useUserStore();
+	const ChatStore = useChatStore()
 	const userInfo = userStore.userInfo;
 	const defaultTimeout = 20000;
 	const headers = {
@@ -51,10 +52,11 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 	http.interceptor.response = (response) => {
 		uni.hideLoading();
 		if (response?.status == 401 || response?.data.code === 401 || response?.data.code === 4001 || response?.statusCode === 401) {
+
 			uni.navigateTo({
 				url: '/pages/login/index'
 			});
-			
+			ChatStore.setLoadingMessage(false)
 			// return response.data = await doRequest(response, url)
 		} else {
 			if (response.data.code !== 200 && response.data.message) {
@@ -115,6 +117,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 							uni.navigateTo({
 								url: '/pages/login/index'
 							});
+							ChatStore.setLoadingMessage(false)
 						} else {
 							if (response.data.code !== 200 && response.data.message) {
 								uni.showToast({
