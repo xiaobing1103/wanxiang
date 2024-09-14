@@ -41,6 +41,9 @@ const iconConfig : IconConfig = {
 	zhipu_glm4Icon: getUrl('/2024/05/21/3eedb54d58430193f016a28bc0d70d9a.svg'),
 	baidu_llamaIcon: getUrl('/2024/08/21/2ef38da657fe22609a2dd0ab51c2b80a.svg'),
 	imageModelIcon: getUrl('/2024/02/22/36128b71a39265bebeba2a1abf6484f7.png'),
+	voiceModelIcon: getUrl('/2023/11/07/a74dddf2100b8d633fb0d3ea0716a2e9.svg'),
+	videoModelIcon: getUrl('/2024/02/22/1c76f2f33e6ac2778e894da18b1caf22.png'),
+	webModelIcon: getUrl('/2024/08/21/d375c55fc4603e3b81bcdc259c52ebf4.svg'),
 	// 个人中心图标
 	phoneIcon: getUrl('/2024/08/22/70d5a0aece7b0fb07c33ab7f0aa353ee.svg'),
 	emailIcon: getUrl('/2024/08/22/7370adddc50c34d2edf3d53e5f296dad.svg'),
@@ -54,23 +57,19 @@ const iconConfig : IconConfig = {
 	gongZhongHao: getUrl('/2024/08/23/d5ae18cfe91fe606991ae0eff484e9d0.jpg'),
 	resetPassWordLock: getUrl('/2024/03/12/ce0a123619c14302caddd7cc934c498b.png'),
 	defineAvatar: getUrl('/2024/08/23/70f89ca27f79ef1ae2217960604257da.jpg'),
-
 	// 客服部分
 	weiXinQun: getUrl('/2024/08/23/96a9187a2fba2d9ddb065e63a9ef0fe3.jpg'),
 	weiXinKeFu: getUrl('/2024/08/23/d3d0d0745124cb68033b27b05dc542f9.png'),
-
-
 	//涂鸦的画笔图标
 	tuYaDrawIcon: getUrl('/2024/03/04/d91ddc60da14ea8423beb09fa31108ab.png'),
-
 	//涂鸦的调色盘图标 
 	tuYaDrawTiaoseIcon: getUrl('/2024/08/30/de0f35a10c54aec2f376e42ead525fa9.svg'),
-
 	//上传图片的图标
 	uploadImageIcon: getUrl('/2024/03/04/8aed983f23cce83b7190c21c7f9dbef9.png'),
-
 	//预览图片的图标
 	previewImageIcon: getUrl('/2024/03/04/0e1835b5223697f669522ac8c6921088.png'),
+	chat40ModelIcon: getUrl('/2024/09/11/f78dc561284062ad7b5b6f5715284987.svg'),
+	codegeex_4ModelIcon: getUrl('/2024/09/11/84915a678e556e905d35d21ea0d520d2.svg')
 }
 
 export default iconConfig

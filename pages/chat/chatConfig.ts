@@ -72,7 +72,17 @@ export const exParmas : Record<ModelType, string | any> = {
 	baidu_ai_apaas: {},
 	qwen_max: {},
 	qwen_turbo: {},
-	qwen_farui: {}
+	qwen_farui: {},
+	baidu_code_llama: {},
+	baidu_llama: {},
+	moonshot_v1_128k: {},
+	moonshot_v1_32k: {},
+	qwen_plus: {},
+	moonshot_v1_8k: {},
+	chat_4o_mini: { type: "zhipu" },
+	chat_4o: { type: "zhipu" },
+	chat_40: { type: "zhipu" },
+	codegeex_4: { type: "zhipu" }
 }
 // 当前模型需要转换params的键值
 export const currentModelReversParmas : Record<ModelType, string | any> = {
@@ -110,7 +120,11 @@ export const currentModelReversParmas : Record<ModelType, string | any> = {
 	moonshot_v1_128k: undefined,
 	moonshot_v1_32k: undefined,
 	qwen_plus: undefined,
-	moonshot_v1_8k: undefined
+	moonshot_v1_8k: undefined,
+	chat_4o_mini: 'ask',
+	chat_4o: 'ask',
+	chat_40: 'ask',
+	codegeex_4: 'ask'
 }
 
 export const TemplateConfig : Record<ModelType, chatConfigProps> = {
@@ -131,16 +145,6 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 				template: 'v40Template',
 				messageType: 'image',
 				message: '//file.1foo.com/2023/12/01/02ae98729cafef3cc0ea0fca1c632101.jpg'
-			}
-		]
-	},
-	'net': {
-		messagesTemplate: [
-			{
-				role: 'system',
-				template: 'netTemplate',
-				messageType: 'text2',
-				message: '联网模型已初步对近期的信息已经学习或理解完成，但仍可能某些最新话题无法正常学习，可尝试重新提问或者换个话题。'
 			}
 		]
 	},
@@ -231,13 +235,23 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 			}
 		]
 	},
+	net: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'netTemplate',
+				messageType: 'text2',
+				message: `我是万象AI助手，我已连接互联网，知晓近日的多数数据，你可以尝试问我,近期的新闻。`
+			}
+		]
+	},
 	image: {
 		messagesTemplate: [
 			{
 				role: 'system',
 				template: 'imageTemplate',
 				messageType: 'text2',
-				message: `图片理解模型,可以理解任意图片类型，支持各种方式对话`
+				message: `图片理解模型正在加载中...`
 			}
 		]
 	},
@@ -251,9 +265,36 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 			}
 		]
 	},
-	video: undefined,
-	voice: undefined,
-	web: undefined,
+	video: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'videoTemplate',
+				messageType: 'text2',
+				message: `视频理解模型正在加载中...`
+			}
+		]
+	},
+	voice: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'tongyiTemplate',
+				messageType: 'text2',
+				message: `音频理解模型正在加载中...`
+			}
+		]
+	},
+	web: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'webTemplate',
+				messageType: 'text2',
+				message: `网页理解模型正在加载中...`
+			}
+		]
+	},
 	"GLM-4-Air": {
 		messagesTemplate: [
 			{
@@ -447,6 +488,46 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 			}
 		]
 	},
+	chat_40: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'chat_40Template',
+				messageType: 'text2',
+				message: `欢迎使用chat_40模型`
+			}
+		]
+	},
+	chat_4o: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'chat_4oTemplate',
+				messageType: 'text2',
+				message: `欢迎使用chat_4o模型`
+			}
+		]
+	},
+	chat_4o_mini: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'chat_4o_miniTemplate',
+				messageType: 'text2',
+				message: `欢迎使用chat_4o_mini模型`
+			}
+		]
+	},
+	codegeex_4: {
+		messagesTemplate: [
+			{
+				role: 'system',
+				template: 'codegeex_4Template',
+				messageType: 'text2',
+				message: `欢迎使用codegeex_4代码模型`
+			}
+		]
+	}
 };
 
-export const noHistoryArr = ['doc', 'image']
+export const noHistoryArr = ['doc', 'image', 'voice', 'video', 'web']

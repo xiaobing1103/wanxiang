@@ -130,11 +130,11 @@
 		const historyMessages = ChatBoxRef.value.getAllHistoryMessage(requestData, msgId)
 
 		const reqData = {
-			prompt: `请以中文回复我 官方设置的${config.currentAsk}角度，适用于日常生活工作的询问与回答，权重均衡`,
+			prompt: model.value == 'net' ? undefined : `请以中文回复我 官方设置的${config.currentAsk}角度，适用于日常生活工作的询问与回答，权重均衡`,
 			type: modelTypes[model.value],
 			...exParmas[model.value],
 			// Dynamically assign the params key
-			[currentModelReversParmas[model.value] || 'params']: historyMessages,
+			[currentModelReversParmas[model.value] || 'params']: model.value == 'net' ? { messages: historyMessages } : historyMessages,
 		};
 		const options = {
 			url: commonModel[model.value].ModelApi,
@@ -165,17 +165,13 @@
 				scrollToBottom();
 			},
 			onerror: (err) => {
-				console.log(err);
 				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
-				console.log(currentMessage);
 				if (currentMessage.state == 'waite') {
 					ChatBoxRef.value.deleteMessage(id)
 				}
 			},
 			onfinish: (response) => {
 				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
-				// 存历史记录
-
 				saveHistory(selectChatId.value, currentMessage);
 				ChatStore.setLoadingMessage(false);
 			},

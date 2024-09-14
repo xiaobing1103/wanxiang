@@ -1,5 +1,5 @@
 <template>
-	<z-paging ref="srollRef" :pagingStyle="{padding:'24rpx'}">
+	<z-paging ref="srollRef" :pagingStyle="{padding:'24rpx',background: 'rgb(246, 247, 249)'}">
 		<template #top>
 			<CommonHeader defindTitle="AI文档对话" />
 		</template>
@@ -16,7 +16,6 @@
 						<up-upload :previewImage="false" :accept="accept" @afterRead="afterRead" @delete="deletePic"
 							:fileList="fileList1" :maxCount="1" name="1" multiple>
 							<view class="up-upload-box">
-
 								<view class="upload_file_main_com">
 									<view class="upload_file_main_comBox">
 										<view class="upload_file_main_comBoxList" v-for="(items,index) in docList"
@@ -41,7 +40,6 @@
 						<view class="input-box">
 							<template v-if="fileList.length>0">
 								<view class="input-box_fileListBox" v-for="(items,index) in fileList" :key="index">
-
 									<view class="input-box_fileListBox_leftBox">
 										<image class="input-box_fileListBox_images" :src="getIcon(items?.name)"
 											mode="" />
@@ -65,15 +63,22 @@
 						</view>
 					</view>
 				</template>
-				<template v-if="currentProject == 1">
-					<DocChatVue :scrollToBottom="scrollToBottom" :currentFileSearch="currentFileSearch"
-						ref="DocChatVueRef" />
-				</template>
+				<view class="chatBoxMain" v-if="currentProject == 1">
+					<!-- <DocChatVue v-model:chatValue="chatValue" :scrollToBottom="scrollToBottom"
+						:currentFileSearch="currentFileSearch" ref="DocChatVueRef" /> -->
+					<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" />
+				</view>
 				<template v-if="currentProject == 2">
 					131231321
 				</template>
 			</view>
 		</view>
+		<template #bottom>
+			<template v-if="currentProject == 1">
+				<DocChatInput @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
+			</template>
+
+		</template>
 	</z-paging>
 	<up-modal showCancelButton @cancel="show = false" @confirm="deleteFile" :show="show" title="删除文件"
 		content="是否删除此文件？">
@@ -82,14 +87,18 @@
 
 <script setup lang="ts">
 	import { ref, reactive, onMounted, nextTick, computed } from 'vue'
+	import ChatBox from '@/components/CommonChat/ChatBox.vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import DocChatInput from './components/DocChatInput.vue';
+	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { iconUrls } from './data'
 	import { useCounterStore } from '@/store';
 	import useChatStore from '@/store/chat';
-	import DocChatVue from './components/DocChat.vue';
 	import { storeToRefs } from 'pinia';
 	import { generateUUID } from '@/tools/uuid';
+	import { ItemMessage } from '@/type/chatData';
+	import { currentModelReversParmas, exParmas, modelTypes } from '@/pages/chat/chatConfig';
 	import { commonModel } from '@/config/modelConfig';
 	const accept = computed(() => {
 		// #ifdef H5
@@ -99,6 +108,102 @@
 		return 'all'
 		// #endif
 	})
+	const chatValue = ref('');
+
+
+	const { streamRequest, onCancelRequest } = useStreamHooks();
+	const props = defineProps<{ currentFileSearch : any, scrollToBottom : () => void }>()
+	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
+	const ChatStore = useChatStore();
+	const { model, selectChatId } = storeToRefs(ChatStore);
+	const { setChatInfo } = ChatStore;
+	const handleValue = (value : any) => {
+		const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId);
+		onSend(messages.message, value);
+	};
+
+	const onCancel = () => {
+		onCancelRequest()
+		ChatStore.setLoadingMessage(false)
+	}
+	const onSend = async (
+		val,
+		config : { currentAsk : string; msgId : string } = {
+			currentAsk: '默认',
+			msgId: ''
+		}
+	) => {
+		if (!val) {
+			uni.$u.toast('请先输入内容！');
+			return;
+		}
+		const msgId = generateUUID();
+		const msgObj : ItemMessage = { id: msgId, state: 'ok', target: 'user', message: val, messageType: 'text' };
+		ChatBoxRef.value.addMessage(msgId, msgObj);
+		saveHistory(selectChatId.value, msgObj);
+		const requestData = [
+			{
+				role: 'user',
+				content: val
+			}
+		];
+		const historyMessages = ChatBoxRef.value.getAllHistoryMessage(requestData, msgId)
+		const reqData = {
+			// prompt: `请以中文回复我 官方设置的${config.currentAsk}角度，适用于日常生活工作的询问与回答，权重均衡`,
+			prompt: null,
+			type: modelTypes[model.value],
+			...exParmas[model.value],
+			[currentModelReversParmas[model.value] || 'params']: historyMessages,
+		};
+		const options = {
+			url: commonModel[model.value].ModelApi,
+			method: 'POST',
+			data: reqData
+		};
+		scrollToBottom();
+		chatValue.value = '';
+		handleStream(options);
+	};
+
+	async function handleStream(options) {
+		let result = '';
+		const id = generateUUID();
+		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
+		ChatStore.setLoadingMessage(true);
+		const LoadingConfig = {
+			showLoading: false,
+			title: '加载中...'
+		};
+		const requestOptions = {
+			url: options.url,
+			data: options.data,
+			onmessage: (text : UniApp.RequestSuccessCallbackResult) => {
+				result += text;
+				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text' });
+				scrollToBottom();
+			},
+			onerror: (err) => {
+				console.log(err);
+				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
+				console.log(currentMessage);
+				if (currentMessage.state == 'waite') {
+					ChatBoxRef.value.deleteMessage(id)
+				}
+			},
+			onfinish: (response) => {
+				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
+				// 存历史记录
+				saveHistory(selectChatId.value, currentMessage);
+				ChatStore.setLoadingMessage(false);
+			},
+			LoadingConfig
+		};
+		streamRequest(requestOptions);
+	}
+
+	const saveHistory = (id : string, currentMessage : ItemMessage) => {
+		setChatInfo(id, currentMessage);
+	};
 
 	const srollRef = ref(null)
 	const seletedId = ref('')
@@ -111,7 +216,6 @@
 	]);
 
 	const currentProject = ref(0)
-	const ChatStore = useChatStore();
 	// #ifdef MP-WEIXIN
 	const system = useCounterStore()
 	const { menuButtonInfo, navBarHeight } = storeToRefs(system)
@@ -189,9 +293,7 @@
 			currentProject.value = 1;
 			ChatStore?.changeSelectChatId(generateUUID());
 			setTimeout(() => {
-				if (DocChatVueRef.value) {
-					DocChatVueRef.value.onSend(list.question)
-				}
+				onSend(list.question)
 			}, 100)
 
 		} else {
@@ -248,7 +350,7 @@
 			} else if (status === 0) {
 				uni.$u.toast('文件上传处理中...');
 			} else {
-				uni.$u.toast('文件状态异常');
+				uni.$u.toast('文件上传处理中...');
 			}
 		}, 2000); // 每隔 2 秒检查一次状态
 	}
@@ -561,5 +663,33 @@
 			display: flex;
 			margin-top: 10rpx;
 		}
+	}
+
+	.DocChat {
+		height: 100%;
+		background-color: rgb(246, 247, 249);
+
+		&_header {
+			display: flex;
+			justify-content: center;
+			font-size: 27rpx;
+			padding: 20rpx 0;
+			color: $aichat-border-color;
+		}
+
+		&_main {
+			padding: 25rpx;
+			box-sizing: border-box;
+			min-height: 70vh;
+			overflow: scroll;
+		}
+
+		&_footer {
+			padding: 10rpx 10rpx;
+		}
+	}
+
+	.chatBoxMain {
+		// background-color: #f1f1ff;
 	}
 </style>

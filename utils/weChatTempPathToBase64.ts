@@ -1,4 +1,4 @@
- function weChatTempPathToBase64(tempFilePath : string) {
+function weChatTempPathToBase64(tempFilePath : string) {
 	return new Promise((resolve, reject) => {
 		// 使用微信小程序的 API 读取文件
 		wx.getFileSystemManager().readFile({
@@ -6,17 +6,15 @@
 			encoding: 'base64',
 			success: (res) => {
 				// 获取文件类型
-				wx.getFileInfo({
+				wx.getFileSystemManager().getFileInfo({
 					filePath: tempFilePath,
 					success: (info) => {
 						let mimeType = info.mimeType;
-
 						// 如果 mimeType 未定义，尝试根据文件扩展名推断
 						if (!mimeType) {
 							const ext = tempFilePath.split('.').pop();
 							mimeType = getMimeTypeFromExtension(ext);
 						}
-
 						// 构造 Base64 数据 URL
 						const base64DataUrl = `data:${mimeType || 'application/octet-stream'};base64,${res.data}`;
 						resolve(base64DataUrl);

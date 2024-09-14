@@ -54,7 +54,7 @@
 <script setup lang="ts">
 	import { nextTick, onMounted, ref } from 'vue';
 	import imageModelChat from '@/components/CommonChat/imageModelChat.vue';
-	import { simpleModels, imagesList } from './data';
+	import { simpleModels, imagesList, imageDesception } from './data';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import ChatBox from '@/components/CommonChat/ChatBox.vue';
 	import { useChatStore } from '../../../../store';
@@ -124,8 +124,6 @@
 		}
 		const temUrl = event.file[0].url
 		showChatBox.value = true
-
-
 		// #ifdef MP-WEIXIN
 		base64 = await weChatTempPathToBase64(temUrl)
 		// #endif
@@ -133,9 +131,16 @@
 		base64 = await fileToBase64WithHeader(event.file[0].file)
 		// #endif
 		const description = await descriptionImage(base64)
-	
+
 		if (description) {
-			
+			const parmas = [
+				{ role: 'system', content: imageDesception },
+				{ role: 'user', content: description },
+			]
+			const msgId = generateUUID();
+			const msgObj : ItemMessage = { id: msgId, state: 'ok', target: 'user', message: temUrl, messageType: "image" };
+			ChatBoxRef.value.addMessage(msgId, msgObj);
+			onSend('请描述这张图片内容', undefined, parmas)
 		}
 	};
 
@@ -161,7 +166,8 @@
 		config : { currentAsk : string; msgId : string } = {
 			currentAsk: '默认',
 			msgId: ''
-		}
+		},
+		extraMessage ?: any
 	) => {
 		if (!val) {
 			uni.$u.toast('请先输入内容！');
@@ -170,8 +176,10 @@
 		const msgId = generateUUID();
 		const msgObj : ItemMessage = { id: msgId, state: 'ok', target: 'user', message: val, messageType: 'text' };
 		ChatBoxRef.value.addMessage(msgId, msgObj);
+
 		saveHistory(selectChatId.value, msgObj);
 		const requestData = [
+			...(Array.isArray(extraMessage) && extraMessage.length ? extraMessage : []),
 			{
 				role: 'user',
 				content: val
@@ -218,7 +226,6 @@
 			onerror: (err) => {
 				console.log(err);
 				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
-				console.log(currentMessage);
 				if (currentMessage.state == 'waite') {
 					ChatBoxRef.value.deleteMessage(id)
 				}
@@ -262,6 +269,7 @@
 			align-items: center;
 			flex-direction: column;
 			padding: 20rpx 0;
+			width: max-content;
 
 			&_image {
 				width: 150rpx;
@@ -269,6 +277,7 @@
 			}
 
 			&_text {
+				text-align: center;
 				font-size: 25rpx;
 				padding: 10rpx 0;
 			}

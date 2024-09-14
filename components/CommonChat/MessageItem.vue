@@ -55,6 +55,7 @@
 	}
 	const msgContent = computed(() => {
 		const { content } = props;
+
 		if (ChatStore.model == 'echarts') {
 			const uchartsJsonBlockRegex = /```(uCharts|json)\s*\n([\s\S]*?)\n```/;
 			const match = content.match(uchartsJsonBlockRegex);

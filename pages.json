@@ -13,17 +13,6 @@
 			}
 		},
 		{
-			"path": "pages/chat/index",
-			"style": {
-				"navigationBarTitleText": "chat",
-				"enablePullDownRefresh": false,
-				"navigationStyle": "custom",
-				"app-plus": {
-					"titleNView": false
-				}
-			}
-		},
-		{
 			"path": "pages/my/index",
 			"style": {
 				"navigationBarTitleText": "我的",
@@ -78,17 +67,41 @@
 			}
 		}
 	],
-	"subPackages": [
-		{
+	"subPackages": [{
 			"root": "pages/index/subPage",
 			"pages": [{
-				"path": "imageModel/index",
-				"name": "imageModel",
-				"style": {
-					"navigationBarTitleText": "图文模型",
-					"navigationStyle": "custom"
+					"path": "imageModel/index",
+					"name": "imageModel",
+					"style": {
+						"navigationBarTitleText": "图文模型",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "voiceModel/index",
+					"name": "voiceModel",
+					"style": {
+						"navigationBarTitleText": "音频模型",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "videoModel/index",
+					"name": "videoModel",
+					"style": {
+						"navigationBarTitleText": "视频模型",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "webModel/index",
+					"name": "webModel",
+					"style": {
+						"navigationBarTitleText": "网页模型",
+						"navigationStyle": "custom"
+					}
 				}
-			}]
+			]
 		},
 		{
 			"root": "pages/my/subPage",

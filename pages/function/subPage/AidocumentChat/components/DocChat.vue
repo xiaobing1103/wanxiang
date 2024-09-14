@@ -29,7 +29,7 @@
 	const ChatStore = useChatStore();
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const { setChatInfo } = ChatStore;
-	const chatValue = ref('');
+	const chatValue = defineModel('chatValue')
 	const handleValue = (value : any) => {
 		const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId);
 		onSend(messages.message, value);

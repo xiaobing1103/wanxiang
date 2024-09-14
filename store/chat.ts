@@ -6,6 +6,7 @@ import { CommonModelKeys } from '../config/type';
 import { ChatHistory, ItemMessage, MessageItems, ModelType, historyMessages } from '../type/chatData';
 import { generateUUID } from '../tools/uuid';
 import { commonModel } from '../config/modelConfig';
+import { noHistoryArr } from '@/pages/chat/chatConfig';
 
 
 const useChatStore = defineStore('wanxiang_chat', () => {
@@ -37,7 +38,6 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		}
 		setModel(value.model)
 		changeSelectChatId(value.id)
-		const noHistoryArr = ['doc']
 		if (noHistoryArr.includes(value.model)) return
 		chats.value.unshift({ ...value })
 	}
@@ -72,6 +72,7 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		persona_id.value = id
 	}
 	const setChatInfo = (id : string, data : ItemMessage) => {
+		if (noHistoryArr.includes(model.value)) return
 		const newChats = chats.value.map((item) => {
 			if (item.id == id) {
 				const updatedData = Array.isArray(item.data) ? item.data : [];
@@ -86,7 +87,7 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	};
 
 	const initChatInfo = (refreshPage ?: boolean) => {
-		if (chats.value.length > 10) {
+		if (chats.value.length >= 10) {
 			uni.$u.toast('历史记录不能超过十条！')
 			return
 		}

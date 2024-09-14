@@ -300,7 +300,11 @@
 
 	.iamge_album {
 		height: max-content;
-		width: 500rpx;
+		width: max-content;
+		min-width: 200rpx;
+		overflow: hidden;
+		border-radius: 10rpx;
+		
 	}
 
 	.messageTemplate {

@@ -35,7 +35,7 @@ export interface IconConfig {
 	*/
 	docModelIcon : string
 	imageModelIcon : string
-
+	voiceModelIcon : string
 	phoneIcon : string
 	emailIcon : string
 	userIcon : string
@@ -53,7 +53,12 @@ export interface IconConfig {
 	tuYaDrawIcon : string
 	tuYaDrawTiaoseIcon : string
 	uploadImageIcon : string
-	previewImageIcon : string
+	previewImageIcon : string,
+	videoModelIcon : string
+	webModelIcon : string
+	chat40ModelIcon : string
+	codegeex_4ModelIcon : string
+
 }
 export interface ModelConfig {
 	title : string;

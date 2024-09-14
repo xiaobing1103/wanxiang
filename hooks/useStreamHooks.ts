@@ -1,8 +1,10 @@
 import { useGlobalProperties } from './useGlobalHooks'
 import { ref } from 'vue'
+import { useChatStore } from '@/store'
 interface Options {
 
 }
+const ChatStore = useChatStore()
 const LoadingConfig = {
 	showLoading: false,
 	title: "加载中..."
@@ -51,8 +53,10 @@ export const useStreamHooks = (options ?: Options) => {
 
 			if (requestTask && typeof requestTask.onChunkReceived === 'function') {
 				requestTask.onChunkReceived(async res => {
-					const message = resloveResponseText(res.data);
-
+					let message = resloveResponseText(res.data);
+					if (ChatStore.model == 'net') {
+						message = await handlerCurrentModel(message)
+					}
 					options.onmessage && options.onmessage(message);
 					console.log(message, 'message错误');
 				});
@@ -81,11 +85,15 @@ export const useStreamHooks = (options ?: Options) => {
 		isRecive.value = true
 		controller.value = new AbortController();
 		const signal = controller.value.signal;
-		const onSuccess = (chunk : string) => {
+		const onSuccess = async (chunk : string) => {
 			if (chunk == null) {//完成
 				isRecive.value = false
 				options.onfinish && options.onfinish()
 				return null
+			}
+
+			if (ChatStore.model == 'net') {
+				chunk = await handlerCurrentModel(chunk)
 			}
 			options.onmessage && options.onmessage(chunk)
 		}
@@ -108,6 +116,65 @@ export const useStreamHooks = (options ?: Options) => {
 	const appStreamRequest = (options : StreamOptions) => {
 
 	}
+	// 处理当前net模型的数据
+	let shouldProcess : boolean = false;
+	let accumulatedData : string = '';
+
+	const handlerCurrentModel = (result : string) : Promise<string> => {
+		let searchResult : string = ''
+		return new Promise((resolve, reject) => {
+			accumulatedData += result;
+			if (accumulatedData.startsWith(`data: {"type":"event","event":"search_read"`)) {
+				const tagPattern = /"tag":"([\s\S]*?)"/;
+				const contentPattern = /"content":\s*(\[[\s\S]*?\])/;
+				const tagMatch = accumulatedData.match(tagPattern);
+				const tag = tagMatch ? tagMatch[1] : null;
+				const contentMatch = accumulatedData.match(contentPattern);
+				const content = contentMatch ? contentMatch[1] : null;
+				console.log("Tag:", tag);
+				const contentArr = JSON.parse(content)
+				contentArr.forEach((items : { title : string; link : string, icon : string, media : string }) => {
+					searchResult += `<a style="color:rgb(0, 122, 255);display:block;padding:10rpx 0;" href="${items.link}"><img style="width: 30rpx; height:30rpx;margin-right:20rpx;" src="${items.icon}" alt="${items.media}"/>${items.title}</a>\n`
+				})
+				resolve(`<div style="margin:20rpx 0;padding:20rpx;background-color:#282c34;border-radius:10rpx;">${searchResult}</div>`)
+			}
+			try {
+				const jsonPattern = /data:\s*({.*?})\s*/g;
+				let match : RegExpExecArray | null;
+				while ((match = jsonPattern.exec(accumulatedData)) !== null) {
+					const jsonString = match[1];
+					if (jsonString) {
+						try {
+							const obj = JSON.parse(jsonString);
+							if (obj?.type === 'event' && obj?.event === 'search') {
+								shouldProcess = true;
+								resolve(`\nAl联网搜索: ${obj?.content.replace(/search\//g, '').replace(/正在搜索:/g, '')}\n------\n`);
+							}
+							if (shouldProcess && obj?.type === 'event' && obj?.event === 'search_read') {
+								let searchResult = '';
+
+								obj.content.forEach((item : { title : string; href : string }) => {
+									searchResult += `<a style="color:red;">${item.title} + ${item.href}</a>\n`;
+								});
+								resolve(`<code>${searchResult}</code>`);
+							}
+							if (obj?.type === 'text') {
+								resolve(shouldProcess ? obj?.content : obj?.content.replace(/search\//g, ''));
+							}
+						} catch (error) {
+							reject(`JSON parsing error: ${error.message}`);
+						}
+					}
+				}
+				accumulatedData = '';
+			} catch (error) {
+				reject(`Error in processing data: ${error.message}`);
+			}
+		});
+	};
+
+
+
 	//统一处理
 	const streamRequest = (options ?: StreamOptions) => {
 		// #ifdef MP-WEIXIN

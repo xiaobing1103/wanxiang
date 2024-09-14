@@ -11,6 +11,13 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelIcon: $assets.v35ModelIcon,
 		modelDesc: '推荐模型基座训练数据超50亿T，是目前大语言模型中...'
 	},
+	"net": {
+		title: '联网模型',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/completionNet',
+		modelIcon: $assets.netModelIcon,
+		modelDesc: '我是万象AI助手，我已连接互联网，知晓近日的...'
+	},
 	'echarts': {
 		title: '图表模型',
 		ModelPath: '',
@@ -25,19 +32,6 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelIcon: $assets.v40ModelIcon,
 		modelDesc: '推荐模型=高中阶段，智慧4.0模型=博士阶段...'
 	},
-	// 'net': {
-	// 	title: '联网模式 (bate) ',
-	// 	ModelPath: '',
-	// 	ModelApi: 'api/v1/chat2/completionNet',
-	// 	modelIcon: $assets.netModelIcon
-	// },
-	// 'echarts': {
-	// 	title: '图表模型',
-	// 	ModelPath: '',
-	// 	ModelApi: 'api/v1/chat2/v35',
-	// 	modelIcon: $assets.echartsModelIcon,
-	// 	modelDesc: '可以帮你处理表格信息，并且生成表格。支持Eharts代码数据可视化图表库'
-	// },
 	"vfast": {
 		title: '极速模型',
 		ModelPath: '',
@@ -52,6 +46,36 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelIcon: $assets.v35ModelIcon,
 		modelDesc: '本模式以推荐模型为底座，在对话过程中语义和基础...'
 	},
+	chat_40: {
+		title: 'chat_40模型',
+		ModelPath: '',
+		modelIcon: $assets.chat40ModelIcon,
+		ModelApi: "api/v1/chat2/chat_40",
+		modelDesc: '欢迎使用chat_40模型'
+	},
+
+	chat_4o: {
+		title: 'chat_4o模型',
+		ModelPath: '',
+		modelIcon: $assets.chat40ModelIcon,
+		ModelApi: "api/v1/chat2/chat_4o",
+		modelDesc: '欢迎使用chat_4o模型'
+	},
+	chat_4o_mini: {
+		title: 'chat_4o_mini模型',
+		ModelPath: '',
+		modelIcon: $assets.chat40ModelIcon,
+		ModelApi: "api/v1/chat2/chat_4o_mini",
+		modelDesc: '欢迎使用chat_4o_mini模型'
+	},
+	codegeex_4: {
+		title: 'codegeex_4代码模型',
+		ModelPath: '',
+		modelIcon: $assets.codegeex_4ModelIcon,
+		ModelApi: "api/v1/chat2/codegeex_4",
+		modelDesc: '欢迎使用codegeex_4代码模型'
+	},
+
 	'glm': {
 		title: '智谱 · 清华ChatGlm',
 		ModelPath: '',
@@ -242,12 +266,27 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: "api/v1/chat2/v35",
 		modelDesc: '可以理解任何图片的模型'
 	},
-	// net: undefined,
-	// echarts: undefined,
-	// video: undefined,
-	// voice: undefined,
-	// image: undefined,
-	// web: undefined,
+	'voice': {
+		title: '音频理解模型',
+		ModelPath: '/pages/index/subPage/voiceModel/index',
+		modelIcon: $assets.voiceModelIcon,
+		ModelApi: "api/v1/chat2/v35",
+		modelDesc: '可以理解任何音频的模型'
+	},
+	'video': {
+		title: '视频理解模型',
+		ModelPath: '/pages/index/subPage/videoModel/index',
+		modelIcon: $assets.videoModelIcon,
+		ModelApi: "api/v1/chat2/v35",
+		modelDesc: '可以理解任何视频的模型'
+	},
+	web: {
+		title: '网页理解模型',
+		ModelPath: '',
+		modelIcon: $assets.webModelIcon,
+		ModelApi: "api/v1/chat2/v35",
+		modelDesc: '可以理解任何网页的模型'
+	},
 
 };
 

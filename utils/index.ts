@@ -4,6 +4,7 @@ import { Url2temUrl } from './Url2temUrl'
 import { isBase64 } from './isBase64'
 import { downloadReport } from './downloadBase64Local'
 import weChatTempPathToBase64 from './weChatTempPathToBase64'
+import { isPureLink } from './isPureLink'
 import { fileToBase64, fileToBase64WithHeader } from './file2Base64'
 
 // 页面跳转
@@ -131,4 +132,4 @@ const saveTextToFile = (textContent : string) => {
 		}
 	});
 };
-export { toPage, debounce, toCopyText, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport };
+export { toPage, debounce, toCopyText, getRandomInt, exportTxt, fileToBase64WithHeader, isPureLink, fileToBase64, saveTextToFile, isValidURL, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport };

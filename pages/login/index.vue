@@ -62,6 +62,7 @@
 				UserStore.userInfo = data.data;
 				const users = await $api.get('api/v1/user/info');
 				if (users.code == 200) {
+					UserStore.token = data?.data?.token;
 					UserStore.userInfo = users.data;
 					uni.switchTab({
 						url: '/pages/my/index'

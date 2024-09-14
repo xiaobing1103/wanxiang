@@ -21,7 +21,7 @@
 				</template>
 			</view>
 			<view class="historyBox_footer">
-
+		
 			</view>
 		</view>
 	</up-popup>

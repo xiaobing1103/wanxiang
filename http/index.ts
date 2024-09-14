@@ -30,7 +30,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 	const defaultTimeout = 20000;
 	const headers = {
 		uid: userInfo?.id || '',
-		token: userInfo?.token || '',
+		token: userStore?.token || '',
 		App: userInfo?.appid || '',
 		'Access-Token': userInfo?.access_token || '',
 		Vt: userInfo?.vip || '0',
