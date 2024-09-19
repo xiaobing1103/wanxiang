@@ -236,6 +236,14 @@
 						"navigationBarTitleText": "涂鸦",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "reserveWordIcons/index",
+					"name": "reserveWordIcons",
+					"style": {
+						"navigationBarTitleText": "图片反推提示词",
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		},

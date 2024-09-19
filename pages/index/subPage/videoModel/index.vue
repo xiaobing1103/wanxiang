@@ -108,7 +108,13 @@
 		if (isPureLink(linkVal.value)) {
 			resvideo = await $api.post('api/v1/media/mediaLink2txt', { file_url: linkVal.value })
 			if (resvideo.code == "0") {
-				onSend(resvideo.text, null, [{ role: 'user', content: '我的内容是：' + resvideo.text }])
+				if (resvideo.text) {
+					onSend(resvideo.text, null, [{ role: 'user', content: '我的内容是：' + resvideo.text }])
+				} else {
+					uni.$u.toast('这个视频似乎没有语音成分，请重试！');
+					showChatBox.value = false
+				}
+
 			} else {
 				uni.$u.toast(resvideo.msg);
 				showChatBox.value = false
@@ -118,7 +124,13 @@
 			if (resvideo.code == 200) {
 				const res = await $api.post('api/v1/media/mediaLink2txt', { file_url: resvideo.data.medias[0].resource_url })
 				if (res.code == "0") {
-					onSend('请理解我发送的视频链接', null, [{ role: 'user', content: '我的内容是：' + res.text }])
+					if (res.text) {
+						onSend('请理解我发送的视频链接', null, [{ role: 'user', content: '我的内容是：' + res.text }])
+					} else {
+						uni.$u.toast('这个视频似乎没有语音成分，请重试！');
+						showChatBox.value = false
+					}
+
 				} else {
 					uni.$u.toast(res.msg);
 					showChatBox.value = false

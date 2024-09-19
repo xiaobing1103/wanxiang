@@ -1,7 +1,7 @@
 <template>
 	<view class="view">
 		<view class="changeView">
-			<!-- <up-tabs :list="list4" lineWidth="30" :lineWidth="0" :lineHeight="0" :activeStyle="{
+			<up-tabs :current="activeTabs"  :list="list4" lineWidth="30" :lineWidth="0" :lineHeight="0" :activeStyle="{
 				fontSize:'25rpx',
 				border: '2rpx solid var(--border-color)',
 				background:'var(--primary-color)',
@@ -17,14 +17,15 @@
 						justifyContent: 'center',
 			            transform: 'scale(1)'
 			        }" itemStyle="padding: 10rpx; " @click="handlerClick">
-			</up-tabs> -->
+			</up-tabs>
 		</view>
 		<view class="tab-content">
 			<template v-if="activeTabs == 0">
 				<BaseTem v-model:parmas="parmas" :IamgeTypes='IamgeTypes' />
 			</template>
 			<template v-if="activeTabs == 1">
-				<ArtStyleCheatSheet />
+				<!-- <ArtStyleCheatSheet /> -->
+				<HistoryCreateImages />
 			</template>
 			<template v-if="activeTabs == 2">
 				<OnlinePrompts />
@@ -37,6 +38,7 @@
 <script setup lang="ts">
 	import BaseTem from './BaseTem'
 	import ArtStyleCheatSheet from './ArtStyleCheatSheet'
+	import HistoryCreateImages from './HistoryCreateImages'
 	import OnlinePrompts from './OnlinePrompts'
 	import {
 		ref,
@@ -46,21 +48,21 @@
 	defineProps<{
 		IamgeTypes : ImageProjectTypes
 	}>()
-	const activeTabs = ref(0)
-
+	
+	const activeTabs = defineModel<number>('activeTabs')
 	const parmas = defineModel<Image2TextParmas>("parmas")
 	const list4 = reactive([{
-		name: '基础',
+		name: '参数设置',
 		keyName: 'Tab1',
 	},
 	{
-		name: '艺术风格速查表',
+		name: '历史记录',
 		keyName: 'Tab12',
 	},
-	{
-		name: '在线提示词',
-		keyName: 'Tab13',
-	},
+		// {
+		// 	name: '在线提示词',
+		// 	keyName: 'Tab13',
+		// },
 	]);
 	const handlerClick = (tabs : {
 		name : string;
@@ -90,7 +92,7 @@
 		background-color: $uni-bg-color;
 		border-radius: 25rpx;
 		margin: 25rpx;
-		width: 70%;
+		// width: 70%;
 	}
 
 	.tab-content {

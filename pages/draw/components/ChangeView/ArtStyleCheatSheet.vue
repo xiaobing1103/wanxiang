@@ -1,8 +1,12 @@
-<template>111111111111
+<template>
+	<view class="ArtStyleCheatSheet">
+		
+	</view>
 </template>
 
-<script>
+<script setup lang='ts'>
+	
 </script>
 
-<style>
+<style lang="scss">
 </style>

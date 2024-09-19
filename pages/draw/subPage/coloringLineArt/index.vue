@@ -3,13 +3,10 @@
 		<template #top>
 			<CommonHeader defindPath="/pages/draw/index"/>
 		</template>
-		<!-- 对话框 -->
-		<!-- v-model:itemMessages="itemMessages" -->
 		<view class="body">
 			<CommonTitle title="线稿上色" desc="在线AI绘画,创作你的专属作品" />
 			<CommonDrawTem :IamgeTypes="IamgeTypes" :parmas="parmas" />
 		</view>
-
 		<template #bottom>
 
 		</template>

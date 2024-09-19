@@ -4,9 +4,11 @@
 	</template>
 	<PreviewImageArae v-model:parmas="parmas" />
 	<UseAiChatConfirm />
-	<ReversePromptUploadedImage />
-	<ChangeView v-model:parmas="parmas" :IamgeTypes='IamgeTypes' />
-	<view class="footer">
+	<template v-if="IamgeTypes.historyType == 'txt2img_task_json' ">
+		<ReversePromptUploadedImage />
+	</template>
+	<ChangeView v-model:parmas="parmas" :IamgeTypes='IamgeTypes' v-model:activeTabs="activeTabs" />
+	<view class="footer" v-if="activeTabs == 0">
 		<view class="footer_box">
 			<view @click="submit" class="footerButton">AI生成(消耗1次)</view>
 		</view>
@@ -55,6 +57,7 @@
 		drawStore.setSeletedDrawProject(props.IamgeTypes.historyType)
 	})
 	// 	
+	const activeTabs = ref(0)
 	const reversNums = (newParmas: Image2TextParmas) => {
 		if (props.IamgeTypes.DifferenceStrength) {
 			newParmas.denoising_strength += props.IamgeTypes.DifferenceStrength
@@ -96,25 +99,18 @@
 	}
 
 	const submit = async () => {
-		// 图生图
-		if (props.IamgeTypes.historyType == 'img2img_task_json' && !parmas.value.image) {
+		const hasImageArr = ['img2img_task_json', 'coloringLineArt_task_json', 'image2cartoon_task_json',
+			'partialRepaint_task_json', 'portraitCutout_task_json'
+		]
+		if (hasImageArr.includes(props.IamgeTypes.historyType) && !parmas.value.image) {
 			uni.$u.toast('请上传图片后再继续！')
 			return
 		}
-		// 文生图
 		if (props.IamgeTypes.historyType == 'txt2img_task_json' && !parmas.value.prompt) {
 			uni.$u.toast('请输入生成文案！')
 			return
 		}
-		// 线稿生徒
-		if (props.IamgeTypes.historyType == 'coloringLineArt_task_json' && !parmas.value.image) {
-			uni.$u.toast('请上传图片后再继续！')
-			return
-		}
-
-
 		await getQueueTask()
-
 	}
 
 

@@ -30,8 +30,8 @@ export interface IconConfig {
 	kimiIcon : string
 	baidu_llamaIcon : string
 	tongyiMaxIcon : string
-	/*
-		文档理解模型icon
+	/**
+	 * 文档理解模型icon
 	*/
 	docModelIcon : string
 	imageModelIcon : string
@@ -58,7 +58,34 @@ export interface IconConfig {
 	webModelIcon : string
 	chat40ModelIcon : string
 	codegeex_4ModelIcon : string
-
+	/**
+	 * 图片反推提示词icon
+	*/
+	reserveWordIcon : string
+	/**
+	 * 图片反推提示词 头部上传图标 icon
+	*/
+	reserveWordHeaderIcon : string
+	/**
+	 * 图片反推提示词 推演结果图标 icon
+	*/
+	reserveContentIcon : string
+	/**
+	 * 图片反推提示词 估值结果图标 icon
+	*/
+	reserveCopyContentIcon : string
+	/**
+	 * vip砖石图标 icon
+	*/
+	vipIcon : string
+	/**
+	* 支付宝图标 icon
+	*/
+	zhiFuBaoIcon : string
+	/**
+	* 微信图标 icon
+	*/
+	weChatIcon : string
 }
 export interface ModelConfig {
 	title : string;

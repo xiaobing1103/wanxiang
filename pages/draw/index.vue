@@ -14,8 +14,6 @@
 				<ImageShowcasePlaza :ImageList="ImageList" />
 			</view>
 		</view>
-		<!-- <text class="desc">未完功能持续上线中...</text> -->
-
 	</z-paging>
 </template>
 

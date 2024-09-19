@@ -1,8 +1,15 @@
 <template>
-	<up-checkbox shape="circle" :customStyle="{margin: '20rpx 0' ,fontSize:'25rpx'}" label="使用AiChat优化你的提示词" name="agree" usedAlone
+	<up-checkbox shape="circle" :customStyle="{margin: '20rpx 0' ,fontSize:'25rpx'}" name="agree" usedAlone
 		v-model:checked="aloneChecked" @change="change">
+		<template #label>
+			<view class="aichatPromet">
+				<text class="aichatPromet_top">使用AiChat优化你的提示词</text>
+				<text class="aichatPromet_bottom">提示：有助于生成精准的绘画指令以及画面光影、画面比例、美感等</text>
+			</view>
+		</template>
 	</up-checkbox>
-	<up-modal :show="aloneChecked" showCancelButton closeOnClickOverlay @close="onclose" @cancel="onclose" @confirm="confirm">
+	<up-modal :show="aloneChecked" showCancelButton closeOnClickOverlay @close="onclose" @cancel="onclose"
+		@confirm="confirm">
 		<view class="checkbox_modal">
 			<view class="checkbox_modal_header">
 				提示
@@ -50,6 +57,19 @@
 
 		&_content {
 			font-size: 27rpx;
+		}
+	}
+
+	.aichatPromet {
+		display: flex;
+		flex-direction: column;
+		&_top{
+			font-size: 27rpx;
+			font-weight: 700;
+		}
+		&_bottom{
+			font-size: 20rpx;
+			color: $uni-color-title;
 		}
 	}
 </style>

@@ -22,7 +22,6 @@ const iconConfig : IconConfig = {
 	wzst_cover: getUrl('/2024/07/29/79cf1c92dad3344d09c588ed894d15fc.svg'),
 	jbzh_cover: getUrl('/2024/07/29/264f04a7b3cae3546bf0544c201d0d7c.svg'),
 	rxkt_cover: getUrl('/2024/07/29/b5e3e490318dd92361e3afee5e16c0bd.svg'),
-
 	// 所有模型icon
 	v35ModelIcon: getUrl('/2023/12/12/941983dadec37a257e67974675d21734.png'),
 	v40ModelIcon: getUrl('/2024/08/21/3095dc6c36fb1cf9d7f59f0237b4faf0.svg'),
@@ -69,7 +68,15 @@ const iconConfig : IconConfig = {
 	//预览图片的图标
 	previewImageIcon: getUrl('/2024/03/04/0e1835b5223697f669522ac8c6921088.png'),
 	chat40ModelIcon: getUrl('/2024/09/11/f78dc561284062ad7b5b6f5715284987.svg'),
-	codegeex_4ModelIcon: getUrl('/2024/09/11/84915a678e556e905d35d21ea0d520d2.svg')
+	codegeex_4ModelIcon: getUrl('/2024/09/11/84915a678e556e905d35d21ea0d520d2.svg'),
+
+	reserveWordIcon: getUrl('/2024/09/18/84c560e5aec3e620d5cb6f87baa16204.png'),
+	reserveWordHeaderIcon: getUrl('/2024/03/04/8aed983f23cce83b7190c21c7f9dbef9.png'),
+	reserveContentIcon: getUrl('/2024/03/23/6216fc7507863a489711b31f05e5327f.svg'),
+	reserveCopyContentIcon: getUrl('/2024/03/23/8e62293bb06d567ffdda5e82a599bde6.svg'),
+	vipIcon: getUrl('/2023/12/27/db9bc66cc1473835b946a72697e7fc03.svg'),
+	zhiFuBaoIcon: getUrl('/2024/09/19/98d77787b35159f0f719bcde29c9a89b.svg'),
+	weChatIcon: getUrl('/2024/09/19/2c5d4e8a115d4ac03e09d63341095704.svg')
 }
 
 export default iconConfig

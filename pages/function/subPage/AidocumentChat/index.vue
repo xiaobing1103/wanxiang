@@ -45,7 +45,7 @@
 											mode="" />
 										<view class="input-box_fileListBox_items"
 											@click="seletedFileSearch(items.file_id)">
-											<view class="input-box_fileListBox_items">{{items?.name}}</view>
+											<view class="input-box_fileListBox_items_desc">{{items?.name}}</view>
 											<view>{{getStatus(items.status, items.chunk_num, items.complete_chunk_num)}}
 											</view>
 										</view>
@@ -69,7 +69,17 @@
 					<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" />
 				</view>
 				<template v-if="currentProject == 2">
-					131231321
+					<view class="currentProject2">
+						<text class="currentProject2_firstTxt">第一步：点击此处上传你想让ai阅读的文档，文档支持格式支持 .txt 、 .doc 、 .excel 、 .pdf
+							类型的文档 👇👇👇👇</text>
+						<image class="currentProject2_firstImages"
+							src="http://file.1foo.com/2024/09/18/a582730121b4308a74268d06e0f18a9c.png" mode="" />
+						<text class="currentProject2_firstTxt">第二步：等待文档完全向量化完毕之后,下面的状态为状态可用状态之后就可以点击该文档进行文档对话了
+							👇👇👇👇</text>
+						<image src="http://file.1foo.com/2024/09/18/7cfc3ab7019c1ebe868b49c3c08c7ef8.png" mode="">
+						</image>
+						<text class="currentProject2_firstTxt">第三步：文档对话是没有历史记录功能的，但是文档是可以保存在云端</text>
+					</view>
 				</template>
 			</view>
 		</view>
@@ -492,6 +502,13 @@
 					&_items {
 						display: flex;
 						flex-direction: column;
+
+						&_desc {
+							white-space: nowrap;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							max-width: 200px;
+						}
 					}
 
 					&_images {
@@ -691,5 +708,17 @@
 
 	.chatBoxMain {
 		// background-color: #f1f1ff;
+	}
+
+	.currentProject2 {
+		display: flex;
+		padding: 25rpx;
+		flex-direction: column;
+
+		&_firstTxt {
+			font-weight: 700;
+			padding: 25rpx 0;
+			font-size: 27rpx;
+		}
 	}
 </style>

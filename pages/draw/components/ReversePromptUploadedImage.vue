@@ -1,5 +1,5 @@
 <template>
-	<view class="ReversePromptUploadedImage">
+	<view class="ReversePromptUploadedImage" @click="toPath">
 		<view class="ReversePromptUploadedImage_main">
 			<view class="ReversePromptUploadedImage_left">
 				<up-icon name="plus" size="20"></up-icon>
@@ -14,6 +14,11 @@
 </template>
 
 <script setup lang="ts">
+	const toPath = () => {
+		uni.navigateTo({
+			url: '/pages/draw/subPage/reserveWordIcons/index'
+		})
+	}
 </script>
 
 <style lang="scss">
@@ -22,7 +27,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		
+
 		&_main {
 			width: 80%;
 			border: 2rpx dashed $u-info-dark;

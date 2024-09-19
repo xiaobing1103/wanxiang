@@ -1,5 +1,5 @@
 <template>
-	<view class="header">
+	<view class="header" :style="{background: noBackGround ?  '' : 'white'}">
 		<view :style="{height:navBarHeight  + 'px'}">
 			<view class="weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
 				<template v-if="curRoute == 'pages/index/index'">
@@ -46,14 +46,13 @@
 <script setup lang="ts">
 	import { ref, computed } from 'vue';
 	import { useChatStore, useCounterStore } from '@/store';
-	// import useCounterStore from '../store/system';
 	import { storeToRefs } from "pinia"
 
 	const curRoute = computed(() => {
 		const routers = getCurrentPages();
 		return routers[routers.length - 1].route
 	})
-	const props = defineProps<{ backPageNum ?: number, defindTitle ?: string, defindPath ?: 'string' }>()
+	const props = defineProps<{ backPageNum ?: number, defindTitle ?: string, defindPath ?: 'string', noBackGround ?: boolean }>()
 	const chatStore = useChatStore()
 	//  #ifdef MP-WEIXIN
 	const system = useCounterStore()
@@ -89,9 +88,9 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.header {
-		background-color: white;
+		// background-color: white;
 	}
 
 	.h5-header {

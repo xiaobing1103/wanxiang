@@ -1,6 +1,6 @@
 <template>
 	<view class="user" :style="{ paddingTop: screenStore.safeTopHeight + 'px' }">
-		<up-avatar :size="50"></up-avatar>
+		<up-avatar :src="UserStore?.userInfo?.avatar" :size="50"></up-avatar>
 		<view class="info">
 			<text class="user-name">
 				<template v-if="!token">
@@ -18,34 +18,34 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useUserStore } from '@/store/index';
-import { useScreenStore } from '@/store/index';
+	import { storeToRefs } from 'pinia';
+	import { useUserStore } from '@/store/index';
+	import { useScreenStore } from '@/store/index';
 
-const screenStore = useScreenStore();
-const UserStore = useUserStore();
-const { userInfo, showVip, token } = storeToRefs(UserStore);
+	const screenStore = useScreenStore();
+	const UserStore = useUserStore();
+	const { userInfo, showVip, token } = storeToRefs(UserStore);
 
-const LoginFn = () => {
-	uni.navigateTo({
-		url: '/pages/login/index'
-	});
-};
+	const LoginFn = () => {
+		uni.navigateTo({
+			url: '/pages/login/index'
+		});
+	};
 </script>
 
 <style lang="scss" scoped>
-.user {
-	display: flex;
-	align-items: center;
+	.user {
+		display: flex;
+		align-items: center;
 
-	.info {
-		padding-left: 30rpx;
-		line-height: 50rpx;
+		.info {
+			padding-left: 30rpx;
+			line-height: 50rpx;
 
-		.user-name {
-			font-weight: 700;
-			font-size: 35rpx;
+			.user-name {
+				font-weight: 700;
+				font-size: 35rpx;
+			}
 		}
 	}
-}
 </style>

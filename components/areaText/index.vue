@@ -1,7 +1,8 @@
 <template>
 	<view :style="[setAreaStyle]" class="area-box">
-		<textarea v-model="value" :maxlength="maxlength" :auto-height="autoHeight" class="area"
-			:placeholder="placeholder"></textarea>
+		<textarea v-model="value" :maxlength="maxlength" :adjustPosition="false" :auto-height="autoHeight" class="area"
+			:placeholder="placeholder" border="surround"></textarea>
+
 		<view v-if="showAction" class="action">
 			<slot name="action">
 				<u-icon @click="onReload" size="22" name="reload"></u-icon>

@@ -242,7 +242,7 @@
 	};
 
 	const updateCanvasSize = () => {
-		const isOpenDoodlesArr = ['coloringLineArt_task_json', 'image2cartoon_task_json', 'portraitCutout_task_json'];
+		const isOpenDoodlesArr = ['coloringLineArt_task_json', 'image2cartoon_task_json', 'portraitCutout_task_json', 'reserveWordIcons_task_json'];
 
 		if (!isOpenDoodlesArr.includes(DrawStore.seletedDrawProject)) {
 			show.value = true;

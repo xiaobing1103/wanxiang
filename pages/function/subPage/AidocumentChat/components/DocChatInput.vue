@@ -1,7 +1,6 @@
 <template>
 	<view class="chatAll">
 		<view class="chatInput">
-			<image class="chatInput_left" src="@/static/image.svg" mode=""></image>
 			<view class="chatInput_input">
 				<up-input placeholder="请输入内容" border="surround" v-model="chatValue"></up-input>
 			</view>
@@ -49,6 +48,7 @@
 	}
 
 	.chatInput {
+		overflow: hidden;
 		width: 100%;
 		display: flex;
 		background-color: white;

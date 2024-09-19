@@ -1,5 +1,6 @@
 <template>
 	<view class="vip-card" :style="{backgroundImage:`url(${$assets.vipCard})`}"></view>
+	
 </template>
 
 <script setup lang="ts">

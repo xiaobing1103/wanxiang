@@ -20,7 +20,7 @@ export interface drawTaskJson {
 	wait_for : number;
 }
 
-export type taskIdTypeKey = 'txt2img_task_json' | 'img2img_task_json' | 'coloringLineArt_task_json' | 'image2cartoon_task_json' | 'partialRepaint_task_json' | 'portraitCutout_task_json';
+export type taskIdTypeKey = 'txt2img_task_json' | 'img2img_task_json' | 'coloringLineArt_task_json' | 'image2cartoon_task_json' | 'partialRepaint_task_json' | 'portraitCutout_task_json' | 'reserveWordIcons_task_json';
 
 // 定义每种任务类型的历史记录数据
 export type taskIdTypesData = {
@@ -60,6 +60,10 @@ const useDrawStore = defineStore(
 			portraitCutout_task_json: {
 				task_id: '',
 				historyTasks: [] as drawTaskJson[]
+			},
+			reserveWordIcons_task_json: {
+				task_id: '',
+				historyTasks: [] as drawTaskJson[]
 			}
 		});
 
@@ -81,13 +85,15 @@ const useDrawStore = defineStore(
 		const setCurrentParmasData = (value : any) => {
 			currentParmasData.value = value;
 		};
-
 		const getTask = async (parmas : any) => {
 			let isformDataRequest = true;
 			let isWeChatSendImages = false;
-			if (isWeChatTempPath(parmas.image)) {
-				isWeChatSendImages = true
+			if (parmas.image) {
+				if (isWeChatTempPath(parmas.image)) {
+					isWeChatSendImages = true
+				}
 			}
+
 			if (seletedDrawProject.value == 'img2img_task_json' || seletedDrawProject.value == 'image2cartoon_task_json') {
 				isformDataRequest = false;
 			}

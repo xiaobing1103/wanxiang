@@ -9,7 +9,10 @@
 				<text class="title">写作主题</text>
 				<text class="description">通过作文提纲的方式引导，帮助你撰写各种论文、研究报告等长篇文章，轻松写完长文。</text>
 				<AreaText v-model="themeStr" placeholder="请输入文章标题(列如:探讨人工智能在医疗领域的应用前景)" />
-				<text @click="onCreateContent" class="btn">生成大纲</text>
+				<view @click="onCreateContent" class="layoutBtn">
+					<up-button :customStyle="{width:'50%',height:'60rpx',}" shape="circle" type="primary"
+						:loading="buttonLoading" :disabled="buttonLoading">生成大纲</up-button>
+				</view>
 			</view>
 			<!-- 文章大纲 -->
 			<view class="artcle-box">
@@ -21,7 +24,10 @@
 					placeholder="" height="300" v-model="outlineStr" />
 				<text
 					class="description">文章大纲往往对文章生成的质量有着很大的关系，如AI生成的大纲不满意或不符合文章主题，建议点击重新生成!否则AI创作的文章水平会参差不齐，请知悉!</text>
-				<text class="btn" @click="createContent">生成正文</text>
+				<view class="layoutBtn" @click="createContent">
+					<up-button :customStyle="{width:'50%',height:'60rpx',}" shape="circle" type="primary"
+						:loading="buttonLoading" :disabled="buttonLoading">生成正文</up-button>
+				</view>
 			</view>
 			<!-- 正文内容 -->
 			<view v-if="showContent" class="artcle-box">
@@ -35,10 +41,13 @@
 				</view>
 				<template v-for="(item,index) in contentExtraArr" :key="index">
 					<AreaText @reload="onRelaod(index)" @export="onExport" :autoHeight="true" v-if="item.show"
-						:show-action="true" placeholder="" height="300" v-model="item.content" />
+						:show-action="true" placeholder="编辑大纲，生成全文初稿" height="300" v-model="item.content" />
 				</template>
 				<text @click="onCopy" v-if="outLineIndex == splitOutLineArr.length" class="btn">复制全文</text>
-				<text @click="onGoOnCreate" v-else class="btn">继续生成</text>
+				<view @click="onGoOnCreate" v-else class="layoutBtn">
+					<up-button :customStyle="{width:'50%',height:'60rpx',}" shape="circle" type="primary"
+						:loading="buttonLoading" :disabled="buttonLoading">继续生成</up-button>
+				</view>
 			</view>
 		</view>
 	</z-paging>
@@ -59,7 +68,7 @@
 	const showContent = ref(false)
 	const themeStr = ref('')
 	const outlineStr = ref('')
-	const contentStr = ref('')
+	const buttonLoading = ref(false)
 	const splitOutLineArr = ref<string[]>([])
 	const outLineIndex = ref(0)
 	const isContentComplete = ref(false)
@@ -98,6 +107,10 @@
 	})
 	//生成正文
 	const createContent = (isScroll = true) => {
+		if (buttonLoading.value) {
+			uni.$u.toast('请等待内容生成完成！')
+			return
+		}
 		contentExtraArr.value[outLineIndex.value].show = true
 		const params = [
 			{
@@ -117,15 +130,18 @@
 		uni.showLoading({
 			title: '正文生成中...'
 		})
+		buttonLoading.value = true
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data,
 			onfinish() {
 				isContentComplete.value = true
 				uni.hideLoading()
+				buttonLoading.value = false
 			},
 			onerror() {
 				uni.hideLoading()
+				buttonLoading.value = true
 			},
 			onmessage(text : string) {
 				contentExtraArr.value[outLineIndex.value].content += text
@@ -152,6 +168,10 @@
 
 	// 生成大纲
 	const onCreateContent = () => {
+		if (buttonLoading.value) {
+			uni.$u.toast('请等待内容生成完成！')
+			return
+		}
 		if (!themeStr.value) {
 			uni.$u.toast('写作主题为空,无法为您生成大纲')
 			return
@@ -204,6 +224,7 @@
 		uni.showLoading({
 			title: '大纲生成中...'
 		})
+		buttonLoading.value = true
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data,
@@ -220,12 +241,15 @@
 				})
 				console.log(splitOutLineArr.value, "分割后的大纲")
 				uni.hideLoading()
+				buttonLoading.value = false
 			},
 			onerror() {
 				uni.hideLoading()
+				buttonLoading.value = false
 			},
 			oncancel() {
 				uni.hideLoading()
+				buttonLoading.value = false
 			},
 			onmessage(text : string) {
 				outlineStr.value += text
@@ -333,5 +357,13 @@
 				border-radius: 20rpx;
 			}
 		}
+	}
+
+	.layoutBtn {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 25rpx 0;
 	}
 </style>

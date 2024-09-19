@@ -50,7 +50,12 @@ export const menuList = [
 		description: "只能提取人像，精确到发丝",
 		path: "/pages/draw/subPage/portraitCutout/index",
 	},
-
+	{
+		cover: $assets.reserveWordIcon,
+		title: "ai图片反推提示词",
+		description: "AI分析图片，转换成描述词",
+		path: "/pages/draw/subPage/reserveWordIcons/index",
+	}
 	// {
 	// 	cover: $assets.rxkt_cover,
 	// 	title: "人像抠图",
