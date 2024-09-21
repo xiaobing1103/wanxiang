@@ -5,13 +5,12 @@
 				<!-- 顶部用户信息 -->
 				<UserInfo />
 				<!-- 会员卡片 -->
-				<VipCard v-if="userStore.showVip" />
+				<template v-if="userStore.userInfo">
+					<VipCard v-model:showOverlay="showOverlay" />
+				</template>
 			</template>
 			<!-- 菜单列表 -->
 			<MenuList v-model:openPop="openPop" v-model:openPop1="openPop1" v-model:popupShow6="popupShow6" />
-			<!-- 			<template #bottom>
-				<CommonTabbar :indexValue="4" />
-			</template> -->
 		</z-paging>
 
 	</view>
@@ -22,6 +21,7 @@
 	<ResetPassWord v-model:popupShow="popupShow4" title="修改密码" :titleIcon="$assets.resetPassWordLock" />
 	<DeleteAccount v-model:popupShow="popupShow5" title="注销账号" />
 	<RelationWe v-model:popupShow="popupShow6" title="联系客服" />
+	<DataViews v-model:showOverlay="showOverlay" />
 </template>
 
 <script setup lang="ts">
@@ -29,6 +29,7 @@
 	import MenuList from './components/menuList/index.vue'
 	import VipCard from './components/vipCard/index.vue'
 	import UserInfo from './components/userInfo/index.vue'
+	import DataViews from './components/DataViews.vue'
 	import ResetPassWord from '@/components/ResetPassWord/index.vue';
 	import handlerSeletedPop from '@/components/handlerSeletedPop/index.vue';
 	import DeleteAccount from '@/components/DeleteAccount/index.vue';
@@ -38,6 +39,8 @@
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
 	const { $assets } = useGlobalProperties();
 	const userStore = useUserStore()
+	const showOverlay = ref(false)
+
 	const popupShow4 = ref(false);
 	const popupShow5 = ref(false)
 	const popupShow6 = ref(false)

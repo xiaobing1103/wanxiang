@@ -6,6 +6,7 @@ const getUrl = (url : string) => {
 const iconConfig : IconConfig = {
 	//我的页面
 	vipCard: getUrl('/2024/07/29/396b53c790a06edd99dd4676c9066bd8.svg'),
+	noVipCard: getUrl('/2024/09/21/946bb2019074124cc1b806209fdc5d40.png'),
 	// 功能页面
 	ppt_cover: getUrl('/2024/07/29/ae8a249b18293065506c5c18f9bf4802.svg'),
 	aixz_cover: getUrl('/2024/07/29/d43cefcff1e8a7c8c15ff4d0d3e6e391.svg'),
@@ -76,7 +77,9 @@ const iconConfig : IconConfig = {
 	reserveCopyContentIcon: getUrl('/2024/03/23/8e62293bb06d567ffdda5e82a599bde6.svg'),
 	vipIcon: getUrl('/2023/12/27/db9bc66cc1473835b946a72697e7fc03.svg'),
 	zhiFuBaoIcon: getUrl('/2024/09/19/98d77787b35159f0f719bcde29c9a89b.svg'),
-	weChatIcon: getUrl('/2024/09/19/2c5d4e8a115d4ac03e09d63341095704.svg')
+	weChatIcon: getUrl('/2024/09/19/2c5d4e8a115d4ac03e09d63341095704.svg'),
+	reloadIcon: getUrl('/2024/09/11/b1f6ae2fe5473c1c18323f1739dc3119.svg'),
+	huangGuanIcon: getUrl('/2024/08/20/7e08b99320e97fe9a32258e53d2b0f8d.svg')
 }
 
 export default iconConfig

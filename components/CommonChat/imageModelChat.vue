@@ -3,7 +3,7 @@
 		<!-- <ChangeModel /> -->
 		<view class="chatInput">
 			<!-- <image @click="toImageModel" class="chatInput_left" src="@/static/image.svg" mode=""></image -->
-			
+
 			<view class="chatInput_input">
 				<up-input placeholder="请输入内容" border="surround" v-model="chatValue"></up-input>
 			</view>
@@ -65,6 +65,7 @@
 		align-items: center;
 		border-radius: 30rpx;
 		overflow: hidden;
+
 		&_left {
 			height: 40rpx;
 			width: 40rpx;

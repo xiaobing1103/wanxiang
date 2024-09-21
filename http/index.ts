@@ -51,7 +51,13 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 	};
 	http.interceptor.response = (response) => {
 		uni.hideLoading();
-		if (response?.status == 401 || response?.data.code === 401 || response?.data.code === 4001 || response?.statusCode === 401) {
+		if (response?.status == 401 || response?.data.code === 401 || response?.data.code === 4001 || response?.data.code === 4005 || response?.statusCode === 401) {
+			console.log(response)
+			if (response.data?.msg) {
+				uni.$u.toast(response.data.msg);
+			} else {
+				uni.$u.toast('登录信息已过期，请重新登录！');
+			}
 
 			uni.navigateTo({
 				url: '/pages/login/index'

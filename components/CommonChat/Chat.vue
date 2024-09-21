@@ -19,7 +19,6 @@
 	import activeSend from '@/static/activeSend.svg'
 	import stop from '@/static/stop.svg'
 	import send from '@/static/send.svg'
-	import { defineModel } from 'vue';
 	import { useChatStore } from '@/store';
 	const chatValue = defineModel<string>("chatValue")
 	const ChatStore = useChatStore()

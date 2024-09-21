@@ -48,7 +48,7 @@
 <style lang="scss" scoped>
 	.OfficeWorkVips {
 		display: grid;
-		padding: 25rpx;
+		padding: 25rpx ;
 
 		&_items {
 			position: relative;

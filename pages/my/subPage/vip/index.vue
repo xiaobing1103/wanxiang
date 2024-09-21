@@ -5,12 +5,12 @@
 			<view class="header_weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
 				<up-icon @click="backview" name="arrow-left" size="20"></up-icon>
 				<view class="header_btngrp">
-					<view class="buchajia">
+					<view class="buchajia" @click="buChaJiaModal = true">
 						<image class="buchajia_image"
 							src="http://file.1foo.com/2024/03/12/1a8bd8642a2892e02a4d822cd5c33116.png" mode="">
 						</image> 补差价升级
 					</view>
-					<view class="buchajia">
+					<view class="buchajia" @click="jiHuoMaModal = true">
 						<image class="buchajia_image"
 							src="http://file.1foo.com/2024/03/12/014e42e0370a6eaeaba022e69f368d6d.png" mode="">
 						</image>使用激活码激活
@@ -31,7 +31,8 @@
 						{{UserStore.userInfo?.nick}}
 					</view>
 					<view class="imagesBox_avatar_bottomText">
-						<image :style="{display:UserStore.userInfo?.vip == 0 ? 'none' : 'block'}" :src="$assets.vipIcon"
+						<image class="imagesBox_avatar_bottomText_img"
+							:style="{display:UserStore.userInfo?.vip == 0 ? 'none' : 'block'}" :src="$assets.vipIcon"
 							mode=""></image>
 						<text>{{UserStore.userInfo?.vipType}}</text>
 					</view>
@@ -60,16 +61,64 @@
 			<OfficeWorkVips @changeVipId="changeVipId" :vipDatas="OfficeWorkVipDatas" />
 		</template>
 		<MiddleVipView />
-		<PayItemView :payMode='payMode' :seletedVipIds="seletedVipIds"/>
-		<VipNumberSteps />
+		<PayItemView :payMode='payMode' :seletedVipIds="seletedVipIds" />
+		<VipNumberSteps :seletedVipIds="seletedVipIds" v-model:buChaJiaModal="buChaJiaModal" />
 		<template #bottom>
 		</template>
+		<up-modal :show="buChaJiaModal" :showConfirmButton='false'>
+			<view class="buChaJiaModal">
+				<view class="buChaJiaModal_header">
+					联系客服
+				</view>
+				<view class="buChaJiaModal_main">
+					<view class="buChaJiaModal_main_topText">
+						使用微信扫一扫，联系您的专属客服
+					</view>
+					<view class="buChaJiaModal_main_middleText">
+						<image class="buChaJiaModal_main_middleText_image"
+							src="//file.1foo.com/2023/10/28/bab81d65016a5d265a1a01a2b898371b.png" mode=""></image>
+					</view>
+					<view class="buChaJiaModal_main_bottomText">
+						客服邮箱:202829657@qq.com
+					</view>
+					<view class="buChaJiaModal_main_bottomText">
+						工作日9:00-12:00 14:00-18:00 20:00-22:30
+					</view>
+
+					<view class="buChaJiaModal_main_bottomText">
+						休息时间不定时处理消息
+					</view>
+				</view>
+				<view class="buChaJiaModal_footer">
+					<view class="buChaJiaModal_footer_button1" @click="buChaJiaModal = false">
+						取消
+					</view>
+					<view class="buChaJiaModal_footer_button2" @click="toCopyText('wuww9879')">
+						复制微信号
+					</view>
+				</view>
+			</view>
+		</up-modal>
+		<up-modal :customClass="'buChaJiaModal'" :show="jiHuoMaModal" showCancelButton @confirm="jihuoCode"
+			@cancel="jiHuoMaModal=false">
+			<view class="buChaJiaModal">
+				<view class="buChaJiaModal_header">
+					激活码激活
+				</view>
+				<view class="buChaJiaModal_main">
+					<up-input fontSize="11" :customStyle="{width:'100%',padding:'0'}" class="buChaJiaModal_main_input"
+						placeholder="请输入激活码" v-model="code"></up-input>
+				</view>
+
+			</view>
+		</up-modal>
 	</z-paging>
 </template>
 
 <script setup lang="ts">
 	import { computed, onMounted, ref } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import { toCopyText } from '@/utils';
 	import { useCounterStore, useUserStore } from '@/store';
 	import HotVips from './components/HotVips.vue';
 	import OfficeWorkVips from './components/OfficeWorkVips.vue';
@@ -84,9 +133,30 @@
 	const HotVipDatas = computed(() => {
 		return vipDatas.value.slice(0, 6)
 	})
+	const buChaJiaModal = ref(false)
+	const jiHuoMaModal = ref(false)
+	const code = ref('')
 	const seletedVipIds = ref(200)
 	const changeVipId = (index : number) => {
 		seletedVipIds.value = index
+	}
+	const refreshInfo = async () => {
+		const users = await $api.get('api/v1/user/info')
+		if (users.code == 200) {
+			UserStore.userInfo = users.data;
+			uni.$u.toast('支付成功！');
+		}
+	}
+	const jihuoCode = async () => {
+
+		const codeRes = await $api.post('api/v1/vip/cardActive', { card: code.value })
+		if (codeRes.code == 200) {
+			uni.$u.toast('激活码激活会员成功！');
+			jiHuoMaModal.value = false
+			refreshInfo()
+		} else {
+			uni.$u.toast(codeRes.msg);
+		}
 	}
 
 	const OfficeWorkVipDatas = computed(() => {
@@ -123,12 +193,11 @@
 		width: 100%;
 		height: 40rpx;
 		margin: 20rpx 0;
-
 		padding: 0 30rpx;
 
 		&_weixin-header {
 			display: flex;
-			justify-content: space-between;
+			justify-content: flex-start;
 
 		}
 
@@ -217,6 +286,12 @@
 				display: flex;
 				align-items: center;
 				font-size: 27rpx;
+
+				&_img {
+					width: 30rpx;
+					height: 40rpx;
+					margin-right: 13rpx;
+				}
 			}
 
 			&_images {
@@ -261,4 +336,77 @@
 	}
 
 	.noActiveVipItems {}
+
+
+	.buChaJiaModal {
+		font-size: 27rpx;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		align-items: center;
+
+		&_header {
+			font-weight: 800;
+			width: 100%;
+			font-size: 30rpx;
+		}
+
+		&_main {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			border: 1rpx solid #ccc;
+			border-radius: 10rpx;
+			padding: 6rpx 9rpx;
+			margin: 20rpx 0;
+
+			&_input {}
+
+			&_topText {
+				padding: 20rpx 0;
+			}
+
+			&_middleText {
+
+				&_image {
+					width: 500rpx;
+					height: 500rpx;
+				}
+
+			}
+
+			&_bottomText {
+				display: flex;
+				width: 100%;
+				font-size: 24rpx;
+				padding: 5rpx 0;
+				color: $uni-color-primary;
+				flex-direction: column;
+				justify-content: flex-start;
+			}
+		}
+
+		&_footer {
+			display: flex;
+			justify-content: flex-end;
+			margin-top: 25rpx;
+
+			&_button1 {
+				padding: 15rpx 20rpx;
+				background-color: #ccc;
+				border-radius: 15rpx;
+				margin-right: 15rpx;
+				color: #FFF9F0;
+			}
+
+			&_button2 {
+				padding: 15rpx 20rpx;
+				background-color: $uni-color-primary;
+				border-radius: 15rpx;
+				color: #FFF9F0;
+			}
+		}
+	}
 </style>

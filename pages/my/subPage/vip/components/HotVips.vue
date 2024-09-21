@@ -35,7 +35,7 @@
 <script setup lang="ts">
 	import { ref } from "vue";
 	import { vipDatasType, vipShowModals } from "../data"
-	const props = defineProps<{ vipDatas : vipDatasType[] | [] }>()
+	defineProps<{ vipDatas : vipDatasType[] | [] }>()
 	const vip = ref(0)
 	const emit = defineEmits(['changeVipId'])
 	const changeVips = (index : number, vipId : number) => {
@@ -49,6 +49,7 @@
 		display: grid;
 		grid-template-columns: repeat(6, 1fr);
 		overflow-x: scroll;
+		margin: 20rpx 10rpx;
 
 		&_vipDatasBox {
 			padding: 20rpx;
@@ -128,7 +129,7 @@
 	.filexdImg {
 		position: absolute;
 		right: 0px;
-		top: 236rpx;
+		bottom: -8rpx;
 
 		&_img {
 			width: 50rpx;

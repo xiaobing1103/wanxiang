@@ -86,6 +86,19 @@ export interface IconConfig {
 	* 微信图标 icon
 	*/
 	weChatIcon : string
+
+	/**
+	* 没有会员的 icon
+	*/
+	noVipCard : string
+	/**
+	* 重新加载 icon
+	*/
+	reloadIcon : string
+	/**
+	* 皇冠 icon
+	*/
+	huangGuanIcon : string
 }
 export interface ModelConfig {
 	title : string;

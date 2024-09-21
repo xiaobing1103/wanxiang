@@ -152,7 +152,6 @@ export const useStreamHooks = (options ?: Options) => {
 							}
 							if (shouldProcess && obj?.type === 'event' && obj?.event === 'search_read') {
 								let searchResult = '';
-
 								obj.content.forEach((item : { title : string; href : string }) => {
 									searchResult += `<a style="color:red;">${item.title} + ${item.href}</a>\n`;
 								});

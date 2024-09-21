@@ -7,7 +7,7 @@
 			<view class="list">
 				<form-cell isHasToken label="个人中心" description="手机、邮箱、特权" :expand="true"
 					path="/pages/my/subPage/PersonalCenter/index"></form-cell>
-				<form-cell label="我的会员" :expand="true" path="/pages/my/subPage/vip/index">
+				<form-cell label="我的会员" isHasToken :expand="true" path="/pages/my/subPage/vip/index">
 					<template #extra>
 						<text
 							:class="{'vip-desc' : UserStore.userInfo?.vip !== 0 } ">{{UserStore.userInfo?.vipType}}</text>
