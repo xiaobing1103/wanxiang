@@ -275,6 +275,10 @@
 				if (currentMessage.state == 'waite') {
 					ChatBoxRef.value.deleteMessage(id)
 				}
+				if (err.includes('请升级会员')) {
+					ChatStore.setShowLevelUpVipContent(err)
+					ChatStore.setShowlevelUpVip(true)
+				}
 			},
 			onfinish: (response) => {
 				const currentMessage = ChatBoxRef.value.getSingelMessage(id);

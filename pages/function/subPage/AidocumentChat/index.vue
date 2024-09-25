@@ -93,6 +93,7 @@
 	<up-modal showCancelButton @cancel="show = false" @confirm="deleteFile" :show="show" title="删除文件"
 		content="是否删除此文件？">
 	</up-modal>
+
 </template>
 
 <script setup lang="ts">
@@ -119,8 +120,6 @@
 		// #endif
 	})
 	const chatValue = ref('');
-
-
 	const { streamRequest, onCancelRequest } = useStreamHooks();
 	const props = defineProps<{ currentFileSearch : any, scrollToBottom : () => void }>()
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
@@ -198,6 +197,10 @@
 				console.log(currentMessage);
 				if (currentMessage.state == 'waite') {
 					ChatBoxRef.value.deleteMessage(id)
+				}
+				if (err.includes('请升级会员')) {
+					ChatStore.setShowLevelUpVipContent(err)
+					ChatStore.setShowlevelUpVip(true)
 				}
 			},
 			onfinish: (response) => {

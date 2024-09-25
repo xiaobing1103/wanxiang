@@ -44,13 +44,14 @@
 	import MessageItem from '@/components/CommonChat/MessageItem.vue';
 	import { debounce, exportTxt } from '@/utils';
 	import { useGlobalProperties } from '../../../../hooks/useGlobalHooks';
+	import { useChatStore } from '@/store';
 	const { $api } = useGlobalProperties()
 	const inputValue = ref('')
 	const contentStr = ref(`> **纠正后示例**：
 	> 我们公司最近正在开发一款新产品，旨在让用户更方便地使用我们的服务。尽管开发过程中遇到了一些挑战，但我们正在积极寻找解决方案。例如，我们的后台系统偶尔会出现一些未知错误，可能导致用户使用时遇到问题。我们正努力提升系统的稳定性，确保用户体验不受影响。
 	 `)
 
-
+	const ChatStore = useChatStore();
 	const exportFile = () => {
 		if (contentStr.value) {
 			exportTxt(contentStr.value);
@@ -94,8 +95,13 @@
 				console.log('成功')
 			},
 			onerror(err) {
+				if (err.includes('请升级会员')) {
+					ChatStore.setShowLevelUpVipContent(err)
+					ChatStore.setShowlevelUpVip(true)
+				}
 				console.log(err, "错误")
-			}
+			},
+			checkNumsType: 'fun_article_correction'
 		})
 	}
 </script>

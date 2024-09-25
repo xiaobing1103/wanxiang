@@ -41,19 +41,20 @@
 			</view>
 		</view>
 	</view>
+	<LevelUpVip />
 </template>
 
 <script setup lang="ts">
+	import LevelUpVip from '@/components/CommonChat/LevelUpVip.vue';
 	import { ref, computed } from 'vue';
-	import { useChatStore, useCounterStore } from '@/store';
+	import { useCounterStore } from '@/store';
 	import { storeToRefs } from "pinia"
-
 	const curRoute = computed(() => {
 		const routers = getCurrentPages();
 		return routers[routers.length - 1].route
 	})
 	const props = defineProps<{ backPageNum ?: number, defindTitle ?: string, defindPath ?: 'string', noBackGround ?: boolean }>()
-	const chatStore = useChatStore()
+
 	//  #ifdef MP-WEIXIN
 	const system = useCounterStore()
 	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)

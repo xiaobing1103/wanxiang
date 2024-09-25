@@ -14,14 +14,36 @@
 	import { onLoad } from '@dcloudio/uni-app';
 	const { streamRequest, isRecive } = useStreamHooks()
 	const iframeRef = ref(null)
-	const contentStr = ref('')
+	const contentStr = ref(`# ChatGptWeb系统
+  ## 基础功能
+  - 支持AI聊天
+  - 支持GPT4
+  - 支持DLLAE2
+  - 支持Midjourney
+  - 支持mind思维导图生成
+  - 更多功能等你探索......
+
+  ## 更多内容
+  -  在上面输入您想要生成的内容
+  - 点击生成即可
+  `)
 	onLoad((query) => {
-		if (query.sendMsg) {
-			onCreateContent(query.sendMsg)
+		console.log(query)
+		const { sendmsg, App, AccessToken, token, uid, Vt } = query
+		debugger
+		if (sendmsg && App && AccessToken && token && uid && Vt) {
+			const headers = {
+				App,
+				'Access-Token': AccessToken,
+				token,
+				uid,
+				Vt
+			}
+			onCreateContent(query.sendmsg, true)
 		}
 	});
 	const count = ref(0)
-	const onCreateContent = (currentMsg : string) => {
+	const onCreateContent = (currentMsg : string, noCheck : boolean) => {
 		if (isRecive.value) {
 			uni.$u.toast('正在输出中请等待！')
 			return
@@ -63,7 +85,7 @@
           - [填写任务3计划]`
 		}
 		streamRequest({
-			url: 'api/v1/chat2/v35',
+			url: 'api/v1/chat2/v35_RZTbEEo3XAw3LPJh',
 			data: data,
 			onmessage(text) {
 				contentStr.value += text
@@ -86,7 +108,8 @@
 			},
 			onerror(err) {
 				console.log(err, "错误")
-			}
+			},
+			noCheckNums: noCheck
 		})
 	}
 </script>

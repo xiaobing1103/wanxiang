@@ -19,6 +19,7 @@ export interface LoadingConfigTypes {
 	showLoading : boolean
 	title : String | "加载中..."
 }
+
 export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig, controller, isWechatSendImages } : httpDTO) => {
 	LoadingConfig = LoadingConfig ? LoadingConfig : {
 		showLoading: true,
@@ -51,7 +52,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 	};
 	http.interceptor.response = (response) => {
 		uni.hideLoading();
-		if (response?.status == 401 || response?.data.code === 401 || response?.data.code === 4001 || response?.data.code === 4005 || response?.statusCode === 401) {
+		if (response?.status == 401 || response?.data?.code === 401 || response?.data?.code === 4001 || response?.data?.code === 4005 || response?.statusCode === 401) {
 			console.log(response)
 			if (response.data?.msg) {
 				uni.$u.toast(response.data.msg);
@@ -134,7 +135,6 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 							}
 						}
 					}
-
 					reject(err);
 				});
 		});
@@ -205,6 +205,23 @@ function get(url, data, config : any) {
 	};
 	return $http(httpDTO);
 }
+const checkPosts = async (options : { url : string, data : any, checkNumsType ?: string }) => {
+	const { url, data, checkNumsType } = options
+	if (checkNumsType) {
+		const res = await post('api/v1/number2/check', { type: checkNumsType })
+		if (res.code == 200) {
+			const httpDTO = {
+				url,
+				method: 'POST',
+				data,
+			};
+			return $http(httpDTO);
+		}
+	}
+
+
+
+}
 
 function post(url : string, data : any, isjson ?: boolean, header ?: any, LoadingConfig ?: LoadingConfigTypes, isWechatSendImages ?: boolean) {
 	const httpDTO = {
@@ -217,7 +234,7 @@ function post(url : string, data : any, isjson ?: boolean, header ?: any, Loadin
 		errorCallback: null,
 		config: header,
 		LoadingConfig,
-		isWechatSendImages
+		isWechatSendImages,
 	};
 	return $http(httpDTO);
 }
@@ -264,20 +281,36 @@ function request(url, method, data) {
 	return $http(httpDTO);
 }
 
-function getStream(url : string, data : any, isStream : boolean, callback : any, errorCallback : any, LoadingConfig : LoadingConfigTypes, controller : { signal : any }) {
-	const httpDTO = {
-		url,
-		method: 'POST',
-		data,
-		isJson: true,
-		isStream: isStream,
-		callback: callback,
-		errorCallback: errorCallback,
-		config: null,
-		LoadingConfig: LoadingConfig,
-		controller
-	};
-	return $http(httpDTO);
+async function getStream(
+	options :
+		{ url : string, data : any, isStream : boolean, callback : any, errorCallback : any, LoadingConfig : LoadingConfigTypes, controller : { signal : any }, checkNumsType : string, noCheckNums ?: boolean }
+) {
+	const ChatStore = useChatStore()
+	const { url, data, isStream, callback, errorCallback, LoadingConfig, controller, checkNumsType, noCheckNums } = options
+	let res
+	if (!noCheckNums) {
+		res = await post('api/v1/number2/check', { type: checkNumsType })
+	}
+
+	if (res?.code == 200 || noCheckNums) {
+		const httpDTO = {
+			url,
+			method: 'POST',
+			data,
+			isJson: true,
+			isStream: isStream,
+			callback: callback,
+			errorCallback: errorCallback,
+			config: null,
+			LoadingConfig: LoadingConfig,
+			controller
+		};
+		return $http(httpDTO);
+	} else {
+		// uni.$u.toast(res.msg);
+		ChatStore.setLoadingMessage(false)
+		errorCallback(res.msg)
+	}
 }
 
 export default {
@@ -287,5 +320,6 @@ export default {
 	put,
 	del,
 	request,
-	getStream
+	getStream,
+	checkPosts
 };

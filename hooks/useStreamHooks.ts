@@ -1,6 +1,7 @@
 import { useGlobalProperties } from './useGlobalHooks'
 import { ref } from 'vue'
 import { useChatStore } from '@/store'
+import { commonModel } from '@/config/modelConfig'
 interface Options {
 
 }
@@ -23,7 +24,9 @@ export const useStreamHooks = (options ?: Options) => {
 			showLoading : boolean;
 			title : string;
 		},
-		oncancel ?: () => void
+		oncancel ?: () => void,
+		checkNumsType ?: string,
+		noCheckNums ?: boolean
 	}
 	enum ErrorCode {
 		'SUCCESS' = 200
@@ -37,20 +40,22 @@ export const useStreamHooks = (options ?: Options) => {
 		isRecive.value = true;
 		cancelFn = options.oncancel
 		try {
-			requestTask = await $api.getStream(
-				options.url,
-				options.data,
-				true,
-				async (response : UniApp.RequestSuccessCallbackResult) => {
+			const getStreamOptions = {
+				url: options.url,
+				data: options.data,
+				isStream: true,
+				callback: async (response : UniApp.RequestSuccessCallbackResult) => {
 					handleResloveError(response.statusCode, options, response);
 				},
-				async (err) => {
+				errorCallback: async (err) => {
 					console.log(err, '微信错误');
-					options.onerror()
+					options.onerror(err)
 				},
-				LoadingConfig
-			);
-
+				LoadingConfig: LoadingConfig,
+				checkNumsType: options.checkNumsType ? options.checkNumsType : commonModel[ChatStore.model]?.checkNumsType,
+				noCheckNums: options.noCheckNums
+			}
+			requestTask = await $api.getStream(getStreamOptions);
 			if (requestTask && typeof requestTask.onChunkReceived === 'function') {
 				requestTask.onChunkReceived(async res => {
 					let message = resloveResponseText(res.data);
@@ -69,19 +74,23 @@ export const useStreamHooks = (options ?: Options) => {
 		}
 	};
 
-	const handleResloveError = (code : ErrorCode, options : StreamOptions, response ?: UniApp.RequestSuccessCallbackResult) => {
+	const handleResloveError = async (code : ErrorCode, options : StreamOptions, response ?: UniApp.RequestSuccessCallbackResult) => {
 		switch (code) {
 			case ErrorCode.SUCCESS:
 				isRecive.value = false
 				options.onfinish && options.onfinish(response)
+				if (!options.checkNumsType) {
+					await $api.post('api/v1/number2/submit', { number: 1, type: options.checkNumsType ? options.checkNumsType : commonModel[ChatStore.model]?.checkNumsType })
+				}
 				break;
 			default:
 				isRecive.value = false
 				options.onerror && options.onerror()
 		}
 	}
-
+	let currentOptions
 	const h5StreamRequest = async (options : StreamOptions) => {
+		currentOptions = options
 		isRecive.value = true
 		controller.value = new AbortController();
 		const signal = controller.value.signal;
@@ -89,6 +98,9 @@ export const useStreamHooks = (options ?: Options) => {
 			if (chunk == null) {//完成
 				isRecive.value = false
 				options.onfinish && options.onfinish()
+				if (!currentOptions.noCheckNums) {
+					await $api.post('api/v1/number2/submit', { number: 1, type: options.checkNumsType ? options.checkNumsType : commonModel[ChatStore.model]?.checkNumsType })
+				}
 				return null
 			}
 
@@ -103,13 +115,29 @@ export const useStreamHooks = (options ?: Options) => {
 		}
 
 		try {
-			await $api.getStream(options.url, options.data, true, onSuccess, onError, LoadingConfig, { signal });
+			const getStreamOptions = {
+				url: options.url,
+				data: options.data,
+				isStream: true,
+				callback: onSuccess,
+				errorCallback: (err) => {
+					console.log(err)
+					onError(err)
+				},
+				LoadingConfig: LoadingConfig,
+				controller: { signal },
+				checkNumsType: options.checkNumsType ? options.checkNumsType : commonModel[ChatStore.model]?.checkNumsType,
+				noCheckNums: options.noCheckNums
+			}
+
+			await $api.getStream(getStreamOptions);
 		} catch (error) {
 			if (error.name === 'AbortError') {
 				console.log('Fetch aborted');
 			} else {
 				onError(error);
 			}
+			console.log(error)
 		}
 	}
 	// 用于App

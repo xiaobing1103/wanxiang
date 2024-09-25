@@ -91,12 +91,14 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import MessageItem from '@/components/CommonChat/MessageItem.vue';
 	import { debounce, exportTxt } from '@/utils';
+	import { useChatStore } from '@/store';
 	const show = ref(false)
 	const seletedNums = ref(150)
 	const changeNums = (nums : number) => {
 		seletedNums.value = nums
 		show.value = false
 	}
+	const ChatStore = useChatStore();
 	const career = ref('')
 	const inputValue = ref('')
 	const contentStr = ref('')
@@ -178,8 +180,13 @@
 				console.log('成功')
 			},
 			onerror(err) {
+				if (err.includes('请升级会员')) {
+					ChatStore.setShowLevelUpVipContent(err)
+					ChatStore.setShowlevelUpVip(true)
+				}
 				console.log(err, "错误")
-			}
+			},
+			checkNumsType: 'fun'
 		})
 	}
 </script>
@@ -221,7 +228,7 @@
 
 	.ppt-con {
 		margin-bottom: 24rpx;
-		
+
 		.create-type {
 
 			&_header {

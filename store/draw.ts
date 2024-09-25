@@ -4,6 +4,7 @@ import { Image2TextParmas, drawProjectConfig } from '@/pages/draw/data';
 import { deepClone } from '@/utils/deepClone';
 import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 import { isWeChatTempPath } from '@/utils';
+import useChatStore from './chat';
 export interface drawTaskJson {
 	create_time : string;
 	do_use : number;
@@ -93,31 +94,37 @@ const useDrawStore = defineStore(
 					isWeChatSendImages = true
 				}
 			}
-
 			if (seletedDrawProject.value == 'img2img_task_json' || seletedDrawProject.value == 'image2cartoon_task_json') {
 				isformDataRequest = false;
 			}
+			const checkNumsRes = await $api.post('api/v1/number2/check', { type: 'draw' })
+			if (checkNumsRes.code == 200) {
+				let taskDTO = await $api.post<Image2TextParmas>(drawProjectConfig[seletedDrawProject.value].api, parmas, isformDataRequest, {}, null, isWeChatSendImages);
+				if (taskDTO && typeof taskDTO == 'string') {
+					taskDTO = JSON.parse(taskDTO);
+				}
+				if (taskDTO.code == 200) {
+					if (taskDTO.data.task_id) {
+						// 获取当前的任务数据
+						const currentData = taskIdParmas.value[seletedDrawProject.value];
+						setTaskIdParmas(seletedDrawProject.value, {
+							task_id: taskDTO.data.task_id,
+							historyTasks: currentData.historyTasks as drawTaskJson[]
+						});
 
-			let taskDTO = await $api.post<Image2TextParmas>(drawProjectConfig[seletedDrawProject.value].api, parmas, isformDataRequest, {}, null, isWeChatSendImages);
-			if (taskDTO && typeof taskDTO == 'string') {
-				taskDTO = JSON.parse(taskDTO);
-			}
-			if (taskDTO.code == 200) {
-				if (taskDTO.data.task_id) {
-					// 获取当前的任务数据
-					const currentData = taskIdParmas.value[seletedDrawProject.value];
-					setTaskIdParmas(seletedDrawProject.value, {
-						task_id: taskDTO.data.task_id,
-						historyTasks: currentData.historyTasks as drawTaskJson[]
-					});
-
-					uni.navigateTo({
-						url: `/pages/draw/subPage/QueueQueryPage/index`
-					});
+						uni.navigateTo({
+							url: `/pages/draw/subPage/QueueQueryPage/index`
+						});
+					}
+				} else {
+					uni.$u.toast(taskDTO.message);
 				}
 			} else {
-				uni.$u.toast(taskDTO.message);
+				const ChatStore = useChatStore()
+				ChatStore.setShowlevelUpVip(true)
+				ChatStore.setShowLevelUpVipContent(checkNumsRes.msg)
 			}
+
 		};
 		return {
 			taskIdParmas,

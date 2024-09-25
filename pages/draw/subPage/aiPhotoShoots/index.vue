@@ -51,7 +51,7 @@
 	import { base64ToFile } from '@/utils/base642file';
 	import { downloadReport, isValidURL, isWeChatTempPath, weChatTempPathToBase64 } from '@/utils';
 	import { storeToRefs } from 'pinia';
-	import { useCounterStore } from '@/store';
+	import { useChatStore, useCounterStore } from '@/store';
 	import { downloadBase64Image } from '@/utils/downLoadLocal';
 	const { $api } = useGlobalProperties();
 	// #ifdef MP-WEIXIN
@@ -59,6 +59,7 @@
 	const { menuButtonInfo, navBarHeight } = storeToRefs(system)
 	// #endif
 	const showOverlay = ref(false)
+	const chatStore = useChatStore()
 	const ChangeFaceTypes : ChangeFaceTypesProps = reactive({
 		type: 'changeFace',
 		historyType: "changeFace_task_json",
@@ -118,6 +119,13 @@
 		console.log(parmasRes)
 		const sendParmas = revasedImages(parmasRes)
 		let res
+
+		const checkRes = await $api.post('api/v1/number2/check', { type: 'draw_face' })
+		if (checkRes.code !== 200) {
+			chatStore.setShowLevelUpVipContent(checkRes.msg)
+			chatStore.setShowlevelUpVip(true)
+			return
+		}
 		// #ifdef H5
 		res = await $api.post('api/v1/img/face', sendParmas, true, {}, null, isWeChatSendImages);
 		// #endif
@@ -128,6 +136,7 @@
 		if (res.code == 200) {
 			currentImage.value = res.data
 			showOverlay.value = true
+			await $api.post('api/v1/number2/submit', { type: "draw_face", number: 1 })
 		} else {
 			uni.$u.toast(res.msg);
 		}

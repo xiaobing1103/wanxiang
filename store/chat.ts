@@ -2,8 +2,7 @@ import {
 	defineStore
 } from 'pinia';
 import { ref } from 'vue';
-import { CommonModelKeys } from '../config/type';
-import { ChatHistory, ItemMessage, MessageItems, ModelType, historyMessages } from '../type/chatData';
+import { ChatHistory, ItemMessage, ModelType, } from '../type/chatData';
 import { generateUUID } from '../tools/uuid';
 import { commonModel } from '../config/modelConfig';
 import { noHistoryArr } from '@/pages/chat/chatConfig';
@@ -15,10 +14,18 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const persona_id = ref<string>('')
 	const loadingMessage = ref<boolean>(false)
 	const openSeletedModel = ref<boolean>(false)
+	const showlevelUpVip = ref<boolean>(false)
+	const showLevelUpVipContent = ref<string>('')
 	const openHistoryModel = ref<boolean>(false)
 	const chats = ref<ChatHistory[]>([])
 	const setModel = (val : ModelType) => {
 		model.value = val
+	}
+	const setShowlevelUpVip = (val : boolean) => {
+		showlevelUpVip.value = val
+	}
+	const setShowLevelUpVipContent = (val : string) => {
+		showLevelUpVipContent.value = val
 	}
 
 	const setLoadingMessage = (val : boolean) => {
@@ -64,6 +71,9 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	};
 	const clearChats = () => {
 		chats.value = []
+	}
+	const clearChartLoadingStauts = () => {
+		console.log(chats.value.find((items) => items.id == selectChatId.value))
 	}
 	const changeSelectChatId = (id : string) => {
 		selectChatId.value = id
@@ -132,7 +142,12 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		initChatInfo,
 		getCurrentInfo,
 		setLoadingMessage,
-		seletedFirstChats
+		seletedFirstChats,
+		clearChartLoadingStauts,
+		showlevelUpVip,
+		showLevelUpVipContent,
+		setShowlevelUpVip,
+		setShowLevelUpVipContent
 	}
 }, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id'] } }
 );

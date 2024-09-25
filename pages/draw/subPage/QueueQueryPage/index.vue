@@ -75,7 +75,6 @@
 		const taskId = drawStore.taskIdParmas[drawStore.seletedDrawProject].task_id
 		if (taskId) {
 			queryTask(taskId)
-
 		} else {
 			message.value = '无任务id';
 		}
@@ -116,6 +115,7 @@
 				message.value = '生成成功,正在加载图片....';
 				progress.value = m / 100;
 				handlerImages(data)
+
 			} else if (data.state === '3') {
 				message.value = '生成失败';
 			}
@@ -133,7 +133,7 @@
 		}
 	});
 
-	const handlerImages = (data : drawTaskJson) => {
+	const handlerImages = async (data : drawTaskJson) => {
 		const taskType : taskIdTypeKey = drawStore.seletedDrawProject;
 		// 获取当前的任务数据
 		const currentData = drawStore.taskIdParmas[taskType];
@@ -148,11 +148,16 @@
 				historyTasks: currentData.historyTasks as drawTaskJson[]
 			});
 		}
+		await $api.post('api/v1/number2/submit', { number: data?.images.length, type: "draw" })
 		uni.navigateTo({
 			url: '/pages/draw/subPage/PreviewPage/index',
-			success: res => { },
+			success: res => {
+			
+			},
 			fail: () => { },
-			complete: () => { }
+			complete: () => {
+
+			}
 		});
 	};
 </script>

@@ -2166,6 +2166,14 @@ markmap-lib@^0.17.0:
     markmap-view "0.17.0"
     prismjs "^1.29.0"
 
+markmap-toolbar@^0.17.1:
+  version "0.17.1"
+  resolved "https://r.cnpmjs.org/markmap-toolbar/-/markmap-toolbar-0.17.1.tgz#dae7137a86892d1def518a5e0910aba894ee099d"
+  integrity sha512-cGFPrYUd/0t/+Ume9R7Gx+Qlzdf8p49CDt2FisJGuOyC0Nr3x7U8rBP6LeKbFueBN5wRKC3zwgeVqesF6GpKvA==
+  dependencies:
+    "@babel/runtime" "^7.22.6"
+    "@gera2ld/jsx-dom" "^2.2.2"
+
 markmap-view@0.17.0, markmap-view@^0.17.0:
   version "0.17.0"
   resolved "https://r.cnpmjs.org/markmap-view/-/markmap-view-0.17.0.tgz"

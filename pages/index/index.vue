@@ -4,7 +4,6 @@
 			<CommonHeader />
 		</template>
 		<!-- 对话框 -->
-		<!-- v-model:itemMessages="itemMessages" -->
 		<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" @echartsOnsendMessage="echartsOnsendMessage" />
 		<!--  v-model:currentAsk="currentAsk"  -->
 		<template #bottom>
@@ -12,8 +11,6 @@
 			<ChatInputToolTipVue @change="sendValue" />
 			<!-- 聊天输入框 -->
 			<Chat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
-			<!-- <up-input v-model="chatValue" @changeData="changeData">修改子组件的数据</up-input> -->
-			<!-- <button @click="abort">取消·请求</button> -->
 		</template>
 	</z-paging>
 	<CommonModelSeleted />
@@ -79,7 +76,6 @@
 	}
 	const handleValue = (value) => {
 		// console.log(ChatBoxRef.value.messageList)
-
 		const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId);
 		onSend(messages.message, value);
 	};
@@ -128,7 +124,6 @@
 		];
 		// 获取所有历史记录拼装data
 		const historyMessages = ChatBoxRef.value.getAllHistoryMessage(requestData, msgId)
-
 		const reqData = {
 			prompt: model.value == 'net' ? undefined : `请以中文回复我 官方设置的${config.currentAsk}角度，适用于日常生活工作的询问与回答，权重均衡`,
 			type: modelTypes[model.value],
@@ -168,6 +163,14 @@
 				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
 				if (currentMessage.state == 'waite') {
 					ChatBoxRef.value.deleteMessage(id)
+				}
+				if (err.includes('请升级会员')) {
+					uni.hideTabBar({
+						success: () => {
+							ChatStore.setShowLevelUpVipContent(err)
+							ChatStore.setShowlevelUpVip(true)
+						}
+					})
 				}
 			},
 			onfinish: (response) => {

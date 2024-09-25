@@ -24,7 +24,7 @@
 					<ImageUpload isShowPlaceholder v-model:parmas="parmas2" v-model:url="url2"
 						type="portraitCutout_task_json" ref="ImageUploadRef" />
 				</view>
-				<view class="portraitCutout_main_footercon">
+				<view class="portraitCutout_main_footercon" v-if="url2">
 					<view class="portraitCutout_main_footercon_button" @click="saveImages">
 						保存图片
 					</view>
@@ -45,13 +45,14 @@
 	import { onMounted, reactive, ref } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import ImageUpload from '../../components/ImageUpload'
-	import { useDrawStore } from '@/store';
+	import { useChatStore, useDrawStore } from '@/store';
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { downloadReport, isWeChatTempPath } from '@/utils';
 	import { saveImage } from '@/utils/saveImages';
 	import { downloadBase64Image } from '@/utils/downLoadLocal';
 	const { $assets, $api } = useGlobalProperties()
+	const chatStore = useChatStore()
 	const parmas = reactive({
 		image: ''
 	})
@@ -70,6 +71,13 @@
 		let formdata : FormData | any
 		let isWeChatSendImages = false;
 		let uploadRes : string | any
+
+		const checkRes = await $api.post('api/v1/number2/check', { type: 'draw_matting' })
+		if (checkRes.code !== 200) {
+			chatStore.setShowLevelUpVipContent(checkRes.msg)
+			chatStore.setShowlevelUpVip(true)
+			return
+		}
 		// #ifdef H5
 		formdata = new FormData()
 		formdata.append('file', parmas.image)
@@ -90,6 +98,8 @@
 			const res = await $api.get(`api/v1/img/matting_base64?url=${uploadRes.data}`)
 			if (res.code == 200) {
 				url2.value = addPrefixToBase64(res.data)
+				await $api.post('api/v1/number2/submit', { type: "draw_matting", number: 1 })
+
 			} else {
 				uni.$u.toast('抠图失败，请重试！');
 			}

@@ -2,7 +2,7 @@
 	<z-paging>
 		<template #top>
 			<view class="top">
-				<up-navbar :auto-back="true" title="AI一键生成PPT" :fixed="false"></up-navbar>
+				<CommonHeader defindTitle="AI一键生成PPT" />
 				<text class="title">第四步,选择你喜欢的主题吧</text>
 				<text
 					class="description">所有模板我们团队会不断的在后台进行上传，只需要选择你喜欢的模板，AI即刻开始任务，不久后你就的PPT就完成啦!当然，我们非常希望你能够给我们提供更多的模板，这样，我们的AI生态即会更加完整。</text>
@@ -44,7 +44,8 @@
 		</template>
 		<view class="body">
 			<view class="template">
-				<view @click="searchForm.themeId = item.id" v-for="(item,index) in templateList" :key="item.id" class="template-item">
+				<view @click="searchForm.themeId = item.id" v-for="(item,index) in templateList" :key="item.id"
+					class="template-item">
 					<image class="theme" :src="templateSrc(item.id)"></image>
 					<view v-if="item.id == searchForm.themeId" class="icon">
 						<u-icon size="24" color="var(--primary-color)" name="checkmark"></u-icon>
@@ -58,12 +59,14 @@
 					<u-checkbox label="随机模版(有选择困难症就那就勾选这里吧)" name="radom" usedAlone v-model:checked="radomCheck">
 					</u-checkbox>
 				</view>
-				<u-button @click="onCreatePPt" style="border-radius: 15rpx;height: 88rpx;" type="primary">第四步:修改AI生成内容</u-button>
+				<u-button @click="onCreatePPt" style="border-radius: 15rpx;height: 88rpx;"
+					type="primary">第四步:修改AI生成内容</u-button>
 			</view>
 		</template>
 	</z-paging>
 </template>
 <script lang="ts" setup>
+	import CommonHeader from '@/components/CommonHeader.vue';
 	import { reactive, onMounted, ref, computed } from 'vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks.ts'
 
@@ -113,7 +116,7 @@
 	})
 
 	const emit = defineEmits<{
-		(e:'next',val:string):void
+		(e : 'next', val : string) : void
 	}>()
 	const onStyleChange = (id : number) => {
 		searchForm.style = id
@@ -130,10 +133,10 @@
 		templateList.value = res.data
 	}
 	//创建ppt
-	const onCreatePPt = () =>{
-		if(!searchForm.themeId)
+	const onCreatePPt = () => {
+		if (!searchForm.themeId)
 			return uni.$u.toast('请选择ppt模版')
-		emit('next',searchForm.themeId)
+		emit('next', searchForm.themeId)
 	}
 	onMounted(() => {
 		getPptTemplate()
@@ -155,6 +158,7 @@
 	.body {
 		padding: 0 24rpx;
 		--primary-color:#{$uni-color-primary};
+
 		.template {
 			display: grid;
 			grid-template-columns: repeat(2, 1fr);
@@ -173,7 +177,8 @@
 					position: absolute;
 					top: 0;
 				}
-				.icon{
+
+				.icon {
 					position: absolute;
 					bottom: 10rpx;
 					right: 10rpx;

@@ -3,11 +3,8 @@ import { isWeChatTempPath } from './isWeChatTempPath'
 import { Url2temUrl } from './Url2temUrl'
 import { isBase64 } from './isBase64'
 import { downloadReport } from './downloadBase64Local'
-import weChatTempPathToBase64 from './weChatTempPathToBase64'
-import { isPureLink } from './isPureLink'
 import { fileToBase64, fileToBase64WithHeader } from './file2Base64'
 import { formatDate } from './formatDate'
-
 // 页面跳转
 const toPage = (path : string) => {
 	uni.navigateTo({
@@ -25,7 +22,7 @@ function debounce(fn : Function, delay : number) {
 	let timer = null;
 	// 2.真正执行的函数
 	const _debounce = function () {
-		// 取消上一次的定时器
+		// 取消上一次的定时器 
 		if (timer) clearTimeout(timer);
 		// 延迟执行
 		timer = setTimeout(() => {
@@ -34,6 +31,18 @@ function debounce(fn : Function, delay : number) {
 		}, delay);
 	};
 	return _debounce;
+}
+function isPureLink(str : string) {
+	const pureLinkRegex = /^https?:\/\/[^\s]+$/;
+	const linkInContentRegex = /https?:\/\/[^\s]+/;
+	if (pureLinkRegex.test(str)) {
+		return true;
+	} else if (linkInContentRegex.test(str)) {
+		return false;
+	} else {
+		uni.$u.toast("这不是一个有效的链接！")
+
+	}
 }
 const toCopyText = (content : string, tips ?: string) => {
 	//#ifndef H5
@@ -75,27 +84,70 @@ const exportTxt = (textContent : string) => {
 	// #ifdef H5
 	// 2. 创建 Blob 对象
 	const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-
 	// 3. 创建 URL 对象
 	const url = URL.createObjectURL(blob);
-
 	// 4. 创建一个下载链接
 	const a = document.createElement('a');
 	a.href = url;
 	a.download = 'exported-file.txt';
-
 	// 5. 触发下载
 	document.body.appendChild(a);
 	a.click();
-
 	// 6. 清理 URL 对象
 	URL.revokeObjectURL(url);
 	// #endif
-
 	// #ifdef MP-WEIXIN
 	saveTextToFile(textContent)
 	// #endif
 };
+function weChatTempPathToBase64(tempFilePath : string) {
+	return new Promise((resolve, reject) => {
+		// 使用微信小程序的 API 读取文件
+		wx.getFileSystemManager().readFile({
+			filePath: tempFilePath,
+			encoding: 'base64',
+			success: (res) => {
+				// 获取文件类型
+				wx.getFileSystemManager().getFileInfo({
+					filePath: tempFilePath,
+					success: (info) => {
+						let mimeType = info.mimeType;
+						// 如果 mimeType 未定义，尝试根据文件扩展名推断
+						if (!mimeType) {
+							const ext = tempFilePath.split('.').pop();
+							mimeType = getMimeTypeFromExtension(ext);
+						}
+						// 构造 Base64 数据 URL
+						const base64DataUrl = `data:${mimeType || 'application/octet-stream'};base64,${res.data}`;
+						resolve(base64DataUrl);
+					},
+					fail: (error) => {
+						reject(error);
+					}
+				});
+			},
+			fail: (error) => {
+				reject(error);
+			}
+		});
+	});
+}
+function getMimeTypeFromExtension(ext : string) {
+	const mimeTypes : { [key : string] : string } = {
+		'png': 'image/png',
+		'jpg': 'image/jpeg',
+		'jpeg': 'image/jpeg',
+		'gif': 'image/gif',
+		'bmp': 'image/bmp',
+		'webp': 'image/webp',
+		'svg': 'image/svg+xml',
+		'mp4': 'video/mp4',
+		'mp3': 'audio/mpeg',
+		'wav': 'audio/wav',
+		// 其他扩展名和 MIME 类型可以根据需要添加
+	};
+	return mimeTypes[ext.toLowerCase()] || 'application/octet-stream';
+}
 const saveTextToFile = (textContent : string) => {
 	const fileSystemManager = wx.getFileSystemManager();
 	const tempFilePath = wx.env.USER_DATA_PATH + '/exported-file.txt';
@@ -133,4 +185,4 @@ const saveTextToFile = (textContent : string) => {
 		}
 	});
 };
-export { toPage, debounce, toCopyText, getRandomInt, exportTxt, fileToBase64WithHeader, isPureLink, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport };
+export { toPage, debounce, isPureLink, toCopyText, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport };

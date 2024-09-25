@@ -51,7 +51,7 @@
 	import { base64ToFile } from '@/utils/base642file';
 	import { downloadReport, isValidURL, isWeChatTempPath, weChatTempPathToBase64 } from '@/utils';
 	import { storeToRefs } from 'pinia';
-	import { useCounterStore } from '@/store';
+	import { useChatStore, useCounterStore } from '@/store';
 	import { downloadBase64Image } from '@/utils/downLoadLocal';
 	const { $api } = useGlobalProperties();
 	// #ifdef MP-WEIXIN
@@ -66,6 +66,7 @@
 		formworkImage: [],
 	})
 	const currentImage = ref('')
+	const chatStore = useChatStore()
 	const parmas = reactive({
 		image1: null,
 		image2: null,
@@ -80,7 +81,6 @@
 
 	const changeFace = async () => {
 		const parmasRes = { ...parmas }
-
 		if (!parmasRes.image1) {
 			uni.$u.toast('请上传自定义原图！');
 			return
@@ -91,7 +91,6 @@
 		}
 		let isWeChatSendImages = false
 
-		// 区分当前是否是url h5端的时候只有url 和 base64
 		// #ifdef H5
 		if (isValidURL(parmasRes.image1)) {
 			parmasRes.image1 = await reverseUrlToBase64(parmasRes.image1)
@@ -99,11 +98,10 @@
 		if (isValidURL(parmasRes.image2)) {
 			parmasRes.image2 = await reverseUrlToBase64(parmasRes.image2)
 		}
-		// #endif
 
+		// #endif
 		// 微信的时候只有临时路径 和 url
 		// #ifdef MP-WEIXIN
-
 		if (isWeChatTempPath(parmasRes.image1)) {
 			parmasRes.image1 = await weChatTempPathToBase64(parmasRes.image1)
 		} else {
@@ -118,7 +116,18 @@
 		// #endif
 		console.log(parmasRes)
 		const sendParmas = revasedImages(parmasRes)
+
+
+
 		let res
+
+		const checkRes = await $api.post('api/v1/number2/check', { type: 'draw_face' })
+		if (checkRes.code !== 200) {
+			chatStore.setShowLevelUpVipContent(checkRes.msg)
+			chatStore.setShowlevelUpVip(true)
+			return
+		}
+
 		// #ifdef H5
 		res = await $api.post('api/v1/img/face', sendParmas, true, {}, null, isWeChatSendImages);
 		// #endif
@@ -129,6 +138,7 @@
 		if (res.code == 200) {
 			currentImage.value = res.data
 			showOverlay.value = true
+			await $api.post('api/v1/number2/submit', { type: "draw_face", number: 1 })
 		} else {
 			uni.$u.toast(res.msg);
 		}
@@ -146,7 +156,7 @@
 
 	const revasedImages = (parmasRes : { image1 : any, image2 : any }) => {
 		let formdata : any | FormData
-			let sendParmas = parmasRes
+		let sendParmas = parmasRes
 		// #ifdef H5
 		const file1 = base64ToFile(parmasRes.image1, '图片1')
 		const file2 = base64ToFile(parmasRes.image2, '图片2')

@@ -1,7 +1,8 @@
 <template>
 	<z-paging ref="pagingRef" :show-scrollbar="false" :scroll-with-animation="true">
 		<template #top>
-			<up-navbar title="生成大纲" :fixed="false" :autoBack="true"></up-navbar>
+			<!-- <up-navbar title="生成大纲" :fixed="false" :autoBack="true"></up-navbar> -->
+			<CommonHeader defindTitle="生成大纲" />
 		</template>
 		<view class="body">
 			<!-- 写作主题 -->
@@ -20,8 +21,10 @@
 					<text>文章大纲</text>
 					<text class="tips">(请确认提纲无误后在点击"生成正文")</text>
 				</view>
+
 				<AreaText @export="onExport" @reload="onCreateContent" :autoHeight="true" :show-action="true"
 					placeholder="" height="300" v-model="outlineStr" />
+
 				<text
 					class="description">文章大纲往往对文章生成的质量有着很大的关系，如AI生成的大纲不满意或不符合文章主题，建议点击重新生成!否则AI创作的文章水平会参差不齐，请知悉!</text>
 				<view class="layoutBtn" @click="createContent">
@@ -54,10 +57,12 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, computed } from 'vue'
+	import CommonHeader from '@/components/CommonHeader.vue';
+	import { ref, computed, watchEffect, watch, nextTick } from 'vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks.ts'
 	import AreaText from '@/components/areaText/index.vue'
 	import { exportTxt, toCopyText } from '@/utils';
+	import { useChatStore } from '@/store';
 	interface ContentArr {
 		content : string;
 		show ?: boolean;
@@ -70,10 +75,13 @@
 	const outlineStr = ref('')
 	const buttonLoading = ref(false)
 	const splitOutLineArr = ref<string[]>([])
+	const ChatStore = useChatStore();
 	const outLineIndex = ref(0)
 	const isContentComplete = ref(false)
 	const contentExtraArr = ref<ContentArr[]>([])
-
+	// watch(outlineStr, ((res) => {
+	// 	console.log(res)
+	// }))
 	const outLine = computed(() => {
 		return contentExtraArr.value[outLineIndex.value]
 	})
@@ -139,16 +147,22 @@
 				uni.hideLoading()
 				buttonLoading.value = false
 			},
-			onerror() {
+			onerror(err) {
+				if (err.includes('请升级会员')) {
+					ChatStore.setShowLevelUpVipContent(err)
+					ChatStore.setShowlevelUpVip(true)
+				}
 				uni.hideLoading()
 				buttonLoading.value = true
+
 			},
 			onmessage(text : string) {
 				contentExtraArr.value[outLineIndex.value].content += text
 				if (isScroll) {
 					pagingRef.value.scrollToBottom()
 				}
-			}
+			},
+			checkNumsType: 'chat'
 		})
 	}
 	const contentLength = computed<number>(() => {
@@ -243,9 +257,14 @@
 				uni.hideLoading()
 				buttonLoading.value = false
 			},
-			onerror() {
+			onerror(err) {
+				if (err.includes('请升级会员')) {
+					ChatStore.setShowLevelUpVipContent(err)
+					ChatStore.setShowlevelUpVip(true)
+				}
 				uni.hideLoading()
 				buttonLoading.value = false
+
 			},
 			oncancel() {
 				uni.hideLoading()
@@ -253,8 +272,12 @@
 			},
 			onmessage(text : string) {
 				outlineStr.value += text
-				pagingRef.value.scrollToBottom()
-			}
+				nextTick(() => {
+					pagingRef.value.scrollToBottom()
+				})
+
+			},
+			checkNumsType: 'fun_long_thesis'
 		})
 
 	}

@@ -107,6 +107,7 @@ export interface ModelConfig {
 	ModelApi : string;
 	modelDesc : string;
 	resetPassWord ?: string
+	checkNumsType ?: string
 }
 
 export type CommonModelKeys = 'v35' | 'v40' | 'net' | 'echarts' | 'vfast';

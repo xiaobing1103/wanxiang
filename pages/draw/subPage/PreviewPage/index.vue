@@ -67,7 +67,6 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue';
-	import CommonTitle from '@/components/CommonTitle.vue';
 	import { useDrawStore } from '@/store';
 	import { drawTaskJson } from '@/store/draw';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
@@ -75,7 +74,7 @@
 	import { saveImage } from '@/utils/saveImages';
 	import { onShareAppMessage } from '@dcloudio/uni-app';
 
-	import { DrawProjectConfig, drawProjectConfig } from '../../data';
+	import { drawProjectConfig } from '../../data';
 
 
 	const sharepopup = ref(null);
@@ -149,34 +148,27 @@
 	// })
 	const returnPage = ref(drawProjectConfig[drawStore.seletedDrawProject].path)
 	const currentImages = ref<drawTaskJson>();
-	onMounted(() => {
+	onMounted(async () => {
 		const index = drawStore.taskIdParmas[drawStore.seletedDrawProject].historyTasks.length;
 		if (index > 0) {
 			currentImages.value = drawStore.taskIdParmas[drawStore.seletedDrawProject].historyTasks[index - 1] as drawTaskJson;
-			console.log(currentImages.value);
 		} else {
 			uni.$u.toast('没有找到查询任务！');
 		}
-
 		const pages = getCurrentPages(); // 当前页面
 		const beforePage = pages[pages.length - 3]; // 前一个页面
 		if (beforePage?.route == '/pages/draw/index') {
 			returnPage.value = beforePage?.route
 		}
-
 	});
 	const previewImage = (current : string) => {
 		uni.previewImage({
 			current,
 			urls: currentImages.value?.images
 		});
-
-
 	};
-
 	const fileUrl = ref('');
 	const fileType = ref('');
-
 	const toDownload = async (url : string, type : string) => {
 		// #ifdef H5
 		const res = await $api.get('api/v1/img/getbase64', { url: url });
