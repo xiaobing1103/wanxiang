@@ -24,14 +24,13 @@
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue';
 	import { nextTick, onMounted, ref } from 'vue';
-	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
-	import { useChatStore } from '../../store';
-	import { ItemMessage } from '../../type/chatData';
-	import { generateUUID } from '../../tools/uuid';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import { useChatStore } from '@/store';
+	import { ItemMessage } from '@/type/chatData';
+	import { generateUUID } from '@/tools/uuid';
 	import ChatBox from '@/components/CommonChat/ChatBox.vue';
 	import { storeToRefs } from 'pinia';
-	// import { angelItem } from "@/config/modelConfig"
-	import { commonModel } from '../../config/modelConfig';
+	import { commonModel } from '@/config/modelConfig';
 	import { ToolTipItem } from '@/type/userTypes';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { currentModelReversParmas, exParmas, modelTypes, noHistoryArr } from '../chat/chatConfig';

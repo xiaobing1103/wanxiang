@@ -5,8 +5,11 @@
 				<view class="downImages">
 					<up-icon @click="downloadImages" name="download" size="20"></up-icon>
 				</view>
-				<qiun-data-charts ref="chartsRef" @complete="getcharts" @getImage="getim" inScrollView canvas2d
-					:type="props.uType || 'line'" :chartData="chartData" />
+				123
+				<!-- <qiun-data-charts ref="chartsRef" @complete="getcharts" @getImage="getim" inScrollView canvas2d
+					:type="props.uType || 'line'" :chartData="chartData" /> -->
+				<!-- 	<QiunDataCharts ref="chartsRef" @complete="getcharts" @getImage="getim" inScrollView canvas2d
+					:type="props.uType || 'line'" :chartData="chartData" /> -->
 			</view>
 			<template v-else>
 				{{msgContent}}
@@ -19,7 +22,8 @@
 </template>
 
 <script setup lang="ts">
-	import { computed, ref, nextTick } from 'vue';
+	// import QiunDataCharts from '@/pages/index/subPage/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
+	import { computed, ref, } from 'vue';
 	import { useChatStore } from '@/store';
 	import { saveImage } from '@/utils/saveImages';
 	import { downloadReport } from '@/utils';

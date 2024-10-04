@@ -1,11 +1,9 @@
 import App from './App'
 import assetsConfig from '@/config/assets.config.ts'
 import setupStore from '@/store/index.ts'
-import WxIcon from '@/components/WxIcon/index.vue'
 import api from '@/http/';
 // #ifndef VUE3
 import Vue from 'vue'
-
 import './uni.promisify.adaptor'
 
 Vue.config.productionTip = false
@@ -22,19 +20,15 @@ import {
 } from 'vue'
 import uviewPlus from 'uview-plus'
 import * as Pinia from 'pinia';
-import '@/assets/css/index.scss';
 export function createApp() {
 	const app = createSSRApp(App)
 	setupStore(app)
 	app.use(uviewPlus)
-	// 全局组件
-	app.component('wx-icon', WxIcon)
-	app.config.globalProperties.$assets = assetsConfig //挂载全局获取图片路径方法
-	app.config.globalProperties.$api = api //挂载全局获取图片路径方法
-
+	app.config.globalProperties.$assets = assetsConfig
+	app.config.globalProperties.$api = api
 	return {
 		app,
-		Pinia, // 此处必须将 Pinia 返回
+		Pinia
 	}
 }
 // #endif

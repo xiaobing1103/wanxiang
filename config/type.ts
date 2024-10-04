@@ -15,6 +15,7 @@ export interface IconConfig {
 	wzst_cover : string;
 	jbzh_cover : string;
 	rxkt_cover : string;
+	AishaShiIcon : string
 	v35ModelIcon : string;
 	v40ModelIcon : string;
 	vfastModelIcon : string;
@@ -30,6 +31,8 @@ export interface IconConfig {
 	kimiIcon : string
 	baidu_llamaIcon : string
 	tongyiMaxIcon : string
+	img2cartoonIcon : string
+	AiChangeFace : string
 	/**
 	 * 文档理解模型icon
 	*/
@@ -58,6 +61,7 @@ export interface IconConfig {
 	webModelIcon : string
 	chat40ModelIcon : string
 	codegeex_4ModelIcon : string
+	pptIcon : string
 	/**
 	 * 图片反推提示词icon
 	*/

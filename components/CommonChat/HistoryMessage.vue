@@ -21,7 +21,7 @@
 				</template>
 			</view>
 			<view class="historyBox_footer">
-		
+
 			</view>
 		</view>
 	</up-popup>
@@ -32,6 +32,7 @@
 	import { ModelType } from '@/type/chatData';
 	const screenStore = useScreenStore()
 	const chatStore = useChatStore()
+
 	const open = () => {
 		chatStore.setopenHistoryModel(true)
 	}

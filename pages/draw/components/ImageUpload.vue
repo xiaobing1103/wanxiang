@@ -40,13 +40,13 @@
 
 				<view class="Doodles" v-show="!showDrawColor && !showDrawWidth">
 					<view class="Doodles_main">
-						<v-sign :lineWidth="linesWidth" :lineColor="seletedColor" :width="canvasWidth"
+						<Vsign :lineWidth="linesWidth" :lineColor="seletedColor" :width="canvasWidth"
 							:height="canvasHeight" :customStyle="{
 								width: canvasWidth + 'px',
 								height: canvasHeight + 'px',
 								backgroundColor: 'transparent'
 							}" @init="onSignInit">
-						</v-sign>
+						</Vsign>
 					</view>
 				</view>
 			</view>
@@ -89,6 +89,7 @@
 </template>
 
 <script setup lang="ts">
+	import Vsign from './v-sign/components/v-sign/v-sign.vue'
 	import { ref, defineExpose } from 'vue';
 	import { Image2TextParmas } from '../data';
 	import useDrawStore, { taskIdTypeKey } from '@/store/draw';

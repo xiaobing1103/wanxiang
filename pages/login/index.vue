@@ -28,9 +28,6 @@
 						type="success" text="一键登录" open-type="getPhoneNumber"
 						@getphonenumber="decryptPhoneNumber"></up-button>
 					<!-- #endif -->
-
-					<!-- <button :style="{width: '70%',borderRadius:'40rpx',marginBottom:'20rpx'}" type="default"
-						open-type="getPhoneNumber" @getphonenumber="decryptPhoneNumber">获取手机号</button> -->
 				</view>
 				<LoginDecscriptions />
 			</template>

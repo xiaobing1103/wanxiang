@@ -6,31 +6,14 @@
 		<!-- 对话框 -->
 		<scroll-view class="scroll-container">
 			<view class="Doodles">
-				<!-- 	<view class="Doodles_header">
-					<CommonTitle title="图片涂鸦" desc="尽情发挥你的想象力" />
-				</view> -->
 				<view class="Doodles_main">
-					<!-- <view class="Doodles_main_imageBox">
-						<image :style="{width:canvasWidth + 'px',height:canvasHeight+ 'px'}" :src="currentImage"
-							mode=""></image>
-					</view> -->
-					<v-sign :lineWidth="linesWidth" :lineColor="seletedColor" :width="canvasWidth"
+					<Vsign :lineWidth="linesWidth" :lineColor="seletedColor" :width="canvasWidth"
 						:height="canvasHeight" :customStyle="{
 							width: canvasWidth + 'px',
 							height: canvasHeight + 'px',
 							backgroundColor: 'transparent'
 						}" @init="onSignInit">
-						<!-- <view class="Doodles_main_color">
-							<text>画笔颜色</text>
-							<v-sign-color></v-sign-color>
-						</view> -->
-
-						<!-- <v-sign-action @save="save" @clear="clear"></v-sign-action> -->
-						<!-- 		<view class="Doodles_main_pen">
-							<text>画笔大小</text>
-							<v-sign-pen></v-sign-pen>
-						</view> -->
-					</v-sign>
+					</Vsign>
 				</view>
 			</view>
 		</scroll-view>
@@ -71,7 +54,7 @@
 <script setup lang="ts">
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useDrawStore, useScreenStore } from '@/store';
-	import CommonTitle from '@/components/CommonTitle.vue';
+	import Vsign from '../../components/v-sign/components/v-sign/v-sign.vue'
 	import { onLoad } from '@dcloudio/uni-app';
 	import { base64ToTempUrl } from '@/utils/base64ToTempUrl';
 	import { onMounted, ref } from 'vue';

@@ -56,10 +56,6 @@
 			</view>
 			<cc-shareMenu ref="share" :contentHeight="580" :shareList="shareList"
 				@click="shareMenuClick"></cc-shareMenu>
-
-			<uni-popup ref="sharepopup" type="bottom">
-				<share-btn :sharedataTemp="share"></share-btn>
-			</uni-popup>
 		</template>
 	</z-paging>
 </template>
@@ -113,12 +109,6 @@
 		}
 	];
 	const goShareClick = () => {
-		// share.value?.toggleMask();
-		// sharepopup.value.open();
-		// share.value = {
-		// 	strShareTitle: '分享图片',
-		// 	strShareImageUrl: currentImages?.value.images[current.value]
-		// }
 		wx.downloadFile({
 			url: currentImages?.value.images[current.value],
 			success: (res) => {

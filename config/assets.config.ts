@@ -70,7 +70,6 @@ const iconConfig : IconConfig = {
 	previewImageIcon: getUrl('/2024/03/04/0e1835b5223697f669522ac8c6921088.png'),
 	chat40ModelIcon: getUrl('/2024/09/11/f78dc561284062ad7b5b6f5715284987.svg'),
 	codegeex_4ModelIcon: getUrl('/2024/09/11/84915a678e556e905d35d21ea0d520d2.svg'),
-
 	reserveWordIcon: getUrl('/2024/09/18/84c560e5aec3e620d5cb6f87baa16204.png'),
 	reserveWordHeaderIcon: getUrl('/2024/03/04/8aed983f23cce83b7190c21c7f9dbef9.png'),
 	reserveContentIcon: getUrl('/2024/03/23/6216fc7507863a489711b31f05e5327f.svg'),
@@ -79,7 +78,11 @@ const iconConfig : IconConfig = {
 	zhiFuBaoIcon: getUrl('/2024/09/19/98d77787b35159f0f719bcde29c9a89b.svg'),
 	weChatIcon: getUrl('/2024/09/19/2c5d4e8a115d4ac03e09d63341095704.svg'),
 	reloadIcon: getUrl('/2024/09/11/b1f6ae2fe5473c1c18323f1739dc3119.svg'),
-	huangGuanIcon: getUrl('/2024/08/20/7e08b99320e97fe9a32258e53d2b0f8d.svg')
+	huangGuanIcon: getUrl('/2024/08/20/7e08b99320e97fe9a32258e53d2b0f8d.svg'),
+	pptIcon: getUrl('/2024/10/03/90cb0715fe03da15be454d21f9f65ae5.svg'),
+	img2cartoonIcon: getUrl('/2024/10/03/61e754c90151fc129a1d6406e21d66d7.svg'),
+	AiChangeFace: getUrl('/2024/10/03/143583d04ac2c96692459ef6e77eedea.svg'),
+	AishaShiIcon: getUrl('/2024/10/03/349b92f6e58d4708fd8dc93e62cf657b.svg')
 }
 
 export default iconConfig

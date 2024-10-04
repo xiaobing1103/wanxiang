@@ -5,7 +5,6 @@
 				"navigationBarTitleText": "对话",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom",
-
 				"app-plus": {
 					"titleNView": false,
 					"softinputmode": "adjustPan"
@@ -69,6 +68,7 @@
 	],
 	"subPackages": [{
 			"root": "pages/index/subPage",
+
 			"pages": [{
 					"path": "imageModel/index",
 					"name": "imageModel",
@@ -346,6 +346,7 @@
 		// 	"iconWidth": "70rpx",
 		// 	"height": "85rpx"
 		// },
+
 		"list": [{
 				"pagePath": "pages/index/index",
 				"text": "对话"

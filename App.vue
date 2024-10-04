@@ -25,6 +25,5 @@
 </script>
 
 <style lang="scss" scoped>
-	/*每个页面公共css */
-	@import url("@/assets/css/index.scss");
+	// @import url("uview-plus/theme.scss");
 </style>

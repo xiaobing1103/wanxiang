@@ -1,12 +1,7 @@
 export const downloadReport = (base64) => {
 	return new Promise((resolve, reject) => {
-		// 确保去掉 Base64 头部信息，只保留图片数据部分
 		const base64Data = base64.replace(/^data:image\/\w+;base64,/, '');
-
-		// 设置保存路径
 		const filepath = wx.env.USER_DATA_PATH + '/test.png';
-
-		// 获取文件管理器对象
 		const fs = wx.getFileSystemManager();
 		fs.writeFile({
 			filePath: filepath,

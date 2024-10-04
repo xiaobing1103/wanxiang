@@ -6,7 +6,7 @@
 					<view v-for="(citem,cindex) in item" :key="cindex" :style="{background:citem.color}"
 						class="toolip-item" @click="topath(citem.path)">
 						<template v-if="citem.iconType == 'symbol'">
-							<wx-icon :size="12" :name="citem.icon"></wx-icon>
+							<image class="toolip-item_images" :src="citem.url" mode=""></image>
 						</template>
 						<template v-if="citem.iconType == 'text'">
 							<text>{{citem.icon}}</text>
@@ -21,17 +21,19 @@
 
 <script setup lang="ts">
 	import { computed } from 'vue'
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	const topath = (path : string) => {
 		uni.navigateTo({
 			url: path
 		})
 	}
-
+	const { $assets } = useGlobalProperties()
 	interface ToolipItem {
 		icon : string;
 		text : string;
 		color : string;
 		path : string;
+		url ?: string;
 		iconType : 'text' | "symbol"
 	}
 	const tooTipList : ToolipItem[] = [
@@ -47,6 +49,7 @@
 			icon: 'ppt',
 			text: '一键生成PPT',
 			color: '#FCF2E7',
+			url: $assets.pptIcon,
 			path: '/pages/function/subPage/ppt/index',
 			iconType: "symbol"
 		},
@@ -54,6 +57,7 @@
 			icon: 'human',
 			text: '图片转卡通',
 			color: '#EEF5FD',
+			url: $assets.img2cartoonIcon,
 			path: '/pages/draw/subPage/image2cartoon/index',
 			iconType: "symbol"
 		},
@@ -61,6 +65,7 @@
 			icon: 'hl',
 			text: 'AI换脸',
 			color: '#FCEDF2',
+			url: $assets.AiChangeFace,
 			path: '/pages/draw/subPage/aiFaceSwapping/index',
 			iconType: "symbol"
 		},
@@ -68,6 +73,7 @@
 			icon: 'xz',
 			text: 'AI写真',
 			color: '#FCF2E7',
+			url: $assets.AishaShiIcon,
 			path: '/pages/draw/subPage/aiPhotoShoots/index',
 			iconType: "symbol"
 		},
@@ -79,11 +85,11 @@
 			iconType: "text"
 		},
 		{
-			icon: 'caihong',
+			icon: '🌈',
 			text: '线稿上色',
 			color: '#ECF7EF',
 			path: '/pages/draw/subPage/coloringLineArt/index',
-			iconType: "symbol"
+			iconType: "text"
 		},
 		{
 			icon: '🧠',
@@ -127,6 +133,11 @@
 				flex-shrink: 0;
 				font-size: 20rpx;
 				border-radius: 40rpx;
+
+				&_images {
+					width: 25rpx;
+					height: 25rpx;
+				}
 
 				.name {
 					display: block;

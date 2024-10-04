@@ -17,14 +17,14 @@
 		{{description}}
 	</view>
 	<up-overlay :show="showupOverlay">
-		<qf-image-cropper :showAngle="false" radius="0" checkRange reverseRotatable choosable bounce gpu :width="500"
+		<QfImageCropper :showAngle="false" radius="0" checkRange reverseRotatable choosable bounce gpu :width="500"
 			:height="500" :radius="30" @crop="handleCrop">
-
-		</qf-image-cropper>
+		</QfImageCropper>
 	</up-overlay>
 </template>
 
 <script setup lang="ts">
+	import QfImageCropper from '../components/qf-image-cropper/components/qf-image-cropper/qf-image-cropper.vue'
 	import { ref } from 'vue';
 	const images = defineModel('images')
 	defineProps<{ description : string }>()

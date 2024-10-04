@@ -54,7 +54,6 @@
 		overflow: hidden;
 		margin-bottom: 20rpx;
 	}
-
 	.chatInput {
 		width: 100%;
 		display: flex;
@@ -62,14 +61,11 @@
 		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 		align-items: center;
 		border-radius: 30rpx;
-
 		&_left {
 			height: 40rpx;
 			width: 40rpx;
 			padding: 0 20rpx;
-
 		}
-
 		&_input {
 			width: 100%;
 			flex: 1;
@@ -77,7 +73,6 @@
 			background-color: white;
 
 		}
-
 		&_right {
 			&_image {
 				height: 50rpx;

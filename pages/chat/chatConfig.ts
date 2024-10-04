@@ -6,7 +6,7 @@ export const modelTypes : Record<ModelType, string> = {
 	video: 'Web-AI视频对话',
 	voice: 'Web-音频理解模型',
 	image: 'Web-图片理解模型',
-	echarts: 'Web-图表模型',
+	// echarts: 'Web-图表模型',
 	web: 'Web-AI文档对话',
 	v40: undefined,
 	net: undefined,
