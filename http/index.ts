@@ -56,8 +56,10 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 			console.log(response)
 			if (response.data?.msg) {
 				uni.$u.toast(response.data.msg);
+				ChatStore.setLoadingMessage(false)
 			} else {
 				uni.$u.toast('登录信息已过期，请重新登录！');
+				ChatStore.setLoadingMessage(false)
 			}
 
 			uni.navigateTo({
