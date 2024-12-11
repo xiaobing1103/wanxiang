@@ -2,42 +2,63 @@
 	<up-popup :show="chatStore.openHistoryModel" mode="left" @close="close" @open="open">
 		<view :style="{paddingTop:screenStore.safeTopHeight + 'rpx'}" class="historyBox">
 			<view class="historyBox_header">
-				<up-button size="small" type="primary" @click="addChat"
-					class="historyBox_header_button">新建对话</up-button>
+				历史记录
 			</view>
 			<up-line></up-line>
 			<view class="historyBox_main">
 				<template v-for="(item,index) in chatStore.chats" :key="index">
 					<view
-						:style="{background: item.id ==  chatStore.selectChatId  ? '#3c9cff' : '',color: item.id ==  chatStore.selectChatId  ? '#fff' : ''}"
+						:style="{background: item.id ==  chatStore.selectChatId  ? '#dfecff' : '',color: item.id ==  chatStore.selectChatId  ? '#3c9cff' : ''}"
 						class="historyBox_main_box" @click="changeChat(item.id,item.model)">
 						<view class="historyBox_main_box_left">
 							<image class="historyBox_main_box_icon" :src="item.iconUrl" mode=""></image>
 							<text class="historyBox_main_box_text">{{item.title}}</text>
 						</view>
 
-						<up-icon @click="deleteChat" stop name="close" size="15"></up-icon>
+						<up-icon :color="item.id ==  chatStore.selectChatId  ? '#3c9cff' : '' " @click="deleteChat" stop
+							name="close" size="15"></up-icon>
 					</view>
 				</template>
 			</view>
 			<view class="historyBox_footer">
-
+				<view class="historyBox_footer_button">
+					<up-button size="small" type="primary" @click="addChat">新建对话</up-button>
+				</view>
+				<view class="historyBox_footer_button">
+					<up-button size="small" type="error" @click="deleteAllChat">删除所有</up-button>
+				</view>
 			</view>
 		</view>
 	</up-popup>
+	<up-modal showCancelButton :show="showModals" title="提示" content="是否删除所有记录对话记录？" @cancel="showModals=false"
+		@confirm="chatStore.clearChats()"></up-modal>
 </template>
 
 <script setup lang="ts">
+	import { ref } from 'vue';
 	import { useChatStore, useScreenStore } from '@/store';
 	import { ModelType } from '@/type/chatData';
 	const screenStore = useScreenStore()
 	const chatStore = useChatStore()
+	const showModals = ref(false)
 
+	const deleteAllChat = () => {
+		// chatStore.clearChats()
+		showModals.value = true
+	}
 	const open = () => {
 		chatStore.setopenHistoryModel(true)
 	}
 	const close = () => {
-		chatStore.setopenHistoryModel(false)
+		uni.showTabBar({
+			success: function () {
+				chatStore.setopenHistoryModel(false)
+			},
+			fail: function (err) {
+				console.log(err)
+			}
+		})
+
 	}
 	const addChat = () => {
 		if (chatStore.loadingMessage) {
@@ -71,7 +92,7 @@
 		flex-direction: column;
 
 		&_view {
-
+			position: relative;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -83,19 +104,21 @@
 			}
 
 			&_text {
-				font-size: 27rpx;
+				font-size: 30rpx;
 			}
 		}
 
 		&_header {
 			display: flex;
-			justify-content: center;
+			justify-content: flex-start;
 			width: 100%;
-			padding: 30rpx;
+			font-weight: 800;
+			padding: 10rpx 30rpx;
 			box-sizing: border-box;
 
 			&_button {
 				width: 80% !important;
+
 			}
 		}
 
@@ -124,12 +147,38 @@
 				&_icon {
 					height: 40rpx;
 					width: 40rpx;
+
 					margin-right: 20rpx;
 				}
 
 				&_text {
-					font-size: 20rpx;
+					font-size: 25rpx;
+					width: 200rpx;
+					white-space: nowrap;
+					/* 强制文本在一行显示，不换行 */
+					overflow: hidden;
+					/* 隐藏溢出的文本 */
+					text-overflow: ellipsis;
+					/* 超出部分显示省略号 */
 				}
+			}
+		}
+
+		&_footer {
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			align-items: center;
+			width: 100%;
+			position: absolute;
+			border-top: 1rpx solid #ccc;
+			bottom: 0;
+			padding: 20rpx 0;
+			overflow: hidden;
+
+			&_button {
+				width: 80% !important;
+				margin: 10rpx 0;
 			}
 		}
 	}

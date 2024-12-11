@@ -1,12 +1,12 @@
 <template>
 	<z-paging>
 		<template #top>
-			<CommonHeader defindTitle="关于万象" />
+			<CommonHeader :defindTitle="'关于'+AppStrName" />
 		</template>
 		<view class="AboutWe">
 			<view class="AboutWe_main">
 				<image class="AboutWe_main_iamge" src="../../../../static/logo.svg" mode=""></image>
-				<text class="AboutWe_main_text">万象ai平台</text>
+				<text class="AboutWe_main_text">{{AppStrName}}ai平台</text>
 				<text class="AboutWe_main_text">v1.1.1</text>
 				<text class="AboutWe_main_text">channel：self</text>
 			</view>
@@ -15,6 +15,9 @@
 </template>
 
 <script setup lang="ts">
+	import { AppStrName } from '@/http';
+
+
 	import CommonHeader from '@/components/CommonHeader.vue'
 </script>
 

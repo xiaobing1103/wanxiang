@@ -80,45 +80,45 @@ export default {
 				`,
 				// 一级标题
 				h1: `
-				margin:25px 0;
+				margin:25rpx 0;
 				font-size: 24px;
 				text-align: center;
 				font-weight: bold;
 				color: ${themeColor};
-				padding:3px 10px 1px;
-				border-bottom: 2px solid ${themeColor};
-				border-top-right-radius:3px;
-				border-top-left-radius:3px;
+				padding:3rpx 10rpx 1rpx;
+				border-bottom: 2rpx solid ${themeColor};
+				border-top-right-radius:3rpx;
+				border-top-left-radius:3rpx;
 				`,
 				// 二级标题
 				h2: `
-				margin:40px 0 20px 0;
+				margin:40rpx 0 20rpx 0;
 				font-size: 20px;
 				text-align:center;
 				color:${themeColor};
 				font-weight:bolder;
-				padding-left:10px;
-				// border:1px solid ${themeColor};
+				padding-left:10rpx;
+				// border:1rpx solid ${themeColor};
 				`,
 				// 三级标题
 				h3: `
-				margin:30px 0 10px 0;
+				margin:30rpx 0 10rpx 0;
 				font-size: 18px;
 				color: ${themeColor};
-				padding-left:10px;
-				border-left:3px solid ${themeColor};
+				padding-left:10rpx;
+				border-left:3rpx solid ${themeColor};
 				`,
 				// 引用
 				blockquote: `
-				margin:15px 0;
+				margin:15rpx 0;
 				font-size:15px;
 				color: #777777;
-				border-left: 4px solid #dddddd;
-				padding: 0 10px;
+				border-left: 4rpx solid #dddddd;
+				padding: 0 10rpx;
 				 `,
 				// 列表
 				ul: `
-				margin: 10px 0;
+				margin: 10rpx 0;
 				color: #555;
 				`,
 				li: `

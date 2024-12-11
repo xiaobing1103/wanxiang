@@ -56,7 +56,7 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import { useChatStore, useUserStore } from '@/store';
 	import { html2Image } from './html2Canvas';
-	import { downloadBase64Image } from '@/utils/downLoadLocal';
+	// import { downloadBase64Image } from '@/utils/downLoadLocal';
 	const svgRef = shallowRef<SVGElement>()
 	const svgWrapRef = shallowRef<HTMLDivElement>()
 	const transformer = new Transformer()
@@ -93,6 +93,14 @@
 		link.download = 'markmap.html'
 		link.click()
 		URL.revokeObjectURL(url)
+	}
+	function downloadBase64Image(base64Data, filename) {
+		const link = document.createElement('a');
+		link.href = base64Data;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 	}
 	const handlers = (key : string) => {
 		switch (key) {
@@ -199,14 +207,6 @@
 		// #ifdef H5
 		onFetchChat(str)
 		// #endif
-
-		// // #ifdef H5
-		// contentStr.value = ''
-		// uni.navigateTo({
-		// 	url: `/pages/function/subPage/AImappingPreview/index?sendMsg=${content}`
-		// })
-		// // #endif
-
 		// #ifdef MP-WEIXIN
 		if (UserStore.token) {
 			uni.navigateTo({

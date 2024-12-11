@@ -1,5 +1,4 @@
 <template>
-
 	<view class="ChatTemplate">
 		<view class="systemChat">
 			<view v-if="model == 'v35'">
@@ -8,22 +7,18 @@
 			<view v-if="model == 'v40'">
 				<v40Template />
 			</view>
-
 			<view v-if="model == 'echarts'">
 				<EchartsTemplate @onsendTemMessage="onsendTemMessage" />
 			</view>
 		</view>
 	</view>
-
-
-
 </template>
 
 <script lang="ts" setup>
 	import { computed, ref } from 'vue';
 	import V35Template from '@/components/ChatTemplate/V35Template.vue';
 	import V40Template from "@/components/ChatTemplate/V40Template.vue"
-	import EchartsTemplate from "@/components/ChatTemplate/echartsTemplate.vue"
+	import EchartsTemplate from "@/components/ChatTemplate/EchartsTemplate.vue"
 	import useChatStore from '@/store/chat';
 	import { storeToRefs } from "pinia"
 	const ChatStore = useChatStore();
@@ -35,7 +30,6 @@
 </script>
 
 <style scoped lang="scss">
-	/* 你的样式 */
 	.chatRole {
 		display: flex;
 	}

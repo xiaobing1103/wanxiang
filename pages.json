@@ -5,6 +5,7 @@
 				"navigationBarTitleText": "对话",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom",
+
 				"app-plus": {
 					"titleNView": false,
 					"softinputmode": "adjustPan"
@@ -43,32 +44,11 @@
 					"titleNView": false
 				}
 			}
-		},
-		{
-			"path": "pages/login/index",
-			"style": {
-				"navigationBarTitleText": "账户登录",
-				"enablePullDownRefresh": false,
-				"navigationStyle": "custom",
-				"app-plus": {
-					"titleNView": false
-				}
-			}
-		},
-		{
-			"path": "pages/loginAccount/index",
-			"style": {
-				"navigationBarTitleText": "用户登录",
-				"enablePullDownRefresh": false,
-				"app-plus": {
-					"titleNView": false
-				}
-			}
 		}
 	],
 	"subPackages": [{
 			"root": "pages/index/subPage",
-
+			"independent": true,
 			"pages": [{
 					"path": "imageModel/index",
 					"name": "imageModel",
@@ -105,7 +85,30 @@
 		},
 		{
 			"root": "pages/my/subPage",
+			"independent": true,
 			"pages": [{
+					"path": "login/index",
+					"style": {
+						"navigationBarTitleText": "账户登录",
+						"enablePullDownRefresh": false,
+						"navigationStyle": "custom",
+						"app-plus": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "loginAccount/index",
+					"style": {
+						"navigationBarTitleText": "用户登录",
+						"enablePullDownRefresh": false,
+						"navigationStyle": "custom",
+						"app-plus": {
+							"titleNView": false
+						}
+					}
+				},
+				{
 					"path": "vip/index",
 					"name": "vip",
 					"style": {
@@ -126,6 +129,14 @@
 					"name": "AboutWe",
 					"style": {
 						"navigationBarTitleText": "关于我们",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "ActiveRule/index",
+					"name": "ActiveRule",
+					"style": {
+						"navigationBarTitleText": "活动规则",
 						"navigationStyle": "custom"
 					}
 				},
@@ -244,6 +255,22 @@
 						"navigationBarTitleText": "图片反推提示词",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "behindQRcode/index",
+					"name": "behindQRcode",
+					"style": {
+						"navigationBarTitleText": "隐藏二维码",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "behindQRcode/articleQRcodoe",
+					"name": "articleQRcodoe",
+					"style": {
+						"navigationBarTitleText": "艺术二维码",
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		},
@@ -328,19 +355,291 @@
 						"navigationBarTitleText": "AI文档对话",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "OfficeWrite/index",
+					"name": "OfficeWrite",
+					"style": {
+						"navigationBarTitleText": "公文写作",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "ArtistWrite/index",
+					"name": "ArtistWrite",
+					"style": {
+						"navigationBarTitleText": "AI论文写作",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "previewTxtPages/index",
+					"name": "previewTxtPages",
+					"style": {
+						"navigationBarTitleText": "TXT文件预览",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AiVioceCreate/index",
+					"name": "AiVioceCreate",
+					"style": {
+						"navigationBarTitleText": "AI真人语音合成",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AiORCModel/index",
+					"name": "AiORCModel",
+					"style": {
+						"navigationBarTitleText": "OCR-DOC办公文档识别",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "ArtistTest/index",
+					"name": "ArtistTest",
+					"style": {
+						"navigationBarTitleText": "AIGC检测",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "ArticlePlagiarism/index",
+					"name": "ArticlePlagiarism",
+					"style": {
+						"navigationBarTitleText": "智能降AIGC",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TestReport/index",
+					"name": "ArtistTest",
+					"style": {
+						"navigationBarTitleText": "查看报告",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TranslatePages/index",
+					"name": "TranslatePages",
+					"style": {
+						"navigationBarTitleText": "AI文档翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "CommonAiTranslatePages/index",
+					"name": "CommonAiTranslatePages",
+					"style": {
+						"navigationBarTitleText": "AI通用翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "OldArticelTranslate/index",
+					"name": "OldArticelTranslate",
+					"style": {
+						"navigationBarTitleText": "AI文言文翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AiVioceTranslate/index",
+					"name": "AiVioceTranslate",
+					"style": {
+						"navigationBarTitleText": "AI录音翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AiImageTranslate/index",
+					"name": "AiImageTranslate",
+					"style": {
+						"navigationBarTitleText": "AI图像翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "ArticelTranslate/index",
+					"name": "ArticelTranslate",
+					"style": {
+						"navigationBarTitleText": "论文翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "ZhArticelTranslate/index",
+					"name": "ArticelTranslate",
+					"style": {
+						"navigationBarTitleText": "中文学术翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "EnArticelTranslate/index",
+					"name": "ArticelTranslate",
+					"style": {
+						"navigationBarTitleText": "英文学术翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AiMusicCreate/index",
+					"name": "AiMusicCreate",
+					"style": {
+						"navigationBarTitleText": "AI音乐",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "MusicSquare/index",
+					"name": "MusicSquare",
+					"style": {
+						"navigationBarTitleText": "AI音乐广场",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "ImageCreateMusic/index",
+					"name": "ImageCreateMusic",
+					"style": {
+						"navigationBarTitleText": "AI图片创作音乐",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "VideoCreateMusic/index",
+					"name": "VideoCreateMusic",
+					"style": {
+						"navigationBarTitleText": "AI视频创作音乐",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TextCreateVideo/index",
+					"name": "TextCreateVideo",
+					"style": {
+						"navigationBarTitleText": "文生视频",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "VideoVip/index",
+					"name": "VideoVip",
+					"style": {
+						"navigationBarTitleText": "视频会员",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TextCreateVideo/videoHistory/index",
+					"name": "videoHistory",
+					"style": {
+						"navigationBarTitleText": "历史记录",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TextCreateVideo/AINumersPeople/index",
+					"name": "AINumersPeople",
+					"style": {
+						"navigationBarTitleText": "AI数字人",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TextCreateVideo/AIVideoHandlerImage/index",
+					"name": "AIVideoHandlerImage",
+					"style": {
+						"navigationBarTitleText": "AI视频抠图",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TextCreateVideo/AIExtractMusic/index",
+					"name": "AIExtractMusic",
+					"style": {
+						"navigationBarTitleText": "AI提取音频",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AIWriteSomething/index",
+					"name": "AIWriteSomething",
+					"style": {
+						"navigationBarTitleText": "AI智能写作",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "importantTextExport/index",
+					"name": "importantTextExport",
+					"style": {
+						"navigationBarTitleText": "AI关键词提取",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TheSamePointTest/index",
+					"name": "TheSamePointTest",
+					"style": {
+						"navigationBarTitleText": "AI相似度检测",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "InspiredWriting/index",
+					"name": "InspiredWriting",
+					"style": {
+						"navigationBarTitleText": "AI灵感写作",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "articleWriting/index",
+					"name": "articleWriting",
+					"style": {
+						"navigationBarTitleText": "AI写作助手",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "createTitle/index",
+					"name": "createTitle",
+					"style": {
+						"navigationBarTitleText": "AI标题生成",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AIaiAgent/index",
+					"name": "AIaiAgent",
+					"style": {
+						"navigationBarTitleText": "AI智能体",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AIaiAgent/mainPages",
+					"name": "mainPages",
+					"style": {
+						"navigationBarTitleText": "智能体对话",
+						"navigationStyle": "custom"
+					}
 				}
-
 			]
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "万象AI",
+		"navigationBarTitleText": "边界AI",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
-		"fontSize": "15",
+		"fontSize": "27rpx",
+		// "iconWidth": "40rpx",
 		// "midButton": {
 		// 	"iconPath": "static/middle.svg",
 		// 	"iconWidth": "70rpx",
@@ -354,14 +653,20 @@
 			{
 				"pagePath": "pages/draw/index",
 				"text": "绘画"
+
 			},
 			{
 				"pagePath": "pages/function/index",
 				"text": "功能库"
+
 			},
 			{
 				"pagePath": "pages/my/index",
-				"text": "我的"
+				"text": "我的",
+				"iconfont": {
+					"fontSize": "30px"
+
+				}
 			}
 		]
 	},
@@ -374,5 +679,13 @@
 			"^up-(.*)": "uview-plus/components/u-$1/u-$1.vue",
 			"^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue"
 		}
+	},
+	"condition": { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+			"name": "", //模式名称
+			"path": "", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到
+		}]
 	}
 }

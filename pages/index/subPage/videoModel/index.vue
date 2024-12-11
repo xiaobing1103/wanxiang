@@ -67,15 +67,15 @@
 	import imageModelChat from '@/components/CommonChat/imageModelChat.vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import ChatBox from '@/components/CommonChat/ChatBox.vue';
-	import { useChatStore } from '../../../../store';
+	import { useChatStore } from '@/store';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
-	import { generateUUID } from '../../../../tools/uuid';
-	import { ItemMessage } from '../../../../type/chatData';
+	import { generateUUID } from '@/tools/uuid';
+	import { ItemMessage } from '@/type/chatData';
 	import { storeToRefs } from 'pinia';
 	import { currentModelReversParmas, exParmas, modelTypes } from '../../../chat/chatConfig';
-	import { commonModel } from '../../../../config/modelConfig';
-	import { useGlobalProperties } from '../../../../hooks/useGlobalHooks';
-	import { isPureLink } from '../../../../utils';
+	import { commonModel } from '@/config/modelConfig';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import { isPureLink } from '@/utils';
 	const chatValue = ref('');
 
 	const accept = computed(() => {

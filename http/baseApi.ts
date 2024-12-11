@@ -1,3 +1,4 @@
+import { AppName } from '.'
 import { isDevMode } from '@/utils/env'
 const envBaseUrl = import.meta.env.VITE_APP_BASE_URL || ''
 

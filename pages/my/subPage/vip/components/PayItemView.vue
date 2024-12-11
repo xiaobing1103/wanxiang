@@ -99,7 +99,7 @@
 				num: 1,
 				pay_id: 'js',
 				shop_id: props.seletedVipIds,
-				appid: "wx493b9b967a6f410c",
+				appid: "wx67c8453af19438e3",
 				openid: res.openid,
 			})
 			if (createShopsOrderRes.code == 200) {

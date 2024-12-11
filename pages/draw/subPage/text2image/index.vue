@@ -1,16 +1,18 @@
 <template>
 	<z-paging ref="srollRef" :pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx'}">
 		<template #top>
-			<CommonHeader defindPath="/pages/draw/index" />
+			<template v-if="!showUpOverlay">
+				<CommonHeader defindPath="/pages/draw/index" />
+			</template>
 		</template>
 		<!-- 对话框 -->
 		<!-- v-model:itemMessages="itemMessages" -->
 		<view class="body">
 			<CommonTitle title="文字生成图片" desc="在线AI绘画,创作你的专属作品" />
-			
-			<CommonDrawTem :IamgeTypes="IamgeTypes" :parmas="parmas" />
-			
-			
+
+			<CommonDrawTem v-model:showUpOverlay="showUpOverlay" :IamgeTypes="IamgeTypes" :parmas="parmas" />
+
+
 		</view>
 
 		<template #bottom>
@@ -22,9 +24,10 @@
 <script setup lang="ts">
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CommonTitle from '@/components/CommonTitle.vue'
-	import CommonDrawTem from "../../components/CommonDrawTem"
+	import CommonDrawTem from "../CommonDrawTem"
 	import { ref } from 'vue';
 	import { ImageProjectTypes } from '../../data';
+	const showUpOverlay = ref(false)
 	const IamgeTypes : ImageProjectTypes = {
 		type: 'text2image',
 		historyType: 'txt2img_task_json',

@@ -1,3 +1,5 @@
+import { AppName } from "@/http"
+
 export const vipTypes = [{
 	title: '热门推荐',
 
@@ -168,7 +170,33 @@ export const quanYiArr = [
 	},
 ]
 
-export const TableTh = {
+export const TableTh = AppName == 'bianjie' ? {
+	'default': {
+		thName: '会员权益对比'
+	},
+	"58": {
+		thName: '超级永久会员'
+	},
+	"52": {
+		thName: '体验月卡会员'
+	},
+
+	"152": {
+		thName: '超级三年会员'
+	},
+	"120": {
+		thName: '两年会员VIP'
+	},
+	"53": {
+		thName: '年费会员VIP'
+	},
+	"78": {
+		thName: '办公会员VIP'
+	},
+	"79": {
+		thName: '高级办公会员'
+	},
+} : {
 	'default': {
 		thName: '会员权益对比'
 	},
@@ -199,7 +227,55 @@ export const TableTh = {
 }
 
 
-export const vipShowModals = {
+export const vipShowModals = AppName == 'bianjie' ? {
+	'58': {
+		background:
+			'linear-gradient(90deg, rgba(255, 154, 36, 1) 0%, rgba(240, 26, 154, 1) 100%), rgba(204, 204, 204, 1)',
+		color: 'white',
+		content: '限时早鸟特惠，80%人已抢',
+		name: '超级永久会员'
+	},
+	'52': {
+		background: 'linear-gradient(90deg, rgba(105, 122, 255, 1) 0%, rgba(50, 91, 255, 1) 100%)',
+		color: 'white',
+		content: '限时早鸟特惠，80%人已抢',
+		name: '体验月卡会员'
+	},
+
+	'120': {
+		background: 'linear-gradient(90deg, rgba(105, 122, 255, 1) 0%, rgba(50, 91, 255, 1) 100%)',
+		color: 'white',
+		content: '限时早鸟特惠，80%人已抢',
+		name: '两年会员VIP'
+	},
+	"152": {
+		background: 'linear-gradient(90deg, rgba(105, 122, 255, 1) 0%, rgba(50, 91, 255, 1) 100%)',
+		color: 'white',
+		content: '限时早鸟特惠，80%人已抢',
+		name: '超级三年会员'
+	},
+	'53': {
+		background: 'linear-gradient(90deg, rgba(105, 122, 255, 1) 0%, rgba(50, 91, 255, 1) 100%)',
+		color: 'white',
+		content: '限时早鸟特惠，80%人已抢',
+		name: '年费会员VIP'
+	},
+
+
+	"78": {
+		background: 'linear-gradient(90deg,#ff715f,#ff3f43)',
+		color: 'white',
+		content: '高效办公',
+		name: '办公会员VIP'
+	},
+	"79": {
+		background: 'linear-gradient(90deg,#ff715f,#ff3f43)',
+		color: 'white',
+		content: '开放全部功能 · 办公无忧',
+		name: '高级办公会员'
+	},
+
+} : {
 	'200': {
 		background:
 			'linear-gradient(90deg, rgba(255, 154, 36, 1) 0%, rgba(240, 26, 154, 1) 100%), rgba(204, 204, 204, 1)',

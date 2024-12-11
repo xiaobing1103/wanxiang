@@ -7,30 +7,34 @@ import $api from '@/http'
 const useUserStore = defineStore("wanxiang_userInfo", () => {
 	const userInfo = ref<UserInfoDTO | null>(null)//用户信息
 	const token = ref('')
+	const invite_code = ref('')
 	const showVip = ref(true)
 	const exitLogin = () => {
 		userInfo.value = null
+		token.value = ''
 		uni.navigateTo({
-			url: '/pages/login/index'
+			url: '/pages/my/subPage/login/index'
 		})
 	}
 	// 用户名密码登录
 	const login = async (parmas, type : 'login' | 'register' | 'phone' | 'wechat') => {
 		if (type == 'phone') {
 			return $api.post('api/v1/user/phoneLogin', parmas)
-			// return await api.phoneLogin(parmas)
 		}
 		if (type == 'login') {
 			return $api.post('api/v1/user/login', parmas)
-			// return await api.login(parmas)
 		}
 		if (type == 'register') {
 			return $api.post('api/v1/user/register', parmas)
-			// return await api.register(parmas)
 		}
 		if (type == 'wechat') {
 			return $api.post('api/v1/user/wechatPhoneLogin', parmas)
 		}
+
+	}
+
+	const setInvite_code = (val : string) => {
+		invite_code.value = val
 	}
 	//微信授权登录
 	const wxAuthLogin = async () => {
@@ -93,8 +97,8 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 		getWxUserInfo,
 		exitLogin,
 		wxAuthLogin,
-		// appId,
-		// uid
+		invite_code,
+		setInvite_code
 	}
-}, { unistorage: { paths: ['userInfo', 'token'] } })
+}, { unistorage: { paths: ['userInfo', 'token', 'invite_code'] } })
 export default useUserStore

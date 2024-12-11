@@ -1,5 +1,5 @@
 <template>
-	<up-popup :show="chatStore.openSeletedModel" :round="25" mode="bottom" @close="close" @open="open">
+	<up-popup :show="chatStore.openSeletedModel" :round="15" mode="bottom" @close="close" @open="open">
 		<view class="viewBox">
 			<view class="viewBox_changeHeader">
 				<text class="viewBox_changeHeader_top">选择模型</text>
@@ -73,7 +73,15 @@
 		})
 	}
 	const close = () => {
-		chatStore.setOpenSeletedModel(false)
+
+		uni.showTabBar({
+			success: function () {
+				chatStore.setOpenSeletedModel(false)
+			},
+			fail: function () {
+				chatStore.setOpenSeletedModel(false)
+			}
+		})
 	}
 	const changeModel = (key : CommonModelKeys) => {
 		if (key == chatStore.model) {

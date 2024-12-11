@@ -30,7 +30,6 @@
 	onLoad((query) => {
 		console.log(query)
 		const { sendmsg, App, AccessToken, token, uid, Vt } = query
-		debugger
 		if (sendmsg && App && AccessToken && token && uid && Vt) {
 			const headers = {
 				App,

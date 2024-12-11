@@ -23,9 +23,11 @@ export async function saveImage(url, filename = '签名') {
 				filePath: tempFilePath,
 				success: (res) => {
 					resolve(res);
+					uni.$u.toast('已保存！');
 				},
 				fail: (err) => {
 					reject(err);
+					uni.$u.toast('保存失败！');
 				}
 			});
 		}
@@ -39,9 +41,11 @@ export async function saveImage(url, filename = '签名') {
 							filePath: downloadRes.tempFilePath,
 							success: (res) => {
 								resolve(res);
+								uni.$u.toast('已保存！');
 							},
 							fail: (err) => {
 								reject(err);
+								uni.$u.toast('保存失败！');
 							}
 						});
 					} else {

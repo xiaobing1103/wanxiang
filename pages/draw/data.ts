@@ -55,13 +55,19 @@ export const menuList = [
 		title: "ai图片反推提示词",
 		description: "AI分析图片，转换成描述词",
 		path: "/pages/draw/subPage/reserveWordIcons/index",
-	}
-	// {
-	// 	cover: $assets.rxkt_cover,
-	// 	title: "人像抠图",
-	// 	description: "只能提取人像，精确到发丝",
-	// 	path: "/pages/draw/subPage/portraitCutout/index",
-	// },
+	},
+	{
+		cover: $assets.behindQrcodeIcon,
+		title: "隐藏二维码",
+		description: "创作风格独树一帜的二维码",
+		path: "/pages/draw/subPage/behindQRcode/index",
+	},
+	{
+		cover: $assets.articleQRcodoeIcon,
+		title: "艺术二维码",
+		description: "创作风格独树一帜的二维码",
+		path: "/pages/draw/subPage/behindQRcode/articleQRcodoe",
+	},
 ];
 // 定义键名的联合类型
 export type DrawExampleKeys =

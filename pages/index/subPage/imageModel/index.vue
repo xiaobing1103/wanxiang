@@ -67,6 +67,7 @@
 	import { fileToBase64WithHeader, weChatTempPathToBase64 } from '../../../../utils';
 	import { useGlobalProperties } from '../../../../hooks/useGlobalHooks';
 	const chatValue = ref('');
+	const description = ref('')
 	const fileList1 = ref([])
 	const showChatBox = ref(false)
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
@@ -81,6 +82,7 @@
 	}
 	const srollRef = ref(null);
 	const handleValue = (value : any) => {
+
 		const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId);
 		onSend(messages.message, value);
 	};
@@ -109,6 +111,7 @@
 	};
 	// 新增图片
 	const afterRead = async (event : { file : any; }) => {
+
 		console.log(event)
 		let fileName = ''
 		let base64 : any = null
@@ -130,17 +133,19 @@
 		// #ifdef H5
 		base64 = await fileToBase64WithHeader(event.file[0].file)
 		// #endif
-		const description = await descriptionImage(base64)
-
-		if (description) {
+		const descriptionReq = await descriptionImage(base64)
+		if (descriptionReq) {
+			description.value = descriptionReq
 			const parmas = [
 				{ role: 'system', content: imageDesception },
-				{ role: 'user', content: description },
+				{ role: 'user', content: descriptionReq },
 			]
 			const msgId = generateUUID();
 			const msgObj : ItemMessage = { id: msgId, state: 'ok', target: 'user', message: temUrl, messageType: "image" };
 			ChatBoxRef.value.addMessage(msgId, msgObj);
 			onSend('请描述这张图片内容', undefined, parmas)
+		} else {
+			uni.$u.toast(descriptionReq.msg);
 		}
 	};
 
@@ -171,6 +176,10 @@
 	) => {
 		if (!val) {
 			uni.$u.toast('请先输入内容！');
+			return;
+		}
+		if (!description.value) {
+			uni.$u.toast('请先上传图片！');
 			return;
 		}
 		const msgId = generateUUID();

@@ -18,10 +18,10 @@
 </template>
 
 <script setup lang="ts">
-	import CommonTabbar from '@/components/CommonTabbar.vue'
-	import ImageShowcasePlaza from './components/ImageShowcasePlaza'
+
+	import ImageShowcasePlaza from './ImageShowcasePlaza'
 	import CommonHeader from '@/components/CommonHeader.vue'
-	import MenuCardItem from '@/pages/function/comoonents/menuItem.vue'
+	import MenuCardItem from './menuItem.vue'
 	import { ImageListDTO, menuList } from './data'
 	import type { MenuItem } from '@/pages/function/type.ts'
 	import { ref } from 'vue'

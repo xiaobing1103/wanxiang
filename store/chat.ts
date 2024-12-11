@@ -38,9 +38,12 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		openHistoryModel.value = val
 	}
 
+
+
 	const addchats = (value : ChatHistory) => {
 		if (chats.value.length >= 10) {
 			uni.$u.toast('历史记录不能超过十条,请删除历史记录后重试！')
+
 			return
 		}
 		setModel(value.model)
@@ -52,7 +55,7 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const delChats = (id : string) => {
 		if (chats.value.length === 1) {
 			// 如果只有一个消息，不允许删除
-			uni.$u.toast('只有一个消息，无法删除');
+			uni.$u.toast('只有一条消息记录，无法删除');
 			return;
 		}
 		const newChats = chats.value.filter((val) => val.id !== id);
@@ -70,7 +73,19 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		}
 	};
 	const clearChats = () => {
-		chats.value = []
+		if (chats.value.length > 1) {
+			chats.value = []
+			addchats({
+				id: generateUUID(),
+				iconUrl: commonModel.v35.modelIcon,
+				title: commonModel.v35.title,
+				data: [],
+				model: 'v35'
+			})
+		} else {
+
+			uni.$u.toast('只有一条消息记录，无法删除！');
+		}
 	}
 	const clearChartLoadingStauts = () => {
 		console.log(chats.value.find((items) => items.id == selectChatId.value))
@@ -149,6 +164,6 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		setShowlevelUpVip,
 		setShowLevelUpVipContent
 	}
-}, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id'] } }
+}, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id', 'loadingMessage'] } }
 );
 export default useChatStore

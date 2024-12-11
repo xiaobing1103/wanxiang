@@ -4,20 +4,29 @@
 			<view class="vip-card_vip_text">
 				{{userStore.userInfo?.vipType}}
 			</view>
-			<image @click="showOverlay = true" class="vip-card_image" :src="$assets.vipCard" mode=""></image>
+			<image @click="toVipPath" class="vip-card_image" :src="vipCardImg" mode=""></image>
 		</view>
-		<image @click="toVipPath" class="vip-card_image1" v-else="userStore.userInfo?.vip" :src="$assets.noVipCard"
-			mode=""></image>
+		<image @click="toVipPath" class="vip-card_image1" v-else="userStore.userInfo?.vip" :src="NoVipCardImg" mode="">
+		</image>
 	</view>
 
 </template>
 
 <script setup lang="ts">
+	import { computed } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
+	import { AppName } from '@/http'
+
 	const { $assets } = useGlobalProperties()
 	import { useUserStore } from '@/store'
 	const userStore = useUserStore()
-	const showOverlay = defineModel<boolean>('showOverlay')
+
+	const vipCardImg = computed(() => {
+		return AppName == 'bianjie' ? $assets.bianJieVipCard : $assets.wanXiangVipCard
+	})
+	const NoVipCardImg = computed(() => {
+		return AppName == 'bianjie' ? $assets.bianJieNoVipCard : $assets.wanXiangNoVipCard
+	})
 	const toVipPath = () => {
 		uni.navigateTo({
 			url: '/pages/my/subPage/vip/index'
@@ -34,7 +43,7 @@
 
 		&_vip {
 			position: relative;
-			
+
 			&_text {
 				position: absolute;
 				top: 31rpx;

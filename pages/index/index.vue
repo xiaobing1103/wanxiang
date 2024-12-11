@@ -1,15 +1,16 @@
 <template>
-	<z-paging ref="srollRef" :pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0 30rpx' }">
+	<z-paging ref="srollRef"
+		:pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0 30rpx',backgroundImage : 'url()' }">
 		<template #top>
 			<CommonHeader />
+			<ChangeModel />
 		</template>
-		<!-- 对话框 -->
-		<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" @echartsOnsendMessage="echartsOnsendMessage" />
-		<!--  v-model:currentAsk="currentAsk"  -->
+		<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" @echartsOnsendMessage="echartsOnsendMessage"
+			v-model:IsHasChatOverMessage="IsHasChatOverMessage" />
 		<template #bottom>
-			<!-- 气泡选择 -->
-			<ChatInputToolTipVue @change="sendValue" />
-			<!-- 聊天输入框 -->
+			<template v-if="IsHasChatOverMessage">
+				<ChatInputToolTipVue @change="sendValue" />
+			</template>
 			<Chat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 		</template>
 	</z-paging>
@@ -18,6 +19,8 @@
 </template>
 
 <script setup lang="ts">
+	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
+	import { onLoad, onShow } from '@dcloudio/uni-app'
 	import Chat from '@/components/CommonChat/Chat.vue';
 	import CommonModelSeleted from '@/components/CommonChat/CommonModelSeleted.vue';
 	import HistoryMessage from '@/components/CommonChat/HistoryMessage.vue';
@@ -25,7 +28,7 @@
 	import ChatInputToolTipVue from '@/components/CommonChat/ChatInputToolTip.vue';
 	import { nextTick, onMounted, ref } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
-	import { useChatStore } from '@/store';
+	import { useChatStore, useUserStore } from '@/store';
 	import { ItemMessage } from '@/type/chatData';
 	import { generateUUID } from '@/tools/uuid';
 	import ChatBox from '@/components/CommonChat/ChatBox.vue';
@@ -34,15 +37,16 @@
 	import { ToolTipItem } from '@/type/userTypes';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { currentModelReversParmas, exParmas, modelTypes, noHistoryArr } from '../chat/chatConfig';
-	import { onShow } from "@dcloudio/uni-app"
 	const { $api } = useGlobalProperties();
 	const ChatStore = useChatStore();
+	const UserStore = useUserStore()
 	const { setChatInfo } = ChatStore;
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const chatValue = ref('');
 	const { streamRequest, isRecive, onCancelRequest } = useStreamHooks();
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
-
+	// 判断当前对话框是否处于对话状态
+	const IsHasChatOverMessage = ref(false)
 	const srollRef = ref(null);
 	onShow(() => {
 		if (noHistoryArr.includes(model.value)) {
@@ -54,6 +58,7 @@
 	// const currentAsk = ref('默认')
 	onMounted(() => {
 		const initMessage = ChatStore.getCurrentInfo(ChatStore.selectChatId);
+		ChatStore.setModel(initMessage.model)
 		if (initMessage.data.length > 0) {
 			const newMap = new Map();
 			initMessage.data.forEach((item : ItemMessage) => {
@@ -65,6 +70,13 @@
 		}
 		scrollToBottom();
 	});
+	onLoad((options : any) => {
+		if (options.invite_code) {
+			
+			UserStore.setInvite_code(options.invite_code)
+		}
+		console.log('apppppppp -----------------------', options)
+	})
 	const echartsOnsendMessage = (val : any) => {
 		const { messages, uchartsType } = val
 		onSend(messages[1].content, {
@@ -87,6 +99,7 @@
 	};
 
 	const sendValue = (val : ToolTipItem) => {
+
 		onSend(val.prompt);
 	};
 	const onCancel = () => {
@@ -111,6 +124,7 @@
 			return;
 		}
 		const msgId = generateUUID();
+		IsHasChatOverMessage.value = false
 		const msgObj : ItemMessage = { id: msgId, state: 'ok', target: 'user', message: val, messageType: 'text' };
 		ChatBoxRef.value.addMessage(msgId, msgObj);
 		saveHistory(selectChatId.value, msgObj);
@@ -138,6 +152,7 @@
 		};
 		scrollToBottom();
 		chatValue.value = '';
+
 		handleStream(options);
 	};
 

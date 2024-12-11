@@ -36,6 +36,7 @@
 		"@dcloudio/uni-cli-shared": "^2.0.2-4020420240722003",
 		"@dcloudio/vite-plugin-uni": "^3.0.0-alpha-3000020210521001",
 		"@vueuse/core": "^11.0.3",
+		"diff-match-patch": "^1.0.5",
 		"flyio": "^0.6.14",
 		"markmap-common": "^0.17.0",
 		"markmap-lib": "^0.17.0",

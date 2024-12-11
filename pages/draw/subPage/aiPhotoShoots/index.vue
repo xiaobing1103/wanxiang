@@ -5,10 +5,11 @@
 		</template>
 		<view class="body">
 			<CommonTitle title="AI写真" desc="上传自拍生活照,挑选喜欢的形象照模版,一键只能生成各种风格高级专业职业形象照" />
-			<CommonChangeFace v-model:parmas="parmas" :ChangeFaceTypes="ChangeFaceTypes" />
+			<CommonChangeFace v-model:showupOverlay="showupOverlay" v-model:parmas="parmas"
+				:ChangeFaceTypes="ChangeFaceTypes" />
 		</view>
 		<template #bottom>
-			<view class="aiFaceSwapping_fooer">
+			<view class="aiFaceSwapping_fooer" v-if="!showupOverlay">
 				<view class="aiFaceSwapping_fooer_button" :style="{borderRadius: '35rpx',width:'75%'}"
 					@click="changeFace">开始换脸</view>
 
@@ -43,7 +44,7 @@
 
 <script setup lang="ts">
 	import CommonHeader from '@/components/CommonHeader.vue'
-	import CommonChangeFace from "../../components/CommonChangeFace/index.vue"
+	import CommonChangeFace from "../CommonChangeFace/index.vue"
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import { onMounted, reactive, ref } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
@@ -54,6 +55,7 @@
 	import { useChatStore, useCounterStore } from '@/store';
 	import { downloadBase64Image } from '@/utils/downLoadLocal';
 	const { $api } = useGlobalProperties();
+	const showupOverlay = ref(false)
 	// #ifdef MP-WEIXIN
 	const system = useCounterStore()
 	const { menuButtonInfo, navBarHeight } = storeToRefs(system)

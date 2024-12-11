@@ -2,6 +2,7 @@
 import { ModelType } from '../type/chatData';
 import $assets from './assets.config';
 import { ModelConfig } from './type';
+import { AppStrName } from '@/http';
 
 export const commonModel : Record<ModelType, ModelConfig> = {
 	'v35': {
@@ -17,17 +18,17 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/completionNet',
 		modelIcon: $assets.netModelIcon,
-		modelDesc: '我是万象AI助手，我已连接互联网，知晓近日的...',
+		modelDesc: `我是您的 AI助手，我已连接互联网，知晓近日的...`,
 		checkNumsType: 'chat_networking'
 	},
-	// 'echarts': {
-	// 	title: '图表模型',
-	// 	ModelPath: '',
-	// 	ModelApi: 'api/v1/chat2/v35',
-	// 	modelIcon: $assets.echartsModelIcon,
-	// 	modelDesc: '可以帮你生成图表，生成表格支持echarts格式...',
-	// 	checkNumsType: 'chat'
-	// },
+	'echarts': {
+		title: '图表模型',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/glm_4_plus',
+		modelIcon: $assets.echartsModelIcon,
+		modelDesc: '可以帮你生成图表，生成表格支持echarts格式...',
+		checkNumsType: 'chat'
+	},
 	'v40': {
 		title: '智慧4.0模式',
 		ModelPath: '',

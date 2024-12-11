@@ -54,14 +54,14 @@
 					</view>
 				</view>
 			</view>
-			<cc-shareMenu ref="share" :contentHeight="580" :shareList="shareList"
-				@click="shareMenuClick"></cc-shareMenu>
+			<ShareMenu ref="share" :contentHeight="580" :shareList="shareList" @click="shareMenuClick"></ShareMenu>
 		</template>
 	</z-paging>
 </template>
 
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
+	import ShareMenu from '../ShareMenu/components/cc-shareMenu/cc-shareMenu.vue'
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useDrawStore } from '@/store';
 	import { drawTaskJson } from '@/store/draw';

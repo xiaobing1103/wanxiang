@@ -45,7 +45,7 @@
 <script setup lang="ts">
 	import { onMounted, reactive, ref } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
-	import ImageUpload from '../../components/ImageUpload'
+	import ImageUpload from '../ImageUpload'
 	import { useDrawStore } from '@/store';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { toCopyText } from '@/utils';

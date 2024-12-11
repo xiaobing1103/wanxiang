@@ -1,8 +1,6 @@
 import fly from 'flyio';
 import { BaseApi } from '@/http/baseApi';
-import { isWeChatTempPath } from '@/utils/isWeChatTempPath';
 // #ifdef MP-WEIXIN
-import FormData from '@/tools/FormData';
 import { httpDTO } from '.';
 // #endif
 
@@ -10,7 +8,7 @@ export default {
 	config: {
 		baseUrl: BaseApi,
 		header: {
-			// 'Content-Type': 'application/json;charset=UTF-8',
+
 		},
 		data: {},
 		method: 'GET',
@@ -27,11 +25,25 @@ export default {
 		}
 		options.baseUrl = options.baseUrl || this.config.baseUrl;
 		options.dataType = options.dataType || this.config.dataType;
-		options.url = options.baseUrl + options.url;
+		if (options.url.startsWith('https://')) {
+
+		} else {
+			options.url = options.baseUrl + options.url;
+		}
+
 		options.data = options.data || {};
 		options.method = options.method || this.config.method;
 
-		const isFormData = options.data instanceof FormData;
+		// let isFormData = options.isWechatSendImages;
+		let isFormData
+		// #ifdef H5
+		if (options.data instanceof FormData) {
+			isFormData = true
+		}
+		// #endif
+		// #ifdef MP-WEIXIN
+		isFormData = false
+		// #endif
 
 		if (!isFormData) {
 			options.header = options.header || {};
@@ -66,6 +78,7 @@ export default {
 			};
 			// h5端发送formdata的情况
 			if (isFormData) {
+
 				fly.interceptors.request.use(this.interceptor.request(_config));
 				fly.interceptors.response.use(
 					(response, promise) => {
@@ -90,12 +103,22 @@ export default {
 					});
 			} else {
 				if (options.isWechatSendImages) {
-					const { image, file, ...others } = options.data;
-					let UploadOptions = {}
+					const arr = ['image', 'file', 'text', 'video']
 
+					const { image, file, ...others } = options.data;
+					let filePath
+					let fileName
+					arr.forEach((items) => {
+						if (options.data[items]) {
+							filePath = options.data[items]
+							delete others[items];
+							fileName = items
+						}
+					})
+					let UploadOptions = {}
 					UploadOptions = {
-						filePath: image ? image : file,
-						name: image ? 'image' : 'file',
+						filePath: filePath,
+						name: fileName,
 						header: {
 							..._config.header,
 							contentType: image && image.contentType
@@ -122,11 +145,17 @@ export default {
 			}
 		});
 	},
+	
 	async fetchStream(options) {
 		const { url, method, data, header, success, fail, controller } = options;
 		console.log(controller)
 		let _config = Object.assign({}, this.config, options);
-		_config.url = this.config.baseUrl + url || options.baseUrl + url;
+
+		if (url.startsWith('https://')) {
+			_config.url = url
+		} else {
+			_config.url = this.config.baseUrl + url || options.baseUrl + url;
+		}
 		_config.method = method;
 		_config.headers = header;
 		_config.body = JSON.stringify(data);
@@ -153,7 +182,6 @@ export default {
 						const text = decoder.decode(value, { stream: true });
 						const lines = text.split('\n');
 						result += lines;
-
 						for (let i = 0; i < lines.length; i++) {
 							if (lines[i]) {
 								const chunk = lines[i].replaceAll('\\n', '\n');
@@ -206,7 +234,11 @@ export default {
 	StreamRequest(options) {
 		const { url, method, data, header, success, fail } = options;
 		let _config = Object.assign({}, this.config, options);
-		_config.url = this.config.baseUrl + url || options.baseUrl + url;
+		if (url.startsWith('https://')) {
+			_config.url = url
+		} else {
+			_config.url = this.config.baseUrl + url || options.baseUrl + url;
+		}
 		_config.method = method;
 		_config.headers = header;
 		_config.data = data;
@@ -238,34 +270,3 @@ export default {
 		});
 	}
 };
-
-function _reqlog(req) {
-	if (process.env.NODE_ENV === 'development') {
-		console.log(`【${req.requestId}】 地址：${req.url}`);
-		if (req.data) {
-			console.log(`【${req.requestId}】 请求参数：${JSON.stringify(req.data)}`);
-		}
-	}
-}
-
-function _reslog(res) {
-	let _statusCode = res.statusCode;
-	if (process.env.NODE_ENV === 'development') {
-		console.log(`【${res.config.requestId}】 地址：${res.config.url}`);
-		if (res.config.data) {
-			console.log(`【${res.config.requestId}】 请求参数：${JSON.stringify(res.config.data)}`);
-		}
-		console.log(`【${res.config.requestId}】 响应结果：${JSON.stringify(res)}`);
-	}
-
-	switch (_statusCode) {
-		case 200:
-			break;
-		case 401:
-			break;
-		case 404:
-			break;
-		default:
-			break;
-	}
-}

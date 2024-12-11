@@ -106,7 +106,12 @@
 	//开始生成内容
 	const onCreateContent = () => {
 		const { key, content } = currentCreateItem.value
+		if (!content) {
+			uni.$u.toast('请先填写内容！');
+			return
+		}
 		const endContent = key == createEnum.TITLE ? `我的标题是:${content}` : `我的内容是:${content}`
+
 		const params = [
 			{
 				role: 'user',
@@ -123,6 +128,7 @@
 			url: 'api/v1/chat2/v35',
 			data: data,
 			onmessage(text) {
+				console.log(text)
 				contentStr.value += text
 				onScroolToBottom()
 			},

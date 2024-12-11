@@ -17,7 +17,8 @@
 			</view>
 		</view>
 	</view>
-	<up-modal :show="showModal" @confirm="confirm" showCancelButton @close="showModal = false" @cancel="showModal = false" closeOnClickOverlay>
+	<up-modal :show="showModal" @confirm="confirm" showCancelButton @close="showModal = false"
+		@cancel="showModal = false" closeOnClickOverlay>
 		<view class="echartsModal">
 			<view class="echartsModal_title">
 				请选择你想输出的图表示例

@@ -5,6 +5,8 @@ import { isBase64 } from './isBase64'
 import { downloadReport } from './downloadBase64Local'
 import { fileToBase64, fileToBase64WithHeader } from './file2Base64'
 import { formatDate } from './formatDate'
+import { saveImage } from './saveImages'
+
 // 页面跳转
 const toPage = (path : string) => {
 	uni.navigateTo({
@@ -44,16 +46,13 @@ function isPureLink(str : string) {
 
 	}
 }
+
 const toCopyText = (content : string, tips ?: string) => {
 	//#ifndef H5
-
 	uni.setClipboardData({
 		data: String(content), // 必须字符串
 		success: function () {
-			uni.showToast({
-				title: tips || '复制成功',
-
-			});
+			uni.$u.toast(tips || '复制成功！');
 		},
 		fail(err) {
 			console.log(err, 'err');
@@ -144,45 +143,125 @@ function getMimeTypeFromExtension(ext : string) {
 		'mp4': 'video/mp4',
 		'mp3': 'audio/mpeg',
 		'wav': 'audio/wav',
-		// 其他扩展名和 MIME 类型可以根据需要添加
 	};
 	return mimeTypes[ext.toLowerCase()] || 'application/octet-stream';
 }
 const saveTextToFile = (textContent : string) => {
 	const fileSystemManager = wx.getFileSystemManager();
-	const tempFilePath = wx.env.USER_DATA_PATH + '/exported-file.txt';
+	let tempFilePath = wx.env.USER_DATA_PATH + '/exported-file.txt';
+	const nowEno = uni.getSystemInfoSync().platform;
+	console.log(textContent)
+	console.log(nowEno)
+	console.log(tempFilePath)
+	if (nowEno == 'ios') {
+		uni.navigateTo({
+			url: "/pages/function/subPage/previewTxtPages/index?text=" + textContent
+		})
+	} else {
+		fileSystemManager.writeFile({
+			filePath: tempFilePath,
+			data: textContent,
+			encoding: 'utf-8',
+			success: (res) => {
+				console.log('文件写入成功:', res);
+				fileSystemManager.saveFile({
+					tempFilePath: tempFilePath,
+					success: (res) => {
+						console.log('文件保存成功:', res.savedFilePath);
+						wx.openDocument({
+							showMenu: true,
+							filePath: res.savedFilePath,
+							success: function () {
+								console.log('文件打开成功');
+							}
+						});
+					},
+					fail: (err) => {
+						uni.$u.toast("文件保存失败！", err.errMsg)
+						console.error('文件保存失败:', err);
+					}
+				});
+			},
+			fail: (err) => {
+				console.error('文件写入失败:', err);
+			}
+		});
 
-	// 1. 创建临时文件并写入内容
-	fileSystemManager.writeFile({
-		filePath: tempFilePath,
-		data: textContent,
-		encoding: 'utf8',
-		success: (res) => {
-			console.log('文件写入成功:', res);
-
-			// 2. 使用 getFileSystemManager().saveFile 代替 wx.saveFile 保存文件到本地
-			fileSystemManager.saveFile({
-				tempFilePath: tempFilePath,
-				success: (res) => {
-					console.log('文件保存成功:', res.savedFilePath);
-
-					// 3. 提供用户打开或操作文件的方式
-					wx.openDocument({
-						showMenu: true,
-						filePath: res.savedFilePath,
-						success: function () {
-							console.log('文件打开成功');
-						}
-					});
-				},
-				fail: (err) => {
-					console.error('文件保存失败:', err);
-				}
-			});
-		},
-		fail: (err) => {
-			console.error('文件写入失败:', err);
-		}
-	});
+	}
 };
-export { toPage, debounce, isPureLink, toCopyText, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport };
+
+function timestampToDateString(timestamp, includeTime) {
+	// 创建一个新的Date对象
+	var date = new Date(timestamp * 1000);
+
+	// 获取年、月、日并确保它们是两位数
+	var year = date.getFullYear();
+	var month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份是从0开始的
+	var day = date.getDate().toString().padStart(2, '0');
+	var hours = date.getHours().toString().padStart(2, '0');
+	var minutes = date.getMinutes().toString().padStart(2, '0');
+	var seconds = date.getSeconds().toString().padStart(2, '0');
+
+	// 根据includeTime参数决定是否包含时分秒
+	var dateString = `${year}-${month}-${day}`;
+	if (includeTime) {
+		dateString += ` ${hours}:${minutes}:${seconds}`;
+	}
+
+	// 返回格式化的日期字符串
+	return dateString;
+}
+function checkFileType(fileName : string, allowedExtensions = ['acc', 'mp4', 'opus', 'wav']) {
+
+	// 获取文件的扩展名	
+	const fileExtension = fileName.split('.').pop().toLowerCase();
+	// 检查文件扩展名是否在允许的列表中
+	if (allowedExtensions.includes(fileExtension)) {
+		return true; // 文件类型允许
+	} else {
+		return false; // 文件类型不允许
+	}
+}
+const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, acceptNumber ?: number, acceptTips ?: string) : Promise<{
+	fileName : string,
+	fileType : string,
+	formdata : null,
+	response : null,
+	isJson : boolean,
+	isWechatSendImages : boolean,
+}> => {
+	const returnDatas = {
+		fileType: '',
+		fileName: '',
+		formdata: undefined,
+		response: undefined,
+		isJson: undefined,
+		isWechatSendImages: undefined,
+	}
+	return new Promise((resolve, reject) => {
+		// #ifdef H5
+		if (event.file[0].size > (acceptNumber || 5242880)) {
+			uni.$u.toast(acceptTips || '内容大小超出限制,不能上传超过5mb大小的文件！')
+			reject(false)
+		}
+		returnDatas.fileName = event.file[0].name
+		returnDatas.formdata = new FormData()
+		returnDatas.formdata.append('file', event.file[0].file)
+		// #endif
+		// #ifdef MP-WEIXIN
+		returnDatas.fileName = event.file[0].name
+		returnDatas.formdata = { file: event.file[0].url }
+		returnDatas.isWechatSendImages = true
+		returnDatas.isJosn = true
+		// #endif
+		const types = allowTypes ? allowTypes : ['docx', 'pdf']
+		returnDatas.fileType = event.file[0].name.split('.').pop().toLowerCase();
+		if (!checkFileType(returnDatas.fileName, types)) {
+			uni.$u.toast(`只支持上传文档格式${types}！`);
+			reject(false)
+		}
+		resolve(returnDatas)
+	})
+}
+
+export { toPage, uploadFileBefore, saveImage, debounce, isPureLink, toCopyText, timestampToDateString, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport };

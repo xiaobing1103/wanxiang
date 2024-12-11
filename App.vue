@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 	import { onLaunch } from '@dcloudio/uni-app'
 	import { useScreenStore, useChatStore } from '@/store'
+	import { useGlobalProperties } from './hooks/useGlobalHooks';
+	const { $api } = useGlobalProperties();
 	const screenStore = useScreenStore()
 	const ChatStore = useChatStore()
 	const initPageSystem = async () => {
@@ -21,7 +23,18 @@
 		//初始化页面信息
 		initPageSystem()
 		ChatStore.initChatInfo()
+		// getInviteCode()
+
 	})
+
+
+	// const getInviteCode = async () => {
+	// 	const queryLink = await $api.post('api/v1/wechat/query_urllink', {
+	// 		"url_link": "https://wxaurl.cn/H18iwCo0X2p",
+	// 		"query_type": 0
+	// 	})
+	// 	console.log(queryLink)
+	// }
 </script>
 
 <style lang="scss" scoped>

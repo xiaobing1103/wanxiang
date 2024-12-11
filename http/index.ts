@@ -1,5 +1,4 @@
-import { useChatStore, useUserStore } from '../store';
-import { UserInfoDTO } from '../type/userTypes';
+import { useChatStore, useUserStore, useAiAgentChats } from '../store';
 import http from './interface';
 export interface httpDTO {
 	url : string;
@@ -17,8 +16,11 @@ export interface httpDTO {
 
 export interface LoadingConfigTypes {
 	showLoading : boolean
-	title : String | "加载中..."
+	title : string | "加载中..."
 }
+export type projectType = 'wanxiang' | 'bianjie'
+export const AppName : projectType = 'bianjie'
+export const AppStrName = AppName == 'wanxiang' ? '万象' : '边界'
 
 export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig, controller, isWechatSendImages } : httpDTO) => {
 	LoadingConfig = LoadingConfig ? LoadingConfig : {
@@ -27,8 +29,9 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 	}
 	const userStore = useUserStore();
 	const ChatStore = useChatStore()
+	const AiAgentChats = useAiAgentChats()
 	const userInfo = userStore.userInfo;
-	const defaultTimeout = 20000;
+	const defaultTimeout = 100000;
 	const headers = {
 		uid: userInfo?.id || '',
 		token: userStore?.token || '',
@@ -36,34 +39,36 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		'Access-Token': userInfo?.access_token || '',
 		Vt: userInfo?.vip || '0',
 		// plaintext: 'true'
-		'app-name': 'wanxiang',
+		'app-name': AppName,
 		...config
 	};
 	http.interceptor.request = (config) => {
 		if (LoadingConfig.showLoading) {
 			uni.showLoading({ title: LoadingConfig.title, mask: true });
 		}
+
 		config.header = {
 			'content-type': isJson ? 'application/json' : 'multipart/form-data;',
-			// Authorization: uni.getStorageSync('token'),
 			...headers
 		};
+		console.log(config)
 		config.timeout = config.timeout || defaultTimeout;
 	};
 	http.interceptor.response = (response) => {
 		uni.hideLoading();
-		if (response?.status == 401 || response?.data?.code === 401 || response?.data?.code === 4001 || response?.data?.code === 4005 || response?.statusCode === 401) {
+		if (response?.status == 401 || response?.data?.code === 401 || response?.data?.code === 4001 || response?.statusCode === 401) {
 			console.log(response)
 			if (response.data?.msg) {
 				uni.$u.toast(response.data.msg);
 				ChatStore.setLoadingMessage(false)
+				
 			} else {
 				uni.$u.toast('登录信息已过期，请重新登录！');
 				ChatStore.setLoadingMessage(false)
-			}
 
+			}
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/my/subPage/login/index'
 			});
 			ChatStore.setLoadingMessage(false)
 			// return response.data = await doRequest(response, url)
@@ -124,9 +129,10 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 						if (response.data.code === 401 || response.data.code === 4001 || response.statusCode === 401) {
 							uni.hideLoading();
 							uni.navigateTo({
-								url: '/pages/login/index'
+								url: '/pages/my/subPage/login/index'
 							});
 							ChatStore.setLoadingMessage(false)
+
 						} else {
 							if (response.data.code !== 200 && response.data.message) {
 								uni.showToast({
@@ -143,43 +149,6 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 	}
 };
 
-// async function login() {
-// 	return new Promise(resolve => {
-// 		uni.login({
-// 			provider: 'weixin',
-// 			success(loginRes) {
-// 				resolve(loginRes.code)
-// 			},
-// 			fail() { }
-// 		});
-// 	})
-// }
-
-// async function doRequest(response, url) {
-// 	var code = await login()
-// 	var res = await get('/v1/oauth/refreshToken/code/' + code, {})
-// 	if (res && res.data.data.token) {
-// 		let config = response.config
-// 		uni.setStorageSync("token", res.data.data.token);
-// 		config.header['Authorization'] = res.data.data.token
-// 		let json = config.header["Content-Type"] === 'application/json'
-// 		const resold = await $http(url, config.method, {
-// 			...config.data
-// 		}, json)
-// 		return resold
-// 	} else {
-// 		uni.clearStorage()
-// 		uni.showToast({
-// 			title: "授权失效，请重新登录",
-// 			duration: 1000,
-// 		})
-// 		uni.navigateTo({
-// 			url: '/pages/login/auth'
-// 		})
-// 		return false
-// 	}
-// }
-
 function postJson(url, data) {
 	const httpDTO = {
 		url,
@@ -194,7 +163,7 @@ function postJson(url, data) {
 	return $http(httpDTO);
 }
 
-function get(url, data, config : any) {
+function get(url, data ?: any, config ?: any) {
 	const httpDTO = {
 		url,
 		method: 'GET',
@@ -221,11 +190,10 @@ const checkPosts = async (options : { url : string, data : any, checkNumsType ?:
 		}
 	}
 
-
-
 }
 
 function post(url : string, data : any, isjson ?: boolean, header ?: any, LoadingConfig ?: LoadingConfigTypes, isWechatSendImages ?: boolean) {
+
 	const httpDTO = {
 		url,
 		method: 'POST',
@@ -238,6 +206,7 @@ function post(url : string, data : any, isjson ?: boolean, header ?: any, Loadin
 		LoadingConfig,
 		isWechatSendImages,
 	};
+
 	return $http(httpDTO);
 }
 
@@ -291,7 +260,7 @@ async function getStream(
 	const { url, data, isStream, callback, errorCallback, LoadingConfig, controller, checkNumsType, noCheckNums } = options
 	let res
 	if (!noCheckNums) {
-		res = await post('api/v1/number2/check', { type: checkNumsType })
+		res = await post('api/v1/number2/check', { type: checkNumsType, })
 	}
 
 	if (res?.code == 200 || noCheckNums) {
@@ -309,7 +278,6 @@ async function getStream(
 		};
 		return $http(httpDTO);
 	} else {
-		// uni.$u.toast(res.msg);
 		ChatStore.setLoadingMessage(false)
 		errorCallback(res.msg)
 	}

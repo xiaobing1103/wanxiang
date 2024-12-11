@@ -1,7 +1,6 @@
 <template>
 	<view class="DocChat">
 		<view class="DocChat_header">
-			文档对话内容均为文档理解模型生成
 		</view>
 		<view class="DocChat_main">
 			<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" />

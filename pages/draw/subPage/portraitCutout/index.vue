@@ -44,7 +44,7 @@
 <script setup lang="ts">
 	import { onMounted, reactive, ref } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
-	import ImageUpload from '../../components/ImageUpload'
+	import ImageUpload from '../ImageUpload'
 	import { useChatStore, useDrawStore } from '@/store';
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';

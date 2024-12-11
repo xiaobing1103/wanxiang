@@ -1,9 +1,13 @@
 <template>
 	<view class="chatAll">
 		<view class="chatInput">
+			<view class="chatInput_left">
+
+			</view>
 			<view class="chatInput_input">
 				<up-input placeholder="请输入内容" border="surround" v-model="chatValue"></up-input>
 			</view>
+
 			<view class="chatInput_right">
 				<image @click="SendMessage" class="chatInput_right_image"
 					:src="chatValue ? 
@@ -43,18 +47,19 @@
 		// position: absolute;
 		bottom: 20rpx;
 		width: 100%;
-		overflow: hidden;
-		margin-bottom: 20rpx;
+		// overflow: hidden;
+		margin-bottom: 30rpx;
 	}
 
 	.chatInput {
-		overflow: hidden;
 		width: 100%;
 		display: flex;
 		background-color: white;
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+		box-shadow: 0px 0px 20rpx rgba(0, 0, 0, 0.1);
 		align-items: center;
 		border-radius: 30rpx;
+		height: 75rpx;
+
 
 		&_left {
 			height: 40rpx;
@@ -72,6 +77,10 @@
 		}
 
 		&_right {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
 			&_image {
 				height: 50rpx;
 				width: 50rpx;

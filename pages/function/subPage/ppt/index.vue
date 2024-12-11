@@ -58,13 +58,17 @@
 				'App': userInfo.appid,
 				'token': userInfo?.token,
 				'Vt': userInfo?.vip || '0',
-				'uid': userInfo?.id
+				'uid': userInfo?.id,
+
 			},
 			success(res) {
+				console.log(res, ' ---------------------')
 				uni.openDocument({
+					
 					filePath: res.tempFilePath,
-					fileType: 'ppt',
+					fileType: 'pptx',
 					showMenu: true,
+
 					success(res) {
 						console.log(res, "res")
 					},
@@ -72,6 +76,7 @@
 						console.log(err, "err")
 					}
 				})
+
 			},
 			fail(err) {
 				console.log(err, "err")
@@ -113,13 +118,19 @@
 		h5Download()
 		// #endif
 	}
+	const convertHttpToHttps = (url : string) => {
+		return url.replace(/http:\/\/(.*?)\/?/gi, 'https://$1/');
+	}
 	//预览ppt
 	const onPreview = async () => {
 		const res = await $api.post('api/v1/ppt/createNewPPT', createForm.value)
 		console.log(res, "res.data")
+
+
 		if (res.data) {
+			const url = convertHttpToHttps(res.data.url)
 			uni.navigateTo({
-				url: '/pages/function/subPage/webview/index?url=' + res.data.url
+				url: '/pages/function/subPage/webview/index?url=' + url
 			})
 		}
 	}

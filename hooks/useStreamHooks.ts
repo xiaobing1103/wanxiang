@@ -1,8 +1,10 @@
 import { useGlobalProperties } from './useGlobalHooks'
-import { ref } from 'vue'
-import { useChatStore } from '@/store'
+import { computed, reactive, ref } from 'vue'
+import { useAiAgentChats, useChatStore } from '@/store'
 import { commonModel } from '@/config/modelConfig'
+import { CreateImageDrawLoadding } from '@/store/aiAgentChats';
 interface Options {
+	onerror(str : any) : unknown;
 
 }
 const ChatStore = useChatStore()
@@ -11,13 +13,12 @@ const LoadingConfig = {
 	title: "加载中..."
 }
 
-
 export const useStreamHooks = (options ?: Options) => {
 	let controller = ref(null)
 	interface StreamOptions {
 		url : string;
 		data ?: any;
-		onmessage ?: (text : string) => void
+		onmessage ?: (text : string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }) => void
 		onerror ?: (err ?: any) => void
 		onfinish ?: (response ?: UniApp.RequestSuccessCallbackResult) => void,
 		LoadingConfig ?: {
@@ -26,12 +27,14 @@ export const useStreamHooks = (options ?: Options) => {
 		},
 		oncancel ?: () => void,
 		checkNumsType ?: string,
-		noCheckNums ?: boolean
+		noCheckNums ?: boolean,
+		isAiAigent ?: boolean
 	}
 	enum ErrorCode {
 		'SUCCESS' = 200
 	}
 	const { $api } = useGlobalProperties()
+	const AiAgentChats = useAiAgentChats()
 	const isRecive = ref(false)
 	let requestTask = null;
 	let cancelFn
@@ -59,27 +62,34 @@ export const useStreamHooks = (options ?: Options) => {
 			if (requestTask && typeof requestTask.onChunkReceived === 'function') {
 				requestTask.onChunkReceived(async res => {
 					let message = resloveResponseText(res.data);
-					if (ChatStore.model == 'net') {
-						message = await handlerCurrentModel(message)
+					if (!options.checkNumsType) {
+						if (ChatStore.model == 'net') {
+							message = await handlerCurrentModel(message)
+						}
 					}
-					options.onmessage && options.onmessage(message);
-					console.log(message, 'message错误');
+					if (options.isAiAigent) {
+						message = await handlerCurrentAiagent(message)
+						options.onmessage(message)
+					} else {
+						options.onmessage && options.onmessage(message)
+					}
+					// console.log(message, 'message错误');
 				});
 			} else {
 				console.error('requestTask is null or does not have onChunkReceived method');
 			}
-
 		} catch (error) {
+			options.onerror('Error in getStream:')
 			console.error('Error in getStream:', error);
 		}
 	};
 
 	const handleResloveError = async (code : ErrorCode, options : StreamOptions, response ?: UniApp.RequestSuccessCallbackResult) => {
 		switch (code) {
-			case ErrorCode.SUCCESS:
+			case 200:
 				isRecive.value = false
 				options.onfinish && options.onfinish(response)
-				if (!options.checkNumsType) {
+				if (!options.noCheckNums) {
 					await $api.post('api/v1/number2/submit', { number: 1, type: options.checkNumsType ? options.checkNumsType : commonModel[ChatStore.model]?.checkNumsType })
 				}
 				break;
@@ -95,7 +105,7 @@ export const useStreamHooks = (options ?: Options) => {
 		controller.value = new AbortController();
 		const signal = controller.value.signal;
 		const onSuccess = async (chunk : string) => {
-			if (chunk == null) {//完成
+			if (chunk == null) {
 				isRecive.value = false
 				options.onfinish && options.onfinish()
 				if (!currentOptions.noCheckNums) {
@@ -103,17 +113,24 @@ export const useStreamHooks = (options ?: Options) => {
 				}
 				return null
 			}
-
-			if (ChatStore.model == 'net') {
-				chunk = await handlerCurrentModel(chunk)
+			if (!options.checkNumsType) {
+				if (ChatStore.model == 'net') {
+					chunk = await handlerCurrentModel(chunk)
+				}
 			}
-			options.onmessage && options.onmessage(chunk)
+			if (options.isAiAigent) {
+				const newChunk = await handlerCurrentAiagent(chunk)
+				options.onmessage(newChunk);
+			} else {
+				options.onmessage && options.onmessage(chunk)
+			}
+
+
 		}
 		const onError = (err : any) => {
 			isRecive.value = false
 			options.onerror && options.onerror(err)
 		}
-
 		try {
 			const getStreamOptions = {
 				url: options.url,
@@ -129,7 +146,6 @@ export const useStreamHooks = (options ?: Options) => {
 				checkNumsType: options.checkNumsType ? options.checkNumsType : commonModel[ChatStore.model]?.checkNumsType,
 				noCheckNums: options.noCheckNums
 			}
-
 			await $api.getStream(getStreamOptions);
 		} catch (error) {
 			if (error.name === 'AbortError') {
@@ -144,9 +160,144 @@ export const useStreamHooks = (options ?: Options) => {
 	const appStreamRequest = (options : StreamOptions) => {
 
 	}
+
+	// 处理当前ai智能
+	const handlerCurrentAiagent = (result : string) : Promise<string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }> => {
+		return new Promise((resolve, reject) => {
+			let resultArr = []
+			result = result.replace(/[\u0000-\u001F\u007F-\u009F]/g, function (match) {
+				switch (match) {
+					case '\n': return '\\n';
+					case '\t': return '\\t';
+					default:
+						return '\\u' + match.charCodeAt(0).toString(16).padStart(4, '0')
+				}
+			});
+
+			if (result.includes('data: ')) {
+				resultArr = result.split('data: ')
+				resultArr.forEach((items) => {
+					if (items) {
+						if (handlerAiAgentFn(items)) {
+							resolve(handlerAiAgentFn(items))
+						}
+
+					}
+				})
+			}
+		})
+	}
+	const setIsRecive = () => {
+		isRecive.value = false;
+	}
+	let globalSearchResults = [];
+	// 检查元素是否已存在于数组中，基于某个唯一标识符（例如链接）
+	function isDuplicate(item, array) {
+		return array.some(element => element.link === item.link);
+	}
+	const handlerAiAgentFn = (str : string) => {
+		try {
+			switch (str) {
+				case '[SUCCESS]':
+					break;
+				case '[DONE]':
+					isRecive.value = false;
+					break;
+				case '[ERROR]':
+					break;
+				default:
+					let jsonPart = null
+					let da = '成功解析'
+					try {
+						jsonPart = JSON.parse(str)
+					} catch (err) {
+						da = '解析失败'
+						jsonPart = str
+						console.log(da, jsonPart)
+						currentOptions.onerror(jsonPart);
+					}
+					if (da == '成功解析') {
+						console.log(da, jsonPart)
+						if (!AiAgentChats.currentConversation_id) {
+							AiAgentChats.setCurrentConversation_id(jsonPart.conversation_id)
+						}
+						if (jsonPart.type == 'web_browser') {
+							if (!jsonPart.content?.input?.includes('mclick')) {
+								if (jsonPart.content?.input?.startsWith('search') || jsonPart.content?.input?.startsWith('msearch')) {
+									const regex = /"([^"]*)"/;
+									const match = jsonPart.content.input.match(regex);
+									return { SearchTitle: match[1] }
+								}
+								if (jsonPart.content?.outputs instanceof Array) {
+									if (jsonPart.content?.outputs.length > 0) {
+										// 过滤掉重复的数据
+										const uniqueOutputs = jsonPart.content.outputs.filter(item => !isDuplicate(item, globalSearchResults));
+										// 将去重后的新数据追加到全局数组中
+										globalSearchResults = globalSearchResults.concat(uniqueOutputs);
+										// 返回最新的全局搜索结果数组
+										return { aiAgentSearchList: globalSearchResults };
+									}
+								}
+							}
+						}
+						if (jsonPart.type == 'code_interpreter') {
+							if (jsonPart.content.input) {
+								return `\`\`\`python\n\n${jsonPart.content.input}\n\`\`\`\n`
+							}
+							if (jsonPart.content.outputs && jsonPart.content.outputs.length > 0) {
+								if (
+									jsonPart.content.outputs[0].logs &&
+									/^https?:\/\//i.test(jsonPart.content.outputs[0].logs)
+								) {
+									return `![alt image](${jsonPart.content.outputs[0].logs})\n\n`
+								} else {
+									console.log('结果', jsonPart.content.outputs[0].logs)
+									return `\`\`\`javascript\n\n${jsonPart.content.outputs[0].logs}\n\`\`\`\n`
+								}
+							}
+						}
+						if (jsonPart.type == 'drawing_tool') {
+							if (jsonPart.content.input) {
+								return CreateImageDrawLoadding()
+							}
+							if (jsonPart.content.outputs instanceof Array) {
+								return `<div style="padding:10px;"><img style="max-width:160px;min-height:160px;border-radius:20rpx;" src='${jsonPart.content.outputs[0].image}'/></div>`
+							}
+						}
+						if (jsonPart.type == 'function') {
+							if (jsonPart.content.arguments) {
+								let code_msg = '\n\n' + jsonPart.content.arguments + '\n\n'
+								if (jsonPart.content.name) {
+									code_msg = `<p style="font-size:16px;font-weight:700;margin:10px 0;">方法${jsonPart.content.name}</p>` + code_msg
+								}
+								return code_msg
+							}
+							if (jsonPart.content.outputs && jsonPart.content.outputs.length > 0) {
+								let data = JSON.parse(jsonPart.content.outputs[0].content)
+								if (data.url) {
+									return `![alt image](${data.url})`
+								}
+							}
+							if (jsonPart.content.url) {
+								return `![alt image](${jsonPart.content.url})`
+							}
+						}
+						if (jsonPart.role == 'assistant') {
+							return jsonPart.content
+						}
+					}
+
+			}
+		} catch (err) {
+			console.log(err)
+			currentOptions.onerror(err);
+		}
+	}
 	// 处理当前net模型的数据
 	let shouldProcess : boolean = false;
 	let accumulatedData : string = '';
+
+
 
 	const handlerCurrentModel = (result : string) : Promise<string> => {
 		let searchResult : string = ''
@@ -199,9 +350,6 @@ export const useStreamHooks = (options ?: Options) => {
 			}
 		});
 	};
-
-
-
 	//统一处理
 	const streamRequest = (options ?: StreamOptions) => {
 		// #ifdef MP-WEIXIN
@@ -232,10 +380,60 @@ export const useStreamHooks = (options ?: Options) => {
 		}
 		// #endif
 	};
+
+	//文档翻译限制
+	const verifyTranslateTextLimit = (text : string) => {
+		// 统计汉字数量
+		let chineseCount = Array.from(text).filter(function (char) {
+			return char.charCodeAt(0) > 127
+		}).length
+		// 统计英文字符数量
+		let englishCount = text.length - chineseCount
+		// 汉字限制1万字
+		let chineseLimit = 10000
+		// 英文限制2万字
+		let englishLimit = 20000
+		// 混合文本限制1.5万字
+		let mixedLimit = 15000
+		// 打印输出信息
+		console.log('总字符数量: ' + text.length)
+		console.log('汉字数量: ' + chineseCount)
+		console.log('英文字符数量: ' + englishCount)
+		if (chineseCount > 0 && englishCount === 0) {
+			// 纯汉字
+			return chineseCount <= chineseLimit
+		} else if (chineseCount === 0 && englishCount > 0) {
+			// 纯英文
+			return englishCount <= englishLimit
+		} else {
+			// 混合文本
+			return text.length <= mixedLimit
+		}
+	}
+	const checkNumFun = async (checkType : string) => {
+		return new Promise(async (resolve, reject) => {
+			const checkRes = await $api.post('api/v1/number2/check', { type: checkType })
+			if (checkRes.code !== 200) {
+				ChatStore.setShowLevelUpVipContent(checkRes.msg)
+				ChatStore.setShowlevelUpVip(true)
+				resolve(false)
+			} else {
+				resolve(true)
+			}
+		})
+
+	}
+	const checkSubmit = async (checkType : string, number = 1) => {
+		await $api.post('api/v1/number2/submit', { type: checkType, number })
+	}
 	return {
 		streamRequest,
 		isRecive,
-		onCancelRequest
+		onCancelRequest,
+		checkSubmit,
+		checkNumFun,
+		setIsRecive,
+		verifyTranslateTextLimit
 	}
 }
 // 流在进行中进行判断逻辑 	
@@ -261,6 +459,7 @@ const decode = (text : string) => {
 	}
 	return txt
 }
+
 //处理返回的文本
 const resloveResponseText = (content : string) : string => {
 	let newMsg : string = ''

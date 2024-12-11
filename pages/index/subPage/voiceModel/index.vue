@@ -84,6 +84,7 @@
 		{ name: '音频文件导入' },
 	])
 	const linkVal = ref('')
+	const description = ref('')
 	const currentProject = ref(0)
 	const fileList1 = ref([])
 	const showChatBox = ref(false)
@@ -179,9 +180,12 @@
 		formdata = new FormData()
 		formdata.append('file', event.file[0].file)
 		// #endif
-		const description = await descriptionImage(formdata)
-		if (description) {
-			onSend(fileName, null, [{ role: 'user', content: '我的内容是：' + description }])
+		const descriptionReq = await descriptionImage(formdata)
+		if (descriptionReq) {
+			description.value = descriptionReq
+			onSend(fileName, null, [{ role: 'user', content: '我的内容是：' + descriptionReq }])
+		} else {
+			uni.$u.toast(descriptionReq.msg);
 		}
 	};
 
@@ -222,6 +226,10 @@
 	) => {
 		if (!val) {
 			uni.$u.toast('请先输入内容！');
+			return;
+		}
+		if (!description.value) {
+			uni.$u.toast('请先上传音频或音频网址内容！');
 			return;
 		}
 		const msgId = generateUUID();

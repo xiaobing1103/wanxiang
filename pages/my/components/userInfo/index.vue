@@ -32,7 +32,7 @@
 	const { $assets } = useGlobalProperties()
 	const LoginFn = () => {
 		uni.navigateTo({
-			url: '/pages/login/index'
+			url: '/pages/my/subPage/login/index'
 		});
 	};
 </script>

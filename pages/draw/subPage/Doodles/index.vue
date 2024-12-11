@@ -54,7 +54,7 @@
 <script setup lang="ts">
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useDrawStore, useScreenStore } from '@/store';
-	import Vsign from '../../components/v-sign/components/v-sign/v-sign.vue'
+	import Vsign from '../v-sign/components/v-sign/v-sign.vue'
 	import { onLoad } from '@dcloudio/uni-app';
 	import { base64ToTempUrl } from '@/utils/base64ToTempUrl';
 	import { onMounted, ref } from 'vue';

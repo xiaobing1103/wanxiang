@@ -7,7 +7,7 @@
 				class="description">所有模板我们团队会不断的在后台进行上传，只需要选择你喜欢的模板，M即刻开始任务，不久后你就的PPT就完成者!当然，我们非常希望你能够给我们提供更多的模板，这样，我们的AI生态即会更加完整</text>
 		</template>
 		<view class="body">
-			<view class="icon"></view>
+			<!-- <view class="icon"></view> -->
 			<text class="description">生成成功!您也可以重新编辑文案，再次生成新的PPT</text>
 			<view class="btn">
 				<u-button @click="onPreview" type="primary">预览PPT</u-button>

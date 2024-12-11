@@ -9,41 +9,31 @@
 					<CommonTitle title="查询任务" desc="请耐心等待任务完成" />
 				</view>
 				<view class="QueueQueryPage_main">
-					<zui-progress-circle :range="[0, 360]" :position="progress" :ringWidth="20" :fixOverlay="true"
+					<ZuiProgressCircle :range="[0, 360]" :position="progress" :ringWidth="20" :fixOverlay="true"
 						:texture="gradientTexture" :direction="'clockwise'" :linecap="'round'">
 						<view class="circle_view">
 							<text class="circle_view_text">{{ (progress * 100).toFixed(0) }} %</text>
 						</view>
-					</zui-progress-circle>
+					</ZuiProgressCircle>
 				</view>
 			</view>
 			<text class="circle_view_desc">{{message}}</text>
 		</view>
-
 		<view class="tips">
 			<text class="tips_top"> 如果一直图片没有加载完成可能是因为服务器压力过大的原因，请您耐心等待，您也可以尝试其他图片生成项目
 			</text>
-			<!-- <view class="tips_bottom" @click="changeProject">
-				切换项目
-			</view> -->
 		</view>
-		<template #bottom>
-			<!-- <button @click="increaseProgress">增加进度</button> -->
-		</template>
-
-
 		<ChangeDrawProject :Config="config" v-model:intervalId="intervalId" />
-
 	</z-paging>
 </template>
 
 <script setup lang="ts">
+	import ZuiProgressCircle from '../ZuiProgressCircle/components/zui-progress-circle/zui-progress-circle.vue'
 	import { onMounted, onUnmounted, ref } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CommonTitle from '@/components/CommonTitle.vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
-	import ChangeDrawProject from '../../components/ChangeDrawProject'
-	import { onLoad } from '@dcloudio/uni-app'
+	import ChangeDrawProject from '../ChangeDrawProject'
 	import { useDrawStore } from '@/store';
 	import { drawTaskJson, taskIdTypeKey } from '@/store/draw';
 	import { DrawProjectConfig, drawProjectConfig } from '../../data';
@@ -152,7 +142,7 @@
 		uni.navigateTo({
 			url: '/pages/draw/subPage/PreviewPage/index',
 			success: res => {
-			
+
 			},
 			fail: () => { },
 			complete: () => {

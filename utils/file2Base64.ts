@@ -1,9 +1,14 @@
 
 /* 返回不带请求头的BASE64 */
-const fileToBase64 = (file, callback) => {
+const fileToBase64 = (file : File, callback : (base64 : string) => void, addHeader ?: boolean) => {
 	const reader = new FileReader();
 	reader.onloadend = function () {
-		const base64String = reader.result.split(',')[1];
+		let base64String
+		if (!addHeader) {
+			base64String = reader.result.split(',')[1];
+		} else {
+			base64String = reader.result
+		}
 		callback(base64String);
 	};
 	reader.readAsDataURL(file);

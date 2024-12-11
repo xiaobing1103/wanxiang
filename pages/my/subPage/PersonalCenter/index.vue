@@ -104,8 +104,8 @@
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import FormCell from '@/components/FormCell/index.vue';
 	import WxGongZhongHao from '@/components/WxGongZhongHao/index.vue';
-	import BindPhone from '@/components/BindPhone/index.vue';
-	import BindEmail from '@/components/BindEmail/index.vue';
+	import BindPhone from '../../components/BindPhone/index.vue';
+	import BindEmail from '../../components/BindEmail/index.vue';
 	import SetUserNick from '@/components/SetUserNick/index.vue';
 	import ResetPassWord from '@/components/ResetPassWord/index.vue';
 	import DeleteAccount from '@/components/DeleteAccount/index.vue';

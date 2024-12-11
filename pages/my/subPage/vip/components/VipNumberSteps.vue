@@ -2,7 +2,7 @@
 	<view class="VipNumberSteps">
 		<view class="VipNumberSteps_headers">
 			<view class="VipNumberSteps_headers_textbox">
-				万象AI平台会员权益 · {{TableTh[seletedVipIds].thName}}
+				{{AppStrName}}AI平台会员权益 · {{TableTh[seletedVipIds].thName}}
 			</view>
 			<view class="VipNumberSteps_headers_buttonBox" @click="buChaJiaModal = true">
 				<up-icon color="#974d1c" name="question-circle"></up-icon>
@@ -63,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+	import { AppStrName } from '@/http';
 	import { computed, onMounted, ref } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { vipShowModals, TableTh, quanYiArr, defaultTh } from '../data'

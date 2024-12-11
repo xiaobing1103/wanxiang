@@ -7,12 +7,13 @@
 					<view class="chatBox_main_View_header">
 						<template
 							v-if="item.target == 'assistant' || (item.target == 'system' && messageList.size == 1)">
-							<image class="chatBox_main_View_header_image" src="../../static/logo.svg"></image>
+							<image class="chatBox_main_View_header_image"
+								:style="{width:AppName == 'bianjie'? '200rpx':'160rpx'}"
+								:src="AppName == 'bianjie'? '../../static/logo.svg' : '../../static/wanxianglogo.svg'">
+							</image>
 						</template>
 						<template v-else>
-							<!-- <view class="avatar">
-											刘
-										</view> -->
+							<!-- <view class="avatar">刘立</view> -->
 						</template>
 					</view>
 					<!-- 如果为模板得情况 -->
@@ -99,7 +100,6 @@
 
 <script lang="ts" setup>
 	import useChatStore from '@/store/chat';
-	import V35Template from '@/components/ChatTemplate/V35Template.vue';
 	import ChatTemplate from './ChatTemplate.vue';
 	import MessageItem from '@/components/CommonChat/MessageItem.vue';
 	import ChatEelseHandler from '@/components/CommonChat/ChatEelseHandler.vue';
@@ -107,6 +107,8 @@
 	import { onMounted, ref, watch } from 'vue';
 	import { generateUUID } from '../../tools/uuid';
 	import { storeToRefs } from 'pinia';
+	import { AppName } from '@/http';
+
 	import { TemplateConfig, noHistoryArr } from '../../pages/chat/chatConfig';
 	const ChatStore = useChatStore();
 	const { model, selectChatId } = storeToRefs(ChatStore);
@@ -115,6 +117,7 @@
 		emit('passToGrandparent', value);
 	};
 	const ChatEelseHandlerRef = ref(null);
+	const IsHasChatOverMessage = defineModel('IsHasChatOverMessage')
 	// 获取初始消息模版
 	const getInitTemplate = () => {
 		const maps = new Map();
@@ -162,9 +165,11 @@
 					currentMsg.forEach((item : ItemMessage, index : number) => {
 						messageList.value.set(item.id, item);
 					});
+					IsHasChatOverMessage.value = false
 				}, 1000);
 			} else {
 				messageList.value = getInitTemplate();
+				IsHasChatOverMessage.value = true
 			}
 		},
 		{ immediate: true }
@@ -261,8 +266,8 @@
 			padding: 10rpx;
 
 			&_image {
-				height: 30rpx;
-				width: 100rpx;
+				height: 40rpx;
+				width: 160rpx;
 			}
 		}
 
@@ -304,7 +309,7 @@
 		min-width: 200rpx;
 		overflow: hidden;
 		border-radius: 10rpx;
-		
+
 	}
 
 	.messageTemplate {

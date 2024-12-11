@@ -5,24 +5,22 @@
 				<view class="downImages">
 					<up-icon @click="downloadImages" name="download" size="20"></up-icon>
 				</view>
-				123
-				<!-- <qiun-data-charts ref="chartsRef" @complete="getcharts" @getImage="getim" inScrollView canvas2d
-					:type="props.uType || 'line'" :chartData="chartData" /> -->
-				<!-- 	<QiunDataCharts ref="chartsRef" @complete="getcharts" @getImage="getim" inScrollView canvas2d
-					:type="props.uType || 'line'" :chartData="chartData" /> -->
+
+				<qiun-data-charts ref="chartsRef" @complete="getcharts" @getImage="getim" inScrollView canvas2d
+					:type="props.uType || 'line'" :chartData="chartData" />
+
 			</view>
 			<template v-else>
 				{{msgContent}}
 			</template>
 		</view>
 		<view v-else>
-			<zero-markdown-view :markdown="msgContent"></zero-markdown-view>
+			<zero-markdown-view :markdown="msgContent" />
 		</view>
 	</view>
 </template>
 
 <script setup lang="ts">
-	// import QiunDataCharts from '@/pages/index/subPage/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
 	import { computed, ref, } from 'vue';
 	import { useChatStore } from '@/store';
 	import { saveImage } from '@/utils/saveImages';
@@ -33,10 +31,8 @@
 	const hasUchatsBlock = ref(false);
 	const chartsRef = ref(null)
 	function parseToJsonObject(str) {
-		// 将所有的键名用双引号括起来
 		const validJsonStr = str.replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":');
 		try {
-			// 尝试解析为 JSON 对象
 			const jsonObj = JSON.parse(validJsonStr);
 			return jsonObj;
 		} catch (error) {
