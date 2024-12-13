@@ -27,7 +27,7 @@ export interface LanguageItem {
 }
 export const languageData : LanguageItem[] = [
 	{
-		label: '英语',
+		label: '英文',
 		value: 'en'
 	},
 	{
@@ -93,5 +93,5 @@ export const languageData : LanguageItem[] = [
 ]
 
 export const languages = [
-	'英语', '中文', '印度尼西亚', '法语', '德语', '俄语', '韩语', '越南语', '西班牙语', '日语', '尼泊尔语', '阿拉伯语', '意大利语', '泰语', '荷兰语', '缅甸语'
+	'英文', '中文', '印度尼西亚', '法语', '德语', '俄语', '韩语', '越南语', '西班牙语', '日语', '尼泊尔语', '阿拉伯语', '意大利语', '泰语', '荷兰语', '缅甸语'
 ]

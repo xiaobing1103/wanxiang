@@ -4,7 +4,7 @@
 			<CommonHeader />
 		</template>
 		<view class="TranslatePages">
-			<LeftMenus v-model:currentProject="currentProject" />
+			<LeftMenus :currentProject="currentProject" @ChangeProJect='ChangeProJect' />
 			<view class="TranslatePages_rightBox">
 				<template v-if="newMenuLists[currentProject]?.length> 0">
 					<view class="TranslatePages_rightBox_items" v-for="(items,index) in newMenuLists[currentProject]"
@@ -44,10 +44,15 @@
 	import AiAgentTemplate from './subPage/AIaiAgent/aiAgentTemplate'
 	import LeftMenus from './LeftMenus.vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
-	import { ref } from 'vue';
+	import { ref, reactive } from 'vue';
 	import { useAiAgentChats } from '@/store';
 	const currentProject = ref('AI智能体')
-	const { $assets } = useGlobalProperties()
+	const { $assets, $api } = useGlobalProperties()
+	const imgConfig = {
+		"论文辅助": $assets.Application2,
+		"文章创作": $assets.Application3,
+		"文案策划": $assets.Application4,
+	}
 	const toPage = (item) => {
 		if (!item.path) {
 			uni.$u.toast('尚未开放')
@@ -57,8 +62,37 @@
 			url: item.path
 		})
 	}
+
+	const ChangeProJect = async (val : string) => {
+		if (val == 'AI应用') {
+			await getAiApplication(val)
+		}
+		currentProject.value = val
+	}
+	const getAiApplication = async (index : string) => {
+		const categoryListsReq = await $api.get('api/v1/nika/categoryLists')
+		if (categoryListsReq.code == 1) {
+			const newData = categoryListsReq.data.slice(2).map((items, dex) => {
+				items.title = items.name
+
+				if (imgConfig[items.name]) {
+
+					items.cover = imgConfig[items.name]
+				} else {
+					items.cover = $assets.artistWriteIcon
+				}
+
+				items.description = 'AI应用创作，你的创作得力助手'
+
+				return items
+
+			})
+			newMenuLists[index] = [...newMenuLists[index], ...newData]
+			console.log(newMenuLists)
+		}
+	}
 	const AiAgentChats = useAiAgentChats()
-	const newMenuLists = {
+	const newMenuLists = reactive({
 		"AI智能体": [
 			...AiAgentChats.agentMenus
 		],
@@ -179,6 +213,12 @@
 				title: 'AI文档翻译',
 				description: '由人工智能提取信息后翻译',
 				path: '/pages/function/subPage/TranslatePages/index'
+			},
+			{
+				cover: $assets.translate20,
+				title: 'AI文档翻译2.0',
+				description: '由人工智能提取信息后翻译',
+				path: '/pages/function/subPage/TranslatePages/TranslatePages20'
 			},
 			{
 				path: '/pages/function/subPage/CommonAiTranslatePages/index',
@@ -303,7 +343,15 @@
 				path: '/pages/function/subPage/TextCreateVideo/AIExtractMusic/index'
 			},
 		]
-	}
+		, 'AI应用': [
+			{
+				cover: $assets.aiApplication,
+				title: 'AI应用中心',
+				description: 'AI应用智能创作中心',
+				path: '/pages/function/subPage/AIApplication/index'
+			},
+		]
+	})
 </script>
 <style lang="scss" scoped>
 	.TranslatePages {

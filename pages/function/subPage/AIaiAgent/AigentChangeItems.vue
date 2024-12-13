@@ -5,7 +5,8 @@
 		</view>
 		<view class="AigentChangeItemsTem">
 			<template v-for="(items,index) in AiAgentChats.agentMenus" :key="index">
-				<view class="AigentChangeItemsTem_items" @click="toPath(items.path)">
+				<view :style="{background:items.path.includes(AiAgentChats.agentId) ? '#ecf5ff':'' }"
+					class="AigentChangeItemsTem_items" @click="toPath(items.path)">
 					<image class="AigentChangeItemsTem_items_image" :src="items.cover" mode=""></image>
 					<view class="AigentChangeItemsTem_items_text">
 						{{items.title}}

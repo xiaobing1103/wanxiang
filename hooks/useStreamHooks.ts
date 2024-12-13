@@ -62,6 +62,7 @@ export const useStreamHooks = (options ?: Options) => {
 			if (requestTask && typeof requestTask.onChunkReceived === 'function') {
 				requestTask.onChunkReceived(async res => {
 					let message = resloveResponseText(res.data);
+
 					if (!options.checkNumsType) {
 						if (ChatStore.model == 'net') {
 							message = await handlerCurrentModel(message)
@@ -83,6 +84,7 @@ export const useStreamHooks = (options ?: Options) => {
 			console.error('Error in getStream:', error);
 		}
 	};
+
 
 	const handleResloveError = async (code : ErrorCode, options : StreamOptions, response ?: UniApp.RequestSuccessCallbackResult) => {
 		switch (code) {
@@ -119,7 +121,7 @@ export const useStreamHooks = (options ?: Options) => {
 				}
 			}
 			if (options.isAiAigent) {
-				const newChunk = await handlerCurrentAiagent(chunk)
+				let newChunk = await handlerCurrentAiagent(chunk)
 				options.onmessage(newChunk);
 			} else {
 				options.onmessage && options.onmessage(chunk)
@@ -190,6 +192,9 @@ export const useStreamHooks = (options ?: Options) => {
 	const setIsRecive = () => {
 		isRecive.value = false;
 	}
+
+	let htmlString = ''
+
 	let globalSearchResults = [];
 	// 检查元素是否已存在于数组中，基于某个唯一标识符（例如链接）
 	function isDuplicate(item, array) {

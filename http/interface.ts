@@ -103,8 +103,7 @@ export default {
 					});
 			} else {
 				if (options.isWechatSendImages) {
-					const arr = ['image', 'file', 'text', 'video']
-
+					const arr = ['image', 'file', 'text', 'video', 'doc']
 					const { image, file, ...others } = options.data;
 					let filePath
 					let fileName
@@ -145,7 +144,7 @@ export default {
 			}
 		});
 	},
-	
+
 	async fetchStream(options) {
 		const { url, method, data, header, success, fail, controller } = options;
 		console.log(controller)

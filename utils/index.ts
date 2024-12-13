@@ -222,13 +222,14 @@ function checkFileType(fileName : string, allowedExtensions = ['acc', 'mp4', 'op
 		return false; // 文件类型不允许
 	}
 }
-const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, acceptNumber ?: number, acceptTips ?: string) : Promise<{
+const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, acceptNumber ?: number, acceptTips ?: string, translateType ?: string) : Promise<{
 	fileName : string,
 	fileType : string,
 	formdata : null,
 	response : null,
 	isJson : boolean,
 	isWechatSendImages : boolean,
+	originFormData : null | any
 }> => {
 	const returnDatas = {
 		fileType: '',
@@ -237,6 +238,7 @@ const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, a
 		response: undefined,
 		isJson: undefined,
 		isWechatSendImages: undefined,
+		originFormData: undefined
 	}
 	return new Promise((resolve, reject) => {
 		// #ifdef H5
@@ -246,6 +248,9 @@ const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, a
 		}
 		returnDatas.fileName = event.file[0].name
 		returnDatas.formdata = new FormData()
+		returnDatas.originFormData = new FormData()
+		returnDatas.originFormData.append('doc', event.file[0].file)
+		returnDatas.originFormData.append('target_lang', translateType)
 		returnDatas.formdata.append('file', event.file[0].file)
 		// #endif
 		// #ifdef MP-WEIXIN
@@ -253,6 +258,7 @@ const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, a
 		returnDatas.formdata = { file: event.file[0].url }
 		returnDatas.isWechatSendImages = true
 		returnDatas.isJosn = true
+		returnDatas.originFormData = { doc: event.file[0].url, target_lang: translateType }
 		// #endif
 		const types = allowTypes ? allowTypes : ['docx', 'pdf']
 		returnDatas.fileType = event.file[0].name.split('.').pop().toLowerCase();

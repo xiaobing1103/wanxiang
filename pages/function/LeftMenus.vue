@@ -1,6 +1,6 @@
 <template>
 	<view class="leftMenusLayout">
-		<view class="leftMenus" v-for="(item,index) in datas" :key="index" @click="changeProJect(item)">
+		<view class="leftMenus" v-for="(item,index) in datas" :key="index" @click="emitProject(item)">
 			<view :class="item.title == currentProject ? 'leftMenus_box2':'leftMenus_box' ">
 				<text class="leftMenus_box_text">{{item.title}}</text>
 				<view class="leftMenus_box_tips" v-if="item.hot"></view>
@@ -19,25 +19,25 @@
 
 <script setup lang="ts">
 	import { ref } from 'vue';
+	const emits = defineEmits(['ChangeProJect'])
+	const props = defineProps<{ currentProject : string }>()
 	const datas = [
-
 		{ title: 'AI智能体', hot: true },
 		{ title: 'AI翻译', hot: true },
 		{ title: 'AI音乐', hot: true },
 		{ title: 'AI视频', hot: true },
+		{ title: 'AI应用', hot: true },
 		{ title: 'AI文档', },
 		{ title: 'AI语音', },
 		{ title: 'AI识别', },
-		{ title: 'AI应用', },
 		{ title: 'AI写作', },
 		{ title: 'AI论文', },
 
 	]
-	const currentProject = defineModel('currentProject')
 
 
-	const changeProJect = ({ title }) => {
-		currentProject.value = title
+	const emitProject = ({ title }) => {
+		emits('ChangeProJect', title)
 	}
 </script>
 

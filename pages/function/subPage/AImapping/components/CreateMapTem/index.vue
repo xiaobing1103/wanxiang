@@ -18,7 +18,6 @@
 			</view>
 			<!-- #ifdef H5 -->
 			<view class="contentHeader">
-
 				<view class="contentHeader_left">
 					内容大纲
 				</view>
@@ -27,7 +26,6 @@
 				</view>
 			</view>
 			<!-- #endif -->
-
 		</view>
 	</view>
 	<!-- #ifdef H5 -->
@@ -37,7 +35,7 @@
 			<div class="mapping_svgToolBar" ref="refToolbar" />
 		</div>
 	</view>
-	<up-popup v-model:show="showExportPopup">
+	<up-popup round="10" v-model:show="showExportPopup">
 		<view class="popupviewMain">
 			<view class="popupview" v-for="(items,index) in exportOptions" :key="index" @click="handlers(items.key)">
 				<view class="popupview_items">

@@ -72,7 +72,7 @@
 	});
 	onLoad((options : any) => {
 		if (options.invite_code) {
-			
+
 			UserStore.setInvite_code(options.invite_code)
 		}
 		console.log('apppppppp -----------------------', options)
@@ -168,8 +168,10 @@
 		const requestOptions = {
 			url: options.url,
 			data: options.data,
-			onmessage: (text : UniApp.RequestSuccessCallbackResult) => {
+			onmessage: async (text : UniApp.RequestSuccessCallbackResult) => {
 				result += text;
+				console.log(result)
+				// result = await streamSpark(result)
 				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text', echartsType: options.echartsType });
 				scrollToBottom();
 			},
@@ -196,4 +198,21 @@
 		};
 		streamRequest(requestOptions);
 	}
+	// const streamSpark = (text : string) : Promise<string> => {
+	// 	return new Promise((resolve, reject) => {
+	// 		// 检查是否有未闭合的代码块
+	// 		let htmlString = "";
+	// 		// 判断markdown中代码块标识符的数量是否为偶数
+	// 		if (text.split("```").length % 2) {
+	// 			let content = text;
+	// 			if (content[content.length - 1] != "\n") {
+	// 				content += "\n";
+	// 			}
+	// 			htmlString = content;
+	// 		} else {
+	// 			htmlString = text;
+	// 		}
+	// 		resolve(htmlString);
+	// 	});
+	// }
 </script>

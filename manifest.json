@@ -58,7 +58,7 @@
     },
     "quickapp" : {},
     "mp-weixin" : {
-        "appid" : "wx493b9b967a6f410c",
+        "appid" : "wx67c8453af19438e3",
         "permission" : {
             "scope.writeFiles" : {
                 "desc" : "你的文件将保存到本地"

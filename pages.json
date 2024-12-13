@@ -271,6 +271,14 @@
 						"navigationBarTitleText": "艺术二维码",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "aiRevers3D/index",
+					"name": "aiRevers3D",
+					"style": {
+						"navigationBarTitleText": "真人转3D",
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		},
@@ -425,6 +433,14 @@
 					"name": "TranslatePages",
 					"style": {
 						"navigationBarTitleText": "AI文档翻译",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TranslatePages/TranslatePages20",
+					"name": "TranslatePages20",
+					"style": {
+						"navigationBarTitleText": "AI文档翻译2.0",
 						"navigationStyle": "custom"
 					}
 				},
@@ -625,6 +641,14 @@
 					"name": "mainPages",
 					"style": {
 						"navigationBarTitleText": "智能体对话",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AIApplication/index",
+					"name": "AIApplication",
+					"style": {
+						"navigationBarTitleText": "AI医用中心",
 						"navigationStyle": "custom"
 					}
 				}

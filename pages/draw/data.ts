@@ -68,6 +68,13 @@ export const menuList = [
 		description: "创作风格独树一帜的二维码",
 		path: "/pages/draw/subPage/behindQRcode/articleQRcodoe",
 	},
+	{
+		cover: $assets.aiRevers3D,
+		title: "真人转3D",
+		description: "真人照片转换3d风格",
+		path: "/pages/draw/subPage/aiRevers3D/index",
+	},
+
 ];
 // 定义键名的联合类型
 export type DrawExampleKeys =

@@ -300,6 +300,12 @@ export interface IconConfig {
 	aiAigentLoadingIcon : string
 	aiAigentLoadingImage : string
 	aiAigentDrawLoading : string
+	aiRevers3D : string
+	translate20 : string
+	aiApplication : string
+	Application2 : string
+	Application3 : string
+	Application4 : string
 }
 export interface ModelConfig {
 	title : string;
@@ -469,6 +475,13 @@ const iconConfig : IconConfig = {
 	aiAigentLoadingIcon: getUrl('/2024/12/05/1165fde6298d8426bfb5584e09a3abc6.gif'),
 	aiAigentLoadingImage: getUrl('/2024/12/06/98c674deeb2da4cc48ab086d903d46d9.gif'),
 	aiAigentDrawLoading: getUrl('/2024/12/06/d31346750914e8326dfa974ec58eaf92.gif'),
+	aiRevers3D: getUrl('/2024/12/11/eaa59e8703fff4c61af0693b42c42e8c.png'),
+	translate20: getUrl('/2024/12/12/1ecbc2151bf7fd25782b8356572e1125.jpg'),
+	aiApplication: getUrl('/2024/12/13/d48c1073e68c148bea75cf7aed7fb9de.jpg'),
+	Application2: getUrl('/2024/12/13/dbdf17d09e7835d8830608970dc04344.webp'),
+	Application3: getUrl('/2024/12/13/f38f31474bd18255372f6d1dc3ef01e5.webp'),
+	Application4: getUrl('/2024/12/13/0467e9a6051422bed62e4054eab406ce.webp'),
+
 
 }
 

@@ -9,6 +9,7 @@ export function saveFile(url : string, fileType : string) {
 			console.error('Base64 转换失败:', error);
 		});
 	} else {
+		// #ifdef MP-WEIXIN
 		uni.downloadFile({
 			url: url,
 			success: (res) => {
@@ -25,6 +26,18 @@ export function saveFile(url : string, fileType : string) {
 				console.error('下载失败:', err);
 			}
 		});
+		// #endif
+		// #ifdef H5
+		if (url.startsWith('http')) {
+			// 如果是网络文件，直接在新窗口中打开
+			window.open(url);
+		} else {
+			const file = new File([url], `downloaded_file.${fileType}`, { type: `application/${fileType}` });
+			const fileURL = URL.createObjectURL(file);
+			window.open(fileURL);
+		}
+		uni.hideLoading();
+		// #endif
 	}
 }
 
@@ -53,6 +66,7 @@ export function base64ToArrayBuffer(base64) {
 }
 
 export function saveToLocal(filePath : string, fileType : string) {
+
 	const saveF = uni.getFileSystemManager()
 	saveF.saveFile({
 		tempFilePath: filePath,
@@ -75,4 +89,6 @@ export function saveToLocal(filePath : string, fileType : string) {
 			console.error('保存失败:', err);
 		}
 	});
+
+
 }
