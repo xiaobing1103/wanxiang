@@ -306,6 +306,27 @@ export interface IconConfig {
 	Application2 : string
 	Application3 : string
 	Application4 : string
+	Application5 : string
+	Application6 : string
+	Application7 : string
+	Application8 : string
+	Application9 : string
+	Application10 : string
+	Application11 : string
+	Application12 : string
+	Application13 : string
+	Application14 : string
+	Application15 : string
+	Application16 : string
+	Application17 : string
+	Application18 : string
+	Application19 : string
+	Application20 : string
+	Application21 : string
+	Application22 : string
+	Application23 : string
+	Application24 : string
+	ApplicationsBackground : string
 }
 export interface ModelConfig {
 	title : string;
@@ -481,8 +502,27 @@ const iconConfig : IconConfig = {
 	Application2: getUrl('/2024/12/13/dbdf17d09e7835d8830608970dc04344.webp'),
 	Application3: getUrl('/2024/12/13/f38f31474bd18255372f6d1dc3ef01e5.webp'),
 	Application4: getUrl('/2024/12/13/0467e9a6051422bed62e4054eab406ce.webp'),
-
-
+	Application5: getUrl('/2024/12/16/f04b277b9bcbdd5beffd721a0129ae53.webp'),
+	Application6: getUrl('/2024/12/16/061657a1407bebbcb5c5f55a1db6c240.webp'),
+	Application7: getUrl('/2024/12/16/6c3784f12f179640f3f23faa9bdfb286.webp'),
+	Application8: getUrl('/2024/12/16/650d01d3b426bb8af35ad604ef283eee.webp'),
+	Application9: getUrl('/2024/12/16/c05c55a56f96f11cfbc7b72eac0c644f.webp'),
+	Application10: getUrl('/2024/12/16/d1e2a25768f06fad3bb2b177c163c447.webp'),
+	Application11: getUrl('/2024/12/16/b5567ac778a58cf9dbff17cac1b5b261.jpg'),
+	Application12: getUrl('/2024/12/16/fdd88669d1b380f901ccde1a0247e5b8.jpg'),
+	Application13: getUrl('/2024/12/16/379a3557205be98a669254e8c73adaa4.jpg'),
+	Application14: getUrl('/2024/12/16/19a87be12100040a44a327e938683a44.jpeg'),
+	Application15: getUrl('/2024/12/16/a503e41727c857a77a38cda9e9945dde.webp'),
+	Application16: getUrl('/2024/12/16/1cf26663b1197afbff55e2f3562727dc.webp'),
+	Application17: getUrl('/2024/12/16/7b7f546e61897cf70be7e67c88f66f12.webp'),
+	Application18: getUrl('/2024/12/16/ac85df12894ec8e78513705e1f2346e0.png'),
+	Application19: getUrl('/2024/12/16/43d012413c248d5e41012ee9111978d7.webp'),
+	Application20: getUrl('/2024/12/16/4c6f48c70cb8bfcef3afb5f33a50305a.jpg'),
+	Application21: getUrl('/2024/12/16/5a0391361dfe96c9981176a5aa150a32.webp'),
+	Application22: getUrl('/2024/12/16/a6e2703982045216ac68d903162b87ce.webp'),
+	Application23: getUrl('/2024/12/16/790dfb2ff072194ebcb2ad37027fbdbf.jpg'),
+	Application24: getUrl('/2024/12/16/80313b822a072ead218aeaf1131f798d.jpg'),
+	ApplicationsBackground: getUrl('/2024/12/16/64639c24c88011dc33ebea90f16b8924.jpg'),
 }
 
 export default iconConfig

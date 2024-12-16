@@ -648,7 +648,15 @@
 					"path": "AIApplication/index",
 					"name": "AIApplication",
 					"style": {
-						"navigationBarTitleText": "AI医用中心",
+						"navigationBarTitleText": "AI应用中心",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "AIApplication/SingleApplication/index",
+					"name": "SingleApplication",
+					"style": {
+						"navigationBarTitleText": "AI应用",
 						"navigationStyle": "custom"
 					}
 				}

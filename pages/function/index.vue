@@ -46,12 +46,33 @@
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
 	import { ref, reactive } from 'vue';
 	import { useAiAgentChats } from '@/store';
-	const currentProject = ref('AI智能体')
+	const currentProject = ref('AI视频')
 	const { $assets, $api } = useGlobalProperties()
 	const imgConfig = {
 		"论文辅助": $assets.Application2,
 		"文章创作": $assets.Application3,
 		"文案策划": $assets.Application4,
+		"生活助手": $assets.Application5,
+		"编程开发": $assets.Application6,
+		"商业文书": $assets.Application7,
+		"工作助手": $assets.Application8,
+		"新媒体运营": $assets.Application9,
+		"科教百科": $assets.Application10,
+		"企业服务": $assets.Application11,
+		"电商运营": $assets.Application12,
+		"法律服务": $assets.Application13,
+		"旅游攻略": $assets.Application14,
+		"教学辅助": $assets.Application15,
+		"经史典籍": $assets.Application16,
+		"软件使用": $assets.Application17,
+		"休闲娱乐": $assets.Application18,
+		"学习辅导": $assets.Application19,
+		"医疗健康": $assets.Application20,
+		"占星问卜": $assets.Application21,
+		"实用工具": $assets.Application22,
+		"其他应用": $assets.Application23,
+		"文创工具": $assets.Application24,
+
 	}
 	const toPage = (item) => {
 		if (!item.path) {
@@ -74,16 +95,12 @@
 		if (categoryListsReq.code == 1) {
 			const newData = categoryListsReq.data.slice(2).map((items, dex) => {
 				items.title = items.name
-
 				if (imgConfig[items.name]) {
-
 					items.cover = imgConfig[items.name]
 				} else {
 					items.cover = $assets.artistWriteIcon
 				}
-
 				items.description = 'AI应用创作，你的创作得力助手'
-
 				return items
 
 			})

@@ -36,9 +36,9 @@
 				<template v-if="currentProject">
 					<view class="voiceLink">
 						<view class="voiceLink_uploadFile">
-							<up-upload :customStyle="{ width: '100%' }" :accept='accept' :previewImage="false"
-								@afterRead="afterRead" @delete="deletePic" :fileList="fileList1" :maxCount="1" name="1"
-								multiple>
+							<up-upload :customStyle="{width: '100%',display:'flex',alignItems:'center' }"
+								:accept='accept' :previewImage="false" @afterRead="afterRead" @delete="deletePic"
+								:fileList="fileList1" :maxCount="1" name="1" multiple>
 								<view class="voiceLink_uploadFile_box">
 									<image class="voiceLink_uploadFile_imageIcon" :src="$assets.videoModelIcon" mode="">
 									</image>
@@ -341,6 +341,8 @@
 
 		&_uploadFile {
 			width: 100%;
+			align-items: center;
+			justify-content: center;
 
 			.u-upload {
 				align-items: flex-start !important;
