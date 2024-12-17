@@ -37,18 +37,18 @@
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import SearchBox from './SearchBox.vue'
 	import { ref } from 'vue';
+	import { onLoad } from '@dcloudio/uni-app'
 	const { $assets, $api } = useGlobalProperties()
 	const TextValue = ref('')
 	const creationLists = ref([])
 	const paging = ref(null)
-
+	const category_id = ref('')
 	const getLists = async (page_no : number = 1, value : string = '', page_size ?: number = 15) => {
 		const parmas = {
-			category_id: 0,
 			page_no,
 			page_size: 10
 		}
-		const creationListsReq = await $api.get(`api/v1/nika/creationLists?keyword=${TextValue.value}`, parmas)
+		const creationListsReq = await $api.get(`api/v1/nika/creationLists?keyword=${TextValue.value}&category_id=${category_id.value}`, parmas)
 		if (creationListsReq.code == 1) {
 			paging.value.complete(creationListsReq.data.lists)
 		} else {
@@ -67,7 +67,11 @@
 			creationLists.value = creationListsReq.data.lists
 		}
 	}
-
+	onLoad(async (query) => {
+		if (query.id) {
+			category_id.value = query.id
+		}
+	})
 
 	const toNextPath = (id : string) => {
 		uni.navigateTo({
@@ -79,6 +83,7 @@
 <style lang="scss" scoped>
 	.AIApplication {
 		padding: 30rpx;
+
 
 		&_header {
 			height: 300rpx;

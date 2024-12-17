@@ -8,7 +8,7 @@
 			<view class="TranslatePages_rightBox">
 				<template v-if="newMenuLists[currentProject]?.length> 0">
 					<view class="TranslatePages_rightBox_items" v-for="(items,index) in newMenuLists[currentProject]"
-						@click="toPage(items)" :key="index">
+						@click="toPage(items,items?.description)" :key="index">
 						<view class="TranslatePages_rightBox_items_left">
 							<image class="TranslatePages_rightBox_items_left_image" :src="items.cover"
 								mode="aspectFill">
@@ -46,7 +46,7 @@
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
 	import { ref, reactive } from 'vue';
 	import { useAiAgentChats } from '@/store';
-	const currentProject = ref('AI视频')
+	const currentProject = ref('AI智能体')
 	const { $assets, $api } = useGlobalProperties()
 	const imgConfig = {
 		"论文辅助": $assets.Application2,
@@ -74,7 +74,14 @@
 		"文创工具": $assets.Application24,
 
 	}
-	const toPage = (item) => {
+	const toPage = (item, desc : string) => {
+		if (desc) {
+			uni.navigateTo({
+				url: '/pages/function/subPage/AIApplication/index?id=' + item.id
+			})
+			return
+		}
+
 		if (!item.path) {
 			uni.$u.toast('尚未开放')
 			return

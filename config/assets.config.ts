@@ -327,6 +327,7 @@ export interface IconConfig {
 	Application23 : string
 	Application24 : string
 	ApplicationsBackground : string
+	NoApplicationsData : string
 }
 export interface ModelConfig {
 	title : string;
@@ -523,6 +524,8 @@ const iconConfig : IconConfig = {
 	Application23: getUrl('/2024/12/16/790dfb2ff072194ebcb2ad37027fbdbf.jpg'),
 	Application24: getUrl('/2024/12/16/80313b822a072ead218aeaf1131f798d.jpg'),
 	ApplicationsBackground: getUrl('/2024/12/16/64639c24c88011dc33ebea90f16b8924.jpg'),
+	NoApplicationsData: getUrl('/2024/12/17/318c0e6fd3d37e1f1a4fc6ecf0ecfb6c.png'),
+
 }
 
 export default iconConfig

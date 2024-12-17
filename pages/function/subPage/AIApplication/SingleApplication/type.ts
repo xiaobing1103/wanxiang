@@ -22,6 +22,7 @@ export interface DetailFormDTO {
 	name : string
 	props : DetailFormPropsDTO
 	title : string
+
 }
 export interface DetailFormPropsDTO {
 	autosize : boolean
@@ -31,4 +32,19 @@ export interface DetailFormPropsDTO {
 	placeholder : string
 	rows : number
 	title : string
+	autoHeight : boolean
+	options : string[]
+}
+export interface stateFromDTO {
+	autosize : boolean
+	defaultValue : string
+	isRequired : boolean
+	maxlength : number
+	modelValue : string | string[]
+	name : string
+	placeholder : string
+	rows : number
+	title : string
+	autoHeight : boolean
+	options : string[]
 }
