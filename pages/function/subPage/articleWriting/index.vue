@@ -91,7 +91,7 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { useChatStore } from '@/store';
 	import { exportTxt, toCopyText } from '@/utils';
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const ChatStore = useChatStore()
 	const seletedParmas = reactive({
 		length: '自动',
@@ -145,11 +145,13 @@
 			prompt,
 		}
 		result.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				result.value += text
+			onmessage: async (text) => {
+				newStr += text
+				result.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

@@ -8,7 +8,7 @@
 			<view class="TranslatePages_rightBox">
 				<template v-if="newMenuLists[currentProject]?.length> 0">
 					<view class="TranslatePages_rightBox_items" v-for="(items,index) in newMenuLists[currentProject]"
-						@click="toPage(items,items?.description)" :key="index">
+						@click="toPage(items,items?.id)" :key="index">
 						<view class="TranslatePages_rightBox_items_left">
 							<image class="TranslatePages_rightBox_items_left_image" :src="items.cover"
 								mode="aspectFill">
@@ -74,8 +74,8 @@
 		"文创工具": $assets.Application24,
 
 	}
-	const toPage = (item, desc : string) => {
-		if (desc) {
+	const toPage = (item, id : number) => {
+		if (id) {
 			uni.navigateTo({
 				url: '/pages/function/subPage/AIApplication/index?id=' + item.id
 			})

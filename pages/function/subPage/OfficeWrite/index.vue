@@ -83,7 +83,7 @@
 		}
 	}
 
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const pagingRef = ref(null)
 	const onScroolToBottom = () => {
 		nextTick(() => {
@@ -108,12 +108,13 @@
 
 		}
 		contentStr.value = ''
+		let newStr = ''
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				contentStr.value += text
-
+			onmessage: async (text:string) => {
+				newStr += text
+				contentStr.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

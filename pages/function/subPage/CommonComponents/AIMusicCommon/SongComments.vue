@@ -14,7 +14,7 @@
 	import { commonParmasType } from '../types';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { useChatStore } from '@/store';
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const commonParmas = defineModel<commonParmasType>('commonParmas')
 	const currentPages = defineModel<number>('currentPages')
 	const ChatStore = useChatStore();
@@ -41,11 +41,13 @@
 			prompt
 		}
 		commonParmas.value.prompt = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				commonParmas.value.prompt += text
+			onmessage: async (text:string) =>{
+				newStr += text
+				commonParmas.value.prompt = await streamSpark(newStr)
 				// onScroolToBottom()
 			},
 			onfinish() {

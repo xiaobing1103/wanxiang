@@ -43,7 +43,7 @@
 	const { setChatInfo } = ChatStore;
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const chatValue = ref('');
-	const { streamRequest, isRecive, onCancelRequest } = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest ,streamSpark } = useStreamHooks();
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
 	// 判断当前对话框是否处于对话状态
 	const IsHasChatOverMessage = ref(false)
@@ -153,6 +153,7 @@
 
 	async function handleStream(options) {
 		let result = '';
+		let newStr = '';
 		const id = generateUUID();
 		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
 		ChatStore.setLoadingMessage(true);
@@ -163,8 +164,9 @@
 		const requestOptions = {
 			url: options.url,
 			data: options.data,
-			onmessage: (text : UniApp.RequestSuccessCallbackResult) => {
-				result += text;
+			onmessage: async (text : UniApp.RequestSuccessCallbackResult) => {
+				newStr += text;
+				result = await streamSpark(newStr)
 				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text', echartsType: options.echartsType });
 				scrollToBottom();
 			},

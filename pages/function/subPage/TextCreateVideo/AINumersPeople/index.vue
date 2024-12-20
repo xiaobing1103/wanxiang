@@ -111,7 +111,6 @@
 
 	const getDatas = async () => {
 		const DeepDanbooruModelReq = await $api.get('api/v1/video/deep_danbooru_model')
-
 		if (DeepDanbooruModelReq.code == 200) {
 			avatars.value = DeepDanbooruModelReq.data.avatar
 			voice.value = DeepDanbooruModelReq.data.voice

@@ -52,7 +52,7 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 
 	const MusicStore = useMusicStore()
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const { $api } = useGlobalProperties()
 	const queryId = ref('')
 	const ChatStore = useChatStore()
@@ -143,11 +143,13 @@
 			prompt: null,
 		}
 		SoraPromptPramas.prompt = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				SoraPromptPramas.prompt += text
+			onmessage: async (text : string) => {
+				newStr += text
+				SoraPromptPramas.prompt  =await streamSpark(newStr)
 			},
 			async onfinish() {
 				console.log('成功')

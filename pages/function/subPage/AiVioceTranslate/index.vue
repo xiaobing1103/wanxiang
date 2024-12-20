@@ -87,7 +87,7 @@
 	import { saveFile } from '../TranslatePages/downLoadLocal';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	const currentLang = ref('英文')
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const pagingRef = ref(null)
 	const ChatStore = useChatStore()
 	const msgContent = ref(`👆请在上面上传要翻译的文档内容`)
@@ -124,11 +124,13 @@
 			type: 'zhipu'
 		}
 		msgContent.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/zhipu',
 			data: data,
-			onmessage(text) {
-				msgContent.value += text
+			onmessage: async(text : string) => {
+				newStr += text
+				msgContent.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

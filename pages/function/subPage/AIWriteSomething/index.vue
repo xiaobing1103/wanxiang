@@ -140,7 +140,7 @@
 	import { useChatStore } from '@/store';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { exportTxt, toCopyText } from '@/utils';
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive ,streamSpark} = useStreamHooks()
 	const radiovalue1 = ref('2.0模式')
 	const switchValue = ref(false)
 	const newResult = ref([])
@@ -238,20 +238,23 @@
 		if (!type) {
 			resultValue.value = ''
 		}
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
+			onmessage: async (text : string) => {
 				if (type == 'zhaiyaoModalContent') {
-					zhaiyaoModalContent.value += text
+					newStr += text
+					zhaiyaoModalContent.value  = await streamSpark(newStr)
 				}
 				if (type == 'titleValue') {
-					TiTleValues.value += text
+					newStr += text
+					TiTleValues.value  = await streamSpark(newStr)
 				}
 				if (!type) {
-					resultValue.value += text
+				    newStr += text
+					resultValue.value  = await streamSpark(newStr)
 				}
-
 			},
 			onfinish() {
 				console.log('成功')

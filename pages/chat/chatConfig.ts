@@ -388,6 +388,7 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 			message: `我是跟KimiAI同款的模型，一款千亿参数的语言模型，具备优秀的语义理解、指令遵循和文本生成能力。支持8K上下文窗口，适合长文本的理解和内容生成场景。随着性能的迭代，模型会持续更新。`
 		}]
 	},
+
 	moonshot_v1_32k: {
 		messagesTemplate: [{
 			role: 'system',
@@ -402,6 +403,30 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 			template: 'moonshot_v1_128kTemplate',
 			messageType: 'text2',
 			message: `我是跟KimiAI同款的模型，一款千亿参数的语言模型，具备优秀的语义理解、指令遵循和文本生成能力。支持128K长上下文窗口，适合超长文本的理解和内容生成场景。随着性能的迭代，模型会持续更新。`
+		}]
+	},
+	doubao_v1_4k: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'doubao_v1_4k',
+			messageType: 'text2',
+			message: `豆包是你的 AI 聊天智能对话问答助手，写作文案翻译情感陪伴编程全能工具。 豆包为你答疑解惑，提供灵感，辅助创作，也可以和你畅聊任何你感兴趣的话题。`
+		}]
+	},
+	doubao_v1_32k: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'doubao_v1_32k',
+			messageType: 'text2',
+			message: `豆包是你的 AI 聊天智能对话问答助手，写作文案翻译情感陪伴编程全能工具。 豆包为你答疑解惑，提供灵感，辅助创作，也可以和你畅聊任何你感兴趣的话题。`
+		}]
+	},
+	doubao_v1_128k: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'doubao_v1_128k',
+			messageType: 'text2',
+			message: `豆包是你的 AI 聊天智能对话问答助手，写作文案翻译情感陪伴编程全能工具。 豆包为你答疑解惑，提供灵感，辅助创作，也可以和你畅聊任何你感兴趣的话题。`
 		}]
 	},
 	baidu_llama: {

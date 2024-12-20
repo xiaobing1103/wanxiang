@@ -264,7 +264,30 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelDesc: '我是跟KimiAI同款的模型,支持 128K 长上下文窗...',
 		checkNumsType: 'chat'
 	},
-
+	doubao_v1_4k:{
+		title: '豆包Pro · 4K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/moonshot_v1_8k',
+		modelIcon: $assets.doubao_llamaIcon,
+		modelDesc: '豆包是你的 AI 聊天智能对话问答助手，写作文...',
+		checkNumsType: 'chat'
+	},
+	doubao_v1_32k:{
+		title: '豆包Pro · 32K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/moonshot_v1_32k',
+		modelIcon: $assets.doubao_llamaIcon,
+		modelDesc: '豆包是你的 AI 聊天智能对话问答助手，写作文...',
+		checkNumsType: 'chat'
+	},
+	doubao_v1_128k:{
+		title: '豆包Pro · 128K',
+		ModelPath: '',
+		ModelApi: 'api/v1/chat2/moonshot_v1_128k',
+		modelIcon: $assets.doubao_llamaIcon,
+		modelDesc: '豆包是你的 AI 聊天智能对话问答助手，写作文...',
+		checkNumsType: 'chat'
+	},
 	baidu_llama: {
 		title: 'Llama · 英文',
 		ModelPath: '',

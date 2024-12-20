@@ -8,8 +8,8 @@
 						<template
 							v-if="item.target == 'assistant' || (item.target == 'system' && messageList.size == 1)">
 							<image class="chatBox_main_View_header_image"
-								:style="{width:AppName == 'bianjie'? '200rpx':'160rpx'}"
-								:src="AppName == 'bianjie'? '../../static/logo.svg' : '../../static/wanxianglogo.svg'">
+								:style="{width:AppName == 'bianjie' ? '200rpx' : '160rpx'}"
+								:src="AppName == 'bianjie' ? '../../static/logo.svg' : '../../static/wanxianglogo.svg' ">
 							</image>
 						</template>
 						<template v-else>

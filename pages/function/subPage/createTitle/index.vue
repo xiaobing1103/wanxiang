@@ -65,7 +65,7 @@
 	const pagingRef = ref(null)
 	const result = ref('')
 	const ChatStore = useChatStore()
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const { $assets } = useGlobalProperties()
 	const btnStyles = {
 		width: '80%',
@@ -107,12 +107,15 @@
 			prompt,
 		}
 		result.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				result.value += text
+			onmessage: async (text:string) => {
+				newStr += text
+			    result.value = await streamSpark(newStr)
 				onScroolToBottom()
+				
 			},
 			onfinish() {
 				console.log('成功')

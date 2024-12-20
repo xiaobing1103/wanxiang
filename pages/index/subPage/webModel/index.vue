@@ -93,7 +93,7 @@
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const { $api, $assets } = useGlobalProperties()
 	const { setChatInfo } = ChatStore;
-	const { streamRequest, isRecive, onCancelRequest } = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest ,streamSpark} = useStreamHooks();
 	const onCancel = () => {
 		onCancelRequest()
 		ChatStore.setLoadingMessage(false)
@@ -255,6 +255,7 @@
 	})
 	async function handleStream(options) {
 		let result = '';
+		let newStr = '';
 		const id = generateUUID();
 		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
 		ChatStore.setLoadingMessage(true);
@@ -265,8 +266,9 @@
 		const requestOptions = {
 			url: options.url,
 			data: options.data,
-			onmessage: (text : UniApp.RequestSuccessCallbackResult) => {
-				result += text;
+			onmessage: async (text : UniApp.RequestSuccessCallbackResult) => {
+				newStr += text;
+				result = await streamSpark(newStr)
 				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text' });
 				scrollToBottom();
 			},

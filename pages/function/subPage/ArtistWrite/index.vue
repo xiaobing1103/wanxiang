@@ -210,7 +210,7 @@
 		showOverlay.value = false
 		outlines.value[currentIndex.value].content = daGangContent.value
 	}
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark} = useStreamHooks()
 	const pagingRef = ref(null)
 	const pagingRef2 = ref(null)
 	const onScroolToBottom = () => {
@@ -259,12 +259,14 @@
 `
 		}
 		contentStr.value = ''
+		let newStr = ''
 		outlines.value = []
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				contentStr.value += text
+			onmessage: async (text:string) =>{
+				newStr += text
+				contentStr.value  = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {
@@ -314,11 +316,13 @@
 			type: "Web-AI论文模式生成大纲",
 			prompt: `你是一名文档大纲编写助手，接下来我需要你根据文档和大纲撰写文档内容，并以中文回复。`
 		}
+		let newStr = ''
 		const RequestObj = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				daGangContent.value += text
+			onmessage: async (text) => {
+				newStr += text
+				daGangContent.value = await streamSpark(newStr)
 				onScroolToBottom2()
 			},
 			onfinish() {

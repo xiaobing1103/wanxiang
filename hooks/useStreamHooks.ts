@@ -431,6 +431,20 @@ export const useStreamHooks = (options ?: Options) => {
 	const checkSubmit = async (checkType : string, number = 1) => {
 		await $api.post('api/v1/number2/submit', { type: checkType, number })
 	}
+	
+	const streamSpark = (text : string) : Promise<string> => {
+		return new Promise((resolve, reject) => {			
+			let htmlString = "";
+			const codeBlocks = text.match(/```[\s\S]*?```|```[\s\S]*?$/g) || []
+			const lastBlock = codeBlocks[codeBlocks.length - 1]
+			if (lastBlock && !lastBlock.endsWith('```')) {
+				  htmlString =text + '\n'
+				} else {
+				  htmlString =text
+				}
+			  resolve(htmlString); 
+		});
+	}
 	return {
 		streamRequest,
 		isRecive,
@@ -438,6 +452,7 @@ export const useStreamHooks = (options ?: Options) => {
 		checkSubmit,
 		checkNumFun,
 		setIsRecive,
+		streamSpark,
 		verifyTranslateTextLimit
 	}
 }
@@ -465,6 +480,9 @@ const decode = (text : string) => {
 	return txt
 }
 
+
+
+
 //处理返回的文本
 const resloveResponseText = (content : string) : string => {
 	let newMsg : string = ''
@@ -482,3 +500,4 @@ const resloveResponseText = (content : string) : string => {
 	}
 	return newMsg
 }
+

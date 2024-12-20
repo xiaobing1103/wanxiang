@@ -67,9 +67,7 @@
 								</view>
 							</template>
 						</view>
-
 					</template>
-
 				</template>
 			</template>
 			<view class="result">
@@ -129,7 +127,7 @@
 	const ChatStore = useChatStore()
 	const pagingRef = ref(null)
 	const descInput = ref('')
-	const { isRecive, streamRequest } = useStreamHooks()
+	const { isRecive, streamRequest , streamSpark} = useStreamHooks()
 	const bthStyles = {
 		height: '67rpx',
 		border: '0',
@@ -251,12 +249,14 @@
 			prompt: null,
 		}
 		descInput.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
+			onmessage: async (text : string) => {
 				console.log(text)
-				descInput.value += text
+				newStr += text
+			    descInput.value = await streamSpark(newStr)	
 				onScroolToBottom()
 			},
 			onfinish() {
@@ -269,7 +269,7 @@
 				}
 				console.log(err, "错误")
 			},
-			checkNumsType: 'fun_mapping'
+			checkNumsType: 'chat'
 		}
 		streamRequest(streamOptions)
 	}

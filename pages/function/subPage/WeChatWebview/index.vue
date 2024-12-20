@@ -43,7 +43,7 @@
   - 点击生成即可
   `
 	const descInput = ref('')
-	const { streamRequest } = useStreamHooks()
+	const { streamRequest , streamSpark } = useStreamHooks()
 	// 定义一个方法，用于向 WebView 发送消息
 	watch(descInput, (() => {
 		console.log(descInput.value)
@@ -105,12 +105,14 @@
 			prompt,
 			type: "zhipu"
 		}
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/glm_4_flash',
 			data: data,
-			onmessage(text) {
+			onmessage: async (text:string) => {
 				console.log(text)
-				descInput.value += text
+				newStr += text
+			    descInput.value = await streamSpark(newStr)
 			},
 			onfinish() {
 				console.log('成功')

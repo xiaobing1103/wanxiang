@@ -83,7 +83,7 @@
 	import { saveFile } from '../TranslatePages/downLoadLocal';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	const currentLang = ref('英文')
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark} = useStreamHooks()
 	const showpicker = ref(false)
 	const ChatStore = useChatStore()
 	const textValue = ref('')
@@ -153,12 +153,14 @@
 			prompt,
 		}
 		msgContent.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
+			onmessage: async (text : string) => {
 				console.log(text)
-				msgContent.value += text
+				newStr += text
+				msgContent.value =	await streamSpark(newStr)
 			},
 			onfinish() {
 				console.log('成功')

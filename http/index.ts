@@ -67,9 +67,12 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 				ChatStore.setLoadingMessage(false)
 
 			}
-			uni.navigateTo({
-				url: '/pages/my/subPage/login/index'
-			});
+			setTimeout(()=>{
+				uni.navigateTo({
+					url: '/pages/my/subPage/login/index'
+				});
+			},1500)
+			
 			ChatStore.setLoadingMessage(false)
 			// return response.data = await doRequest(response, url)
 		} else {
@@ -111,6 +114,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		// #endif
 		return isDelopMent;
 	} else {
+		
 		return new Promise((resolvce, reject) => {
 			http.request({
 				method: method,
@@ -193,7 +197,6 @@ const checkPosts = async (options : { url : string, data : any, checkNumsType ?:
 }
 
 function post(url : string, data : any, isjson ?: boolean, header ?: any, LoadingConfig ?: LoadingConfigTypes, isWechatSendImages ?: boolean) {
-
 	const httpDTO = {
 		url,
 		method: 'POST',
@@ -206,7 +209,6 @@ function post(url : string, data : any, isjson ?: boolean, header ?: any, Loadin
 		LoadingConfig,
 		isWechatSendImages,
 	};
-
 	return $http(httpDTO);
 }
 

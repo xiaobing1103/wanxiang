@@ -1,6 +1,6 @@
 <template>
 	<z-paging ref="srollRef"
-		:pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0 30rpx',backgroundImage : 'url()' }">
+		:pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0 30rpx', }" fixed>
 		<template #top>
 			<CommonHeader />
 			<ChangeModel />
@@ -8,10 +8,12 @@
 		<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" @echartsOnsendMessage="echartsOnsendMessage"
 			v-model:IsHasChatOverMessage="IsHasChatOverMessage" />
 		<template #bottom>
-			<template v-if="IsHasChatOverMessage">
-				<ChatInputToolTipVue @change="sendValue" />
-			</template>
-			<Chat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
+			<view class="chatBoxLayout">
+				<template v-if="IsHasChatOverMessage">
+					<ChatInputToolTipVue @change="sendValue" />
+				</template>
+				<Chat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
+			</view>
 		</template>
 	</z-paging>
 	<CommonModelSeleted />
@@ -43,7 +45,7 @@
 	const { setChatInfo } = ChatStore;
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const chatValue = ref('');
-	const { streamRequest, isRecive, onCancelRequest } = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest ,streamSpark} = useStreamHooks();
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
 	// 判断当前对话框是否处于对话状态
 	const IsHasChatOverMessage = ref(false)
@@ -158,6 +160,7 @@
 
 	async function handleStream(options) {
 		let result = '';
+		let newStr =''
 		const id = generateUUID();
 		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
 		ChatStore.setLoadingMessage(true);
@@ -169,9 +172,9 @@
 			url: options.url,
 			data: options.data,
 			onmessage: async (text : UniApp.RequestSuccessCallbackResult) => {
-				result += text;
+				newStr += text
+				result = await streamSpark(newStr)
 				console.log(result)
-				// result = await streamSpark(result)
 				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text', echartsType: options.echartsType });
 				scrollToBottom();
 			},
@@ -198,21 +201,16 @@
 		};
 		streamRequest(requestOptions);
 	}
-	// const streamSpark = (text : string) : Promise<string> => {
-	// 	return new Promise((resolve, reject) => {
-	// 		// 检查是否有未闭合的代码块
-	// 		let htmlString = "";
-	// 		// 判断markdown中代码块标识符的数量是否为偶数
-	// 		if (text.split("```").length % 2) {
-	// 			let content = text;
-	// 			if (content[content.length - 1] != "\n") {
-	// 				content += "\n";
-	// 			}
-	// 			htmlString = content;
-	// 		} else {
-	// 			htmlString = text;
-	// 		}
-	// 		resolve(htmlString);
-	// 	});
-	// }
+
 </script>
+<style scoped lang="scss">
+	.chatBoxLayout {
+		overflow: hidden;
+		padding: 30rpx 0;
+		/* #ifdef MP-WEIXIN */
+		padding-bottom: env(safe-area-inset-bottom);
+		/* #endif */
+		// overflow: hidden;
+	}
+	
+</style>

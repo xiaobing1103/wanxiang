@@ -84,9 +84,11 @@
 	import { videoword, exampleData, VideoVmodalType, imgword } from './datas';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
-	const { streamRequest, isRecive } = useStreamHooks()
+	import { useChatStore } from '@/store';
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const props = defineProps<{ currentPages : number }>()
 	const currentKey = ref('')
+	const ChatStore = useChatStore()
 	const SoraPromptPramas = defineModel<VideoVmodalType>('SoraPromptPramas')
 	const { $assets } = useGlobalProperties()
 	const showupOverlay = ref(false)
@@ -133,12 +135,14 @@
 			prompt
 		}
 		SoraPromptPramas.value.prompt = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
+			onmessage: async (text : string) => {
 				console.log(text)
-				SoraPromptPramas.value.prompt += text
+				newStr += text
+				SoraPromptPramas.value.prompt = await streamSpark(newStr)
 			},
 			onfinish() {
 				console.log('成功')

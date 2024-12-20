@@ -81,7 +81,7 @@
 	const languages = ['文言文', '白话文']
 	const currentLangFirst = ref('白话文')
 	const currentLang = ref('文言文')
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const showpicker = ref(false)
 	const textValue = ref('')
 	const currentType = ref('')
@@ -246,11 +246,13 @@
 			type: 'zhipu'
 		}
 		msgContent.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/zhipu',
 			data: data,
-			onmessage(text) {
-				msgContent.value += text
+			onmessage: async (text:string) => {
+				newStr += text
+				msgContent.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

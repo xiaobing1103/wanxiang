@@ -69,7 +69,7 @@
 		outLine ?: string
 	}
 	const pagingRef = ref()
-	const { streamRequest, isRecive, onCancelRequest } = useStreamHooks()
+	const { streamRequest, isRecive, onCancelRequest , streamSpark } = useStreamHooks()
 	const showContent = ref(false)
 	const themeStr = ref('')
 	const outlineStr = ref('')
@@ -139,6 +139,7 @@
 			title: '正文生成中...'
 		})
 		buttonLoading.value = true
+		let newStr = ''
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data,
@@ -156,8 +157,10 @@
 				buttonLoading.value = true
 
 			},
-			onmessage(text : string) {
-				contentExtraArr.value[outLineIndex.value].content += text
+			onmessage: async (text : string) => {
+				newStr += text
+				contentExtraArr.value[outLineIndex.value].content =await streamSpark(newStr)
+	
 				if (isScroll) {
 					pagingRef.value.scrollToBottom()
 				}
@@ -239,6 +242,7 @@
 			title: '大纲生成中...'
 		})
 		buttonLoading.value = true
+		let newStr = ''
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data,
@@ -270,8 +274,9 @@
 				uni.hideLoading()
 				buttonLoading.value = false
 			},
-			onmessage(text : string) {
-				outlineStr.value += text
+			onmessage:async(text : string) => {
+				newStr += text
+				outlineStr.value=await streamSpark(newStr)
 				nextTick(() => {
 					pagingRef.value.scrollToBottom()
 				})

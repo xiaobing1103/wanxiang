@@ -32,8 +32,6 @@
 		width: 100%;
 		display: flex;
 		justify-content: center;
-		// position: sticky;
-		// top: 8rpx;
 		z-index: 100;
 		height: 80rpx;
 		overflow: hidden;

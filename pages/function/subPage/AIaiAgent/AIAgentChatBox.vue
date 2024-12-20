@@ -30,7 +30,9 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import { generateUUID } from '@/tools/uuid';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
+	import { storeToRefs } from 'pinia'
 	const AiAgentChats = useAiAgentChats()
+	const { messageList } = storeToRefs(AiAgentChats);
 	const ChatStore = useChatStore()
 	const { $api } = useGlobalProperties()
 	const agentItem = computed(() => AiAgentChats.agentItem)
@@ -72,12 +74,11 @@
 	const onSendMessage = async (value : string, list ?: FileItem[] = []) => {
 		if (AiAgentChats.chatList[AiAgentChats.agentId]) {
 			let keysLength = Object.keys(AiAgentChats.chatList[AiAgentChats.agentId]).length;
-			if (keysLength >= 5) {
-				uni.$u.toast('每个智能体对话历史记录不能超过五条，请你清除后继续对话！');
+			if (keysLength >= 6) {
+				uni.$u.toast('历史记录对应的智能体历史记录不能超过五条，请你清除一条后继续对话！');
 				return
 			}
 		}
-
 		if (!UserStore.userInfo?.token) {
 			//如果没有登录则去登录
 			uni.navigateTo({
@@ -149,10 +150,11 @@
 		AiAgentChats.addMessageList(messageItem)
 		mainParmas.value.fileList = []
 		mainParmas.value.chatValue = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'https://open.aichatapi.com/api/v1/chat/zhipu.assistant/yfoo.chat',
 			data: ChatBody,
-			onmessage(text : string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }) {
+			onmessage: async (text : string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }) => {
 				const length = chatMessage.length - 1
 				if (typeof text === 'object' && text !== null && 'SearchTitle' in text) {
 					loadingWebPage.value = true
@@ -166,7 +168,10 @@
 					if (chatMessage[length]?.content.includes(CreateImageDrawLoadding())) {
 						AiAgentChats.replaceMessageLists(CreateImageDrawLoadding(), CreateImageDrawComplete())
 					}
-					AiAgentChats.changeMessageListContent(text)
+					const index = messageList.value.length - 1
+					newStr += text
+					messageList.value[index].content = await mainParmas.value.streamSpark(newStr)
+					
 				}
 			},
 			onfinish() {

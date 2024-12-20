@@ -59,7 +59,7 @@
 	const fileList1 = ref([]);
 	const currentLang = ref('英文')
 	const msgContent = ref(`👉此处为翻译结果显示区域`)
-	const { streamRequest, isRecive, verifyTranslateTextLimit } = useStreamHooks()
+	const { streamRequest, isRecive, verifyTranslateTextLimit , streamSpark } = useStreamHooks()
 	const pagingRef = ref(null)
 	const isTransLateLoading = ref(false)
 	const { $api } = useGlobalProperties()
@@ -119,11 +119,13 @@
 			type: 'zhipu'
 		}
 		msgContent.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/zhipu',
 			data: data,
-			onmessage(text) {
-				msgContent.value += text
+			onmessage: async (text:string) => {
+			newStr += text
+			msgContent.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

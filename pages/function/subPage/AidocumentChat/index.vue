@@ -64,8 +64,6 @@
 					</view>
 				</template>
 				<view class="chatBoxMain" v-if="currentProject == 1">
-					<!-- <DocChatVue v-model:chatValue="chatValue" :scrollToBottom="scrollToBottom"
-						:currentFileSearch="currentFileSearch" ref="DocChatVueRef" /> -->
 					<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" />
 				</view>
 				<template v-if="currentProject == 2">
@@ -87,7 +85,6 @@
 			<template v-if="currentProject == 1">
 				<DocChatInput @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 			</template>
-
 		</template>
 	</z-paging>
 	<up-modal showCancelButton @cancel="show = false" @confirm="deleteFile" :show="show" title="删除文件"
@@ -120,7 +117,7 @@
 		// #endif
 	})
 	const chatValue = ref('');
-	const { streamRequest, onCancelRequest } = useStreamHooks();
+	const { streamRequest, onCancelRequest , streamSpark} = useStreamHooks();
 	const props = defineProps<{ currentFileSearch : any, scrollToBottom : () => void }>()
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
 	const ChatStore = useChatStore();
@@ -176,6 +173,7 @@
 
 	async function handleStream(options) {
 		let result = '';
+		let newStr = '';
 		const id = generateUUID();
 		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
 		ChatStore.setLoadingMessage(true);
@@ -186,8 +184,9 @@
 		const requestOptions = {
 			url: options.url,
 			data: options.data,
-			onmessage: (text : UniApp.RequestSuccessCallbackResult) => {
-				result += text;
+			onmessage: async(text : UniApp.RequestSuccessCallbackResult) => {
+				newStr += text;
+				result = await streamSpark(newStr)
 				ChatBoxRef.value.setMessage(id, { id: id, state: 'ok', target: 'assistant', message: result, messageType: 'text' });
 				scrollToBottom();
 			},

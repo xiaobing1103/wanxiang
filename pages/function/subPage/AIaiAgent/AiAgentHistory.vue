@@ -34,7 +34,7 @@
 		</view>
 	</up-popup>
 	<up-modal showCancelButton :show="showModals" title="提示" content="是否删除当前智能体对话记录？" @cancel="showModals=false"
-		@confirm="AiAgentChats.deleteChatListSingleChat(seletedKey);showModals = false;"></up-modal>
+		@confirm="deleteCurrent"></up-modal>
 	<up-modal showCancelButton :show="showModals2" title="提示" content="是否删除所有智能体对话记录？" @cancel="showModals=false"
 		@confirm="AiAgentChats.clearAllLists();showModals2 = false;"></up-modal>
 </template>
@@ -75,6 +75,13 @@
 		showModals.value = true
 
 	}
+	
+	const deleteCurrent =() =>{
+		AiAgentChats.deleteChatListSingleChat(seletedKey.value);
+		AiAgentChats.setCurrentConversation_id('')
+		showModals.value = false;
+	}
+
 </script>
 
 <style lang="scss" scoped>

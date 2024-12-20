@@ -38,7 +38,8 @@
 	const {
 		streamRequest,
 		onCancelRequest,
-		isRecive
+		isRecive,
+		streamSpark
 	} = useStreamHooks();
 	const change = (e) => {
 		if (e) {
@@ -75,11 +76,13 @@
 			prompt,
 		}
 		parmas.value.prompt = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				parmas.value.prompt += text
+			onmessage: async (text:string) => {
+				newStr += text
+				parmas.value.prompt = await streamSpark(newStr)
 			},
 			onfinish() {
 				console.log('成功')

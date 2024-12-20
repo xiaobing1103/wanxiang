@@ -114,7 +114,7 @@
 	const ChatStore = useChatStore()
 	const deleteModal = ref(false)
 	const pagingRef = ref(null)
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark} = useStreamHooks()
 	const radiovalue1 = ref('优选')
 	const showAllTextEdit = ref(false)
 	const iconsStyles = {
@@ -207,11 +207,13 @@
 		}
 		resultList.value = []
 		result.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				result.value += text
+			onmessage: async (text : string) => {
+				newStr += text
+				result.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

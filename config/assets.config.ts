@@ -265,6 +265,7 @@ export interface IconConfig {
 	MusicSquare : string
 	ImageCreateMusicIcon : string
 	VideoCreateMusicIcon : string
+	doubao_llamaIcon:string
 	text2videoIcon : string
 	createVideoVipIcon : string
 	wechatPayIcon : string
@@ -375,6 +376,7 @@ const iconConfig : IconConfig = {
 	docModelIcon: getUrl('/2024/02/22/f8fdbf7ea31f0f5e772dd80f37e5c334.png'),
 	zhipu_glm4Icon: getUrl('/2024/05/21/3eedb54d58430193f016a28bc0d70d9a.svg'),
 	baidu_llamaIcon: getUrl('/2024/08/21/2ef38da657fe22609a2dd0ab51c2b80a.svg'),
+	doubao_llamaIcon: getUrl('/2024/12/18/e0558db52ce548746df4027a9fe63f1e.svg'),
 	imageModelIcon: getUrl('/2024/02/22/36128b71a39265bebeba2a1abf6484f7.png'),
 	voiceModelIcon: getUrl('/2023/11/07/a74dddf2100b8d633fb0d3ea0716a2e9.svg'),
 	videoModelIcon: getUrl('/2024/02/22/1c76f2f33e6ac2778e894da18b1caf22.png'),

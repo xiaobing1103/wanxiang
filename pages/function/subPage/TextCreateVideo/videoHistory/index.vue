@@ -17,14 +17,12 @@
 									<up-icon name="photo-fill" size="28"></up-icon>
 								</view>
 							</template>
-
-
 							<text class="videoHistory_items_leftBox_title">{{items.title || '默认标题'}}</text>
 						</view>
 						<view class="videoHistory_items_rightBox">
-							<up-icon @click="playVideos(items)" name="play-right-fill" size="20"></up-icon>
-							<up-icon @click="downLoad(items.url)" name="download" size="20"></up-icon>
-							<up-icon @click="deleteVideos(items.url)" name="trash" size="20"></up-icon>
+							<up-icon :customStyle="{margin:'0 10rpx'}" @click="playVideos(items)" name="play-right-fill" size="24"></up-icon>
+							<up-icon :customStyle="{margin:'0 10rpx'}" @click="downLoad(items.url)" name="download" size="24"></up-icon>
+							<up-icon :customStyle="{margin:'0 10rpx'}" @click="deleteVideos(items.url)" name="trash" size="24"></up-icon>
 						</view>
 					</view>
 				</template>

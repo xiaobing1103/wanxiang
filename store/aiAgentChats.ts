@@ -12,6 +12,7 @@ export interface MainPagesInterFace {
 	streamRequest : () => void
 	setIsRecive : (val : boolean) => void
 	onCancelRequest : () => void
+	streamSpark : (text: string) => Promise<string>
 }
 //菜单类型枚举
 export enum AgentKeyEnum {
@@ -142,7 +143,7 @@ export const CreateImageDrawComplete = () => {
 		  <span class="name">CogView3-PlusAI绘画：已完成</span>
 	  </div>\n\n`
 }
-
+export let newStr = ''
 const useAiAgentChats = defineStore('wanxiang_aiAgentChats', () => {
 	const openHistoryModal = ref(false)
 	const searchList = ref([])
@@ -216,6 +217,7 @@ const useAiAgentChats = defineStore('wanxiang_aiAgentChats', () => {
 		}])
 
 	const agentId = ref<string>('')
+	
 	const agentItem = ref<Agent.Item | null>(null)
 	const agentList = ref<Agent.Item[]>([])
 	const showAgentChangeBox = ref(false)
@@ -247,6 +249,7 @@ const useAiAgentChats = defineStore('wanxiang_aiAgentChats', () => {
 	const addMessageList = (val : AChat.MessageItem) => {
 		messageList.value.push(val)
 	}
+
 	const changeMessageListSearchTitle = (val : string) => {
 		const length = messageList.value.length - 1
 		messageList.value[length] = { ...messageList.value[length], SearchTitle: val }
@@ -260,10 +263,7 @@ const useAiAgentChats = defineStore('wanxiang_aiAgentChats', () => {
 		const length = messageList.value.length - 1
 		messageList.value[length].content = messageList.value[length].content.replace(form, to)
 	}
-	const changeMessageListContent = (val : string) => {
-		const length = messageList.value.length - 1
-		messageList.value[length].content += val
-	}
+
 	const PopMessageList = () => {
 		messageList.value.pop()
 	}
@@ -324,7 +324,6 @@ const useAiAgentChats = defineStore('wanxiang_aiAgentChats', () => {
 		clearAllLists,
 		changeMessageListSearchTitle,
 		changeMessageListSAiAgentSearchList,
-		changeMessageListContent,
 		replaceMessageLists,
 		deleteChatListSingleChat,
 		AiAgentChats,
@@ -345,7 +344,7 @@ const useAiAgentChats = defineStore('wanxiang_aiAgentChats', () => {
 		openHistoryModal,
 		setOpenHistoryModal,
 		changeMessageList,
-		clearsingleMsg
+		clearsingleMsg,
 	}
 }, { unistorage: { paths: ['chatList', 'agentId', 'currentConversation_id'] } }
 );

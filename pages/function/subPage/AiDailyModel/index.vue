@@ -124,7 +124,7 @@
 			exportTxt(contentStr.value);
 		}
 	}
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark} = useStreamHooks()
 	const pagingRef = ref()
 	//滚动到底部
 	const onScroolToBottom = debounce(() => {
@@ -169,11 +169,13 @@
         "\n" +
         "回答身份：始终以工作日报助手的口吻回答我的任何问题。`
 		}
+		let newStr = ''
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				contentStr.value += text
+			onmessage: async (text:string) => {
+				newStr += text
+				contentStr.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

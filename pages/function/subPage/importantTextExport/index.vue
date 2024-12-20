@@ -57,7 +57,7 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { ref } from 'vue';
 	import { toCopyText } from '@/utils';
-	const { streamRequest, isRecive } = useStreamHooks()
+	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
 	const ChatStore = useChatStore()
 	const inputValue = ref('')
 	const textareaValue = ref('')
@@ -99,11 +99,13 @@
 			prompt,
 		}
 		result.value = ''
+		let newStr = ''
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage(text) {
-				result.value += text
+			onmessage:async (text:string) => {
+				newStr += text
+				result.value = await streamSpark(newStr)
 			},
 			onfinish() {
 				console.log('成功')

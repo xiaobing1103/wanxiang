@@ -12,7 +12,6 @@
 						<text :style="{marginRight:'10rpx'}">剩余次数</text>
 						{{restNum}}
 					</up-button>
-
 				</view>
 				<!-- <view class="restNums_history" @click="toHistory">
 					历史记录

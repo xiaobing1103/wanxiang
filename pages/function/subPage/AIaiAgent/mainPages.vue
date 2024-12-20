@@ -90,7 +90,7 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import { FileItem, MainPagesInterFace } from '@/store/aiAgentChats';
 	const AIAgentChatBoxRef = ref<InstanceType<typeof AIAgentChatBox>>(null);
-	const { isRecive, streamRequest, setIsRecive, onCancelRequest } = useStreamHooks()
+	const { isRecive, streamRequest, setIsRecive, onCancelRequest , streamSpark} = useStreamHooks()
 	const { $api, $assets } = useGlobalProperties()
 	const AiAgentChats = useAiAgentChats()
 	const mainParmas = reactive<MainPagesInterFace>({
@@ -100,7 +100,8 @@
 		isRecive,
 		setIsRecive,
 		streamRequest,
-		onCancelRequest
+		onCancelRequest,
+		streamSpark
 	})
 
 	// 新增图片
@@ -151,9 +152,10 @@
 	});
 
 	onMounted(async () => {
-
+		AiAgentChats.setCurrentConversation_id(null)
 		await getLists()
 	})
+	
 	onUnmounted(() => {
 		console.log('卸载页面！')
 		AiAgentChats.setCurrentConversation_id(null)
