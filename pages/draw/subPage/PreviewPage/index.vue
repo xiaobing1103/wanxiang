@@ -66,7 +66,7 @@
 	import { useDrawStore } from '@/store';
 	import { drawTaskJson } from '@/store/draw';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
-	import { downloadBase64Image, saveFile } from '@/utils/downLoadLocal';
+	import { downloadBase64Image } from '@/utils/downLoadLocal';
 	import { saveImage } from '@/utils/saveImages';
 	import { onShareAppMessage } from '@dcloudio/uni-app';
 
@@ -76,8 +76,9 @@
 	const sharepopup = ref(null);
 	onShareAppMessage(() => {
 		return {
-			title: '自定义分享标题',
-			path: '/pages/test/test?id=123'
+			title: '分享图片页面',
+			path: '/pages/draw/subPage/PreviewImages/index',
+			imageUrl:currentImages?.value.images[current.value]
 		};
 	});
 	const share = ref(null);
@@ -85,7 +86,8 @@
 		{
 			type: 1,
 			icon: 'http://file.1foo.com/2024/08/20/89749b5acda3775b7bd150074f7c8491.png',
-			text: '微信好友'
+			text: '微信好友',
+			
 		},
 		{
 			type: 2,

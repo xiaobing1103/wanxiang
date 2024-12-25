@@ -26,7 +26,6 @@ const useScreenStore = defineStore("screen", () => {
 	const NotificationSign = ref('')
 	const saveTime = ref(0)
 	const lastModalisOpen = ref(false)
-
 	const lastDayDatas = ref<lastDayDatasTypes>(null)
 	//顶部安全距离
 	const safeTopHeight = computed(() => {
@@ -38,11 +37,35 @@ const useScreenStore = defineStore("screen", () => {
 		height = menuButtonInfo.value.top + menuButtonInfo.value.height
 		// #endif
 		// #ifdef APP-PLUS
-		height = systemInfo.value.statusBarHeight + 20
+		height = systemInfo.value.statusBarHeight + systemInfo.value.safeArea.top
 		// #endif
 		return height
 	})
 
+	// changeVieHeight 
+	const changeVieHeight = computed(() => {
+		let height : number = 0
+		// #ifdef H5
+		height = 7
+		// #endif
+		// #ifdef MP-WEIXIN
+		height = 7
+		// #endif
+		// #ifdef APP-PLUS
+		height = 10
+		// #endif
+		return height
+	})
+
+	const setSystemInfo = (val : UniApp.GetSystemInfoResult) => {
+		systemInfo.value = val
+	}
+	const setStatusBarHeight = (val : string) => {
+		statusBarHeight.value = val
+	}
+	const setMenuButtonInfo = (val : UniApp.GetMenuButtonBoundingClientRectRes) => {
+		menuButtonInfo.value = val
+	}
 	const setNotificationSign = (val : string) => {
 		NotificationSign.value = val
 	}
@@ -68,7 +91,11 @@ const useScreenStore = defineStore("screen", () => {
 		lastModalisOpen,
 		setLastModalisOpen,
 		setLastDayDatas,
-		lastDayDatas
+		lastDayDatas,
+		setStatusBarHeight,
+		setMenuButtonInfo,
+		setSystemInfo,
+		changeVieHeight
 	}
 }, { unistorage: { paths: ['statusBarHeight', 'menuButtonInfo', 'systemInfo', 'NotificationSign', 'saveTime', 'lastModalisOpen', 'lastDayDatas'] } })
 export default useScreenStore

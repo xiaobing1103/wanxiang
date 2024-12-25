@@ -99,8 +99,10 @@ const exportTxt = (textContent : string) => {
 	saveTextToFile(textContent)
 	// #endif
 };
+
 function weChatTempPathToBase64(tempFilePath : string) {
 	return new Promise((resolve, reject) => {
+		// #ifdef MP-WEIXIN
 		// 使用微信小程序的 API 读取文件
 		wx.getFileSystemManager().readFile({
 			filePath: tempFilePath,
@@ -129,8 +131,32 @@ function weChatTempPathToBase64(tempFilePath : string) {
 				reject(error);
 			}
 		});
+		// #endif
+		// #ifdef APP-PLUS
+		// App端的API
+		plus.io.resolveLocalFileSystemURL(tempFilePath, function (entry) {
+			entry.file(function (file) {
+				let reader = new plus.io.FileReader();
+				reader.onloadend = function (e) {
+					let base64Data = e.target.result;
+					let mimeType = file.type;
+					const base64DataUrl = `data:${mimeType};base64,${base64Data}`;
+					resolve(base64DataUrl);
+				};
+				reader.onerror = function (e) {
+					reject(e.target.error);
+				};
+				reader.readAsDataURL(file);
+			}, function (e) {
+				reject(e.message);
+			});
+		}, function (e) {
+			reject(e.message);
+		});
+		// #endif
 	});
 }
+
 function getMimeTypeFromExtension(ext : string) {
 	const mimeTypes : { [key : string] : string } = {
 		'png': 'image/png',

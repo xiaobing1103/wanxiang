@@ -1,5 +1,6 @@
 <template>
-	<view class="changeViewBox">
+	<view class="changeViewBox"
+		:style="{ marginTop: ScreenStore.changeVieHeight ? ScreenStore.changeVieHeight + 'px': '15rpx'}">
 		<view class="changeView" @click="openModels">
 			<view class="changeView_box">
 				<image class="changeView_images" :src="commonModel[chatStore.model].modelIcon" mode=""></image>
@@ -18,8 +19,10 @@
 	import { ref } from 'vue';
 	import { commonModel } from '@/config/modelConfig';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
-	import { useChatStore } from '@/store';
+	import { useChatStore, useScreenStore } from '@/store';
 	const chatStore = useChatStore()
+	const ScreenStore = useScreenStore()
+
 	const { $assets } = useGlobalProperties()
 	const openModels = () => {
 		chatStore.setOpenSeletedModel(true)
@@ -32,14 +35,11 @@
 		width: 100%;
 		display: flex;
 		justify-content: center;
-		z-index: 100;
 		height: 80rpx;
 		overflow: hidden;
-		margin-top: 15rpx;
 		margin-bottom: 9rpx;
 		box-sizing: content-box;
 		background-color: rgb(246, 247, 249);
-
 	}
 
 	.changeView {

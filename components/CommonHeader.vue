@@ -1,8 +1,7 @@
 <template>
-
 	<view class="header" :style="{background: noBackGround ?  '' : 'white'}">
-		<view :style="{height: navBarHeight + 'px' }">
-			<view class="weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
+		<view class="headerItems" :style="{height: parmas.navBarHeight + 'px' }">
+			<view class="weixin-header">
 				<template v-if="curRoute == 'pages/index/index'">
 					<up-navbar :bgColor="bgColor" :left-icon="'clock'" @leftClick="leftClick">
 						<template v-slot:center>
@@ -50,34 +49,42 @@
 		<template v-if="!noRenderLastModal">
 			<GolbalModals />
 		</template>
-
 	</view>
-
 	<LevelUpVip />
-
 </template>
 
 <script setup lang="ts">
 	import LevelUpVip from '@/components/CommonChat/LevelUpVip.vue';
 	import GolbalModals from './GolbalModals.vue';
-	import { computed } from 'vue';
+	import { computed, reactive } from 'vue';
 	import { AppName } from '@/http';
-	import { useCounterStore, useChatStore } from '@/store';
+	import { useChatStore, useScreenStore } from '@/store';
 	import { storeToRefs } from "pinia"
 	const curRoute = computed(() => {
 		const routers = getCurrentPages();
 		return routers[routers.length - 1].route
 	})
+	const parmas = reactive({
+		statusBarHeight: 0,
+		menuButtonInfo: { height: 44 },
+		navBarHeight: 44
+	})
+	const ScreenStore = useScreenStore()
 	const props = defineProps<{ backPageNum ?: number, defindTitle ?: string, defindPath ?: 'string', noBackGround ?: boolean, backFunction ?: Function, noRenderLastModal ?: boolean }>()
 	const bgColor = props.noBackGround ? 'rgb(255,255,255,0)' : 'rgb(255,255,255)'
 	const chatStore = useChatStore()
-	//  #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
-	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
-	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
-	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
+	// #ifdef MP-WEIXIN
+	parmas.statusBarHeight = uni.getSystemInfoSync().statusBarHeight
+	parmas.navBarHeight = parmas.menuButtonInfo.height + parmas.statusBarHeight + 10
 	// #endif
+
+
+	// #ifdef APP
+	if (ScreenStore.systemInfo) {
+		parmas.navBarHeight = ScreenStore.systemInfo.safeArea.top + parmas.navBarHeight
+	}
+	// #endif
+
 	const leftClick = () => {
 		chatStore.setopenHistoryModel(true)
 		uni.hideTabBar({})
@@ -112,6 +119,11 @@
 <style lang="scss" scoped>
 	.header {
 		// background-color: white;
+	}
+
+	.headerItems {
+		display: flex;
+		align-items: center;
 	}
 
 	.h5-header {

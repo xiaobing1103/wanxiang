@@ -61,20 +61,18 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 			if (response.data?.msg) {
 				uni.$u.toast(response.data.msg);
 				ChatStore.setLoadingMessage(false)
-				
+
 			} else {
 				uni.$u.toast('登录信息已过期，请重新登录！');
 				ChatStore.setLoadingMessage(false)
 
 			}
-			setTimeout(()=>{
+			setTimeout(() => {
 				uni.navigateTo({
 					url: '/pages/my/subPage/login/index'
 				});
-			},1500)
-			
+			}, 1500)
 			ChatStore.setLoadingMessage(false)
-			// return response.data = await doRequest(response, url)
 		} else {
 			if (response.data.code !== 200 && response.data.message) {
 				uni.showToast({
@@ -84,7 +82,6 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 				});
 			}
 		}
-
 		return response;
 	};
 
@@ -114,7 +111,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		// #endif
 		return isDelopMent;
 	} else {
-		
+
 		return new Promise((resolvce, reject) => {
 			http.request({
 				method: method,
@@ -254,11 +251,10 @@ function request(url, method, data) {
 	return $http(httpDTO);
 }
 
-async function getStream(
-	options :
-		{ url : string, data : any, isStream : boolean, callback : any, errorCallback : any, LoadingConfig : LoadingConfigTypes, controller : { signal : any }, checkNumsType : string, noCheckNums ?: boolean }
+async function getStream(options : { url : string, data : any, isStream : boolean, callback : any, errorCallback : any, LoadingConfig : LoadingConfigTypes, controller : { signal : any }, checkNumsType : string, noCheckNums ?: boolean }
 ) {
 	const ChatStore = useChatStore()
+	console.log(options)
 	const { url, data, isStream, callback, errorCallback, LoadingConfig, controller, checkNumsType, noCheckNums } = options
 	let res
 	if (!noCheckNums) {

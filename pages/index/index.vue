@@ -1,6 +1,5 @@
 <template>
-	<z-paging ref="srollRef"
-		:pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0 30rpx', }" fixed>
+	<z-paging ref="srollRef" :pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0 30rpx'}">
 		<template #top>
 			<CommonHeader />
 			<ChangeModel />
@@ -18,9 +17,11 @@
 	</z-paging>
 	<CommonModelSeleted />
 	<HistoryMessage />
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
 </template>
-
 <script setup lang="ts">
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
 	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
 	import { onLoad, onShow } from '@dcloudio/uni-app'
 	import Chat from '@/components/CommonChat/Chat.vue';
@@ -39,15 +40,15 @@
 	import { ToolTipItem } from '@/type/userTypes';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { currentModelReversParmas, exParmas, modelTypes, noHistoryArr } from '../chat/chatConfig';
+	const { streamRequest, isRecive, onCancelRequest, streamSpark, openCore, errorCore, messageCore, finishCore, chatSSEClientRef } = useStreamHooks();
 	const { $api } = useGlobalProperties();
 	const ChatStore = useChatStore();
 	const UserStore = useUserStore()
 	const { setChatInfo } = ChatStore;
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const chatValue = ref('');
-	const { streamRequest, isRecive, onCancelRequest ,streamSpark} = useStreamHooks();
+
 	const ChatBoxRef = ref<InstanceType<typeof ChatBox>>(null);
-	// 判断当前对话框是否处于对话状态
 	const IsHasChatOverMessage = ref(false)
 	const srollRef = ref(null);
 	onShow(() => {
@@ -56,8 +57,6 @@
 			return
 		}
 	})
-	// 当前选择回答角度
-	// const currentAsk = ref('默认')
 	onMounted(() => {
 		const initMessage = ChatStore.getCurrentInfo(ChatStore.selectChatId);
 		ChatStore.setModel(initMessage.model)
@@ -68,13 +67,12 @@
 			});
 			ChatBoxRef.value.messageList = newMap;
 		} else {
-			ChatBoxRef.value.clearAllMessage();
+			ChatBoxRef.value?.clearAllMessage();
 		}
 		scrollToBottom();
 	});
 	onLoad((options : any) => {
 		if (options.invite_code) {
-
 			UserStore.setInvite_code(options.invite_code)
 		}
 		console.log('apppppppp -----------------------', options)
@@ -88,7 +86,6 @@
 		}, [messages[0]], uchartsType)
 	}
 	const handleValue = (value) => {
-		// console.log(ChatBoxRef.value.messageList)
 		const messages = ChatBoxRef.value.getPrevSingelMessage(value.msgId);
 		onSend(messages.message, value);
 	};
@@ -99,9 +96,7 @@
 			}
 		});
 	};
-
 	const sendValue = (val : ToolTipItem) => {
-
 		onSend(val.prompt);
 	};
 	const onCancel = () => {
@@ -143,7 +138,6 @@
 			prompt: model.value == 'net' ? undefined : `请以中文回复我 官方设置的${config.currentAsk}角度，适用于日常生活工作的询问与回答，权重均衡`,
 			type: modelTypes[model.value],
 			...exParmas[model.value],
-			// Dynamically assign the params key
 			[currentModelReversParmas[model.value] || 'params']: model.value == 'net' ? { messages: historyMessages } : historyMessages,
 		};
 		const options = {
@@ -154,13 +148,12 @@
 		};
 		scrollToBottom();
 		chatValue.value = '';
-
 		handleStream(options);
 	};
 
 	async function handleStream(options) {
 		let result = '';
-		let newStr =''
+		let newStr = ''
 		const id = generateUUID();
 		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
 		ChatStore.setLoadingMessage(true);
@@ -183,7 +176,7 @@
 				if (currentMessage.state == 'waite') {
 					ChatBoxRef.value.deleteMessage(id)
 				}
-				if (err.includes('请升级会员')) {
+				if (err?.includes('请升级会员')) {
 					uni.hideTabBar({
 						success: () => {
 							ChatStore.setShowLevelUpVipContent(err)
@@ -197,12 +190,12 @@
 				saveHistory(selectChatId.value, currentMessage);
 				ChatStore.setLoadingMessage(false);
 			},
-			LoadingConfig
+			LoadingConfig,
 		};
 		streamRequest(requestOptions);
 	}
-
 </script>
+
 <style scoped lang="scss">
 	.chatBoxLayout {
 		overflow: hidden;
@@ -212,5 +205,4 @@
 		/* #endif */
 		// overflow: hidden;
 	}
-	
 </style>

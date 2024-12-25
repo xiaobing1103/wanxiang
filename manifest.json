@@ -6,7 +6,7 @@
     "versionCode" : "100",
     "transformPx" : false,
     "app-plus" : {
-        "usingComponents" : true,
+        "usingComponents" : false,
         "nvueStyleCompiler" : "uni-app",
         "compilerVersion" : 3,
         "splashscreen" : {
@@ -47,11 +47,22 @@
             },
             "sdkConfigs" : {
                 "ad" : {},
-                "share" : {
-                    "weixin" : {
-                        "appid" : "wx67c8453af19438e3",
-                        "UniversalLinks" : ""
-                    }
+                "share" : {}
+            }
+        },
+        "nativePlugins" : {
+            "yj-ssemodule" : {
+                "__plugin_info__" : {
+                    "name" : "ssemodule - [试用版，仅用于自定义调试基座]",
+                    "description" : "sse网络请求",
+                    "platforms" : "Android,iOS",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=19103",
+                    "android_package_name" : "",
+                    "ios_bundle_id" : "",
+                    "isCloud" : true,
+                    "bought" : 0,
+                    "pid" : "19103",
+                    "parameters" : {}
                 }
             }
         }
@@ -91,5 +102,7 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "3"
+    "vueVersion" : "3",
+    "fallbackLocale" : "zh-Hans",
+    "locale" : "zh-Hans"
 }

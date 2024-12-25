@@ -126,7 +126,7 @@
 			onmessage: async (text:string) => {
 			newStr += text
 			msgContent.value = await streamSpark(newStr)
-				onScroolToBottom()
+			onScroolToBottom()
 			},
 			onfinish() {
 				console.log('成功')

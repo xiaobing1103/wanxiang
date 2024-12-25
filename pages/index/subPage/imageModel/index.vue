@@ -57,15 +57,15 @@
 	import { simpleModels, imagesList, imageDesception } from './data';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import ChatBox from '@/components/CommonChat/ChatBox.vue';
-	import { useChatStore } from '../../../../store';
+	import { useChatStore } from '@/store';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
-	import { generateUUID } from '../../../../tools/uuid';
-	import { ItemMessage } from '../../../../type/chatData';
+	import { generateUUID } from '@/tools/uuid';
+	import { ItemMessage } from '@/type/chatData';
 	import { storeToRefs } from 'pinia';
 	import { currentModelReversParmas, exParmas, modelTypes } from '../../../chat/chatConfig';
-	import { commonModel } from '../../../../config/modelConfig';
-	import { fileToBase64WithHeader, weChatTempPathToBase64 } from '../../../../utils';
-	import { useGlobalProperties } from '../../../../hooks/useGlobalHooks';
+	import { commonModel } from '@/config/modelConfig';
+	import { fileToBase64WithHeader, weChatTempPathToBase64 } from '@/utils';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	const chatValue = ref('');
 	const description = ref('')
 	const fileList1 = ref([])
@@ -75,7 +75,7 @@
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const { $api } = useGlobalProperties()
 	const { setChatInfo } = ChatStore;
-	const { streamRequest, isRecive, onCancelRequest , streamSpark} = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest, streamSpark } = useStreamHooks();
 	const onCancel = () => {
 		onCancelRequest()
 		ChatStore.setLoadingMessage(false)
@@ -118,16 +118,17 @@
 		// #ifdef H5
 		fileName = event.file[0].name
 		// #endif
-		// #ifdef MP-WEIXIN
+		// #ifndef H5
 		fileName = event.file[0].url
 		// #endif
+
 		if (!checkFileType(fileName)) {
 			uni.$u.toast('只支持上传图片格式png, jpg, jpeg, gif, webp！');
 			return
 		}
 		const temUrl = event.file[0].url
 		showChatBox.value = true
-		// #ifdef MP-WEIXIN
+		// #ifndef H5
 		base64 = await weChatTempPathToBase64(temUrl)
 		// #endif
 		// #ifdef H5

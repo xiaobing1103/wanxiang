@@ -34,7 +34,6 @@
 			</view>
 		</view>
 		<template #bottom>
-
 			<view class="btn">
 				<u-button :customStyle="{height:'60rpx', borderRadius:'25rpx',width:'80%'}" class="bth_content"
 					:disabled="isRecive" @click="onCreateContent" type="primary">开始写公文</u-button>
@@ -83,7 +82,7 @@
 		}
 	}
 
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark } = useStreamHooks()
 	const pagingRef = ref(null)
 	const onScroolToBottom = () => {
 		nextTick(() => {
@@ -112,7 +111,7 @@
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage: async (text:string) => {
+			onmessage: async (text : string) => {
 				newStr += text
 				contentStr.value = await streamSpark(newStr)
 				onScroolToBottom()

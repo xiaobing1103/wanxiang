@@ -6,8 +6,8 @@
 			</view>
 			
 			<view class="chatInput_input" >
-				<textarea cursor-spacing="100rpx" :show-confirm-bar="false" :adjust-position="true" auto-height disable-default-padding  
-				:style="{margin:'0rpx' ,overflow: 'scroll',maxHeight:'100rpx', padding:' 0rpx', fontSize:'30rpx', width:'100%'}" 
+				<textarea  cursor-spacing="100rpx" :show-confirm-bar="false" :adjust-position="false" auto-height disable-default-padding  
+				:style="{margin:'0rpx' ,overflow: 'scroll',maxHeight:'100rpx', padding:'0rpx', fontSize:'30rpx', width:'100%'}" 
 				maxlength="-1" @focus="inputFocus" placeholder="请输入内容" border="surround" v-model="chatValue"></textarea>
 			</view>
 			<view class="chatInput_right">
@@ -18,6 +18,9 @@
 	</view>
 	<up-overlay :show="showOverlay"   opacity="0.3">
 		<view class="overlay">
+			<view class="overlay_top" @click="showOverlay = false">
+				
+			</view>
 			<view class="showOverlaychatAll" :style="{bottom: inputBottom + 'rpx'}">
 					<view class="chatInputBox" >
 						<view class="chatInput_left">
@@ -25,7 +28,7 @@
 						</view>
 						
 						<view class="chatInput_input" >
-							<textarea cursor-spacing="100rpx" :show-confirm-bar="false" :adjust-position="true" auto-height disable-default-padding
+							<textarea cursor-spacing="100rpx" :show-confirm-bar="false" :adjust-position="false" auto-height disable-default-padding
 							:style="{margin:'0rpx' ,overflow: 'scroll',maxHeight:'100rpx', padding:' 0rpx', fontSize:'30rpx', width:'100%'}" 
 							maxlength="-1" @focus="inputFocus" placeholder="请输入内容" border="surround" v-model="chatValue"></textarea>
 						</view>
@@ -34,9 +37,10 @@
 								activeSend : ChatStore.loadingMessage ?  stop : send" mode=""></image>
 						</view>
 					</view>
-				</view>
+			</view>
+		
 		</view>
-		</up-overlay>
+	</up-overlay>
 </template>
 
 <script setup lang="ts">
@@ -67,7 +71,7 @@
 	const inputFocus = (e)=> {
 		showOverlay.value = true
 		// #ifdef MP-WEIXIN
-		 inputBottom.value = e.detail.height
+		 inputBottom.value = e.detail.height + 50
 		// #endif
 		console.log(inputBottom.value)
   }
@@ -88,7 +92,7 @@
 		max-height: 90rpx;
 		z-index: 900;
 	}
-
+ 
 	.chatInput {
 		width: 100%;
 		display: flex;
@@ -113,6 +117,8 @@
 			background-color: white;
 			overflow: hidden;
 			height: auto;
+			padding: 20rpx 0;
+			
 		}
 		&_right {
 			display: flex;
@@ -128,15 +134,20 @@
 	}
 	.showOverlaychatAll{
 		display: flex;
-		position: fixed;
+		position: absolute;
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
 		width: 100%;
 		height: 90rpx;
 		margin-bottom: 56px;
+		/* #ifdef MP-WEIXIN  */
+		margin-bottom: 84px
+		/* #endif */
+		
 	}
 	.overlay{
+		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		&_top{

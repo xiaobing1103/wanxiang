@@ -7,11 +7,12 @@
 	const ChatStore = useChatStore()
 	const initPageSystem = async () => {
 		const systemInfo = await uni.getSystemInfo()
+		console.log(systemInfo)
 		// #ifdef MP-WEIXIN
 		const buttonInfo = uni.getMenuButtonBoundingClientRect()
-		screenStore.menuButtonInfo = buttonInfo
+		screenStore.setMenuButtonInfo(buttonInfo)
 		// #endif
-		screenStore.systemInfo = systemInfo
+		screenStore.setSystemInfo(systemInfo)
 	}
 	// #ifndef MP-WEIXIN
 	uni.onTabBarMidButtonTap(() => {
@@ -24,7 +25,10 @@
 		initPageSystem()
 		ChatStore.initChatInfo()
 		// getInviteCode()
-
+		console.log('App Launch');
+		// #ifdef APP-PLUS
+		plus.screen.lockOrientation("portrait-primary");
+		// #endif
 	})
 
 

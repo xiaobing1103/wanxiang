@@ -1,43 +1,117 @@
 import { useGlobalProperties } from './useGlobalHooks'
-import { computed, reactive, ref } from 'vue'
-import { useAiAgentChats, useChatStore } from '@/store'
+import { ref } from 'vue'
+import { useAiAgentChats, useChatStore, useUserStore } from '@/store'
 import { commonModel } from '@/config/modelConfig'
 import { CreateImageDrawLoadding } from '@/store/aiAgentChats';
+import { BaseApi } from '@/http/baseApi';
 interface Options {
 	onerror(str : any) : unknown;
-
+	onmessage : (text : string) => void
 }
-const ChatStore = useChatStore()
+
 const LoadingConfig = {
 	showLoading: false,
 	title: "加载中..."
 }
-
-export const useStreamHooks = (options ?: Options) => {
+interface StreamOptions {
+	url : string;
+	data ?: any;
+	onmessage ?: (text : string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }) => void
+	onerror ?: (err ?: any) => void
+	onfinish ?: (response ?: UniApp.RequestSuccessCallbackResult) => void,
+	LoadingConfig ?: {
+		showLoading : boolean;
+		title : string;
+	},
+	oncancel ?: () => void,
+	checkNumsType ?: string,
+	noCheckNums ?: boolean,
+	isAiAigent ?: boolean
+}
+enum ErrorCode {
+	'SUCCESS' = 200
+}
+export const useStreamHooks = (options ?: StreamOptions) => {
+	let currentOptions = options
 	let controller = ref(null)
-	interface StreamOptions {
-		url : string;
-		data ?: any;
-		onmessage ?: (text : string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }) => void
-		onerror ?: (err ?: any) => void
-		onfinish ?: (response ?: UniApp.RequestSuccessCallbackResult) => void,
-		LoadingConfig ?: {
-			showLoading : boolean;
-			title : string;
-		},
-		oncancel ?: () => void,
-		checkNumsType ?: string,
-		noCheckNums ?: boolean,
-		isAiAigent ?: boolean
-	}
-	enum ErrorCode {
-		'SUCCESS' = 200
-	}
 	const { $api } = useGlobalProperties()
 	const AiAgentChats = useAiAgentChats()
+	const ChatStore = useChatStore()
+	const UserStore = useUserStore()
 	const isRecive = ref(false)
+	const chatSSEClientRef = ref(null)
 	let requestTask = null;
 	let cancelFn
+	// 用于App
+	const appStreamRequest = async (options : StreamOptions) => {
+		currentOptions = options
+		// if (!isRecive.value) {
+		// 	uni.$u.toast('请先等待消息回复完成！');
+		// 	return
+		// };
+		chatSSEClientRef.value.startChat({
+			url: BaseApi + options.url,
+			body: options.data,
+			headers: {
+				'Access-Token': UserStore.userInfo?.access_token,
+				'App': UserStore.userInfo?.appid,
+				'Token': UserStore.userInfo?.token,
+				'Vt': UserStore.userInfo?.vip,
+				'Uid': UserStore.userInfo?.id,
+				'Content-Type': 'application/json'
+			},
+		})
+
+	}
+	const openCore = (reader) => {
+		isRecive.value = true;
+		console.log("open sse", reader);
+	}
+
+	const errorCore = (err) => {
+		console.log("error sse：", err);
+		isRecive.value = false;
+		currentOptions.onerror(err)
+	}
+
+	const messageCore = async (message : string) => {
+		console.log("message sse：", message);
+		let chunk = await revserAppChunk(message)
+		if (chunk) {
+			if (!currentOptions.checkNumsType) {
+				if (ChatStore.model == 'net') {
+					chunk = await handlerCurrentModel(chunk)
+				}
+			}
+			if (currentOptions.isAiAigent) {
+				let newChunk = await handlerCurrentAiagent(chunk)
+				currentOptions.onmessage(newChunk);
+			} else {
+				currentOptions.onmessage && currentOptions.onmessage(chunk)
+			}
+		}
+	}
+	const finishCore = async () => {
+		console.log("finish sse")
+		isRecive.value = false;
+		currentOptions.onfinish()
+		if (!currentOptions.noCheckNums) {
+			await $api.post('api/v1/number2/submit', { number: 1, type: currentOptions.checkNumsType ? currentOptions.checkNumsType : commonModel[ChatStore.model]?.checkNumsType })
+		}
+	}
+	let result = ''
+	const revserAppChunk = async (text : string) => {
+		const lines = text.split('\n');
+		result += lines;
+		for (let i = 0; i < lines.length; i++) {
+			if (lines[i]) {
+				const chunk = lines[i].replaceAll('\\n', '\n');
+				if (result.length !== 0 && chunk !== '[SUCCESS]') {
+					return chunk
+				}
+			}
+		}
+	}
 	//用于微信
 	const wechatStreamRequest = async (options : StreamOptions) => {
 		isRecive.value = true;
@@ -59,6 +133,7 @@ export const useStreamHooks = (options ?: Options) => {
 				noCheckNums: options.noCheckNums
 			}
 			requestTask = await $api.getStream(getStreamOptions);
+			console.log(requestTask)
 			if (requestTask && typeof requestTask.onChunkReceived === 'function') {
 				requestTask.onChunkReceived(async res => {
 					let message = resloveResponseText(res.data);
@@ -84,8 +159,6 @@ export const useStreamHooks = (options ?: Options) => {
 			console.error('Error in getStream:', error);
 		}
 	};
-
-
 	const handleResloveError = async (code : ErrorCode, options : StreamOptions, response ?: UniApp.RequestSuccessCallbackResult) => {
 		switch (code) {
 			case 200:
@@ -100,7 +173,7 @@ export const useStreamHooks = (options ?: Options) => {
 				options.onerror && options.onerror()
 		}
 	}
-	let currentOptions
+
 	const h5StreamRequest = async (options : StreamOptions) => {
 		currentOptions = options
 		isRecive.value = true
@@ -158,10 +231,7 @@ export const useStreamHooks = (options ?: Options) => {
 			console.log(error)
 		}
 	}
-	// 用于App
-	const appStreamRequest = (options : StreamOptions) => {
 
-	}
 
 	// 处理当前ai智能
 	const handlerCurrentAiagent = (result : string) : Promise<string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }> => {
@@ -301,9 +371,6 @@ export const useStreamHooks = (options ?: Options) => {
 	// 处理当前net模型的数据
 	let shouldProcess : boolean = false;
 	let accumulatedData : string = '';
-
-
-
 	const handlerCurrentModel = (result : string) : Promise<string> => {
 		let searchResult : string = ''
 		return new Promise((resolve, reject) => {
@@ -431,20 +498,21 @@ export const useStreamHooks = (options ?: Options) => {
 	const checkSubmit = async (checkType : string, number = 1) => {
 		await $api.post('api/v1/number2/submit', { type: checkType, number })
 	}
-	
+
 	const streamSpark = (text : string) : Promise<string> => {
-		return new Promise((resolve, reject) => {			
+		return new Promise((resolve, reject) => {
 			let htmlString = "";
 			const codeBlocks = text.match(/```[\s\S]*?```|```[\s\S]*?$/g) || []
 			const lastBlock = codeBlocks[codeBlocks.length - 1]
 			if (lastBlock && !lastBlock.endsWith('```')) {
-				  htmlString =text + '\n'
-				} else {
-				  htmlString =text
-				}
-			  resolve(htmlString); 
+				htmlString = text + '\n'
+			} else {
+				htmlString = text
+			}
+			resolve(htmlString);
 		});
 	}
+
 	return {
 		streamRequest,
 		isRecive,
@@ -453,7 +521,12 @@ export const useStreamHooks = (options ?: Options) => {
 		checkNumFun,
 		setIsRecive,
 		streamSpark,
-		verifyTranslateTextLimit
+		verifyTranslateTextLimit,
+		openCore,
+		errorCore,
+		messageCore,
+		finishCore,
+		chatSSEClientRef
 	}
 }
 // 流在进行中进行判断逻辑 	
@@ -479,10 +552,6 @@ const decode = (text : string) => {
 	}
 	return txt
 }
-
-
-
-
 //处理返回的文本
 const resloveResponseText = (content : string) : string => {
 	let newMsg : string = ''
@@ -500,4 +569,3 @@ const resloveResponseText = (content : string) : string => {
 	}
 	return newMsg
 }
-

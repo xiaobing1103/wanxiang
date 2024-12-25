@@ -9,11 +9,14 @@
 		<template #top>
 			<CommonHeader noBackGround />
 		</template>
-		<view class="LoginTitle">
+	<!-- 	<view class="LoginTitle">
 			<view class="LoginTitle_welocome">欢迎回来</view>
 			<view class="LoginTitle_NoRegister">未注册的手机号码登录后自动注册账号</view>
-		</view>
-		<!-- <view class="loginAccount">
+		</view> -->
+		
+		
+		
+		<view class="loginAccount">
 			<view class="loginAccount_tabList">
 				<up-tabs :activeStyle="{ color: 'rgba(50, 100, 237, 1)', }" :lineWidth="'100rpx'" :lineHeight="'15rpx'"
 					:lineColor="`url(${lineBg}) 100% 100%`" :current="current" @change="changeTabs"
@@ -57,10 +60,15 @@
 			</view>
 
 		</view>
-	 -->
+	
+	
+	
+	
 		<template #bottom>
 			<LoginDecscriptions v-model:aloneChecked="aloneChecked" />
 		</template>
+		
+		
 		<up-overlay :show="show">
 			<view class="warp">
 				<up-loading-icon vertical color="#e8e8e8" text-color="#e8e8e8" text="登录中"
@@ -74,9 +82,9 @@
 			<up-button shape="circle" :customStyle="{width: '85%',marginBottom:'20rpx'}" size="normal" type="success"
 				text="手机号快捷登录" open-type="getPhoneNumber" @getphonenumber="decryptPhoneNumber"></up-button>
 			<!-- #endif -->
-			<up-button shape="circle" :hairline="false"
+			<!-- <up-button shape="circle" :hairline="false"
 				:customStyle="{width: '85%',borderRadius:'50rpx',border:'1px solid #ccc'}" size="normal" text="账户登录/注册"
-				@click="toAccountLogin"></up-button>
+				@click="toAccountLogin"></up-button> -->
 
 		</view>
 		<!-- <LoginDecscriptions /> -->
@@ -88,7 +96,13 @@
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { useUserStore, useScreenStore, } from '@/store';
-	// import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue';
+	
+	
+	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue';
+	
+	
+	
+	
 	const toAccountLogin = () => {
 		uni.navigateTo({
 			url: '/pages/my/subPage/loginAccount/index'
@@ -150,143 +164,170 @@
 
 
 
-	// const lineBg = `http://file.1foo.com/2024/10/14/6cd06f2c1b04a9677b0124fa40d698cc.png`
-	// const userStore = useUserStore();
-	// const aloneChecked = ref(false);
-	// const show = ref(false);
-	// const veifytime = ref(120);
-	// const timerActive = ref(false);
-	// const tabList = ref([
-	// 	{ name: '账户登录', value: 'login' },
-	// 	{ name: '注册账户', value: 'register' }
-	// ]);
-	// const verifyPhoneFn = (phoneNumber : string) => {
-	// 	const regu = /^1[3-9][0-9]{9}$/
-	// 	return regu.test(phoneNumber)
-	// }
-	// const current = ref(0);
-	// const type = ref<'login' | 'register' | 'phone'>('login');
-	// watch([veifytime, timerActive], ([newVeifytime, newTimerActive]) => {
-	// 	let timer = null;
-	// 	if (newTimerActive && newVeifytime > 0) {
-	// 		timer = setTimeout(() => {
-	// 			veifytime.value -= 1;
-	// 		}, 1000);
-	// 	} else if (newVeifytime === 0) {
-	// 		timerActive.value = false;
-	// 	}
-	// 	return () => clearTimeout(timer);
-	// });
-	// const backLogin = () => {
-	// 	uni.switchTab({
-	// 		url: '/pages/my/index'
-	// 	})
-	// }
-	// // 验证手机
 
-	// const userComputed = computed({
-	// 	get() {
-	// 		return isMessageLogin.value ? PhoneLoginParmas.phone : loginParmas.user;
-	// 	},
-	// 	set(value) {
-	// 		if (isMessageLogin.value) {
-	// 			PhoneLoginParmas.phone = value;
-	// 		} else {
-	// 			loginParmas.user = value;
-	// 		}
-	// 	}
-	// });
 
-	// const loginParmas = reactive({
-	// 	user: '',
-	// 	pass: '',
-	// 	code: userStore.invite_code
-	// });
-	// const changeTabs = (val) => {
-	// 	current.value = val.index;
-	// 	type.value = val.value;
-	// };
-	// const PhoneLoginParmas = reactive({
-	// 	phone: '',
-	// 	code: ''
-	// });
-	// const isMessageLogin = ref(false);
-	// const changeType = () => {
-	// 	isMessageLogin.value = !isMessageLogin.value;
-	// 	isMessageLogin.value ? (type.value = 'phone') : (type.value = 'login');
-	// 	current.value = 0;
-	// };
 
-	// const onLogin = async () => {
-	// 	//  判断是否勾选隐私协议
-	// 	console.log(aloneChecked.value);
-	// 	if (!aloneChecked.value) {
-	// 		uni.$u.toast('请勾选隐私协议后再进行！');
-	// 		return;
-	// 	}
-	// 	const parmas = isMessageLogin.value ? PhoneLoginParmas : loginParmas;
-	// 	if (userStore.invite_code) {
-	// 		parmas.code = userStore.invite_code
-	// 	}
-	// 	// 验证登录方式
-	// 	if (type.value == 'phone') {
-	// 		if (!PhoneLoginParmas.phone || !PhoneLoginParmas.code) {
-	// 			uni.$u.toast('请输入手机号和验证码后登录！');
-	// 			return;
-	// 		}
-	// 	}
-	// 	if (type.value == 'login' || type.value == 'register') {
 
-	// 		if (!loginParmas.user || !loginParmas.pass) {
-	// 			uni.$u.toast('请输入用户名和密码后登录！');
-	// 			return;
-	// 		}
-	// 	}
-	// 	// show.value = true
-	// 	const data = await userStore.login(parmas, type.value);
-	// 	const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-	// 	if (data.code == 200) {
-	// 		show.value = false;
-	// 		userStore.token = data?.data?.token;
-	// 		userStore.userInfo = data.data;
-	// 		// const users = await api.userInfo(null)
-	// 		const users = await $api.get('api/v1/user/info');
-	// 		if (users.code == 200) {
-	// 			userStore.userInfo = users.data;
-	// 			await getLastdayInfo()
-	// 			uni.switchTab({
-	// 				url: '/pages/my/index'
-	// 			});
-	// 			uni.$u.toast('登录成功！')
-	// 		}
 
-	// 	} else {
-	// 		show.value = false;
-	// 		uni.$u.toast(data.msg);
-	// 	}
-	// };
 
-	// const sendCode = async () => {
-	// 	if (!verifyPhoneFn(PhoneLoginParmas.phone || '')) {
-	// 		uni.$u.toast('请输入正确的手机号！');
-	// 		return;
-	// 	}
-	// 	if (timerActive.value) {
-	// 		uni.$u.toast('请等待2分钟后再试！');
-	// 		return;
-	// 	}
-	// 	// 发送验证码的逻辑
-	// 	timerActive.value = true;
-	// 	veifytime.value = 60;
 
-	// 	// const result = await api.sendSmsCode({ phone: PhoneLoginParmas.phone })
-	// 	const result = await $api.post('api/v1/user/sendSmsCode', { phone: PhoneLoginParmas.phone });
-	// 	if (result.code == 200) {
-	// 		uni.$u.toast('发送验证码成功，请注意查收！');
-	// 	} else {
-	// 		uni.$u.toast(result.msg);
-	// 	}
-	// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	const lineBg = `http://file.1foo.com/2024/10/14/6cd06f2c1b04a9677b0124fa40d698cc.png`
+	const userStore = useUserStore();
+	const aloneChecked = ref(false);
+	const show = ref(false);
+	const veifytime = ref(120);
+	const timerActive = ref(false);
+	const tabList = ref([
+		{ name: '账户登录', value: 'login' },
+		{ name: '注册账户', value: 'register' }
+	]);
+	const verifyPhoneFn = (phoneNumber : string) => {
+		const regu = /^1[3-9][0-9]{9}$/
+		return regu.test(phoneNumber)
+	}
+	const current = ref(0);
+	const type = ref<'login' | 'register' | 'phone'>('login');
+	watch([veifytime, timerActive], ([newVeifytime, newTimerActive]) => {
+		let timer = null;
+		if (newTimerActive && newVeifytime > 0) {
+			timer = setTimeout(() => {
+				veifytime.value -= 1;
+			}, 1000);
+		} else if (newVeifytime === 0) {
+			timerActive.value = false;
+		}
+		return () => clearTimeout(timer);
+	});
+	const backLogin = () => {
+		uni.switchTab({
+			url: '/pages/my/index'
+		})
+	}
+	// 验证手机
+
+	const userComputed = computed({
+		get() {
+			return isMessageLogin.value ? PhoneLoginParmas.phone : loginParmas.user;
+		},
+		set(value) {
+			if (isMessageLogin.value) {
+				PhoneLoginParmas.phone = value;
+			} else {
+				loginParmas.user = value;
+			}
+		}
+	});
+
+	const loginParmas = reactive({
+		user: '',
+		pass: '',
+		code: userStore.invite_code
+	});
+	const changeTabs = (val) => {
+		current.value = val.index;
+		type.value = val.value;
+	};
+	const PhoneLoginParmas = reactive({
+		phone: '',
+		code: ''
+	});
+	const isMessageLogin = ref(false);
+	const changeType = () => {
+		isMessageLogin.value = !isMessageLogin.value;
+		isMessageLogin.value ? (type.value = 'phone') : (type.value = 'login');
+		current.value = 0;
+	};
+
+	const onLogin = async () => {
+		//  判断是否勾选隐私协议
+		console.log(aloneChecked.value);
+		if (!aloneChecked.value) {
+			uni.$u.toast('请勾选隐私协议后再进行！');
+			return;
+		}
+		const parmas = isMessageLogin.value ? PhoneLoginParmas : loginParmas;
+		if (userStore.invite_code) {
+			parmas.code = userStore.invite_code
+		}
+		// 验证登录方式
+		if (type.value == 'phone') {
+			if (!PhoneLoginParmas.phone || !PhoneLoginParmas.code) {
+				uni.$u.toast('请输入手机号和验证码后登录！');
+				return;
+			}
+		}
+		if (type.value == 'login' || type.value == 'register') {
+
+			if (!loginParmas.user || !loginParmas.pass) {
+				uni.$u.toast('请输入用户名和密码后登录！');
+				return;
+			}
+		}
+		// show.value = true
+		const data = await userStore.login(parmas, type.value);
+		const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+		if (data.code == 200) {
+			show.value = false;
+			userStore.token = data?.data?.token;
+			userStore.userInfo = data.data;
+			// const users = await api.userInfo(null)
+			const users = await $api.get('api/v1/user/info');
+			if (users.code == 200) {
+				userStore.userInfo = users.data;
+				await getLastdayInfo()
+				uni.switchTab({
+					url: '/pages/my/index'
+				});
+				uni.$u.toast('登录成功！')
+			}
+
+		} else {
+			show.value = false;
+			uni.$u.toast(data.msg);
+		}
+	};
+
+	const sendCode = async () => {
+		if (!verifyPhoneFn(PhoneLoginParmas.phone || '')) {
+			uni.$u.toast('请输入正确的手机号！');
+			return;
+		}
+		if (timerActive.value) {
+			uni.$u.toast('请等待2分钟后再试！');
+			return;
+		}
+		// 发送验证码的逻辑
+		timerActive.value = true;
+		veifytime.value = 60;
+
+		// const result = await api.sendSmsCode({ phone: PhoneLoginParmas.phone })
+		const result = await $api.post('api/v1/user/sendSmsCode', { phone: PhoneLoginParmas.phone });
+		if (result.code == 200) {
+			uni.$u.toast('发送验证码成功，请注意查收！');
+		} else {
+			uni.$u.toast(result.msg);
+		}
+	};
+	
+	
+	
+	
 </script>
 
 <style lang="scss" scoped>
@@ -359,77 +400,78 @@
 			font-size: 27rpx;
 		}
 	}
-	// .loginAccount {
-	// 	display: flex;
-	// 	flex-direction: column;
-	// 	padding: 100rpx 0;
 
-	// 	&_tabList {
-	// 		padding: 20rpx 0;
-	// 		display: flex;
-	// 		justify-content: center;
-	// 	}
+	.loginAccount {
+		display: flex;
+		flex-direction: column;
+		padding: 100rpx 0;
 
-	// 	&_header {
-	// 		display: flex;
-	// 		flex-direction: column;
-	// 		justify-content: center;
-	// 		align-items: center;
+		&_tabList {
+			padding: 20rpx 0;
+			display: flex;
+			justify-content: center;
+		}
 
-	// 		&_image {
-	// 			width: 200rpx;
-	// 			height: 100rpx;
-	// 			padding: 70rpx;
-	// 		}
-	// 	}
+		&_header {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
 
-	// 	&_main {
-	// 		display: flex;
-	// 		flex-direction: column;
-	// 		align-items: center;
-	// 		justify-content: center;
+			&_image {
+				width: 200rpx;
+				height: 100rpx;
+				padding: 70rpx;
+			}
+		}
 
-	// 		&_input {
-	// 			width: 88%;
-	// 			display: flex;
-	// 			border-radius: 15rpx;
-	// 			justify-content: center;
-	// 			align-items: center;
-	// 			background-color: #f7f7f7;
-	// 			margin: 20rpx 0;
+		&_main {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
 
-	// 			&_code {
-	// 				color: rgb(192, 196, 204);
-	// 				padding: 0 15rpx;
-	// 				font-size: 30rpx;
-	// 			}
-	// 		}
-	// 	}
-	// }
+			&_input {
+				width: 88%;
+				display: flex;
+				border-radius: 15rpx;
+				justify-content: center;
+				align-items: center;
+				background-color: #f7f7f7;
+				margin: 20rpx 0;
 
-	// .loginButton {
-	// 	width: 88%;
-	// }
+				&_code {
+					color: rgb(192, 196, 204);
+					padding: 0 15rpx;
+					font-size: 30rpx;
+				}
+			}
+		}
+	}
 
-	// .vertifyStuas {
-	// 	display: flex;
-	// 	width: 88%;
-	// 	font-size: 27rpx;
-	// 	color: $u-primary;
-	// 	justify-content: flex-end;
-	// }
+	.loginButton {
+		width: 88%;
+	}
 
-	// .warp {
-	// 	display: flex;
-	// 	flex-direction: column;
-	// 	align-items: center;
-	// 	justify-content: center;
-	// 	height: 100%;
-	// }
+	.vertifyStuas {
+		display: flex;
+		width: 88%;
+		font-size: 27rpx;
+		color: $u-primary;
+		justify-content: flex-end;
+	}
 
-	// .rect {
-	// 	width: 200px;
-	// 	height: 200px;
-	// 	background-color: #fff;
-	// }
+	.warp {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+	}
+
+	.rect {
+		width: 200px;
+		height: 200px;
+		background-color: #fff;
+	}
 </style>

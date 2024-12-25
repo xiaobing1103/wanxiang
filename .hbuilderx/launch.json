@@ -22,6 +22,10 @@
         {
             "openVueDevtools" : false,
             "type" : "uni-app:miniProgram"
+        },
+        {
+            "playground" : "standard",
+            "type" : "uni-app:app-android"
         }
     ]
 }
