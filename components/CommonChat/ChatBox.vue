@@ -252,7 +252,7 @@
 <style lang="scss" scoped>
 	.chatBox {
 		height: 100%;
-		// padding: 20rpx 0;
+		padding: 0 30rpx;
 		box-sizing: border-box;
 	}
 

@@ -1,7 +1,6 @@
 <template>
 	<up-overlay zIndex="999999" v-if="ChatStore.showlevelUpVip" :show=" ChatStore.showlevelUpVip">
 		<view class="levelUpVip">
-
 			<view class="levelUpVip_over">
 				<view class="levelUpVip_closeBox">
 					<view class="levelUpVip_closeBox_closeIcon">
@@ -16,8 +15,8 @@
 				</view>
 				<view class="levelUpVip_main" @click="toVipPath">
 					{{
-					ChatStore.showLevelUpVipContent
-				}}
+						ChatStore.showLevelUpVipContent
+					}}
 				</view>
 				<view class="levelUpVip_footer">
 					<view class="levelUpVip_footer_leftBox" @click="closeOverLay">
@@ -30,8 +29,6 @@
 			</view>
 		</view>
 	</up-overlay>
-	<!-- 	<up-modal showCancelButton @cancel="ChatStore.setShowlevelUpVip(false)" @confirm="toVipPath" title="升级会员"
-		:content='ChatStore.showLevelUpVipContent'></up-modal> -->
 </template>
 
 <script setup lang="ts">
@@ -43,13 +40,17 @@
 		const currentPage = pages[pages.length - 1]; // 获取当前页面对象
 		const currentRoute = '/' + currentPage.route; // 获取当前页面路径
 		if (tabbarPages.includes(currentRoute)) {
-			uni.showTabBar({
-				success: () => {
-					ChatStore.setShowlevelUpVip(false)
-					uni.navigateTo({
-						url: '/pages/my/subPage/vip/index'
-					})
-				}
+			// uni.showTabBar({
+			// 	success: () => {
+			// 		ChatStore.setShowlevelUpVip(false)
+			// 		uni.navigateTo({
+			// 			url: '/pages/my/subPage/vip/index'
+			// 		})
+			// 	}
+			// })
+			ChatStore.setShowlevelUpVip(false)
+			uni.navigateTo({
+				url: '/pages/my/subPage/vip/index'
 			})
 		} else {
 			uni.navigateTo({
@@ -60,11 +61,11 @@
 	}
 	const closeOverLay = () => {
 		ChatStore.setShowlevelUpVip(false)
-		uni.showTabBar({
-			success: () => {
-				ChatStore.setShowlevelUpVip(false)
-			}
-		})
+		// uni.showTabBar({
+		// 	success: () => {
+		// 		ChatStore.setShowlevelUpVip(false)
+		// 	}
+		// })
 	}
 </script>
 

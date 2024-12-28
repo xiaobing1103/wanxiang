@@ -11,10 +11,18 @@
 			<text class="ChatEelseHandler_item_text">举报</text>
 			<up-icon color="#ccc" class="ChatEelseHandler_item_icon" name="arrow-down-fill" size="10"></up-icon>
 		</view>
+		<!-- #ifdef H5  -->
 		<view class="ChatEelseHandler_item" @click="exprotFile">
 			<text class="ChatEelseHandler_item_text">导出</text>
 			<up-icon color="#ccc" class="ChatEelseHandler_item_icon" name="arrow-down-fill" size="10"></up-icon>
 		</view>
+		<!-- #endif -->
+		<!-- #ifndef H5 || MP-WEIXIN -->
+		<view class="ChatEelseHandler_item" @click="shareFile">
+			<text class="ChatEelseHandler_item_text">分享</text>
+			<up-icon color="#ccc" class="ChatEelseHandler_item_icon" name="share" size="10"></up-icon>
+		</view>
+		<!-- #endif -->
 		<view class="ChatEelseHandler_item" @click="copy">
 			<text class="ChatEelseHandler_item_text">复制</text>
 		</view>
@@ -57,7 +65,9 @@
 <script setup lang="ts">
 	import { ref } from 'vue';
 	import { angelItem } from '@/config/modelConfig';
-	import { exportTxt, toCopyText } from '@/utils';
+	import { exportTxt, shareText, toCopyText } from '@/utils';
+	import { commonModel } from '@/config/modelConfig';
+	import { useChatStore } from '@/store';
 	const show = ref(false);
 	const showAngel = ref(false);
 	const closeShowAngel = () => {
@@ -66,6 +76,7 @@
 	const openShowAngel = () => {
 		showAngel.value = true;
 	};
+	const ChatStore = useChatStore()
 	const props = defineProps<{ msgId : string; text : string }>();
 	const currentAsk = ref('默认');
 	const juBaoList = ['政治谣言、舆论与虚假新闻', '暴力与仇恨言论', '色情与淫秽内容', '侵犯隐私', '垃圾信息', '其他'];
@@ -132,6 +143,20 @@
 			exportTxt(props.text);
 		}
 	};
+
+	const shareFile = () => {
+
+		// #ifdef APP
+		ChatStore.setSharedata({
+			type: 1,
+			strShareSummary: props.text + '\n' + '——————此内容由边界ai' + commonModel[ChatStore.model].title + '生成',
+			strShareUrl: 'https://ai1foo.com/',
+			strShareTitle: '边界ai生成内容',
+		})
+		ChatStore.setShareButton(true)
+		// #endif
+
+	}
 </script>
 
 <style lang="scss">

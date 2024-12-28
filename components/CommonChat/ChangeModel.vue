@@ -26,7 +26,6 @@
 	const { $assets } = useGlobalProperties()
 	const openModels = () => {
 		chatStore.setOpenSeletedModel(true)
-		uni.hideTabBar({})
 	}
 </script>
 

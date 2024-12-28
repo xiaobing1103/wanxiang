@@ -104,6 +104,6 @@
 </script>
 
 <template>
-	<view :renderjsData="renderjsData" :change:renderjsData="chat.startChatCore" :stopCount="stopCount"
-		:change:stopCount="chat.stopChatCore" />
+	<view :renderjsData="renderjsData" :change:renderjsData="chat?.startChatCore" :stopCount="stopCount"
+		:change:stopCount="chat?.stopChatCore" />
 </template>

@@ -95,6 +95,7 @@
 		width: 100%;
 		margin-bottom: 20rpx;
 		flex-direction: column;
+		padding: 0 30rpx;
 
 		.tools {
 			font-size: 22rpx;

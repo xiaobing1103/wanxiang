@@ -73,15 +73,15 @@
 		})
 	}
 	const close = () => {
-
-		uni.showTabBar({
-			success: function () {
-				chatStore.setOpenSeletedModel(false)
-			},
-			fail: function () {
-				chatStore.setOpenSeletedModel(false)
-			}
-		})
+		chatStore.setOpenSeletedModel(false)
+		// uni.showTabBar({
+		// 	success: function () {
+		// 		chatStore.setOpenSeletedModel(false)
+		// 	},
+		// 	fail: function () {
+		// 		chatStore.setOpenSeletedModel(false)
+		// 	}
+		// })
 	}
 	const changeModel = (key : CommonModelKeys) => {
 		if (key == chatStore.model) {

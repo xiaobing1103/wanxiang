@@ -1,9 +1,13 @@
 <template>
 	<view class="header" :style="{background: noBackGround ?  '' : 'white'}">
-		<view class="headerItems" :style="{height: parmas.navBarHeight + 'px' }">
+		<view class="headerItems" :style="{height: ScreenStore.navBarHeight + 'px' }">
 			<view class="weixin-header">
 				<template v-if="curRoute == 'pages/index/index'">
-					<up-navbar :bgColor="bgColor" :left-icon="'clock'" @leftClick="leftClick">
+					<up-navbar :bgColor="bgColor">
+						<template v-slot:left>
+							<up-icon :color="chatStore.openHistoryModel ? '#4955f5' :''"
+								@click="chatStore.setopenHistoryModel(true)" name="clock" size="22"></up-icon>
+						</template>
 						<template v-slot:center>
 							<view>
 								<image :src="AppName =='bianjie' ? '/static/logo.svg' :'/static/wanxianglogo.svg'"
@@ -49,13 +53,17 @@
 		<template v-if="!noRenderLastModal">
 			<GolbalModals />
 		</template>
+		<CommonTabbar />
 	</view>
 	<LevelUpVip />
+
+
 </template>
 
 <script setup lang="ts">
 	import LevelUpVip from '@/components/CommonChat/LevelUpVip.vue';
 	import GolbalModals from './GolbalModals.vue';
+	import CommonTabbar from './CommonTabbar.vue';
 	import { computed, reactive } from 'vue';
 	import { AppName } from '@/http';
 	import { useChatStore, useScreenStore } from '@/store';
@@ -64,31 +72,17 @@
 		const routers = getCurrentPages();
 		return routers[routers.length - 1].route
 	})
-	const parmas = reactive({
-		statusBarHeight: 0,
-		menuButtonInfo: { height: 44 },
-		navBarHeight: 44
-	})
+	const chatStore = useChatStore()
 	const ScreenStore = useScreenStore()
+
 	const props = defineProps<{ backPageNum ?: number, defindTitle ?: string, defindPath ?: 'string', noBackGround ?: boolean, backFunction ?: Function, noRenderLastModal ?: boolean }>()
 	const bgColor = props.noBackGround ? 'rgb(255,255,255,0)' : 'rgb(255,255,255)'
-	const chatStore = useChatStore()
-	// #ifdef MP-WEIXIN
-	parmas.statusBarHeight = uni.getSystemInfoSync().statusBarHeight
-	parmas.navBarHeight = parmas.menuButtonInfo.height + parmas.statusBarHeight + 10
-	// #endif
 
 
-	// #ifdef APP
-	if (ScreenStore.systemInfo) {
-		parmas.navBarHeight = ScreenStore.systemInfo.safeArea.top + parmas.navBarHeight
+	const openPageList = () => {
+		ScreenStore.setOpenGolbalList(true)
 	}
-	// #endif
 
-	const leftClick = () => {
-		chatStore.setopenHistoryModel(true)
-		uni.hideTabBar({})
-	};
 	const backpage = () => {
 		if (props.backFunction) {
 			props.backFunction()

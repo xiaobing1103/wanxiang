@@ -2,7 +2,12 @@
 	<up-popup :show="chatStore.openHistoryModel" mode="left" @close="close" @open="open">
 		<view :style="{paddingTop:screenStore.safeTopHeight + 'rpx'}" class="historyBox">
 			<view class="historyBox_header">
-				历史记录
+				<view class="historyBox_header_title">
+					历史记录
+				</view>
+				<view class="historyBox_header_close" @click="chatStore.setopenHistoryModel(false)">
+					<up-icon name="close" size="20"></up-icon>
+				</view>
 			</view>
 			<up-line></up-line>
 			<view class="historyBox_main">
@@ -50,14 +55,15 @@
 		chatStore.setopenHistoryModel(true)
 	}
 	const close = () => {
-		uni.showTabBar({
-			success: function () {
-				chatStore.setopenHistoryModel(false)
-			},
-			fail: function (err) {
-				console.log(err)
-			}
-		})
+		chatStore.setopenHistoryModel(false)
+		// uni.showTabBar({
+		// 	success: function () {
+		// 		chatStore.setopenHistoryModel(false)
+		// 	},
+		// 	fail: function (err) {
+		// 		console.log(err)
+		// 	}
+		// })
 
 	}
 	const addChat = () => {
@@ -85,7 +91,7 @@
 </script>
 <style lang="scss">
 	.historyBox {
-		width: 50vw;
+		width: 70vw;
 		background-color: white;
 		border-radius: 30rpx;
 		display: flex;
@@ -110,11 +116,12 @@
 
 		&_header {
 			display: flex;
-			justify-content: flex-start;
+			justify-content: space-between;
 			width: 100%;
 			font-weight: 800;
 			padding: 10rpx 30rpx;
 			box-sizing: border-box;
+			align-items: center;
 
 			&_button {
 				width: 80% !important;
