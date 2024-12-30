@@ -36,6 +36,9 @@
 				</template>
 			</view>
 		</view>
+		<template #bottom>
+			<m-tabbar native safeBottom></m-tabbar>
+		</template>
 	</z-paging>
 </template>
 
@@ -43,6 +46,7 @@
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import AiAgentTemplate from './subPage/AIaiAgent/aiAgentTemplate'
 	import LeftMenus from './LeftMenus.vue'
+	import { onLoad } from '@dcloudio/uni-app'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
 	import { ref, reactive } from 'vue';
 	import { useAiAgentChats } from '@/store';
@@ -376,6 +380,9 @@
 			},
 		]
 	})
+	// onLoad((options : any) => {
+	// 	uni.hideTabBar()
+	// })
 </script>
 <style lang="scss" scoped>
 	.TranslatePages {

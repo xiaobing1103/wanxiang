@@ -20,14 +20,27 @@ export interface lastDayDatasTypes {
 	title : string
 }
 const useScreenStore = defineStore("screen", () => {
-	const statusBarHeight = ref<string | undefined>()
 	const menuButtonInfo = ref<UniApp.GetMenuButtonBoundingClientRectRes>()
 	const systemInfo = ref<UniApp.GetSystemInfoResult>()
 	const NotificationSign = ref('')
 	const saveTime = ref(0)
 	const lastModalisOpen = ref(false)
 	const lastDayDatas = ref<lastDayDatasTypes>(null)
-	//顶部安全距离
+	const openGolbalList = ref<boolean>(false)
+	const setOpenGolbalList = (val : boolean) => {
+		openGolbalList.value = val
+	}
+
+	const navBarHeight = computed(() => {
+		// #ifdef MP-WEIXIN
+		return 44 + systemInfo.value.statusBarHeight
+		// #endif
+		// #ifdef APP
+		return systemInfo.value.safeArea.top + 44
+		// #endif
+		return 44
+	})
+
 	const safeTopHeight = computed(() => {
 		let height : number = 0
 		// #ifdef H5
@@ -60,9 +73,6 @@ const useScreenStore = defineStore("screen", () => {
 	const setSystemInfo = (val : UniApp.GetSystemInfoResult) => {
 		systemInfo.value = val
 	}
-	const setStatusBarHeight = (val : string) => {
-		statusBarHeight.value = val
-	}
 	const setMenuButtonInfo = (val : UniApp.GetMenuButtonBoundingClientRectRes) => {
 		menuButtonInfo.value = val
 	}
@@ -80,7 +90,6 @@ const useScreenStore = defineStore("screen", () => {
 		lastModalisOpen.value = val
 	}
 	return {
-		statusBarHeight,
 		safeTopHeight,
 		menuButtonInfo,
 		systemInfo,
@@ -92,10 +101,12 @@ const useScreenStore = defineStore("screen", () => {
 		setLastModalisOpen,
 		setLastDayDatas,
 		lastDayDatas,
-		setStatusBarHeight,
 		setMenuButtonInfo,
 		setSystemInfo,
-		changeVieHeight
+		changeVieHeight,
+		setOpenGolbalList,
+		openGolbalList,
+		navBarHeight
 	}
 }, { unistorage: { paths: ['statusBarHeight', 'menuButtonInfo', 'systemInfo', 'NotificationSign', 'saveTime', 'lastModalisOpen', 'lastDayDatas'] } })
 export default useScreenStore

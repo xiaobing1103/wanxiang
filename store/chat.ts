@@ -1,12 +1,19 @@
 import {
 	defineStore
 } from 'pinia';
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { ChatHistory, ItemMessage, ModelType, } from '../type/chatData';
 import { generateUUID } from '../tools/uuid';
 import { commonModel } from '../config/modelConfig';
 import { noHistoryArr } from '@/pages/chat/chatConfig';
-
+export interface shareDataType {
+	sharedata ?: any
+	type : number
+	strShareUrl ?: string
+	strShareTitle ?: string
+	strShareSummary ?: string
+	strShareImageUrl ?: string
+}
 
 const useChatStore = defineStore('wanxiang_chat', () => {
 	const model = ref<ModelType>('v35')
@@ -18,6 +25,20 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const showLevelUpVipContent = ref<string>('')
 	const openHistoryModel = ref<boolean>(false)
 	const chats = ref<ChatHistory[]>([])
+	const shareButton = ref(false)
+	const sharedata = ref<shareDataType>({
+		type: 1,
+		strShareUrl: "http://www.baidu.com",
+		strShareTitle: "分享标题",
+		strShareSummary: "分享总结",
+		strShareImageUrl: "http://www.xuelejia.com/xljapp/h5/static/aboutUsLogo.png"
+	})
+	const setSharedata = (val : shareDataType) => {
+		sharedata.value = val
+	}
+	const setShareButton = (val : boolean) => {
+		shareButton.value = val
+	}
 	const setModel = (val : ModelType) => {
 		model.value = val
 	}
@@ -162,7 +183,11 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		showlevelUpVip,
 		showLevelUpVipContent,
 		setShowlevelUpVip,
-		setShowLevelUpVipContent
+		setShowLevelUpVipContent,
+		sharedata,
+		shareButton,
+		setShareButton,
+		setSharedata
 	}
 }, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id', 'loadingMessage'] } }
 );

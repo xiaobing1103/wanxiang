@@ -43,12 +43,10 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 	let requestTask = null;
 	let cancelFn
 	// 用于App
+	// #ifdef APP
 	const appStreamRequest = async (options : StreamOptions) => {
 		currentOptions = options
-		// if (!isRecive.value) {
-		// 	uni.$u.toast('请先等待消息回复完成！');
-		// 	return
-		// };
+		console.log(chatSSEClientRef)
 		chatSSEClientRef.value.startChat({
 			url: BaseApi + options.url,
 			body: options.data,
@@ -61,7 +59,6 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 				'Content-Type': 'application/json'
 			},
 		})
-
 	}
 	const openCore = (reader) => {
 		isRecive.value = true;
@@ -73,7 +70,6 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 		isRecive.value = false;
 		currentOptions.onerror(err)
 	}
-
 	const messageCore = async (message : string) => {
 		console.log("message sse：", message);
 		let chunk = await revserAppChunk(message)
@@ -99,19 +95,25 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 			await $api.post('api/v1/number2/submit', { number: 1, type: currentOptions.checkNumsType ? currentOptions.checkNumsType : commonModel[ChatStore.model]?.checkNumsType })
 		}
 	}
+
+
 	let result = ''
 	const revserAppChunk = async (text : string) => {
 		const lines = text.split('\n');
 		result += lines;
 		for (let i = 0; i < lines.length; i++) {
 			if (lines[i]) {
-				const chunk = lines[i].replaceAll('\\n', '\n');
+				const chunk = lines[i].replace('\\n', '\n');
 				if (result.length !== 0 && chunk !== '[SUCCESS]') {
 					return chunk
 				}
 			}
 		}
 	}
+
+	// #endif
+
+
 	//用于微信
 	const wechatStreamRequest = async (options : StreamOptions) => {
 		isRecive.value = true;
@@ -173,6 +175,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 				options.onerror && options.onerror()
 		}
 	}
+	// h5端流处理
 
 	const h5StreamRequest = async (options : StreamOptions) => {
 		currentOptions = options
@@ -522,11 +525,13 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 		setIsRecive,
 		streamSpark,
 		verifyTranslateTextLimit,
+		// #ifdef APP
 		openCore,
 		errorCore,
 		messageCore,
 		finishCore,
 		chatSSEClientRef
+		// #endif
 	}
 }
 // 流在进行中进行判断逻辑 	

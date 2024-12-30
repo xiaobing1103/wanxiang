@@ -11,10 +11,12 @@
 				<text v-if="!isShowPlaceholder" class="ImageUploadCom_text">点击上传图片</text>
 			</template>
 		</view>
-		<up-overlay opacity="0.9" :show="showUpOverlay" :mask-click-able="false">
+
+		<up-overlay :show="showUpOverlay" :mask-click-able="false">
+			<!-- #ifndef APP-PLUS  -->
 			<view class="overlayHandlerImages">
-				<view :style="{height:navBarHeight + 'px',background:'#fff'}">
-					<view class="Doodles_footerBox" :style="{padding:menuButtonInfo?.top + 16 +'px 0'}">
+				<view class="headerItems" :style="{ height: ScreenStore.navBarHeight + 'px',background:'#fff'}">
+					<view class="Doodles_footerBox">
 						<view class="Doodles_footerBox_title">
 							涂鸦
 						</view>
@@ -33,10 +35,8 @@
 								</view>
 							</view>
 						</view>
-
 					</view>
 				</view>
-
 
 				<view class="Doodles" v-show="!showDrawColor && !showDrawWidth">
 					<view class="Doodles_main">
@@ -50,8 +50,13 @@
 					</view>
 				</view>
 			</view>
+			<!-- #endif -->
+			<!-- #ifdef APP-PLUS  -->
+			<view class="overlayHandlerImages">
+				<DrawTools @saveImage="saveImage" :img="url" />
+			</view>
+			<!-- #endif -->
 		</up-overlay>
-
 		<up-modal :show="showDrawColor" @confirm="showDrawColor = false">
 			<view class="showDrawColorModal">
 				<text class="showDrawColorModal_title">画笔颜色</text>
@@ -64,9 +69,7 @@
 						</view>
 					</template>
 				</view>
-
 			</view>
-
 		</up-modal>
 
 		<up-modal :show="showDrawWidth" @confirm="showDrawWidth = false">
@@ -82,33 +85,28 @@
 					</template>
 				</view>
 			</view>
-
 		</up-modal>
-
 	</view>
 </template>
 
 <script setup lang="ts">
 	import Vsign from './v-sign/components/v-sign/v-sign.vue'
-	import { ref, defineExpose } from 'vue';
+	import DrawTools from './components/DrawTools.vue'
+	import { ref, defineExpose, reactive } from 'vue';
 	import { Image2TextParmas } from '../data';
 	import useDrawStore, { taskIdTypeKey } from '@/store/draw';
 	import { fileToBase64, wxBase64 } from '@/utils/file2Base64';
 	import { storeToRefs } from 'pinia';
 	import { base64ToFile } from '@/utils/base642file';
 	import { base64ToTempUrl } from '@/utils/base64ToTempUrl';
-	import { useCounterStore, useScreenStore } from '@/store';
+	import { useScreenStore } from '@/store';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	const showDrawColor = ref(false)
 	const showDrawWidth = ref(false)
 	const showUpOverlay = defineModel('showUpOverlay');
 	const { $assets } = useGlobalProperties()
-	// #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { menuButtonInfo, navBarHeight } = storeToRefs(system)
-	// #endif
 	const ScreenStore = useScreenStore();
-	const props = defineProps<{ type : taskIdTypeKey, isShowPlaceholder : boolean }>();
+	const props = defineProps<{ type : taskIdTypeKey, isShowPlaceholder ?: boolean }>();
 	const parmas = defineModel<Image2TextParmas>('parmas');
 	const url = defineModel<string>('url');
 	const DrawStore = useDrawStore();
@@ -124,10 +122,18 @@
 	const seletedColor = ref('#000000');
 	const canvasWidth = ref(0);
 	const onSignInit = (signCtx : any) => {
+		console.log(signCtx)
 		signContext.value = signCtx;
 	};
 
-
+	const graffiti = ref(null)
+	const stepInfo = ref({
+		curStep: -1,
+		len: 0
+	})
+	const stepChanged = (e) => {
+		stepInfo.value = e;
+	}
 	const seletedPen = (pen : number) => {
 		linesWidth.value = pen;
 	};
@@ -144,16 +150,18 @@
 		DrawStore.setCurrentIamgeBase64(temImage);
 		temImage = base64ToTempUrl(base64);
 		// #endif
-		// uni.navigateTo({
-		// 	url: drawProjectConfig[DrawStore.seletedDrawProject].path + `?temImages=${temImage}`
-		// });
+
 		url.value = temImage
 		showUpOverlay.value = false
+		// await signContext.value.clear();
+		// const res = await graffiti.value.saveCanvas()
+		// url.value = res
+		// showUpOverlay.value = false
 	};
 	// 赋值image
 	const hanlderImages = async (url : string) => {
 		console.log('处理的 URL:', url);
-		// #ifdef H5
+		// #ifdef H5 
 		if (props.type == 'coloringLineArt_task_json') {
 			parmas.value.image = DrawStore.currentIamgeBase64;
 		} else {
@@ -168,7 +176,7 @@
 		};
 		// #endif
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		wx.getImageInfo({
 			src: url,
 			success: (res) => {
@@ -196,6 +204,7 @@
 				count: 1,
 				sizeType: ['original'],
 				success: async (options) => {
+					console.log(options)
 					const { tempFilePaths, tempFiles } = options;
 					url.value = tempFilePaths[0];
 					// #ifdef H5
@@ -206,7 +215,6 @@
 					} else {
 						parmas.value.image = tempFiles[0];
 					}
-
 					const img = new Image();
 					img.src = tempFilePaths[0];
 					img.onload = async () => {
@@ -216,7 +224,7 @@
 					};
 					// #endif
 
-					// #ifdef MP-WEIXIN
+					// #ifdef MP-WEIXIN || APP
 					wx.getImageInfo({
 						src: tempFilePaths[0],
 						success: async (res) => {
@@ -235,7 +243,7 @@
 					// #endif
 				},
 				fail: (err) => {
-					console.log(err);
+					console.log('err', err);
 					uni.$u.toast('上传图片失败，请重试！');
 				}
 			});
@@ -245,9 +253,9 @@
 
 	const updateCanvasSize = () => {
 		const isOpenDoodlesArr = ['coloringLineArt_task_json', 'image2cartoon_task_json', 'portraitCutout_task_json', 'reserveWordIcons_task_json'];
-
 		if (!isOpenDoodlesArr.includes(DrawStore.seletedDrawProject)) {
 			showUpOverlay.value = true;
+			// #ifndef APP-PLUS 
 			currentImage.value = url.value;
 			const screenWidth = ScreenStore.systemInfo.screenWidth;
 			const screenHeight = ScreenStore.systemInfo.screenHeight;
@@ -261,8 +269,18 @@
 			setTimeout(() => {
 				addImage();
 			}, 200);
+			// #endif
 		}
 	};
+
+	const saveImage = (e) => {
+		console.log(e)
+		url.value = e
+
+
+		parmas.value.image = e
+		showUpOverlay.value = false;
+	}
 </script>
 
 <style lang="scss">
@@ -308,12 +326,19 @@
 
 
 	.overlayHandlerImages {
-		width: 100%;
+		width: 100vw;
 		height: 100vh;
-
-
+		background-color: #fff;
 	}
 
+	.headerItems {
+		display: flex;
+		align-items: flex-end;
+		width: 100%;
+		padding-top: 30rpx;
+		box-sizing: content-box;
+		background-color: #fff;
+	}
 
 
 
@@ -322,12 +347,13 @@
 		flex-direction: column;
 		height: 100%;
 		width: 100%;
+		margin-top: 50rpx;
 
 		&_main {
 			height: 100%;
 			width: 100%;
 			display: flex;
-			align-items: center;
+			// align-items: center;
 			position: relative;
 
 			&_color {

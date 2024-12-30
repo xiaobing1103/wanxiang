@@ -14,6 +14,7 @@
 			<view @click="submit" class="footerButton">AI生成(消耗1次)</view>
 		</view>
 	</view>
+	<!-- <view class="nav_title" @click="custom.taskSycn">test</view> -->
 </template>
 
 <script setup lang='ts'>
@@ -78,7 +79,7 @@
 			"image2cartoon_task_json" || props.IamgeTypes.historyType == "partialRepaint_task_json") {
 
 			let formdata: Image2TextParmas | FormData
-			// #ifdef H5
+			// #ifdef H5 
 			formdata = new FormData()
 			for (const key in newParmas) {
 				if (key !== 'image') {
@@ -88,8 +89,7 @@
 			formdata.append('image', file)
 			newParmas = formdata
 			// #endif
-
-			// #ifdef MP-WEIXIN
+			// #ifdef MP-WEIXIN || APP
 			newParmas.image = file
 			// #endif
 		} else {
@@ -101,6 +101,7 @@
 	}
 
 	const submit = async () => {
+		console.log(parmas.value)
 		const hasImageArr = ['img2img_task_json', 'coloringLineArt_task_json', 'image2cartoon_task_json',
 			'partialRepaint_task_json', 'portraitCutout_task_json'
 		]

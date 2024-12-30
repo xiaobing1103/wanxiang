@@ -49,9 +49,12 @@
 			<imageModelChat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 		</template>
 	</z-paging>
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
 </template>
 
 <script setup lang="ts">
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
 	import { nextTick, onMounted, ref } from 'vue';
 	import imageModelChat from '@/components/CommonChat/imageModelChat.vue';
 	import { simpleModels, imagesList, imageDesception } from './data';
@@ -75,7 +78,7 @@
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const { $api } = useGlobalProperties()
 	const { setChatInfo } = ChatStore;
-	const { streamRequest, isRecive, onCancelRequest, streamSpark } = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest, streamSpark, openCore, errorCore, messageCore, finishCore, chatSSEClientRef } = useStreamHooks();
 	const onCancel = () => {
 		onCancelRequest()
 		ChatStore.setLoadingMessage(false)
@@ -113,6 +116,10 @@
 	const afterRead = async (event : { file : any; }) => {
 
 		console.log(event)
+		if (event.file[0]?.size > 10485760) {
+			uni.$u.toast('图片大小不能超过10mb！');
+			return
+		}
 		let fileName = ''
 		let base64 : any = null
 		// #ifdef H5
@@ -135,6 +142,7 @@
 		base64 = await fileToBase64WithHeader(event.file[0].file)
 		// #endif
 		const descriptionReq = await descriptionImage(base64)
+
 		if (descriptionReq) {
 			description.value = descriptionReq
 			const parmas = [
@@ -145,19 +153,17 @@
 			const msgObj : ItemMessage = { id: msgId, state: 'ok', target: 'user', message: temUrl, messageType: "image" };
 			ChatBoxRef.value.addMessage(msgId, msgObj);
 			onSend('请描述这张图片内容', undefined, parmas)
-		} else {
-			uni.$u.toast(descriptionReq.msg);
 		}
 	};
 
 	const descriptionImage = async (base64 : string) => {
 		const res = await $api.post('api/v1/ocr/descriptionImage', { image: base64 })
 		return new Promise((resolve, reject) => {
-			if (res.code == 200) {
+			if (res?.code == 200) {
 				resolve(res.data)
 			} else {
 				uni.$u.toast('图片理解失败，请重试！');
-				reject(null)
+				resolve(null)
 			}
 		})
 

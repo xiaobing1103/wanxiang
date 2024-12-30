@@ -33,7 +33,7 @@ function fileToBase64WithHeader(file) {
 
 const wxBase64 = ({ url, type }) => {
 	return new Promise((resolve, reject) => {
-		wx.getFileSystemManager().readFile({
+		uni.getFileSystemManager().readFile({
 			filePath: url, //选择图片返回的相对路径
 			encoding: 'base64', //编码格式
 			success: res => {

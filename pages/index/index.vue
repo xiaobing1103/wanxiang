@@ -1,8 +1,9 @@
 <template>
-	<z-paging ref="srollRef" :pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0 30rpx'}">
+	<z-paging fixed ref="srollRef" safe-area-inset-bottom
+		:pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0'}">
 		<template #top>
 			<CommonHeader />
-			<ChangeModel />
+			<ChangeModel :style="{width:'100%'}" />
 		</template>
 		<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" @echartsOnsendMessage="echartsOnsendMessage"
 			v-model:IsHasChatOverMessage="IsHasChatOverMessage" />
@@ -13,18 +14,28 @@
 				</template>
 				<Chat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 			</view>
+			<m-tabbar native safeBottom></m-tabbar>
 		</template>
 	</z-paging>
 	<CommonModelSeleted />
 	<HistoryMessage />
+
+	<!-- #ifdef APP -->
+	<up-popup round="10" :show="ChatStore.shareButton" @close="ChatStore.setShareButton(false)">
+		<ShareBtn :sharedataTemp="ChatStore.sharedata"></ShareBtn>
+	</up-popup>
 	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
 		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 <script setup lang="ts">
+	// #ifdef APP
 	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
 	import { onLoad, onShow } from '@dcloudio/uni-app'
 	import Chat from '@/components/CommonChat/Chat.vue';
+	import ShareBtn from '@/components/ShareBtn.vue';
 	import CommonModelSeleted from '@/components/CommonChat/CommonModelSeleted.vue';
 	import HistoryMessage from '@/components/CommonChat/HistoryMessage.vue';
 	import CommonHeader from '@/components/CommonHeader.vue';
@@ -40,7 +51,11 @@
 	import { ToolTipItem } from '@/type/userTypes';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { currentModelReversParmas, exParmas, modelTypes, noHistoryArr } from '../chat/chatConfig';
-	const { streamRequest, isRecive, onCancelRequest, streamSpark, openCore, errorCore, messageCore, finishCore, chatSSEClientRef } = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest, streamSpark
+		// #ifdef APP
+		,openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks();
 	const { $api } = useGlobalProperties();
 	const ChatStore = useChatStore();
 	const UserStore = useUserStore()
@@ -57,6 +72,22 @@
 			return
 		}
 	})
+
+	const onBeforeChange = (next, index) => {
+		uni.showModal({
+			title: '非法进入',
+			content: `你点击了第${index}个tab,被系统拦截了,是否继续`,
+			success: function (res) {
+				if (res.confirm) {
+					next()
+				} else if (res.cancel) {
+					console.log('用户点击取消');
+				}
+			}
+		})
+	}
+
+
 	onMounted(() => {
 		const initMessage = ChatStore.getCurrentInfo(ChatStore.selectChatId);
 		ChatStore.setModel(initMessage.model)
@@ -75,6 +106,7 @@
 		if (options.invite_code) {
 			UserStore.setInvite_code(options.invite_code)
 		}
+		// uni.hideTabBar()
 		console.log('apppppppp -----------------------', options)
 	})
 	const echartsOnsendMessage = (val : any) => {
@@ -148,6 +180,7 @@
 		};
 		scrollToBottom();
 		chatValue.value = '';
+		console.log(options)
 		handleStream(options);
 	};
 
@@ -192,6 +225,7 @@
 			},
 			LoadingConfig,
 		};
+		console.log(requestOptions)
 		streamRequest(requestOptions);
 	}
 </script>
@@ -203,6 +237,10 @@
 		/* #ifdef MP-WEIXIN */
 		padding-bottom: env(safe-area-inset-bottom);
 		/* #endif */
-		// overflow: hidden;
 	}
+
+	// .changemodels {
+	// 	height: max-content;
+	// 	display: flex;
+	// }
 </style>

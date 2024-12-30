@@ -1,10 +1,7 @@
 <template>
-
-	<!-- width: width && formatSize(width),
-					height: height && formatSize(height) -->
 	<view class="signature-wrap">
-		<canvas :canvas-id="cid" :id="cid" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd"
-			disable-scroll :style="[
+		<canvas @error="error" :canvas-id="cid" :id="cid" @touchstart="onTouchStart" @touchmove="onTouchMove"
+			@touchend="onTouchEnd" disable-scroll :style="[
 				{
 					width: width && formatSize(width) + 'px',
 					height: height && formatSize(height) + 'px'
@@ -96,25 +93,23 @@
 			this.winWidth = windowWidth
 			this.winHeight = windowHeight
 		},
-		mounted() {
 
+		mounted() {
 			// 计算最佳的显示高度和宽度
 			this.canvasCtx = uni.createCanvasContext(this.cid, this)
 			// h5 需延迟绘制，否则绘制失败
 			// #ifdef H5
 			setTimeout(() => {
-				// #endif
 				this.setBackgroundColor(this.bgColor)
-				// #ifdef H5
 			}, 10)
 			// #endif
-			// 初始化完成，触发 init 事件
+
 			this.$emit('init', this.provideSignInterface())
 			// this.addImages()
 		},
 		methods: {
-
 			onTouchStart(e) {
+				console.log(e)
 				const pos = e.touches[0]
 				this.lineData.push({
 					style: {
@@ -131,6 +126,7 @@
 				this.drawLine()
 			},
 			onTouchMove(e) {
+				console.log(e)
 				const pos = e.touches[0]
 				this.lineData[this.lineData.length - 1].coordinates.push({
 					type: e.type,
@@ -139,28 +135,27 @@
 				})
 				this.drawLine()
 			},
+			error(e) {
+				console.log(e)
+			},
 			addImages(src, width, height) {
-				// #ifdef H5
+				console.log('addImages组件', src, width, height)
+				console.log(this.canvasCtx)
 				this.canvasCtx.drawImage(src, 0, 0, width, height);
 				this.canvasCtx.draw();
-				// #endif
-
-				// #ifdef MP-WEIXIN
-				this.canvasCtx.drawImage(src, 0, 0, width, height);
-				this.canvasCtx.draw();
-
-				// #endif
 			},
 			onTouchEnd(e) {
 				this.$emit('end', this.lineData)
 			},
 			// 清空画布
 			clear() {
-				this.lineData = []
-				this.canvasCtx.clearRect(0, 0, this.winWidth, this.winHeight)
-				this.canvasCtx.draw()
-				this.setBackgroundColor(this.bgColor)
-				this.$emit('clear')
+				if (this.canvasCtx) {
+					this.lineData = []
+					this.canvasCtx.clearRect(0, 0, this.winWidth, this.winHeight)
+					this.canvasCtx.draw()
+					this.setBackgroundColor(this.bgColor)
+					this.$emit('clear')
+				}
 			},
 			// 撤销
 			revoke() {
@@ -227,7 +222,6 @@
 			},
 			// 保存png图片，文件名配置 filename 仅支持 h5
 			async getImagePath(filename = '图片') {
-
 				const tempFilePath = await this.canvasToTempFilePath({
 					width: this.width,
 					height: this.height,
@@ -236,7 +230,6 @@
 				})
 				return tempFilePath
 			},
-
 			async saveImage(filename = '签名') {
 				const tempFilePath = await this.canvasToTempFilePath()
 				return new Promise((resolve, reject) => {

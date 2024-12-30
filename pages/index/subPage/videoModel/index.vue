@@ -36,7 +36,7 @@
 				<template v-if="currentProject">
 					<view class="voiceLink">
 						<view class="voiceLink_uploadFile">
-							<up-upload :customStyle="{width: '100%',display:'flex',alignItems:'center' }"
+							<up-upload :customStyle="{ width: '100%',display:'flex',alignItems:'center'}"
 								:accept='accept' :previewImage="false" @afterRead="afterRead" @delete="deletePic"
 								:fileList="fileList1" :maxCount="1" name="1" multiple>
 								<view class="voiceLink_uploadFile_box">
@@ -60,9 +60,12 @@
 			<imageModelChat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 		</template>
 	</z-paging>
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
 </template>
 
 <script setup lang="ts">
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
 	import { computed, nextTick, onMounted, ref } from 'vue';
 	import imageModelChat from '@/components/CommonChat/imageModelChat.vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
@@ -82,6 +85,9 @@
 		// #ifdef MP-WEIXIN
 		return 'all'
 		// #endif
+		// #ifdef APP
+		return 'video'
+		// #endif
 		return 'file'
 	})
 	const changeTabsLists = ref([
@@ -97,7 +103,7 @@
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const { $api, $assets } = useGlobalProperties()
 	const { setChatInfo } = ChatStore;
-	const { streamRequest, isRecive, onCancelRequest , streamSpark} = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest, streamSpark, openCore, errorCore, messageCore, finishCore, chatSSEClientRef } = useStreamHooks();
 	const onCancel = () => {
 		onCancelRequest()
 		ChatStore.setLoadingMessage(false)
@@ -184,12 +190,15 @@
 		// #ifdef MP-WEIXIN
 		fileName = event.file[0].name
 		// #endif
+		// #ifdef APP
+		fileName = event.file[0].url
+		// #endif
 		if (!checkFileType(fileName)) {
 			uni.$u.toast('只支持上传视频格式acc, mp4, opus, wav！');
 			return
 		}
 		showChatBox.value = true
-		// #ifdef MP-WEIXIN
+		// #ifndef H5
 		formdata = { file: event.file[0].url }
 		// #endif
 		// #ifdef H5
@@ -197,8 +206,9 @@
 		formdata.append('file', event.file[0].file)
 		// #endif
 		const description = await descriptionImage(formdata)
+
 		if (description) {
-			onSend(fileName, null, [{ role: 'user', content: '我的内容是：' + description }])
+			onSend('请你理解这段视频说了什么', null, [{ role: 'user', content: '我的内容是：' + description }])
 		}
 	};
 
@@ -207,20 +217,20 @@
 		// #ifdef H5
 		res = await $api.post('api/v1/media/audioFile2txt', formData)
 		// #endif
-		// #ifdef MP-WEIXIN
+		// #ifndef H5
 		res = await $api.post('api/v1/media/audioFile2txt', formData, true, {}, null, true)
 		// #endif
 		if (typeof res == 'string') {
 			res = JSON.parse(res)
 		}
+		console.log(res)
 		return new Promise((resolve, reject) => {
 			if (res.code == "0") {
-
-				resolve(res.text)
+				resolve(res.text || '这个文件没有对话内容，请重新发一个视频文件试试！')
 			} else {
 				uni.$u.toast('视频理解失败，请重新生成！');
 				currentProject.value = 0
-				reject(null)
+				resolve(null)
 			}
 		})
 	}
@@ -343,11 +353,8 @@
 
 		&_uploadFile {
 			width: 100%;
-			align-items: center;
-			justify-content: center;
-
 			.u-upload {
-				align-items: flex-start !important;
+				// align-items: flex-start !important;
 			}
 
 			&_box {

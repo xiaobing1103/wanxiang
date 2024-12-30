@@ -47,6 +47,24 @@ function isPureLink(str : string) {
 	}
 }
 
+const limitFileSize = (File : any, tips : string) => {
+	let flag = true
+	// #ifdef APP
+	if (File[0]?.size > 10485760) {
+		uni.$u.toast(tips + '大小不能超过10mb！');
+		flag = false
+	}
+	// #endif
+	// #ifndef APP
+	if (File.file[0]?.size > 10485760) {
+		uni.$u.toast(tips + '大小不能超过10mb！');
+		flag = false
+	}
+	// #endif 
+	return flag
+
+}
+
 const toCopyText = (content : string, tips ?: string) => {
 	//#ifndef H5
 	uni.setClipboardData({
@@ -139,9 +157,9 @@ function weChatTempPathToBase64(tempFilePath : string) {
 				let reader = new plus.io.FileReader();
 				reader.onloadend = function (e) {
 					let base64Data = e.target.result;
-					let mimeType = file.type;
-					const base64DataUrl = `data:${mimeType};base64,${base64Data}`;
-					resolve(base64DataUrl);
+					// let mimeType = file.type;
+					// const base64DataUrl = `data:${mimeType};base64,${base64Data}`;
+					resolve(base64Data);
 				};
 				reader.onerror = function (e) {
 					reject(e.target.error);
@@ -296,4 +314,4 @@ const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, a
 	})
 }
 
-export { toPage, uploadFileBefore, saveImage, debounce, isPureLink, toCopyText, timestampToDateString, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport };
+export { toPage, uploadFileBefore, saveImage, debounce, isPureLink, toCopyText, timestampToDateString, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport, limitFileSize, shareText };

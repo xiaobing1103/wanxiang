@@ -18,14 +18,17 @@
 				使用AI优化功能后会占用你的AiChat3.5的问答次数，优化一次会扣掉一次问答次数,请知悉！
 			</view>
 		</view>
-
 	</up-modal>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 <script setup lang="ts">
 	import {
 		useStreamHooks
 	} from '@/hooks/useStreamHooks';
-
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
 	import {
 		nextTick,
 		ref
@@ -39,7 +42,8 @@
 		streamRequest,
 		onCancelRequest,
 		isRecive,
-		streamSpark
+		streamSpark,
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
 	} = useStreamHooks();
 	const change = (e) => {
 		if (e) {
@@ -51,6 +55,10 @@
 	const confirm = () => {
 		console.log('点击了确认')
 		onclose()
+		if (!parmas.value.prompt) {
+			uni.$u.toast('请先输入提示词在进行ai优化！')
+			return
+		}
 		onFetchChat(parmas.value.prompt)
 	}
 	const onclose = () => {
@@ -80,7 +88,7 @@
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage: async (text:string) => {
+			onmessage: async (text : string) => {
 				newStr += text
 				parmas.value.prompt = await streamSpark(newStr)
 			},

@@ -58,11 +58,7 @@
 						@click="onLogin" type="primary" text="立即登录"></up-button>
 				</view>
 			</view>
-
 		</view>
-	
-	
-	
 	
 		<template #bottom>
 			<LoginDecscriptions v-model:aloneChecked="aloneChecked" />
@@ -161,29 +157,6 @@
 			}
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

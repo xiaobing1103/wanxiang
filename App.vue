@@ -13,6 +13,7 @@
 		screenStore.setMenuButtonInfo(buttonInfo)
 		// #endif
 		screenStore.setSystemInfo(systemInfo)
+		
 	}
 	// #ifndef MP-WEIXIN
 	uni.onTabBarMidButtonTap(() => {
@@ -20,9 +21,9 @@
 	})
 	// #endif
 	// 初始化对话
-	onLaunch(() => {
+	onLaunch(async () => {
 		//初始化页面信息
-		initPageSystem()
+		await initPageSystem()
 		ChatStore.initChatInfo()
 		// getInviteCode()
 		console.log('App Launch');

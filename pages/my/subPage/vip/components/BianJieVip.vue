@@ -2,7 +2,7 @@
 	<z-paging :show-scrollbar="false" ref="srollRef"
 		:pagingStyle="{ background: 'linear-gradient(to bottom, rgb(250,234,210), rgb(235, 214, 186))', padding: '0' }">
 		<view class="header" :style="{height:navBarHeight  + 'px'}">
-			<view class="header_weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
+			<view class="header_weixin-header" :style="{marginTop:ScreenStore.navBarHeight + 'px'}">
 				<up-icon @click="backview" name="arrow-left" size="20"></up-icon>
 				<view class="header_btngrp">
 					<view class="buchajia" @click="buChaJiaModal = true">
@@ -119,7 +119,7 @@
 	import { computed, onMounted, ref } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { toCopyText } from '@/utils';
-	import { useCounterStore, useUserStore } from '@/store';
+	import { useCounterStore, useScreenStore, useUserStore } from '@/store';
 	import HotVips from './HotVips.vue';
 	import OfficeWorkVips from './OfficeWorkVips.vue';
 	import VipNumberSteps from './VipNumberSteps.vue';
@@ -127,6 +127,7 @@
 	import MiddleVipView from './MiddleVipView.vue';
 	import { storeToRefs } from "pinia"
 	import { vipTypes, vipDatasType, payModeType } from "../data"
+	const ScreenStore = useScreenStore()
 	const activeItems = ref(0)
 	const UserStore = useUserStore()
 	const { $assets, $api } = useGlobalProperties();

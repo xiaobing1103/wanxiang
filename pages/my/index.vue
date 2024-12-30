@@ -19,6 +19,9 @@
 		<!-- 菜单列表 -->
 		<MenuList :isIos="isIos" v-model:showOverlay="showOverlay" v-model:openPop="openPop" v-model:openPop1="openPop1"
 			v-model:popupShow6="popupShow6" />
+		<template #bottom>
+			<m-tabbar native safeBottom></m-tabbar>
+		</template>
 	</z-paging>
 
 	<handlerSeletedPop v-model:openPop="openPop" text1="修改密码" text2="注销用户" @handler1="handlerPassword"
@@ -44,6 +47,7 @@
 	import RelationWe from '@/components/RelationWe/index.vue';
 	import { useUserStore } from '@/store/index'
 	import { onMounted, ref } from 'vue'
+	import { onLoad } from '@dcloudio/uni-app'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
 	const { $assets, $api } = useGlobalProperties();
 	const userStore = useUserStore()
@@ -84,6 +88,9 @@
 			url: "/pages/my/subPage/PrivacyPolicy/index"
 		})
 	}
+	// onLoad((options : any) => {
+	// 	uni.hideTabBar()
+	// })
 </script>
 
 <style lang="scss">

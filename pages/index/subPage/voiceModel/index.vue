@@ -31,9 +31,24 @@
 				<template v-if="currentProject">
 					<view class="voiceLink">
 						<view class="voiceLink_uploadFile">
-							<up-upload :customStyle="{ width: '100%' }" :accept='accept' :previewImage="false"
-								@afterRead="afterRead" @delete="deletePic" :fileList="fileList1" :maxCount="1" name="1"
-								multiple>
+							<!-- #ifdef APP -->
+							<upload-demo :count="1" @UploadCallback="UploadCallback" type="file">
+								<template #defaultTemplate>
+									<view class="voiceLink_uploadFile_box">
+										<image class="voiceLink_uploadFile_imageIcon" :src="$assets.voiceModelIcon"
+											mode="">
+										</image>
+										<text class="voiceLink_uploadFile_topText">点击此区域进行文件上传</text>
+										<text
+											class="voiceLink_uploadFile_bottomText">您可以上传.Acc、.Mp3、.Opus或.Wav格式的文件</text>
+									</view>
+								</template>
+							</upload-demo>
+							<!-- #endif -->
+							<!-- #ifndef APP -->
+							<up-upload :customStyle="{ width: '100%',display:'flex',alignItems:'center' }"
+								:accept='accept' :previewImage="false" @afterRead="afterRead" @delete="deletePic"
+								:fileList="fileList1" :maxCount="1" name="1" multiple>
 								<view class="voiceLink_uploadFile_box">
 									<image class="voiceLink_uploadFile_imageIcon" :src="$assets.voiceModelIcon" mode="">
 									</image>
@@ -41,6 +56,7 @@
 									<text class="voiceLink_uploadFile_bottomText">您可以上传.Acc、.Mp3、.Opus或.Wav格式的文件</text>
 								</view>
 							</up-upload>
+							<!-- #endif -->
 						</view>
 					</view>
 				</template>
@@ -55,27 +71,43 @@
 			<imageModelChat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 		</template>
 	</z-paging>
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
 </template>
 
 <script setup lang="ts">
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
 	import { computed, nextTick, onMounted, ref } from 'vue';
+	import UploadDemo from '../components/UploadDemo.vue'
+	import ytUpload from '../components/yt-upload/components/yt-upload/yt-upload.vue'
 	import imageModelChat from '@/components/CommonChat/imageModelChat.vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import ChatBox from '@/components/CommonChat/ChatBox.vue';
-	import { useChatStore } from '../../../../store';
+	import { useChatStore } from '@/store';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
-	import { generateUUID } from '../../../../tools/uuid';
-	import { ItemMessage } from '../../../../type/chatData';
+	import { generateUUID } from '@/tools/uuid';
+	import { ItemMessage } from '@/type/chatData';
 	import { storeToRefs } from 'pinia';
+	import { limitFileSize } from '@/utils'
 	import { currentModelReversParmas, exParmas, modelTypes } from '../../../chat/chatConfig';
-	import { commonModel } from '../../../../config/modelConfig';
-	import { useGlobalProperties } from '../../../../hooks/useGlobalHooks';
-	import { isPureLink } from '../../../../utils';
+	import { commonModel } from '@/config/modelConfig';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import { isPureLink } from '@/utils';
 	const chatValue = ref('');
+	const uploadOptions = ref({
+	})
+	const XeUpload = ref(null)
 
+	const UploadCallback = (e) => {
+		console.log(e)
+		afterRead(e)
+	}
 	const accept = computed(() => {
 		// #ifdef MP-WEIXIN
 		return 'all'
+		// #endif
+		// #ifdef APP
+		return 'image'
 		// #endif
 		return 'file'
 	})
@@ -93,10 +125,13 @@
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const { $api, $assets } = useGlobalProperties()
 	const { setChatInfo } = ChatStore;
-	const { streamRequest, isRecive, onCancelRequest ,streamSpark} = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest, streamSpark, openCore, errorCore, messageCore, finishCore, chatSSEClientRef } = useStreamHooks();
 	const onCancel = () => {
 		onCancelRequest()
 		ChatStore.setLoadingMessage(false)
+	}
+	const readFile = (res) => {
+		console.log('文件内容', res)
 	}
 	const startFast = async () => {
 		let resvideo : any
@@ -141,6 +176,7 @@
 			}
 		});
 	};
+
 	function checkFileType(fileName : string) {
 		// 定义允许上传的文件扩展名
 		const allowedExtensions = ['acc', 'mp3', 'opus', 'wav'];
@@ -160,6 +196,13 @@
 	// 新增图片
 	const afterRead = async (event : { file : any; }) => {
 		console.log(event)
+		if (!limitFileSize(event, '音频')) return
+		// const isMap = Object.prototype.toString.call(event) === '[object Map]';
+		// if (isMap) {
+		// 	for (const [key, value] of event.entries()) {
+		// 		console.log(key, value);
+		// 	}
+		// }
 		let fileName = ''
 		let formdata : any = null
 		// #ifdef H5
@@ -167,6 +210,9 @@
 		// #endif
 		// #ifdef MP-WEIXIN
 		fileName = event.file[0].name
+		// #endif
+		// #ifdef APP
+		fileName = event[0].name
 		// #endif
 		if (!checkFileType(fileName)) {
 			uni.$u.toast('只支持上传音频格式acc, mp3, opus, wav！');
@@ -176,11 +222,15 @@
 		// #ifdef MP-WEIXIN
 		formdata = { file: event.file[0].url }
 		// #endif
+		// #ifdef APP
+		formdata = { file: event[0].url }
+		// #endif
 		// #ifdef H5
 		formdata = new FormData()
 		formdata.append('file', event.file[0].file)
 		// #endif
 		const descriptionReq = await descriptionImage(formdata)
+		console.log(descriptionReq)
 		if (descriptionReq) {
 			description.value = descriptionReq
 			onSend(fileName, null, [{ role: 'user', content: '我的内容是：' + descriptionReq }])
@@ -194,7 +244,7 @@
 		// #ifdef H5
 		res = await $api.post('api/v1/media/audioFile2txt', formData)
 		// #endif
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		res = await $api.post('api/v1/media/audioFile2txt', formData, true, {}, null, true)
 		// #endif
 		if (typeof res == 'string') {
@@ -202,8 +252,7 @@
 		}
 		return new Promise((resolve, reject) => {
 			if (res.code == "0") {
-
-				resolve(res.text)
+				resolve(res.text || '音频没有任何内容')
 			} else {
 				uni.$u.toast('音频理解失败，请重新生成！');
 				currentProject.value = 0

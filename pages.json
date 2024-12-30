@@ -1,6 +1,5 @@
 {
-	"pages": [
-		{
+	"pages": [{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "对话",
@@ -46,8 +45,7 @@
 			}
 		}
 	],
-	"subPackages": [
-		{
+	"subPackages": [{
 			"root": "pages/index/subPage",
 			"independent": true,
 			"pages": [{
@@ -670,25 +668,37 @@
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
+
 	"tabBar": {
-		"fontSize": "27rpx",
+		"fontSize": "24rpx",
+		"height": "40rpx  !important",
+		"color": "#95ACBE",
+		"selectedColor": "#4955f5",
+		"backgroundColor": "#fff",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"text": "对话"
+				"text": "对话",
+				"iconPath": "/static/chat.png",
+				"selectedIconPath": "/static/seletedChat.png"
 			},
 			{
 				"pagePath": "pages/draw/index",
-				"text": "绘画"
+				"text": "绘画",
+				"iconPath": "/static/draw.png",
+				"selectedIconPath": "/static/drawSeleted.png"
 
 			},
 			{
 				"pagePath": "pages/function/index",
-				"text": "功能库"
-
+				"text": "功能库",
+				"iconPath": "/static/funtion.png",
+				"selectedIconPath": "/static/funtionSeleted.png"
 			},
 			{
 				"pagePath": "pages/my/index",
-				"text": "我的"
+				"text": "我的",
+				"iconPath": "/static/my.png",
+				"selectedIconPath": "/static/mySeleted.png"
 			}
 		]
 	},

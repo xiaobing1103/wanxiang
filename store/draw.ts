@@ -100,6 +100,7 @@ const useDrawStore = defineStore(
 			const checkNumsRes = await $api.post('api/v1/number2/check', { type: 'draw' })
 			if (checkNumsRes.code == 200) {
 				let taskDTO = await $api.post<Image2TextParmas>(drawProjectConfig[seletedDrawProject.value].api, parmas, isformDataRequest, {}, null, isWeChatSendImages);
+				console.log(taskDTO)
 				if (taskDTO && typeof taskDTO == 'string') {
 					taskDTO = JSON.parse(taskDTO);
 				}

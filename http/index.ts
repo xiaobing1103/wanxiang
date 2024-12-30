@@ -55,6 +55,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		config.timeout = config.timeout || defaultTimeout;
 	};
 	http.interceptor.response = (response) => {
+		console.log(response)
 		uni.hideLoading();
 		if (response?.status == 401 || response?.data?.code === 401 || response?.data?.code === 4001 || response?.statusCode === 401) {
 			console.log(response)
@@ -74,7 +75,7 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 			}, 1500)
 			ChatStore.setLoadingMessage(false)
 		} else {
-			if (response.data.code !== 200 && response.data.message) {
+			if (response?.data?.code !== 200 && response?.data?.message) {
 				uni.showToast({
 					title: response.data.message,
 					icon: 'none',

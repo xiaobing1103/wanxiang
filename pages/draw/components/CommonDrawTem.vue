@@ -18,7 +18,7 @@
 <script setup lang='ts'>
 	import PreviewImageArae from './PreviewImageArae'
 	import UseAiChatConfirm from './UseAiChatConfirm'
-	import ImageUpload from './ImageUpload'
+	import ImageUpload from '../subPage/ImageUpload.vue'
 	import ReversePromptUploadedImage from './ReversePromptUploadedImage'
 	import {
 		onLoad
@@ -87,7 +87,7 @@
 			newParmas = formdata
 			// #endif
 
-			// #ifdef MP-WEIXIN
+			// #ifdef MP-WEIXIN || APP
 			newParmas.image = file
 			// #endif
 		} else {

@@ -14,11 +14,13 @@
 				<ImageShowcasePlaza :ImageList="ImageList" />
 			</view>
 		</view>
+		<template #bottom>
+			<m-tabbar native safeBottom></m-tabbar>
+		</template>
 	</z-paging>
 </template>
 
 <script setup lang="ts">
-
 	import ImageShowcasePlaza from './ImageShowcasePlaza'
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import MenuCardItem from './menuItem.vue'
@@ -26,7 +28,7 @@
 	import type { MenuItem } from '@/pages/function/type.ts'
 	import { ref } from 'vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
-
+	import { onLoad } from '@dcloudio/uni-app'
 	const { $api } = useGlobalProperties()
 	const paging = ref(null)
 	// 创建响应式数据
@@ -52,6 +54,9 @@
 			paging.value.complete(false);
 		}
 	}
+	// onLoad((options : any) => {
+	// 	uni.hideTabBar()
+	// })
 </script>
 <style lang="scss" scoped>
 	.body {
