@@ -5,7 +5,6 @@
 				<view class="ImageUploadCom_content_image">
 					<image :style="{width:'90%'}" :src="images" mode="aspectFit"></image>
 				</view>
-
 			</template>
 			<template v-else>
 				<up-icon
@@ -19,8 +18,8 @@
 	<view class="description">
 		{{description}}
 	</view>
-	<up-overlay :show="showupOverlay">
-		<QfImageCropper :showAngle="props.showAngle|| false" checkRange reverseRotatable choosable bounce gpu
+	<up-overlay :show="showupOverlay" opacity="0" zIndex="99999">
+		<QfImageCropper :showAngle="props.showAngle || false" checkRange reverseRotatable choosable bounce gpu
 			:width="props.width || 500" :height="props.height|| 500" :radius="0" @crop="handleCrop"
 			@close="handleClose">
 		</QfImageCropper>
@@ -32,9 +31,11 @@
 	import { ref } from 'vue';
 	import { fileToBase64, weChatTempPathToBase64 } from '@/utils';
 	const images = defineModel('images')
+	// const images = ref('')
 	const FileMode = defineModel<any>('FileMode')
+	const showupOverlay = ref(false)
 	const props = defineProps<{ noUseCorpImage ?: boolean, description ?: string, radius ?: number, showAngle ?: boolean, width ?: number, height ?: number }>()
-	const showupOverlay = defineModel('showupOverlay')
+
 	const uploadImages = () => {
 		if (!props.noUseCorpImage) {
 			showupOverlay.value = true
@@ -51,15 +52,13 @@
 						FileMode.value = res.tempFiles[0]
 					}
 					// #endif
-
-					// #ifdef MP-WEIXIN
+					// #ifdef MP-WEIXIN || APP
 					weChatTempPathToBase64(res.tempFilePaths[0]).then((res) => {
 						images.value = res
 					})
 					if (FileMode) {
 						FileMode.value = res.tempFilePaths[0]
 					}
-
 					// #endif
 				}
 			})
@@ -68,10 +67,9 @@
 	const handleCrop = (e) => {
 		images.value = e.tempFilePath
 		console.log(images.value)
-		showupOverlay.value = false
-
+		handleClose()
 	}
-	const handleClose = (e) => {
+	const handleClose = () => {
 		showupOverlay.value = false
 	}
 </script>

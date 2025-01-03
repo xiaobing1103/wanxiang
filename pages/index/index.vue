@@ -31,11 +31,11 @@
 <script setup lang="ts">
 	// #ifdef APP
 	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	import ShareBtn from '@/components/ShareBtn.vue';
 	// #endif
 	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
 	import { onLoad, onShow } from '@dcloudio/uni-app'
 	import Chat from '@/components/CommonChat/Chat.vue';
-	import ShareBtn from '@/components/ShareBtn.vue';
 	import CommonModelSeleted from '@/components/CommonChat/CommonModelSeleted.vue';
 	import HistoryMessage from '@/components/CommonChat/HistoryMessage.vue';
 	import CommonHeader from '@/components/CommonHeader.vue';
@@ -53,7 +53,7 @@
 	import { currentModelReversParmas, exParmas, modelTypes, noHistoryArr } from '../chat/chatConfig';
 	const { streamRequest, isRecive, onCancelRequest, streamSpark
 		// #ifdef APP
-		,openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
 		// #endif
 	} = useStreamHooks();
 	const { $api } = useGlobalProperties();

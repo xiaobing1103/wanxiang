@@ -23,7 +23,7 @@
 						:customStyle="{width:'50%',margin:'20rpx 0',padding:'10rpx 0',height:'60rpx'}" shape="circle"
 						:disabled="!value2" size="normal" type="primary">
 						<image class="body_buttons_images" :src="$assets.reserveCopyContentIcon" mode=""></image>
-						<text>复制结果</text>
+						<text>复制提示词去生成图片</text>
 					</up-button>
 				</view>
 
@@ -70,7 +70,7 @@
 		res = await $api.post('api/v1/img/deep_danbooru', formData)
 		// #endif
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		formData = { file: parmas.image }
 		res = await $api.post('api/v1/img/deep_danbooru', formData, true, {}, null, true)
 		res = JSON.parse(res)
@@ -84,6 +84,9 @@
 	}
 	const copyText = () => {
 		toCopyText(value2.value)
+		uni.navigateTo({
+			url: '/pages/draw/subPage/text2image/index'
+		})
 	}
 </script>
 

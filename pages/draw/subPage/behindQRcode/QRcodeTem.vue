@@ -60,26 +60,29 @@
 	</z-paging>
 	<up-overlay :show="showOverlay">
 		<view class="overlayMusicHeader">
-			<view class="loadingMusicHeader" :style="{height: navBarHeight + 'px' }">
-				<view :style="{paddingTop:menuButtonInfo?.top + 'px'}">
-					<view class="loadingMusicHeader_title">
-						<up-icon @click="backPage" name="arrow-left"></up-icon>
-						<text>等待二维码生成</text>
-						<view class=""></view>
-					</view>
+			<view class="loadingMusicHeader" :style="{height: ScreenStore.navBarHeight + 'px' }">
+				<view class="loadingMusicHeader_title">
+					<up-icon @click="backPage" name="arrow-left"></up-icon>
+					<text>等待二维码生成</text>
+					<view class=""></view>
 				</view>
 			</view>
 			<view class="loadingMusic">
 				<view class="loadingMusic_loading">
 					<template v-if="waitPages">
 						<view class="waitPagespages">
-							<image show-menu-by-longpress class="waitPagespages_images" :src="resultImages[0]" />
+							<image show-menu-by-longpress @click="previewImages" class="waitPagespages_images"
+								:src="currentImages" />
 
 							<view class="waitPagespages_bottom">
 								<template v-for="(items,index) in resultImages" :key="index">
-									<image show-menu-by-longpress class="waitPagespages_images" :src="items" />
+									<image @click="seletedImages(items)" show-menu-by-longpress
+										class="waitPagespages_images" :src="items" />
 								</template>
 							</view>
+						</view>
+						<view class="waitPagespages_bottom_desc">
+							点击预览图片长按保存图片
 						</view>
 					</template>
 					<template v-else>
@@ -106,10 +109,13 @@
 	import ImageLoraScale from '../ChangeView/ImageLoraScale'
 	import { ref, reactive, onMounted } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
-	import { useCounterStore } from '@/store';
+	import { useScreenStore } from '@/store';
+	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { storeToRefs } from "pinia"
 	const waitPages = ref(false)
+	const ScreenStore = useScreenStore()
 
+	const { checkNumFun, checkSubmit } = useStreamHooks()
 	const props = defineProps<{ QRcodeParmas : QRcodeParmasInterface }>()
 	const { $api, $assets } = useGlobalProperties()
 	const qrcodesLists = ref([])
@@ -117,13 +123,7 @@
 	const message = ref('')
 	const progress = ref(0.01)
 	const showOverlay = ref(false)
-	//  #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
-	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
-	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
-	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
-	// #endif
+	const currentImages = ref('')
 	const parmas = reactive(requestReq)
 	const RequestParmas = reactive<RequestParmasInterface>({
 		currentModes: 0,
@@ -139,16 +139,21 @@
 	const backPage = () => {
 		showOverlay.value = false
 	}
+	const seletedImages = (url : string) => {
+		currentImages.value = url
+	}
+	const previewImages = (url : string) => {
+		uni.previewImage({
+			urls: [currentImages.value]
+		})
+	}
 
 	const onCreate = async () => {
 		waitPages.value = false
-
-
 		if (!RequestParmas.seletedModel) {
 			uni.$u.toast('请先选择模型！')
 			return
 		}
-
 		if (!RequestParmas.currentModes && !RequestParmas.imageUrl) {
 			uni.$u.toast('请先上传图片！')
 			return
@@ -167,22 +172,27 @@
 			formdata.append('file', RequestParmas.FileMode)
 			// #endif
 
-			// #ifdef MP-WEIXIN
+			// #ifdef MP-WEIXIN || APP
 			formdata = { file: RequestParmas.FileMode }
 			isjson = true
 			isWeChatSendImages = true
 			// #endif
-			QRcodeImageReq = await $api.post('api/v1/ocr/qrcode', formdata, isjson, {}, null, isWeChatSendImages)
+			if (!await checkNumFun('draw_qrcode')) {
+				return
+			}
+			QRcodeImageReq = await $api.post('https://open.aichatapi.com/api/v1/qrcode/free.scan', formdata, isjson, {}, null, isWeChatSendImages)
+			if (QRcodeImageReq.code !== 200) {
+				uni.$u.toast('请先上传正确的二维码图片！')
+				return
+			}
+
+			// QRcodeImageReq = await $api.post('api/v1/ocr/qrcode', formdata, isjson, {}, null, isWeChatSendImages)
 			if (typeof QRcodeImageReq == 'string') {
 				QRcodeImageReq = JSON.parse(QRcodeImageReq)
 			}
 		}
 
-
-
-
 		if (RequestParmas.currentModes || QRcodeImageReq.code == 200) {
-
 			const qrcodeInfoReq = await $api.get(`api/v1/img/qrcode_info?id=${RequestParmas.seletedModel}`)
 			if (qrcodeInfoReq.code == 200) {
 				const QrcodesaddReq = await $api.post('api/v1/img/qrcodes_add', { ...qrcodeInfoReq.data.state, text: RequestParmas.currentModes ? RequestParmas.textValue : QRcodeImageReq.data })
@@ -211,6 +221,7 @@
 						num: 2
 					}
 					const txt2qrcodeReq = await $api.post('api/v1/img/txt2qrcode', sendParmas)
+					await checkSubmit('fun')
 					if (txt2qrcodeReq.code == 200) {
 						QueryTask(txt2qrcodeReq.data.task_id)
 						showOverlay.value = true
@@ -259,7 +270,7 @@
 				waitPages.value = true
 				await delay(2000)
 				resultImages.value = data.images
-
+				currentImages.value = data.images[0]
 			}
 
 			if (data.state == '3') {
@@ -403,12 +414,14 @@
 	.loadingMusicHeader {
 		font-weight: 800;
 		font-size: 30rpx;
+		display: flex;
+		align-items: flex-end;
 
 		&_title {
 			padding: 18rpx;
 			display: flex;
 			justify-content: space-between;
-
+			width: 100%;
 		}
 	}
 
@@ -469,6 +482,11 @@
 			width: 300rpx;
 			height: 300rpx;
 			margin: 20rpx;
+		}
+
+		&_desc {
+			display: flex;
+			justify-content: center;
 		}
 
 		&_bottom {

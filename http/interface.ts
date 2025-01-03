@@ -103,7 +103,7 @@ export default {
 					});
 			} else {
 				if (options.isWechatSendImages) {
-					const arr = ['image', 'file', 'text', 'video', 'doc']
+					const arr = ['image', 'file', 'text', 'video', 'doc', 'img']
 					const { image, file, ...others } = options.data;
 					let filePath
 					let fileName

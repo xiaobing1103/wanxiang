@@ -6,8 +6,7 @@
 			</template>
 		</template>
 		<view class="aiRever3D">
-			<ChangeFaceUploadImage noUseCorpImage v-model:showupOverlay="showupOverlay" v-model:images="parmas.imageUrl"
-				v-model:FileMode="parmas.FileMode" />
+			<ChangeFaceUploadImage noUseCorpImage v-model:images="parmas.imageUrl" v-model:FileMode="parmas.FileMode" />
 			<Revers3DTem v-model:parmas="parmas" />
 		</view>
 		<template #bottom>
@@ -18,31 +17,29 @@
 	</z-paging>
 	<up-overlay z-index="10" :show="showOverlay">
 		<view class="overlayMusicHeader">
-			<view class="loadingMusicHeader" :style="{height: navBarHeight + 'px' }">
-				<view :style="{paddingTop:menuButtonInfo?.top + 'px'}">
-					<view class="loadingMusicHeader_title">
-						<up-icon @click="backPage" name="arrow-left"></up-icon>
-						<text>等待图片生成</text>
-						<view class=""></view>
-					</view>
+			<view class="loadingMusicHeader" :style="{height: ScreenStore.navBarHeight + 'px' }">
+				<view class="loadingMusicHeader_title">
+					<up-icon @click="backPage" name="arrow-left"></up-icon>
+					<text>等待图片生成</text>
+					<view class=""></view>
 				</view>
+
 			</view>
 			<view class="loadingMusic">
 				<view class="loadingMusic_loading">
 					<template v-if="waitPages">
 						<view class="waitPagespages">
-							<image @click="previewImage(parmas.showImg[0])" show-menu-by-longpress
-								class="waitPagespages_images" :src="parmas.showImg[0]" />
-
+							<image @click="previewImage(CurrentImages)" show-menu-by-longpress
+								class="waitPagespages_images" :src="CurrentImages" mode="aspectFit" />
 							<view class="waitPagespages_bottom">
 								<template v-for="(items,index) in parmas.showImg" :key="index">
-									<image @click="previewImage(items)" show-menu-by-longpress
-										class="waitPagespages_images" :src="items" />
+									<image @click="CurrentImages = items" show-menu-by-longpress
+										class="waitPagespages_bottom_images" :src="items" mode="aspectFit" />
 								</template>
 
 							</view>
 							<view class="tips">
-								图片不会保存在本地，请长按保存图片
+								<up-button @click="saveImages">保存图片</up-button>
 							</view>
 						</view>
 					</template>
@@ -70,8 +67,11 @@
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
 	import { parmasTypes } from './types'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
-	import { useCounterStore } from '@/store';
+	import { useScreenStore } from '@/store';
 	import { storeToRefs } from "pinia"
+	import { downloadBase64Image } from '@/utils/downLoadLocal';
+	import { downloadReport } from '@/utils'
+	const ScreenStore = useScreenStore()
 	const gradientTexture = [
 		[
 			45,
@@ -91,13 +91,7 @@
 	const waitPages = ref(false)
 	const progress = ref(0.01)
 	const message = ref('')
-	//  #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
-	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
-	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
-	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
-	// #endif
+	const CurrentImages = ref('')
 	const btnStyles = {
 		margin: "30rpx auto",
 		height: '70rpx',
@@ -105,8 +99,8 @@
 		border: '0rpx',
 		width: '70%',
 		color: 'white',
-		background: 'linear-gradient(to right, rgb(49, 76, 215), rgb(174, 29, 253)'
-	}
+		background: 'linear-gradient(to right, rgb(49, 76, 215), rgb(174, 29, 253))'
+	};
 	const parmas = reactive<parmasTypes>({
 		seletedNumber: 1,
 		face_restoration: 0,
@@ -124,10 +118,13 @@
 	const previewImage = (url : string) => {
 		uni.previewImage({
 			urls: [url],
-
 		})
 	}
 	const create3D = async () => {
+		if (!parmas.FileMode) {
+			uni.$u.toast('请先上传本地图片！');
+			return
+		}
 		const PromptPromise = await imgPropmt()
 		if (!PromptPromise) {
 			uni.$u.toast('prompt解析失败请重新解析！');
@@ -140,7 +137,6 @@
 				return
 			}
 			queryTask(img3DPro)
-
 		}
 	}
 
@@ -153,12 +149,16 @@
 			formdata = new FormData()
 			formdata.append('img', parmas.FileMode)
 			// #endif
-			// #ifdef MP-WEIXIN
+			// #ifdef MP-WEIXIN ||  APP
 			formdata = { img: parmas.FileMode }
 			isJson = true
 			isWechatSendImages = true
 			// #endif
-			const imgPropmtReq = await $api.post('api/v1/img/prompt', formdata, isJson, {}, null, isWechatSendImages)
+			let imgPropmtReq = null
+			imgPropmtReq = await $api.post('api/v1/img/prompt', formdata, isJson, {}, null, isWechatSendImages)
+			if (typeof imgPropmtReq == 'string') {
+				imgPropmtReq = JSON.parse(imgPropmtReq)
+			}
 			if (imgPropmtReq.code == 0) {
 				parmas.prompt = imgPropmtReq.data
 				parmas.width = imgPropmtReq.width
@@ -219,26 +219,44 @@
 			await delay(3000)
 			queryTask(taskId)
 			progress.value += 5 / 100;
+			message.value = queryReq.msg
 			return
 		}
 		if (queryReq.code == 2) {
 			await delay(3000)
 			queryTask(taskId)
+			message.value = queryReq.msg
 			return
 		}
 		if (queryReq.code == 0) {
 			await checkSubmit('draw')
 			waitPages.value = true
 			parmas.showImg = queryReq.msg.images
+			CurrentImages.value = queryReq.msg.images[0]
 		}
+		message.value = queryReq.msg
 	}
 	const backPage = () => {
 		showOverlay.value = false
 	}
+	const saveImages = () => {
+		// #ifdef H5
+		downloadBase64Image(CurrentImages.value, '下载')
+		// #endif
+		// #ifdef MP-WEIXIN || APP
+		downloadReport(CurrentImages.value).then((res) => {
+			uni.$u.toast(res);
+		}).catch((err) => {
+			console.log(err)
+			uni.$u.toast(err);
+		})
+		// #endif
+
+	}
 </script>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.aiRever3D {
 		display: flex;
 		flex-direction: column;
@@ -254,12 +272,14 @@
 	.loadingMusicHeader {
 		font-weight: 800;
 		font-size: 30rpx;
+		display: flex;
+		align-items: flex-end;
 
 		&_title {
 			padding: 18rpx;
 			display: flex;
 			justify-content: space-between;
-
+			width: 100%;
 		}
 	}
 
@@ -317,7 +337,7 @@
 		flex-direction: column;
 
 		&_images {
-			width: 500rpx;
+
 			height: 300rpx;
 			margin: 20rpx;
 		}
@@ -329,6 +349,11 @@
 			margin: 20px 0;
 			grid-template-columns: repeat(4, 1fr);
 
+			&_images {
+				padding: 20rpx;
+				height: 200rpx;
+				width: 160rpx;
+			}
 		}
 	}
 

@@ -39,9 +39,20 @@
 			</view>
 		</template>
 	</z-paging>
+	<!-- #ifdef APP -->
+	<up-popup round="10" :show="ChatStore.shareButton" @close="ChatStore.setShareButton(false)">
+		<ShareBtn :sharedataTemp="ChatStore.sharedata"></ShareBtn>
+	</up-popup>
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	import ShareBtn from '@/components/ShareBtn.vue';
+	// #endif
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { ref, nextTick } from 'vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
@@ -60,7 +71,11 @@
 	const emit = defineEmits<{
 		(e : 'next', val : { content : string, type : createEnum }) : void
 	}>()
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const pagingRef = ref()
 	//当前输出的内容
 	const ChatStore = useChatStore();
@@ -127,10 +142,10 @@
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage:async(text)=> {
+			onmessage: async (text) => {
 				console.log(text)
 				newStr += text
-				contentStr.value =  await streamSpark(newStr)
+				contentStr.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

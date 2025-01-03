@@ -99,7 +99,6 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		});
 		// #endif
 		//  #ifdef H5
-
 		isDelopMent = http.fetchStream({
 			url,
 			method,
@@ -112,7 +111,6 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		// #endif
 		return isDelopMent;
 	} else {
-
 		return new Promise((resolvce, reject) => {
 			http.request({
 				method: method,

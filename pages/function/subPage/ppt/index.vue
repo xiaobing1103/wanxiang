@@ -16,6 +16,7 @@
 	import previewResult from './components/previewResult.vue'
 	import updateContent from './components/updateContent.vue'
 	import APP_CONFIG from '@/config/config.ts'
+	import { AppName } from '@/http'
 
 	enum stepEnum {
 		'STEP_TEMPLATE' = 0,
@@ -48,27 +49,98 @@
 			}
 		})
 	}
+
+	const fileNameEscape = (filename) => {
+		if (uni.getSystemInfoSync().platform == "ios") {
+			filename = escape(filename);
+		}
+		return filename;
+	}
+
+	const saveFile = (tempFilePath) => {
+		let fileName = `${new Date().getTime()}.pptx`; // 目标文件名
+		// 通过URL参数获取目录对象或文件对象
+		let targetDir = null;
+		if (uni.getSystemInfoSync().platform === 'android') {
+			// 获取安卓下载目录
+			targetDir = plus.android.invoke(plus.android.runtimeMainActivity(), 'getExternalFilesDir', 'download').getAbsolutePath();
+		} else if (uni.getSystemInfoSync().platform === 'ios') {
+			// iOS 没有直接的通用下载目录，使用 app 的 Documents 目录
+			targetDir = plus.io.convertLocalFileSystemURL('documents://');
+		}
+		const targetFilePath = targetDir + '/' + fileName;
+
+		uni.saveFile({
+			tempFilePath: targetFilePath,
+			success: (res) => {
+				console.log('保存文件成功：', res);
+				// 需要保存的文件的临时路径
+				let tempFilePath = res.savedFilePath;
+				plus.io.resolveLocalFileSystemURL(tempFilePath, (entry) => {
+					plus.io.resolveLocalFileSystemURL('_doc/', (root) => {
+						// 创建或打开当前目录下指定的文件
+						root.getFile(fileName, {
+							create: true
+						}, (file) => {
+							// 删除、拷贝目录
+							file.remove(() => {
+								entry.copyTo(root, fileName, (entry) => {
+									console.log('拷贝目录成功：', entry.fullPath);
+									// 调用第三方程序打开指定的文件
+									plus.runtime.openFile(entry.fullPath);
+
+								}, (err) => {
+									console.log('拷贝目录失败：', err);
+								});
+							});
+						}, (err) => {
+							console.log('获取文件失败', err);
+						});
+					});
+				});
+			},
+			fail: (err) => {
+				console.log('保存文件失败', err);
+			}
+		});
+	}
+
+
 	//小程序下载
 	const wechatDownLoad = async () => {
 		const userInfo = userStore.userInfo;
+		// const header = { "Access-Token": "nrBMSuyhf7462HZ9zSNc9HdCj0wSHQ7ND/vzaW6OKhjsrD9OvjHZRSwUpq6qqYCS5j9RST4sFQ1QOgR+XRKPeRFlYNklL/gwHWcIFhr8WyW26Ivj6VSbHzIxUKSlsdRVxzjV5sOFuclEWSd8r/LCPO5ZCvntao4B4Q+Uwndt3NLBhAZ52qYf88iphdRpcv9yzh2U3zxyjM8NGGHhYL7FULiZU0xZSUIjWGFaZjWzjuUzb9QmdoJLqq+vWtahKbvxYJGpnlkiJbwe84Ec9YS69g==", "App": 1668085753, "Token": "07670c9d483cc917e874e48d450308eb", "Vt": 58, "Uid": 4600812, "App-Name": "bianjie" }
+		const header = {
+			'Access-Token': userInfo?.access_token,
+			'App': userInfo?.appid,
+			'Token': userInfo?.token,
+			'Vt': userInfo?.vip || '0',
+			'Uid': userInfo?.id,
+			'App-Name': AppName,
+		}
+		console.log(`https://ai1foo.com/api/v1/ppt/down?id=` + taskId.value)
+		console.log(header, 'header')
+		console.log(taskId.value, 'taskId.value')
+		// // #ifdef APP
+		// const res = await $api.get('api/v1/ppt/down?id=' + taskId.value, null, {
+		// 	'Content-Type': 'application/x-www-form-urlencoded'
+		// })
+		// console.log(res)
+		// // #endif
 		uni.downloadFile({
-			url: `https://ai1foo.com/api/v1/ppt/down?id=` + taskId.value,
-			header: {
-				'Access-Token': userInfo.access_token,
-				'App': userInfo.appid,
-				'token': userInfo?.token,
-				'Vt': userInfo?.vip || '0',
-				'uid': userInfo?.id,
-
-			},
+			// url: `https://ai1foo.com/api/v1/ppt/down?id=` + taskId.value,
+			url: 'https://api.idocv.com/doc/download/obUYlcp?url=http%3a%2f%2fapi.idocv.com%2fdata%2fdoc%2ftest.pptx',
+			// header,
 			success(res) {
-				console.log(res, ' ---------------------')
+				console.log(res, '---------------------')
+				// #ifdef APP
+				saveFile(res.tempFilePath)
+				// #endif
+				// #ifndef APP
 				uni.openDocument({
-					
 					filePath: res.tempFilePath,
 					fileType: 'pptx',
 					showMenu: true,
-
 					success(res) {
 						console.log(res, "res")
 					},
@@ -77,11 +149,13 @@
 					}
 				})
 
+				// #endif
 			},
 			fail(err) {
 				console.log(err, "err")
 			}
 		})
+
 	}
 	//h5下载
 	const h5Download = async () => {
@@ -93,6 +167,35 @@
 			const res = await $api.get('api/v1/ppt/down?id=' + taskId.value, null, {
 				'Content-Type': 'application/x-www-form-urlencoded'
 			})
+			console.log(res, 'APP')
+			// #ifdef APP
+			const filePath = uni.env.USER_DATA_PATH + '/PDF文件下载_' + new Date().getTime() + '.pptx';
+			console.log(filePath, 'filePath')
+			uni.downloadFile({
+				url: 'data:application/octet-stream;base64,' + btoa(String.fromCharCode.apply(null, new Uint8Array(res.data))),
+				filePath: filePath,
+				success: (res1) => {
+					if (res1.statusCode === 200) {
+						// 下载成功后，可以选择打开文件
+						uni.openDocument({
+							filePath: res1.filePath,
+							success: function (openRes) {
+								console.log('打开文件成功', openRes);
+							},
+							fail: function (err) {
+								console.log('打开文件失败', err);
+							}
+						});
+					}
+				},
+				fail: (err) => {
+					console.log('下载文件失败', err);
+				}
+			});
+			// #endif
+
+
+			// #ifndef APP
 			const bl = new Blob([res], {
 				type: "application/octet-stream;charset=utf-8",
 			});
@@ -105,16 +208,18 @@
 			a.remove(); // 然后从DOM中移除
 			window.URL.revokeObjectURL(url);
 			uni.hideLoading()
+			// #endif
+
 		} catch (err) {
 			uni.hideLoading()
 		}
 	}
-	//下载ppt
+	//下载ppt·
 	const onDwonLoad = async () => {
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN  || APP
 		wechatDownLoad()
 		// #endif
-		// #ifdef H5
+		// #ifdef H5 
 		h5Download()
 		// #endif
 	}

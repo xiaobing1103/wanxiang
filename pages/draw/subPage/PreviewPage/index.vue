@@ -78,7 +78,7 @@
 		return {
 			title: '分享图片页面',
 			path: '/pages/draw/subPage/PreviewImages/index',
-			imageUrl:currentImages?.value.images[current.value]
+			imageUrl: currentImages?.value.images[current.value]
 		};
 	});
 	const share = ref(null);
@@ -87,7 +87,7 @@
 			type: 1,
 			icon: 'http://file.1foo.com/2024/08/20/89749b5acda3775b7bd150074f7c8491.png',
 			text: '微信好友',
-			
+
 		},
 		{
 			type: 2,
@@ -172,7 +172,7 @@
 			uni.$u.toast('获取图片链接失败请重试！');
 		}
 		// #endif
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		saveImage(url);
 		// #endif
 

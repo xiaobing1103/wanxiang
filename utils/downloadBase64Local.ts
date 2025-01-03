@@ -1,5 +1,7 @@
 export const downloadReport = (base64) => {
+
 	return new Promise((resolve, reject) => {
+		// #ifndef APP
 		const base64Data = base64.replace(/^data:image\/\w+;base64,/, '');
 		const filepath = wx.env.USER_DATA_PATH + '/test.png';
 		const fs = wx.getFileSystemManager();
@@ -63,5 +65,48 @@ export const downloadReport = (base64) => {
 				reject(err); // 写入文件失败时返回错误信息
 			}
 		});
+		// #endif
+		// #ifdef APP
+		const bitmap = new plus.nativeObj.Bitmap('test');
+		bitmap.loadBase64Data(
+			base64,
+			function () {
+				const url = '_doc/' + new Date() + '.png'; // url建议用时间戳命名方式
+				console.log('url:', url);
+				bitmap.save(
+					url, {
+					overwrite: true // 是否覆盖
+					// quality: 'quality'  // 图片清晰度
+				},
+					i => {
+						uni.saveImageToPhotosAlbum({
+							filePath: url,
+							success: function () {
+								bitmap.clear();
+								resolve('保存成功,已保存到相册！')
+							}
+						});
+					},
+					e => {
+						uni.showToast({
+							title: '保存失败',
+							icon: 'none'
+						})
+						console.log(e);
+						bitmap.clear();
+						reject(e);
+					}
+				);
+			},
+			e => {
+				console.log('保存失败', e);
+				bitmap.clear();
+				reject('保存失败,图片为空白图片可能是因为上传了一个非人像图片！');
+			}
+		);
+
+		// #endif
+
 	});
+
 };

@@ -691,7 +691,12 @@
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
-		background-color: #000;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 100000;
+		-webkit-transform: translateZ(1px);
+		-moz-transform: translateZ(1px);
+		-o-transform: translateZ(1px);
+		transform: translateZ(1px);
 
 		.img-canvas {
 			position: absolute !important;
@@ -714,7 +719,7 @@
 			.crop-circle-box {
 				position: fixed;
 				box-sizing: border-box;
-				z-index: 2;
+				z-index: 100002;
 				pointer-events: none;
 				overflow: hidden;
 
@@ -730,19 +735,21 @@
 				border-radius: 0 !important;
 				display: block !important;
 				backface-visibility: hidden;
+				z-index: 0;
+				position: absolute;
 			}
 
 			.crop-border {
 				position: fixed;
 				border: 1px solid #fff;
 				box-sizing: border-box;
-				z-index: 3;
+				z-index: 100003;
 				pointer-events: none;
 			}
 
 			.crop-grid {
 				position: fixed;
-				z-index: 3;
+				z-index: 100003;
 				border-style: dashed;
 				border-color: #fff;
 				pointer-events: none;
@@ -751,7 +758,7 @@
 
 			.crop-angle {
 				position: fixed;
-				z-index: 3;
+				z-index: 100003;
 				border-style: solid;
 				border-color: #fff;
 				pointer-events: none;
@@ -763,7 +770,7 @@
 			left: 0;
 			right: 0;
 			bottom: 0;
-			z-index: 99;
+			z-index: 1000099;
 			display: flex;
 			flex-direction: row;
 			background-color: $uni-bg-color-grey;

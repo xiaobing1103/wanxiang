@@ -1,13 +1,11 @@
 <template>
 	<view class="CommonChangeFace">
 		<!-- 自定义上传原图 -->
-		<ChangeFaceUploadImage v-model:showupOverlay="showupOverlay" description="请上传自定义原图"
-			v-model:images="parmas.image1" />
+		<ChangeFaceUploadImage description="请上传自定义原图" v-model:images="parmas.image1" />
 		<!-- 模板图库 -->
 		<ChangeFaceTemplates title="模板图库" :faceTems="ChangeFaceTypes.formworkImage" v-model:images="parmas.image1" />
 		<!-- 自定义上传人脸图 -->
-		<ChangeFaceUploadImage v-model:showupOverlay="showupOverlay" description="请上传自定义人脸图"
-			v-model:images="parmas.image2" />
+		<ChangeFaceUploadImage description="请上传自定义人脸图" v-model:images="parmas.image2" />
 		<!-- 第二个模板图库 -->
 		<template v-if="ChangeFaceTypes.humanFaceImage.length > 0">
 			<ChangeFaceTemplates title="人脸图库模板" :faceTems="ChangeFaceTypes.humanFaceImage"
@@ -24,8 +22,12 @@
 		image1 : null | FormData
 		image2 : null | FormData
 	}>('parmas')
-	const showupOverlay = defineModel('showupOverlay')
+
 	const props = defineProps<{ ChangeFaceTypes : ChangeFaceTypesProps }>()
+
+	// const setImages1 = (e : any) => {
+	// 	parmas.value.image1 = e
+	// }
 </script>
 
 <style lang="scss" scoped>

@@ -118,7 +118,7 @@ const exportTxt = (textContent : string) => {
 	// #endif
 };
 
-function weChatTempPathToBase64(tempFilePath : string) {
+function weChatTempPathToBase64(tempFilePath : string, deleteHeader ?: boolean) {
 	return new Promise((resolve, reject) => {
 		// #ifdef MP-WEIXIN
 		// 使用微信小程序的 API 读取文件
@@ -159,6 +159,12 @@ function weChatTempPathToBase64(tempFilePath : string) {
 					let base64Data = e.target.result;
 					// let mimeType = file.type;
 					// const base64DataUrl = `data:${mimeType};base64,${base64Data}`;
+					if (deleteHeader) {
+						if (base64Data.indexOf(',') > -1) {
+							base64Data = base64Data.split(',')[1];
+						}
+					}
+
 					resolve(base64Data);
 				};
 				reader.onerror = function (e) {
@@ -314,4 +320,22 @@ const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, a
 	})
 }
 
-export { toPage, uploadFileBefore, saveImage, debounce, isPureLink, toCopyText, timestampToDateString, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport, limitFileSize, shareText };
+const base64ToBlob = (base64Data : string) => {
+	const sliceSize = 1024;
+	const byteCharacters = atob(base64Data);
+	const byteArrays = [];
+
+	for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+		const slice = byteCharacters.slice(offset, offset + sliceSize);
+		const byteNumbers = new Array(slice.length);
+		for (let i = 0; i < slice.length; i++) {
+			byteNumbers[i] = slice.charCodeAt(i);
+		}
+		const byteArray = new Uint8Array(byteNumbers);
+		byteArrays.push(byteArray);
+	}
+
+	const blob = new Blob(byteArrays, { type: 'image/png' });
+	return blob;
+}
+export { toPage, uploadFileBefore, base64ToBlob, saveImage, debounce, isPureLink, toCopyText, timestampToDateString, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport, limitFileSize, shareText };

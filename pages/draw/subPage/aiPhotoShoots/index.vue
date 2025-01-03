@@ -1,5 +1,5 @@
 <template>
-	<z-paging ref="srollRef" :pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx'}">
+	<z-paging ref="srollRef" :pagingStyle="{background:'rgb(246, 247, 249)',padding:'0'}">
 		<template #top>
 			<CommonHeader />
 		</template>
@@ -8,35 +8,31 @@
 			<CommonChangeFace v-model:showupOverlay="showupOverlay" v-model:parmas="parmas"
 				:ChangeFaceTypes="ChangeFaceTypes" />
 		</view>
-		<template #bottom>
-			<view class="aiFaceSwapping_fooer" v-if="!showupOverlay">
-				<view class="aiFaceSwapping_fooer_button" :style="{borderRadius: '35rpx',width:'75%'}"
-					@click="changeFace">开始换脸</view>
 
-			</view>
-		</template>
+		<view class="aiFaceSwapping_fooer" v-if="!showupOverlay">
+			<view class="aiFaceSwapping_fooer_button" :style="{borderRadius: '35rpx',width:'75%'}" @click="changeFace">
+				开始换脸</view>
+		</view>
 	</z-paging>
-
 	<up-overlay :show="showOverlay" opacity="0.8">
 		<view class="aiFaceSwapping_overlay">
-			<view class="aiFaceSwapping_overlay_header" :style="{height:navBarHeight + 'px'}">
-				<view class="aiFaceSwapping_overlay_header_Box" :style="{paddingTop:menuButtonInfo?.top + 10 +  'px'}">
-					<up-icon @click="showOverlay  = false" name="arrow-left" size="20"></up-icon>
+			<view class="aiFaceSwapping_overlay_header" :style="{height:ScreenStore.navBarHeight + 'px'}">
+				<view class="aiFaceSwapping_overlay_header_Box">
+					<up-icon @click="showOverlay = false" name="arrow-left" size="20"></up-icon>
 					<text class="aiFaceSwapping_overlay_header_Box_text">AI换脸（图片版）结果</text>
 				</view>
-				<view class="aiFaceSwapping_overlay_main">
-					<image class="aiFaceSwapping_overlay_main_image" :src="currentImage" mode="aspectFit"></image>
-					<text class="aiFaceSwapping_overlay_main_image_text">融合后图像</text>
+			</view>
+			<view class="aiFaceSwapping_overlay_main">
+				<image class="aiFaceSwapping_overlay_main_image" :src="currentImage" mode="aspectFit"></image>
+				<text class="aiFaceSwapping_overlay_main_image_text">融合后图像</text>
+			</view>
+			<view class="aiFaceSwapping_overlay_footer">
+				<view class="aiFaceSwapping_overlay_footer_button" @click="saveImages">
+					保存图片
 				</view>
-				<view class="aiFaceSwapping_overlay_footer">
-					<view class="aiFaceSwapping_overlay_footer_button" @click="saveImages">
-						保存图片
-					</view>
-				</view>
-
-				<view class="aiFaceSwapping_overlay_desc">
-					请遵守相关法律法规，反对非法用途，违者100%封号，包括但不限于侵犯他人隐私、散步虚假信息、进行诈骗等行为！
-				</view>
+			</view>
+			<view class="aiFaceSwapping_overlay_desc">
+				请遵守相关法律法规，反对非法用途，违者100%封号，包括但不限于侵犯他人隐私、散步虚假信息、进行诈骗等行为！
 			</view>
 		</view>
 	</up-overlay>
@@ -52,14 +48,12 @@
 	import { base64ToFile } from '@/utils/base642file';
 	import { downloadReport, isValidURL, isWeChatTempPath, weChatTempPathToBase64 } from '@/utils';
 	import { storeToRefs } from 'pinia';
-	import { useChatStore, useCounterStore } from '@/store';
+	import { useChatStore, useScreenStore } from '@/store';
 	import { downloadBase64Image } from '@/utils/downLoadLocal';
 	const { $api } = useGlobalProperties();
 	const showupOverlay = ref(false)
-	// #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { menuButtonInfo, navBarHeight } = storeToRefs(system)
-	// #endif
+
+	const ScreenStore = useScreenStore()
 	const showOverlay = ref(false)
 	const chatStore = useChatStore()
 	const ChangeFaceTypes : ChangeFaceTypesProps = reactive({
@@ -92,7 +86,6 @@
 			return
 		}
 		let isWeChatSendImages = false
-
 		// 区分当前是否是url h5端的时候只有url 和 base64
 		// #ifdef H5
 		if (isValidURL(parmasRes.image1)) {
@@ -102,9 +95,8 @@
 			parmasRes.image2 = await reverseUrlToBase64(parmasRes.image2)
 		}
 		// #endif
-
 		// 微信的时候只有临时路径 和 url
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 
 		if (isWeChatTempPath(parmasRes.image1)) {
 			parmasRes.image1 = await weChatTempPathToBase64(parmasRes.image1)
@@ -116,7 +108,6 @@
 		} else {
 			parmasRes.image2 = await reverseUrlToBase64(parmasRes.image2)
 		}
-
 		// #endif
 		console.log(parmasRes)
 		const sendParmas = revasedImages(parmasRes)
@@ -132,7 +123,7 @@
 		res = await $api.post('api/v1/img/face', sendParmas, true, {}, null, isWeChatSendImages);
 		// #endif
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		res = await $api.post('api/v1/img/face_base64', sendParmas);
 		// #endif
 		if (res.code == 200) {
@@ -172,7 +163,7 @@
 		// #ifdef H5
 		downloadBase64Image(currentImage.value, '下载')
 		// #endif
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		downloadReport(currentImage.value).then((res) => {
 			uni.$u.toast(res);
 			showOverlay.value = false
@@ -189,6 +180,7 @@
 	.body {
 		display: flex;
 		flex-direction: column;
+		padding: 0 30rpx;
 		box-sizing: border-box;
 	}
 
@@ -219,6 +211,11 @@
 		background-color: #fff;
 
 		&_header {
+			display: flex;
+			align-items: flex-end;
+			padding-top: 30rpx;
+			box-sizing: content-box;
+
 			&_Box {
 				display: flex;
 				align-items: center;

@@ -15,15 +15,16 @@
 				</view>
 			</view>
 			<view class="right-tools">
-				<text @click="drawActon('clear')" class="clear">清空</text>
-				<text @click="drawActon('draw')" class="clear">涂鸦</text>
-				<text @click="drawActon('easer')" class="easer">擦除</text>
+				<template v-for="(items,index) in toolsConfig" :key="index">
+					<text :style="{color: type == items.tool ?  'rgb(49, 76, 215)':''}" @click="drawActon(items.tool)"
+						class="clear">{{items.title}}</text>
+				</template>
 				<text @click="draw.saveDraw" class="save">保存</text>
 			</view>
 		</view>
 		<view class="draw-con">
 			<view class="draw-box">
-				<image ref="imageRef" style="width: 100%;opacity: 0.9;" @load="onImageLoad" mode="widthFix"
+				<image ref="imageRef" style="width: 100%;opacity: 0;" @load="onImageLoad" mode="widthFix"
 					:src="imgFile"></image>
 				<view id="draw" class="draw"></view>
 			</view>
@@ -34,9 +35,26 @@
 </template>
 
 <script>
+	import {
+		weChatTempPathToBase64
+	} from '@/utils'
+
 	export default {
 		data() {
 			return {
+				toolsConfig: [{
+						title: "清空",
+						tool: 'clear'
+					},
+					{
+						title: "涂鸦",
+						tool: 'draw'
+					},
+					{
+						title: "擦除",
+						tool: 'easer'
+					},
+				],
 				imgFile: '',
 				top: 0,
 				imageRef: null,
@@ -89,10 +107,6 @@
 			},
 			//保存
 			saveFile(dataUrl) {
-				// uni.previewImage({
-				// 	count: 1,
-				// 	urls: [dataUrl],
-				// })
 				this.$emit('saveImage', dataUrl)
 			},
 			//设置操作
@@ -135,120 +149,88 @@
 			}
 		},
 		mounted() {
-			this.imgFile = this.img
+			// this.imgFile = this.img
 			this.initPage()
+			console.log(this.img)
+			weChatTempPathToBase64(this.img).then((res) => {
+				this.imgFile = res
+			})
 		},
-		// onLoad(options) {
-
-		// }
 	}
 </script>
 <script module="draw" lang="renderjs">
 	export default {
 		mounted() {
-			const script = document.createElement('script')
-			script.src = 'static/konva.js'
-			document.head.appendChild(script)
-
+			const script = document.createElement('script');
+			script.src = 'static/konva.js';
+			document.head.appendChild(script);
 		},
 		data() {
 			return {
-				statge: null, //舞台
-				layer: null, //图层
+				stage: null, // 舞台
+				layer: null, // 图层
 				options: null,
-				color: '', //颜色
+				color: '', // 颜色
 				strokeWidth: '',
-				mode: 'brush', //模式brush绘画 eraser擦除
-			}
+				mode: 'brush', // 模式brush绘画 eraser擦除
+			};
 		},
 		methods: {
-			//设置粗细
+			// 设置粗细
 			setStrokeWidth(value) {
-				this.strokeWidth = value
+				this.strokeWidth = value;
 			},
-			//设置颜色
+			// 设置颜色
 			setColor(value) {
-				this.color = value
+				this.color = value;
 			},
-			//参数
+			// 参数
 			setOption(options) {
-				this.options = options
-				if (options.width != 0 && options.height != 0 && !this.statge) {
-					this.initKonva()
+				this.options = options;
+				if (options.width != 0 && options.height != 0 && !this.stage) {
+					this.initKonva();
 				}
 			},
-			//擦除
+			// 擦除
 			onEaser() {
-				this.mode = 'eraser'
+				this.mode = 'eraser';
 			},
-			//涂鸦
+			// 涂鸦
 			onDrawLine() {
-				this.mode = 'brush'
+				this.mode = 'brush';
 			},
-			//清空画布
+			// 清空画布
 			clearDraw() {
-				// this.layer.destroyChildren()
-
-				// this.layer.draw();
-				// this.layer.children.forEach((child) => {
-				// 	if (!(child instanceof Konva.Image)) {
-				// 		child.destroy();
-				// 	}
-				// });
+				const toDestroy = [];
 				this.layer.children.forEach((child) => {
 					if (child.getAttr('isDrawingPath')) {
-						child.destroy();
+						toDestroy.push(child);
 					}
 				});
-				this.layer.draw();
+				toDestroy.forEach((child) => child.destroy());
 				this.layer.draw();
 			},
-			//操作
+			// 操作
 			action(type) {
-				console.log(type)
+				console.log(type);
 				switch (type) {
-					case 'easer': //擦除
-						this.onEaser()
+					case 'easer': // 擦除
+						this.onEaser();
 						break;
-					case 'draw': //绘画
-						this.onDrawLine()
+					case 'draw': // 绘画
+						this.onDrawLine();
 						break;
-					case 'clear': //清除
-						this.clearDraw()
+					case 'clear': // 清除
+						this.clearDraw();
 						break;
 				}
 			},
-			//保存
+			// 保存
 			saveDraw(event, ownerInstance) {
 				const {
 					originWidth,
 					originHeight
 				} = this.options
-
-				// const byteString = atob(dataUrl.split(',')[1]);
-				// const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
-				// const ab = new ArrayBuffer(byteString.length);
-				// const ia = new Uint8Array(ab);
-				// for (let i = 0; i < byteString.length; i++) {
-				// 	ia[i] = byteString.charCodeAt(i);
-				// }
-				// const blob = new Blob([ab], {
-				// 	type: mimeString
-				// });
-				// // 创建临时URL
-				// const blobUrl = URL.createObjectURL(blob);
-
-
-				// this.stage.toBlob((blob) => {
-				// 	if (blob) {
-				// 		const blobUrl = URL.createObjectURL(blob);
-				// 		console.log(blobUrl);
-				// 		ownerInstance.callMethod('saveFile', blobUrl);
-				// 	}
-				// }, 'image/png', {
-				// 	width: originWidth,
-				// 	height: originHeight
-				// });
 
 				const dataUrl = this.stage.toDataURL({
 					width: originWidth,
@@ -256,22 +238,34 @@
 				})
 				ownerInstance.callMethod('saveFile', dataUrl)
 			},
-			//绘制线条
+
+			// 绘制线条
 			drawLine() {
 				let isPaint = false;
 				let lastLine;
+				let brushLines = [];
 				this.stage.on('mousedown touchstart', (e) => {
 					isPaint = true;
 					let pos = this.stage.getPointerPosition();
-					lastLine = new Konva.Line({
-						stroke: this.color,
-						strokeWidth: this.strokeWidth,
-						globalCompositeOperation: this.mode === 'brush' ? 'source-over' :
-							'destination-out',
-						points: [pos.x, pos.y],
-						isDrawingPath: true
-
-					});
+					if (this.mode === 'brush') {
+						lastLine = new window.Konva.Line({
+							stroke: this.color,
+							strokeWidth: this.strokeWidth,
+							globalCompositeOperation: 'source-over',
+							points: [pos.x, pos.y],
+							isDrawingPath: true,
+							brushLine: true
+						});
+						brushLines.push(lastLine);
+					} else if (this.mode === 'eraser') {
+						lastLine = new window.Konva.Line({
+							stroke: 'rgba(0, 0, 0, 0)',
+							strokeWidth: this.strokeWidth,
+							globalCompositeOperation: 'destination-out',
+							points: [pos.x, pos.y],
+							isDrawingPath: true
+						});
+					}
 					this.layer.add(lastLine);
 				});
 				this.stage.on('mousemove touchmove', () => {
@@ -281,54 +275,85 @@
 					const pos = this.stage.getPointerPosition();
 					let newPoints = lastLine.points().concat([pos.x, pos.y]);
 					lastLine.points(newPoints);
+					if (this.mode === 'eraser') {
+						// 遍历所有画笔绘制的线条，判断是否相交并擦除
+						brushLines.forEach((line) => {
+							if (this.checkIntersection(lastLine, line)) {
+								line.destroy();
+							}
+						});
+					}
 					this.layer?.batchDraw();
 				});
 				this.stage.on('mouseup touchend', () => {
 					isPaint = false;
 				});
 			},
+			checkIntersection(line1, line2) {
+				const points1 = line1.points();
+				const points2 = line2.points();
+				for (let i = 0; i < points1.length - 1; i += 2) {
+					const x1 = points1[i];
+					const y1 = points1[i + 1];
+					const x2 = points1[i + 2];
+					const y2 = points1[i + 3];
+					for (let j = 0; j < points2.length - 1; j += 2) {
+						const x3 = points2[j];
+						const y3 = points2[j + 1];
+						const x4 = points2[j + 2];
+						const y4 = points2[j + 3];
+						// 线段相交检测算法
+						const denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+						if (denominator !== 0) {
+							const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator;
+							const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator;
+							if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
+								return true;
+							}
+						}
+					}
+				}
+				return false;
+			},
 			initKonva() {
 				const {
 					width,
 					height,
 					src
-				} = this.options
-				console.log(width,
-					height,
-					src)
-				console.log(window.Konva)
-				if (width == 0) return
-				if (!window.Konva) return
-				console.log(src)
+				} = this.options;
+				if (width == 0) return;
+				if (!window.Konva) return;
+
 				this.stage = new window.Konva.Stage({
 					container: 'draw',
 					width: width,
 					height: height
-				})
-				this.drawLine() //默认开启
+				});
+				this.drawLine(); // 默认开启
 				this.layer = new Konva.Layer();
 				this.stage.add(this.layer);
 				let imageObj = new Image();
-				imageObj.crossOrigin = 'anonymous';
+				// imageObj.crossOrigin = 'anonymous';
 				imageObj.onload = () => {
-					console.log(123123)
 					const image = new window.Konva.Image({
 						x: 0,
 						y: 0,
 						width,
 						height,
-						image: imageObj
+						image: imageObj,
+						isDrawingPath: false
 					});
 					this.layer.add(image);
 					this.layer.batchDraw();
-				}
+				};
 				imageObj.onerror = (error) => {
 					console.error('Image loading failed:', error);
 				};
-				imageObj.src = src
+				imageObj.src = src;
+
 			}
 		}
-	}
+	};
 </script>
 <style lang="scss" scoped>
 	.content {
@@ -414,14 +439,14 @@
 	}
 
 	.clear {
-		padding: 0 20rpx;
+		padding-left: 20rpx;
 	}
 
 	.easer {
-		padding: 0 20rpx;
+		padding-left: 20rpx;
 	}
 
 	.save {
-		padding: 0 20rpx;
+		padding-left: 20rpx;
 	}
 </style>

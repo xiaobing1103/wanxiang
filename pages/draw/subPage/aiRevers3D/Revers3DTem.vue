@@ -58,8 +58,8 @@
 				变化强度 <view class="label_rightText">(越大与原图越不相近)</view>
 			</view>
 			<view class="values">
-				<ImageLoraScale v-model:sliderValue="parmas.denoising_strength" :stepList="[0,2,4,6,8,10]" :min='0'
-					:max='10' type="bianHua" />
+				<ImageLoraScale v-model:sliderValue="parmas.denoising_strength" :stepList="[0,2,4,6,8,10]" min='0'
+					max='10' type="bianHua" />
 			</view>
 		</view>
 		<view class="boxItems">

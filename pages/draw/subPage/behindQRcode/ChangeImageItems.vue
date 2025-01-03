@@ -5,6 +5,7 @@
 		v-model:showupOverlay="showupOverlay"
 		v-model:images="RequestParmas.imageUrl" 
 		v-model:FileMode="RequestParmas.FileMode" 
+		description="请上传二维码图片,其他图片会出错"
 		/>
 	</view>
 </template>

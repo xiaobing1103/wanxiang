@@ -47,6 +47,7 @@
 		// position: absolute;
 		bottom: 20rpx;
 		width: 100%;
+		padding: 0 30rpx;
 		// overflow: hidden;
 		margin-bottom: 30rpx;
 	}

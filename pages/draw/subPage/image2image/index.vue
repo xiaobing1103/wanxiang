@@ -1,5 +1,5 @@
 <template>
-	<z-paging ref="srollRef" :pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx'}">
+	<z-paging ref="srollRef" :pagingStyle="{background:'rgb(246, 247, 249)',padding:'0'}">
 		<template #top>
 			<template v-if="!showUpOverlay">
 				<CommonHeader defindPath="/pages/draw/index" />
@@ -70,6 +70,7 @@
 
 <style lang="scss" scoped>
 	.body {
+		padding: 0 30rpx;
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;

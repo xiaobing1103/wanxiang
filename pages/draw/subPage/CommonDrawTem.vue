@@ -14,7 +14,6 @@
 			<view @click="submit" class="footerButton">AI生成(消耗1次)</view>
 		</view>
 	</view>
-	<!-- <view class="nav_title" @click="custom.taskSycn">test</view> -->
 </template>
 
 <script setup lang='ts'>
@@ -116,12 +115,10 @@
 		await getQueueTask()
 	}
 
-
 	onLoad(async (query) => {
 		if (query.temImages) {
 			url.value = query.temImages
 		}
-
 		// if (query.id) {
 		// 	const res = await $api.get(`api/v1/img/publishInfo?id=${query.id}`)
 		// 	debugger
@@ -153,9 +150,7 @@
 		padding: 50rpx 0;
 
 		&_box {
-
 			width: 60%;
-
 		}
 	}
 

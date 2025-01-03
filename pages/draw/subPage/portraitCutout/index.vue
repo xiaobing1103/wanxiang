@@ -4,7 +4,7 @@
 			<CommonHeader defindPath="/pages/draw/index" defindTitle="AI人像抠图" />
 		</template>
 		<view class="portraitCutout">
-			<CommonTitle title="AI人像抠图" desc="通过上传模版图和人脸图,AI会把人脸图中的任务替换" />
+			<CommonTitle title="AI人像抠图" desc="通过上传模版图和人脸图,AI会把人脸图中的人物替换" />
 			<view class="portraitCutout_header">
 
 				<view class="portraitCutout_header_title">
@@ -23,6 +23,7 @@
 				<view class="portraitCutout_main_content" @click="previewImage">
 					<ImageUpload isShowPlaceholder v-model:parmas="parmas2" v-model:url="url2"
 						type="portraitCutout_task_json" ref="ImageUploadRef" />
+
 				</view>
 				<view class="portraitCutout_main_footercon" v-if="url2">
 					<view class="portraitCutout_main_footercon_button" @click="saveImages">
@@ -78,13 +79,13 @@
 			chatStore.setShowlevelUpVip(true)
 			return
 		}
-		// #ifdef H5
+		// #ifdef H5 
 		formdata = new FormData()
 		formdata.append('file', parmas.image)
 		uploadRes = await $api.post('api/v1/files/upload', formdata)
 		// #endif
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		formdata = { file: url.value }
 		if (isWeChatTempPath(parmas.image)) {
 			isWeChatSendImages = true
@@ -94,12 +95,15 @@
 		if (typeof uploadRes == 'string') {
 			uploadRes = JSON.parse(uploadRes)
 		}
+
+		console.log(uploadRes)
 		if (uploadRes?.code == 200) {
-			const res = await $api.get(`api/v1/img/matting_base64?url=${uploadRes.data}`)
+			let res = null
+			res = await $api.get(`api/v1/img/matting_base64?url=${uploadRes.data}`)
 			if (res.code == 200) {
 				url2.value = addPrefixToBase64(res.data)
 				await $api.post('api/v1/number2/submit', { type: "draw_matting", number: 1 })
-
+				uni.$u.toast('抠图成功，有的图片为空白图，因为图片大小过大或者没有人物主体！');
 			} else {
 				uni.$u.toast('抠图失败，请重试！');
 			}
@@ -114,18 +118,24 @@
 	}
 
 	const previewImage = () => {
-		uni.previewImage({
-			current: 0,
-			urls: [url2.value]
-		});
+		if (url2.value) {
+			uni.previewImage({
+				current: 0,
+				urls: [url2.value]
+			});
+		} else {
+			uni.$u.toast('请先进行人像抠图后预览！');
+		}
+
 	}
 
 	const saveImages = () => {
+		console.log(url2.value)
 		// #ifdef H5
 		downloadBase64Image(url2.value, '下载')
 		// #endif
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		downloadReport(url2.value).then((res) => {
 			uni.$u.toast(res);
 		}).catch((err) => {

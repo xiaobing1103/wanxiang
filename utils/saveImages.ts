@@ -15,7 +15,7 @@ export async function saveImage(url, filename = '签名') {
 		});
 		// #endif
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		// 判断当前url是否是base64格式 
 		if (isBase64(url)) {
 			const tempFilePath = base64ToTempUrl(url)

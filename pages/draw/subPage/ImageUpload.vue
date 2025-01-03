@@ -91,7 +91,6 @@
 
 <script setup lang="ts">
 	import Vsign from './v-sign/components/v-sign/v-sign.vue'
-	import DrawTools from './components/DrawTools.vue'
 	import { ref, defineExpose, reactive } from 'vue';
 	import { Image2TextParmas } from '../data';
 	import useDrawStore, { taskIdTypeKey } from '@/store/draw';
@@ -101,6 +100,10 @@
 	import { base64ToTempUrl } from '@/utils/base64ToTempUrl';
 	import { useScreenStore } from '@/store';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import { weChatTempPathToBase64 } from '@/utils';
+	// #ifdef APP
+	import DrawTools from './components/DrawTools.vue'
+	// #endif
 	const showDrawColor = ref(false)
 	const showDrawWidth = ref(false)
 	const showUpOverlay = defineModel('showUpOverlay');
@@ -185,7 +188,14 @@
 			}
 		});
 		if (props.type == 'coloringLineArt_task_json') {
-			const file = await wxBase64({ url: url, type: 'png' });
+			let file
+			// #ifdef APP
+			file = await weChatTempPathToBase64(url, true)
+			// #endif
+			// #ifdef MP-WEIXIN
+			file = await wxBase64({ url: url, type: 'png' });
+			// #endif
+			console.log(file)
 			parmas.value.image = file;
 		} else {
 			parmas.value.image = url;
@@ -224,7 +234,7 @@
 					};
 					// #endif
 
-					// #ifdef MP-WEIXIN || APP
+					// #ifndef H5
 					wx.getImageInfo({
 						src: tempFilePaths[0],
 						success: async (res) => {
@@ -235,7 +245,13 @@
 					});
 
 					if (props.type == 'coloringLineArt_task_json') {
-						const file = await wxBase64({ url: tempFilePaths[0], type: 'png' });
+						let file
+						// #ifdef APP
+						file = await weChatTempPathToBase64(tempFilePaths[0], true)
+						// #endif
+						// #ifdef MP-WEIXIN
+						file = await wxBase64({ url: tempFilePaths[0], type: 'png' });
+						// #endif
 						parmas.value.image = file;
 					} else {
 						parmas.value.image = tempFilePaths[0];
@@ -272,7 +288,7 @@
 			// #endif
 		}
 	};
-
+	
 	const saveImage = (e) => {
 		console.log(e)
 		url.value = e

@@ -112,7 +112,6 @@ const useDrawStore = defineStore(
 							task_id: taskDTO.data.task_id,
 							historyTasks: currentData.historyTasks as drawTaskJson[]
 						});
-
 						uni.navigateTo({
 							url: `/pages/draw/subPage/QueueQueryPage/index`
 						});
