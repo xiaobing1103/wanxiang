@@ -17,6 +17,7 @@
 	import updateContent from './components/updateContent.vue'
 	import APP_CONFIG from '@/config/config.ts'
 	import { AppName } from '@/http'
+	import { toCopyText } from '@/utils'
 
 	enum stepEnum {
 		'STEP_TEMPLATE' = 0,
@@ -108,8 +109,8 @@
 
 	//小程序下载
 	const wechatDownLoad = async () => {
+		const requestUrl = `https://ai1foo.com/api/v1/ppt/down?id=` + taskId.value
 		const userInfo = userStore.userInfo;
-		// const header = { "Access-Token": "nrBMSuyhf7462HZ9zSNc9HdCj0wSHQ7ND/vzaW6OKhjsrD9OvjHZRSwUpq6qqYCS5j9RST4sFQ1QOgR+XRKPeRFlYNklL/gwHWcIFhr8WyW26Ivj6VSbHzIxUKSlsdRVxzjV5sOFuclEWSd8r/LCPO5ZCvntao4B4Q+Uwndt3NLBhAZ52qYf88iphdRpcv9yzh2U3zxyjM8NGGHhYL7FULiZU0xZSUIjWGFaZjWzjuUzb9QmdoJLqq+vWtahKbvxYJGpnlkiJbwe84Ec9YS69g==", "App": 1668085753, "Token": "07670c9d483cc917e874e48d450308eb", "Vt": 58, "Uid": 4600812, "App-Name": "bianjie" }
 		const header = {
 			'Access-Token': userInfo?.access_token,
 			'App': userInfo?.appid,
@@ -118,25 +119,18 @@
 			'Uid': userInfo?.id,
 			'App-Name': AppName,
 		}
-		console.log(`https://ai1foo.com/api/v1/ppt/down?id=` + taskId.value)
-		console.log(header, 'header')
-		console.log(taskId.value, 'taskId.value')
-		// // #ifdef APP
-		// const res = await $api.get('api/v1/ppt/down?id=' + taskId.value, null, {
-		// 	'Content-Type': 'application/x-www-form-urlencoded'
-		// })
-		// console.log(res)
-		// // #endif
+		// #ifdef APP
+		// saveFile(res.tempFilePath)
+		toCopyText(requestUrl, '复制成功，请粘贴到浏览器下载此ppt文件！')
+		// #endif
+
+		// #ifndef APP
 		uni.downloadFile({
-			// url: `https://ai1foo.com/api/v1/ppt/down?id=` + taskId.value,
-			url: 'https://api.idocv.com/doc/download/obUYlcp?url=http%3a%2f%2fapi.idocv.com%2fdata%2fdoc%2ftest.pptx',
-			// header,
+			url: `https://ai1foo.com/api/v1/ppt/down?id=` + taskId.value,
+			// url: 'https://api.idocv.com/doc/download/obUYlcp?url=http%3a%2f%2fapi.idocv.com%2fdata%2fdoc%2ftest.pptx',
+			header,
 			success(res) {
 				console.log(res, '---------------------')
-				// #ifdef APP
-				saveFile(res.tempFilePath)
-				// #endif
-				// #ifndef APP
 				uni.openDocument({
 					filePath: res.tempFilePath,
 					fileType: 'pptx',
@@ -149,13 +143,12 @@
 					}
 				})
 
-				// #endif
 			},
 			fail(err) {
 				console.log(err, "err")
 			}
 		})
-
+		// #endif
 	}
 	//h5下载
 	const h5Download = async () => {

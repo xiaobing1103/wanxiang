@@ -45,6 +45,9 @@
 		</view>
 	</up-popup>
 	<!-- #endif -->
+	<!-- #ifdef APP || H5 -->
+	<MappingRenderJS ref="MappingRenderJSRef" @initMap="initMap" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
@@ -54,7 +57,7 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import { useChatStore, useUserStore } from '@/store';
 	import { html2Image } from './html2Canvas';
-	// import { downloadBase64Image } from '@/utils/downLoadLocal';
+	import MappingRenderJS from '../MappingRenderJS.vue'
 	const svgRef = shallowRef<SVGElement>()
 	const svgWrapRef = shallowRef<HTMLDivElement>()
 	const transformer = new Transformer()
@@ -111,6 +114,9 @@
 		}
 	}
 
+	const initMap = (e) => {
+		console.log(e)
+	}
 
 	const exportImg = async (type : 'png' | 'jpeg') => {
 		const data = await html2Image(
