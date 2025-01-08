@@ -1,59 +1,74 @@
 <template>
-	<view>
-
-		<!-- 		<button @click="renderScript.emitData">直接调用renderjs中的emitData的方法</button>
-		<button @click="changeMsg" class="app-view">改变msg的值,直接调用renderjs中receiveMsg的值</button>
-		<button @click="renderScript.renferMsg">通过renderjs改变msg的值,同时调用renderjs中的emitData的方法</button> -->
-		<button @click="renderScript.restartData">更新数据</button>
-
-	</view>
-	<view class="AImapping1">
-		<div class="svg-container" id="svgWrapRef">
-			<svg class="svg-container_svg" id="svgRef"></svg>
-			<!-- <div class="mapping_svgToolBar" id="refToolbar" /> -->
-		</div>
-	</view>
-
-	<view :msg="msg" :change:msg="renderScript.receiveMsg" class="renderjs" id="renderjs-view">
-		{{msg}}
+	<view class="mapping-container" :value="value" :change:value="renderScript.propObserver">
+		<sp-html2canvas-render domId="render-dom-2" ref="renderRef" @renderOver="renderOver"></sp-html2canvas-render>
+		<view class="mappingHandlerBox">
+			<view @click="renderScript.restartData">刷新思维导图</view>
+			<view class="mappingHandlerBox_right" @click="cusRenderDom">导出图片</view>
+		</view>
+		<view class="AImapping1 render-main" id="render-dom-2">
+			<div class="svg-container" id="svgWrapRef">
+				<svg class="svg-container" id="svgRef"></svg>
+			</div>
+		</view>
 	</view>
 </template>
 
 <script>
 	import {
-		Transformer
-	} from 'markmap-lib'
+		urlToBase64,
+		pathToBase64,
+		base64ToPath
+	} from '@/uni_modules/sp-html2canvas-render/utils/index.js'
 	import {
-		Markmap
-	} from 'markmap-view'
-	import {
-		html2Image
-	} from './CreateMapTem/html2Canvas';
+		saveBase64Img
+	} from '@/utils'
 
 	export default {
-		data() {
-			return {
-				msg: '我是service层原来的msg',
-			};
+		props: {
+			value: {
+				type: String,
+				default: '',
+				required: true,
+				reviewBaseImg: '',
+				webImageBase1: '',
+				webImageBase2: '',
+				locImageBase: ''
+			}
+		},
+		computed: {
+			richimg() {
+				return `
+		    <img style="width: 200px; object-fit: cover" src="${this.webImageBase1}" />
+		    <img style="width: 200px; object-fit: cover" src="${this.webImageBase2}" />
+		    <img style="width: 200px; object-fit: cover" src="${this.locImageBase}" />
+		    `
+			}
+		},
+		created() {
+			this.handleImage()
 		},
 		methods: {
-			// 触发逻辑层出入renderjs数据改变
-			changeMsg() {
-				this.msg = "msg值改变了";
+			renderOver(e) {
+				// console.log(e)
+				// this.reviewBaseImg = e
+				saveBase64Img(e)
+				// base64ToPath(e).then((res) => {
+				// 	console.log('==== path :', res)
+				// })
 			},
-			// 接收renderjs发回的数据
-			receiveRenderData(val) {
-				console.log('renderjs返回的值-->', val);
+			cusRenderDom() {
+				this.$refs.renderRef.h2cRenderDom()
+
 			},
-			//接收renderjs发回的数据,同时触发:change:msg,调用enderjs中的emitData的方法
-			serviceClick(e) {
-				this.msg = e
+			handleContentChange(newContent) {
+				this.$emit('input', newContent);
 			},
 		},
 		mounted() {
-			this.$emit('initMap', '组件开始')
-		},
-
+			if (this.value) {
+				this.renderScript?.propObserver?.(this.value);
+			}
+		}
 	};
 </script>
 
@@ -61,146 +76,232 @@
 	export default {
 		data() {
 			return {
-				name: '我是renderjs数据',
 				transformer: null,
 				markmapDOM: null,
-				descInput: ''
+				currentContent: '',
+				isScriptsLoaded: false,
+				defaultContent: `# ChatGptWeb系统
+  ## 基础功能
+  - 支持AI聊天
+  - 支持GPT4
+  - 支持DLLAE2
+  - 支持Midjourney
+  - 支持mind思维导图生成
+  - 更多功能等你探索......
+
+  ## 更多内容
+  -  在上面输入您想要生成的内容
+  - 点击生成即可
+  `
 			}
 		},
 		mounted() {
-			const loadScript = (src) => {
+			// 按顺序加载所需资源
+			this.loadBasicScripts();
+		},
+		methods: {
+			loadBasicScripts() {
+				// 先加载基础样式
+				const baseStyle = document.createElement('style');
+				baseStyle.textContent = `
+	                .markmap-wrapper {
+	                    width: 100%;
+	                    height: 100%;
+	                    min-height: 500px;
+	                }
+	                .markmap-svg {
+	                    width: 100%;
+	                    height: 100%;
+	                }
+	                .markmap-node {
+	                    cursor: pointer;
+	                }
+	                .markmap-node-circle {
+	                    fill: #fff;
+	                    stroke: #999;
+	                    stroke-width: 1.5px;
+	                }
+	                .markmap-node-text {
+	                    fill: #333;
+	                    font: 12px sans-serif;
+	                }
+	                .markmap-link {
+	                    fill: none;
+	                    stroke: #999;
+	                    stroke-width: 1.5px;
+	                }
+	            `;
+				document.head.appendChild(baseStyle);
+				// 按顺序加载脚本
+				this.loadScript('static/d3@7.js')
+					.then(() => this.loadScript('static/markmap-lib.js'))
+					.then(() => this.loadScript('static/markmap-view.js'))
+					.then(() => {
+						this.isScriptsLoaded = true;
+						this.initializeMarkmap();
+					})
+					.catch(error => {
+						console.error('脚本加载失败:', error);
+					});
+			},
+
+			loadScript(src) {
 				return new Promise((resolve, reject) => {
 					const script = document.createElement('script');
 					script.src = src;
 					script.onload = resolve;
-					script.onerror = () => {
-						reject(new Error(`Failed to load script: ${src}`));
-					};
+					script.onerror = reject;
 					document.head.appendChild(script);
 				});
-			};
-			Promise.allSettled([
-				loadScript('static/markmap-lib.js'),
-				loadScript('static/d3@7.js'),
-				loadScript('static/markmap-view.js')
-			]).then((results) => {
-				const failedScripts = results.filter((result) => result.status === "rejected");
-				if (failedScripts.length === 0) {
-					this.initMapping();
-				} else {
-					failedScripts.forEach((failed) => {
-						console.error(failed.reason.message);
-					});
-				}
-			});
-		},
-		methods: {
-			initMapping() {
-				console.log(typeof window.markmap)
-				if (typeof window.markmap === 'object') {
-					const { Transformer } = window.markmap
-					
-					this.transformer = new Transformer()
-					const { markmap } = window
-					const ElTag = document.getElementById('svgRef')
-					console.log('markmap',markmap)
-					console.log('ElTag',ElTag)
-					this.markmapDOM = markmap.Markmap.create(ElTag)
-				} else {
-					console.error('markmap is not available in window.');
-				}
 			},
-			renderMarkMap() {
-				const {
-					root
-				} = this.transformer.transform(this.descInput);
-				console.log('root object:', root);
-				this.markmapDOM?.setData(root);
-				console.log('Setting data to markmapDOM:', root);
-				this.markmapDOM?.fit(root);
-				console.log('Fitting markmapDOM with root:', root);
-			},
-			async exportImg(type) {
-				const data = await html2Image(
-					this.$refs.svgWrapRef, {
-						type
-					}, {
-						backgroundColor: '#fff',
-						scale: window.devicePixelRatio * 1.5
+			initializeMarkmap() {
+				try {
+					if (!window.markmap || !window.d3) {
+						throw new Error('必要的库未加载');
 					}
-				)
+					// 清理现有内容
+					const container = document.getElementById('svgWrapRef');
+					container.innerHTML = '';
+					// 创建新的SVG元素
+					const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+					svg.setAttribute('id', 'svgRef');
+					svg.setAttribute('class', 'markmap-svg');
+					container.appendChild(svg);
+					// 初始化transformer
+					const {
+						Transformer
+					} = window.markmap;
+					this.transformer = new Transformer();
+					// 创建markmap实例
+					this.markmapDOM = window.markmap.Markmap.create(svg, {
+						autoFit: true,
+						initialZoom: 0.9,
+						maxWidth: 600,
+						color: window.d3.scaleOrdinal(window.d3.schemeCategory10),
+						nodeMinHeight: 16,
+						spacingVertical: 5,
+						spacingHorizontal: 80,
+						duration: 500,
+						embedGlobalCSS: true
+					});
+					// 初始渲染
+					this.renderContent();
+				} catch (error) {
+					console.error('初始化失败:', error);
+				}
 			},
-			renferMsg(event, ownerInstance) {
-				// 调用 service层的serviceClick方法,传值
-				ownerInstance.callMethod('serviceClick', {
-					test: '这是点击renderjs的区域，向service层传递变量'
-				})
+			restartData() {
+				if (!this.isScriptsLoaded) {
+					this.loadBasicScripts();
+					return;
+				}
+				// this.currentContent = this.defaultContent
+				this.initializeMarkmap();
 			},
-			// 接收逻辑层发送的数据
-			receiveMsg(newValue, oldValue, ownerVm, vm) {
-				console.log('msg变化了newValue', newValue)
-				console.log('msg变化了oldValue', oldValue)
-				console.log('msg变化了ownerVm', ownerVm)
-				console.log('msg变化了vm', vm)
+			propObserver(newValue) {
+				if (!newValue) {
+					console.warn('接收到空值');
+					return;
+				}
+				try {
+					this.currentContent = String(newValue);
+					if (this.isScriptsLoaded && this.markmapDOM) {
+						this.renderContent(this.currentContent);
+					}
+					// 通知内容更新
+					this.$ownerInstance.callMethod('changeMap');
+				} catch (error) {
+					console.error('处理新内容失败:', error);
+				}
 			},
-			// 发送数据到逻辑层
-			emitData(e, ownerVm) {
-				ownerVm.callMethod('receiveRenderData', this.name)
-			},
-			restartData(e) {
-				this.descInput = `# 缅因猫
-- 日期：[填写日期]
-- 目标：深入了解缅因猫的特点和历史
-- 进展：
-  - [缅因猫起源和分布]
-    - [缅因猫的起源]
-    - [缅因猫的分布]
-  - [缅因猫外观特征]
-    - [体型和毛发]
-    - [颜色和图案]
-  - [缅因猫性格特点]
-    - [友好性]
-    - [独立性]
-- 问题：
-  - [问题1]
-    - 缅因猫在寒冷气候下的适应性如何？
-  - [问题2]
-    - 缅因猫的护理需求有哪些？
-  - [问题3]
-    - 缅因猫的饲养环境有哪些注意事项？
-- 下周计划：
-  - [填写任务1计划]
-    - 查阅更多关于缅因猫的健康信息
-  - [填写任务2计划]
-    - 了解缅因猫的繁殖情况
-  - [填写任务3计划]
-    - 收集缅因猫的饲养经验和注意事项`
-				this.renderMarkMap()
+			renderContent(content) {
+				if (!this.transformer || !this.markmapDOM) return;
+				try {
+					const contentToRender = String(content || this.currentContent);
+					if (!contentToRender) {
+						console.warn('没有可渲染的内容');
+						return;
+					}
+
+					const {
+						root
+					} = this.transformer.transform(contentToRender);
+					if (!root) {
+						console.error('转换结果为空');
+						return;
+					}
+					this.markmapDOM.setData(root);
+					setTimeout(() => {
+						if (this.markmapDOM && this.markmapDOM.fit) {
+							this.markmapDOM.fit();
+						}
+					}, 300);
+				} catch (error) {
+					console.error('渲染内容失败:', error, '内容:', content);
+				}
 			}
-		},
-		// watch: {
-		// 	descInput(oldVal, newVal) {
-		// 		this.renderMarkMap();
-		// 	}
-		// }
-	};
+		}
+	}
 </script>
 
-
 <style lang="scss" scoped>
+	.index {
+		padding: 24rpx;
+		box-sizing: border-box;
+	}
+
+	.curpage-review {
+		width: 100%;
+		border: 1px solid #cccccc;
+		display: flex;
+		justify-content: center;
+
+		.review-content {}
+	}
+
+	.mapping-container {
+		width: 100%;
+		height: 100%;
+		height: 600rpx;
+	}
+
 	.AImapping1 {
-		width: 100vw;
+		width: 100%;
+		height: 100%;
+		height: 600rpx;
 	}
 
 	.svg-container {
-		width: 100vw;
-		display: flex;
-		justify-content: center;
-		height: 600rpx;
+		width: 100%;
+		height: 100%;
+		min-height: 600rpx;
+		position: relative;
+	}
 
-		&_svg {
-			width: 100%;
-			height: 100%;
+
+	.mappingHandlerBox {
+		padding: 0 30rpx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		&_right {
+			display: flex;
+			align-items: center;
+			background-color: rgb(41, 121, 255);
+			padding: 10rpx 15rpx;
+			font-size: 25rpx;
+			border-radius: 10rpx;
+			color: white
 		}
+	}
+
+	.render-main {
+		/* 若要渲染的盒子超出页面,建议给外层盒子一个overflow:auto */
+		overflow: auto;
+	}
+
+	.base-img {
+		width: 100%;
 	}
 </style>

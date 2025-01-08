@@ -46,6 +46,47 @@ function isPureLink(str : string) {
 
 	}
 }
+function saveBase64Img(base64) {
+	const bitmap = new plus.nativeObj.Bitmap('test');
+	bitmap.loadBase64Data(
+		base64,
+		function () {
+			const url = '_doc/' + new Date() + '.png'; // url建议用时间戳命名方式
+			console.log('url:', url);
+			bitmap.save(
+				url, {
+				overwrite: true // 是否覆盖
+				// quality: 'quality'  // 图片清晰度
+			},
+				i => {
+					uni.saveImageToPhotosAlbum({
+						filePath: url,
+						success: function () {
+							uni.showToast({
+								title: '保存成功',
+								icon: 'none'
+							})
+							bitmap.clear();
+						}
+					});
+				},
+				e => {
+					uni.showToast({
+						title: '保存失败',
+						icon: 'none'
+					})
+					console.log(e);
+					bitmap.clear();
+				}
+			);
+		},
+		e => {
+			console.log('保存失败', e);
+			bitmap.clear();
+		}
+	);
+}
+
 
 const limitFileSize = (File : any, tips : string) => {
 	let flag = true
@@ -320,6 +361,34 @@ const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, a
 	})
 }
 
+
+/* eslint-disable no-var */
+function getLocalFilePath(path) {
+	if (
+		path.indexOf('_www') === 0 ||
+		path.indexOf('_doc') === 0 ||
+		path.indexOf('_documents') === 0 ||
+		path.indexOf('_downloads') === 0
+	) {
+		return path
+	}
+	if (path.indexOf('file://') === 0) {
+		return path
+	}
+	if (path.indexOf('/storage/emulated/0/') === 0) {
+		return path
+	}
+	if (path.indexOf('/') === 0) {
+		const localFilePath = plus.io.convertAbsoluteFileSystem(path)
+		if (localFilePath !== path) {
+			return localFilePath
+		} else {
+			path = path.substr(1)
+		}
+	}
+	return '_www/' + path
+}
+
 const base64ToBlob = (base64Data : string) => {
 	const sliceSize = 1024;
 	const byteCharacters = atob(base64Data);
@@ -338,4 +407,4 @@ const base64ToBlob = (base64Data : string) => {
 	const blob = new Blob(byteArrays, { type: 'image/png' });
 	return blob;
 }
-export { toPage, uploadFileBefore, base64ToBlob, saveImage, debounce, isPureLink, toCopyText, timestampToDateString, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport, limitFileSize, shareText };
+export { toPage, getLocalFilePath, uploadFileBefore, base64ToBlob, saveImage, debounce, isPureLink, toCopyText, timestampToDateString, getRandomInt, exportTxt, fileToBase64WithHeader, fileToBase64, saveTextToFile, isValidURL, formatDate, isWeChatTempPath, Url2temUrl, weChatTempPathToBase64, isBase64, downloadReport, limitFileSize, shareText, saveBase64Img };

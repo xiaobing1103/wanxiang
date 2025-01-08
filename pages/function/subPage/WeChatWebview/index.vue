@@ -1,6 +1,11 @@
 <template>
-	<z-paging ref="pagingRef"
-		:pagingStyle="{background:'rgb(246, 247, 249)',padding:'0 30rpx',justifyContent:'center'}">
+	<z-paging ref="pagingRef" :pagingStyle="{background:'rgb(246, 247, 249)',padding:'0',justifyContent:'center'}">
+		<!-- #ifdef APP -->
+		<template #top>
+			<CommonHeader defindTitle="AI思维导图" />
+		</template>
+		<!-- #endif -->
+
 		<!-- #ifdef H5 -->
 		<view class="AImapping1">
 			<view class="svg-container" ref="svgWrapRef">
@@ -9,8 +14,8 @@
 			</view>
 		</view>
 		<!-- #endif -->
-		<!-- #ifdef MP-WEIXIN -->
-		<web-view :src="url"></web-view>
+		<!-- #ifdef MP-WEIXIN || APP-->
+		<web-view :fullscreen="false" :src="url"></web-view>
 		<!-- #endif -->
 	</z-paging>
 </template>
@@ -22,6 +27,7 @@
 	import { Transformer } from 'markmap-lib'
 	import { Markmap } from 'markmap-view'
 	import { useChatStore, useUserStore } from '@/store';
+	import CommonHeader from '@/components/CommonHeader.vue';
 	const ChatStore = useChatStore();
 	const svgRef = shallowRef<SVGElement>()
 	const svgWrapRef = shallowRef<HTMLDivElement>()
@@ -43,7 +49,7 @@
   - 点击生成即可
   `
 	const descInput = ref('')
-	const { streamRequest , streamSpark } = useStreamHooks()
+	const { streamRequest, streamSpark } = useStreamHooks()
 	// 定义一个方法，用于向 WebView 发送消息
 	watch(descInput, (() => {
 		console.log(descInput.value)
@@ -109,10 +115,10 @@
 		const streamOptions = {
 			url: 'api/v1/chat2/glm_4_flash',
 			data: data,
-			onmessage: async (text:string) => {
+			onmessage: async (text : string) => {
 				console.log(text)
 				newStr += text
-			    descInput.value = await streamSpark(newStr)
+				descInput.value = await streamSpark(newStr)
 			},
 			onfinish() {
 				console.log('成功')

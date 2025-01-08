@@ -1,4 +1,3 @@
-
 import { isDevMode } from '@/utils/env'
 const envBaseUrl = import.meta.env.VITE_APP_BASE_URL || ''
 
@@ -20,4 +19,5 @@ const config = {
 	urlPrefix: 'api', //请求默认前缀
 	timeout: 30 * 1000 //请求超时时长
 }
+
 export default config

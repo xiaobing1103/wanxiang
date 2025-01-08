@@ -76,7 +76,7 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const delChats = (id : string) => {
 		if (chats.value.length === 1) {
 			// 如果只有一个消息，不允许删除
-			uni.$u.toast('只有一条消息记录，无法删除');
+			UNI.$u.toast('只有一条消息记录，无法删除');
 			return;
 		}
 		const newChats = chats.value.filter((val) => val.id !== id);

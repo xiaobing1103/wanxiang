@@ -1,5 +1,5 @@
 <template>
-	<z-paging :scroll-with-animation="true" :show-scrollbar="false" ref="pagingRef" :pagingStyle="{padding:'24rpx'}">
+	<z-paging :scroll-with-animation="true" :show-scrollbar="false" ref="pagingRef" :pagingStyle="{padding:'0 24rpx'}">
 		<template #top>
 			<CommonHeader defindTitle="AI工作总结" />
 		</template>

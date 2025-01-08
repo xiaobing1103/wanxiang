@@ -3,6 +3,9 @@
 		<template #top>
 			<CommonHeader defindTitle="AI思维导图" />
 		</template>
+		<!-- #ifdef APP -->
+		<!-- <web-view :src="url" @message="getMessage" /> -->
+		<!-- #endif -->
 		<view class="AImapping">
 			<view class="AImapping_main">
 				<view class="AImapping_main_content">
@@ -16,19 +19,40 @@
 </template>
 
 <script setup lang="ts">
-	import { nextTick, ref, } from 'vue';
+	import { nextTick, ref, computed } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CreateMapTem from './components/CreateMapTem'
 	import { debounce } from '@/utils';
+	import config from '@/config'
+	import { base64ToPath } from '@/utils/imgPath';
+	import { useUserStore } from '@/store';
 	const current = ref(0)
 	const pagingRef = ref(null)
-
+	const UserStore = useUserStore()
 	//滚动到底部
 	const onScroolToBottom = debounce(() => {
 		nextTick(() => {
 			pagingRef.value.scrollToBottom()
 		})
 	}, 500)
+
+	const getMessage = async (event : any) => {
+		const data = event.detail.data
+		const path = await base64ToPath(data[0].base64)
+		uni.saveImageToPhotosAlbum({
+			filePath: path,
+			success: (result) => {
+				uni.$u.toast('保存成功！')
+			},
+			fail: (err) => {
+				uni.$u.toast('保存失败！')
+			}
+		})
+	}
+	const url = computed(() => {
+		const domain = config.baseUrl
+		return `https://ai.ai068.com/mobile/packages/pages/mind_map/webview?is_web_view=1&token=&client=isApp`
+	})
 </script>
 
 <style lang="scss" scoped>

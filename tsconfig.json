@@ -6,7 +6,8 @@
 			"mini-types",
 			"vite/client",
 			"vue",
-			"z-paging/global.d.ts"
+			"z-paging/global.d.ts",
+			"pinia"
 		],
 		"esModuleInterop": true,
 		"moduleResolution": "node",
@@ -17,20 +18,20 @@
 			"esnext",
 			"dom"
 		],
-		"exclude": [
-			"node_modules"
-		],
-		"include": [
-			"src/**/*.ts",
-			"src/**/*.d.ts",
-			"src/**/*.tsx",
-			"src/**/*.vue"
-		],
 		"baseUrl": "./",
 		"paths": {
 			"@/*": [
 				"*"
 			]
 		}
-	}
+	},
+	"exclude": [
+		"node_modules"
+	],
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.d.ts",
+		"src/**/*.tsx",
+		"src/**/*.vue"
+	]
 }

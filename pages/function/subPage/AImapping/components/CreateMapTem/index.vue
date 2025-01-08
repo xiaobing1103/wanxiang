@@ -9,12 +9,13 @@
 					:placeholder="currentCreateItem.placeholder"></u-textarea>
 			</view>
 			<view class="btn">
-				<view class="btn_top" @click="onCreateContent(currentCreateItem.content)" :style="{
+				<up-button class="btn_top" @click="onCreateContent(currentCreateItem.content)" :disable="isRecive"
+					:style="{
 					background:isRecive ? 'var(--u-primary-disabled)' : 'var(--aichat-button-color)',
 					color:isRecive ? 'var(--uni-text-color-disable)' : 'var(--uni-bg-color)'
 					}" type="primary">
 					生成思维导图
-				</view>
+				</up-button>
 			</view>
 			<!-- #ifdef H5 -->
 			<view class="contentHeader">
@@ -45,12 +46,15 @@
 		</view>
 	</up-popup>
 	<!-- #endif -->
-	<!-- #ifdef APP || H5 -->
-	<MappingRenderJS ref="MappingRenderJSRef" @initMap="initMap" />
+	<!-- #ifdef APP -->
+	<MappingRenderJS ref="MappingRenderJSRef" :value="descInput" @input="updateInput" />
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
 	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
 	import { Transformer } from 'markmap-lib'
 	import { Markmap } from 'markmap-view'
 	import { nextTick, onMounted, ref, shallowRef, watch } from 'vue'
@@ -63,6 +67,7 @@
 	const transformer = new Transformer()
 	const refToolbar = shallowRef<HTMLDivElement>()
 	const showExportPopup = ref(false)
+	const MappingRenderJSRef = ref(null)
 	let markmap : Markmap | null = null
 	const UserStore = useUserStore()
 	const exportOptions = ref([
@@ -113,10 +118,17 @@
 				break
 		}
 	}
-
+	const changeMap = () => {
+		if (MappingRenderJSRef.value) {
+			MappingRenderJSRef.value.handleContentChange(descInput.value)
+		}
+	}
 	const initMap = (e) => {
 		console.log(e)
 	}
+	const updateInput = (newValue) => {
+		descInput.value = newValue;
+	};
 
 	const exportImg = async (type : 'png' | 'jpeg') => {
 		const data = await html2Image(
@@ -129,7 +141,19 @@
 		)
 		downloadBase64Image(data, '123')
 	}
-	const descInput = ref(``)
+	const descInput = ref(`# ChatGptWeb系统
+  ## 基础功能
+  - 支持AI聊天
+  - 支持GPT4
+  - 支持DLLAE2
+  - 支持Midjourney
+  - 支持mind思维导图生成
+  - 更多功能等你探索......
+
+  ## 更多内容
+  -  在上面输入您想要生成的内容
+  - 点击生成即可
+  `)
 	enum createEnum {
 		'TITLE' = 'title',
 		'CONTENT' = 'content'
@@ -177,7 +201,11 @@
 		(e : 'next', val : { content : string, type : createEnum }) : void
 		(e : 'scrollBottom') : void
 	}>()
-	const { isRecive, streamRequest } = useStreamHooks()
+	const { isRecive, streamRequest, onCancelRequest, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 
 	//类型列表
 	const typeList : Record<createEnum, TypeItem> = {
@@ -197,7 +225,6 @@
 		}
 	}
 	const currentCreateItem = ref<TypeItem>(typeList[createEnum.TITLE])
-
 	const onCreateContent = (str) => {
 		if (isRecive.value) {
 			uni.$u.toast('正在输出中请等待！')
@@ -208,14 +235,15 @@
 			uni.$u.toast('输入内容为空！')
 			return
 		}
-		// #ifdef H5
+		// #ifdef H5 || APP
 		onFetchChat(str)
 		// #endif
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN 
 		if (UserStore.token) {
 			uni.navigateTo({
 				url: `/pages/function/subPage/WeChatWebview/index?sendMsg=${content}`
 			})
+
 		} else {
 			uni.$u.toast('请先登录账号！')
 		}
@@ -235,22 +263,12 @@
 					content +
 					"'，回答的时候不要有任何其他内容，你只需要输出markdown，请严格按照我的格式模版要求执行。" +
 					` 
-			    格式模版
-			    # 周报
-			    - 日期：[填写日期]
-			    - 目标：[填写本周目标]
-			    - 进展：
-			      - [填写任务1进展]
-			      - [填写任务2进展]
-			      - [填写任务3进展]
-			    - 问题：
-			      - [填写问题1]
-			      - [填写问题2]
-			      - [填写问题3]
-			    - 下周计划：
-			      - [填写任务1计划]
-			      - [填写任务2计划]
-			      - [填写任务3计划]`
+			    请以 Markdown 格式撰写一篇关于 [主题名称，比如人工智能在医疗领域的应用] 的科普文章，要求：
+			    文章开头使用一级标题 #，写上文章主题，字体加粗。
+			    第二部分用二级标题 ##，介绍该主题的背景，阐述为什么这个主题在当下备受关注，至少包含 3 个要点，以列表形式 - 呈现。
+			    第三部分用二级标题 ##，详细讲解该主题的主要应用方式，每种应用方式用三级标题 ### 细分，结合实际案例说明，至少列举 3 种应用，每个案例描述不少于 100 字。
+			    第四部分用二级标题 ##，探讨该主题面临的挑战，同样以列表形式 - 罗列至少 3 个挑战点。
+			    结尾部分用二级标题 ##，对未来发展趋势进行展望，给出积极的预期，不少于 150 字。`
 			}
 		]
 
