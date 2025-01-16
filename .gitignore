@@ -14,7 +14,7 @@ dist-ssr
 obfuscated
 *.local
 .vite
-
+unpackage/*
 uploads/*
 
 # Editor directories and files
