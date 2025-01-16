@@ -7,14 +7,25 @@
 		<up-textarea v-model="commonParmas.prompt" height="150" :customStyle="{border:'1rpx solid #ccc'}"
 			maxlength="3000" count border="surround" placeholder="请输入你的歌词描述(例如:关于夏天的动感流行音乐)"></up-textarea>
 	</view>
-
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
+
 	import { commonParmasType } from '../types';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { useChatStore } from '@/store';
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const commonParmas = defineModel<commonParmasType>('commonParmas')
 	const currentPages = defineModel<number>('currentPages')
 	const ChatStore = useChatStore();
@@ -45,7 +56,7 @@
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage: async (text:string) =>{
+			onmessage: async (text : string) => {
 				newStr += text
 				commonParmas.value.prompt = await streamSpark(newStr)
 				// onScroolToBottom()
@@ -59,6 +70,10 @@
 					ChatStore.setShowlevelUpVip(true)
 				}
 				console.log(err, "错误")
+			},
+			LoadingConfig: {
+				showLoading: true,
+				title: '歌词生成中...'
 			},
 			checkNumsType: 'chat'
 		}

@@ -1,5 +1,5 @@
 {
-    "name" : "边界ai",
+    "name" : "边界AIchat",
     "appid" : "__UNI__33AE902",
     "description" : "",
     "versionName" : "1.0.0",
@@ -16,7 +16,12 @@
             "delay" : 0
         },
         "modules" : {
-            "Share" : {}
+            "Share" : {},
+            "Gallery" : {},
+            "VideoPlayer" : {},
+            "UIWebview" : {},
+            "Record" : {},
+            "Camera" : {}
         },
         "optimization" : {
             "subPackages" : true
@@ -44,24 +49,12 @@
             "sdkConfigs" : {
                 "ad" : {},
                 "share" : {}
+            },
+            "splashscreen" : {
+                "useOriginalMsgbox" : true
             }
         },
-        "nativePlugins" : {
-            "yj-ssemodule" : {
-                "__plugin_info__" : {
-                    "name" : "ssemodule - [试用版，仅用于自定义调试基座]",
-                    "description" : "sse网络请求",
-                    "platforms" : "Android,iOS",
-                    "url" : "https://ext.dcloud.net.cn/plugin?id=19103",
-                    "android_package_name" : "",
-                    "ios_bundle_id" : "",
-                    "isCloud" : true,
-                    "bought" : 0,
-                    "pid" : "19103",
-                    "parameters" : {}
-                }
-            }
-        }
+        "nativePlugins" : {}
     },
     "quickapp" : {},
     "mp-weixin" : {

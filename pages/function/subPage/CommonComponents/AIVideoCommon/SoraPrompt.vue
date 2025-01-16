@@ -19,8 +19,9 @@
 					上传照片：
 				</view>
 				<view class="SoraPrompt_Input_uploadImages_uploadBox">
-					<ChangeFaceUploadImage noUseCorpImage v-model:showupOverlay="showupOverlay" description="请上传自定义原图"
-						v-model:images="SoraPromptPramas.image_url" :showAngle="true" :width="900" :height="800" />
+					<ChangeFaceUploadImage appuUseBase64 noUseCorpImage v-model:showupOverlay="showupOverlay"
+						description="请上传自定义原图" v-model:images="SoraPromptPramas.image_url" :showAngle="true"
+						:width="900" :height="800" />
 				</view>
 			</view>
 		</template>
@@ -76,16 +77,27 @@
 			</view>
 		</view>
 	</view>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import ChangeFaceUploadImage from '../../ChangeFaceUploadImage.vue'
 	import { ref } from 'vue';
 	import { videoword, exampleData, VideoVmodalType, imgword } from './datas';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import { useChatStore } from '@/store';
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const props = defineProps<{ currentPages : number }>()
 	const currentKey = ref('')
 	const ChatStore = useChatStore()
@@ -100,9 +112,14 @@
 	}
 	const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 	const OpenVideo = async (url : string) => {
-		SoraPromptPramas.value.playVideo = url
-		SoraPromptPramas.value.isQuery = false
-		SoraPromptPramas.value.showVideo = true
+		// SoraPromptPramas.value.playVideo = url
+		// SoraPromptPramas.value.isQuery = false
+		// SoraPromptPramas.value.showVideo = true
+		// 文字生图模式
+
+		uni.navigateTo({
+			url: '/pages/function/subPage/TextCreateVideo/PlayVideo/index?url=' + url
+		})
 	}
 	const seletedItems = ({ key, prompt }) => {
 		currentKey.value = key

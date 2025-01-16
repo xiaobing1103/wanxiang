@@ -18,6 +18,25 @@
 				</view>
 				<view class="uploadFileTranslate_content">
 					<view class="translateContent">
+						<!-- #ifdef APP -->
+						<UploadDemo :count="1" @UploadCallback="afterRead" type="file">
+							<template #defaultTemplate>
+								<view class="translateContent_middle">
+									<image class="translateContent_middle_image"
+										src="http://file.1foo.com/2024/11/02/e367cd9a2a7d50de530301e90babbc3c.png">
+									</image>
+									<text
+										class="translateContent_middle_text1">支持MP3,AAC,OPUS,WAV等格式编码的音频,支持20mb以内且时长不超过1小时的音频文件</text>
+									<text class="translateContent_middle_text2">(部分音频内容比较多,可能Ai无法理解)</text>
+									<up-button
+										:customStyle="{width:'40%',borderRadius:'15rpx',height:'60rpx',marginBottom:'15rpx'}"
+										type="primary">上传文档</up-button>
+								</view>
+
+							</template>
+						</UploadDemo>
+						<!-- #endif -->
+						<!-- #ifndef APP -->
 						<up-upload :customStyle="{width:'100%',display:'flex',alignItems:'center'}"
 							:fileList="fileList1" @afterRead="afterRead" name="4" multiple accept="all" :maxCount="1">
 							<view class="translateContent_middle">
@@ -32,6 +51,8 @@
 									type="primary">上传文档</up-button>
 							</view>
 						</up-upload>
+						<!-- #endif -->
+
 					</view>
 				</view>
 
@@ -42,7 +63,7 @@
 					<view class="bottomView_title_button">
 						<up-button :customStyle="{width:'30%'}" type="primary" size="mini"
 							@click="copy">复制结果</up-button>
-							
+
 					</view>
 
 				</view>
@@ -75,9 +96,18 @@
 			</view>
 		</view>
 	</up-popup>
+
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import UploadDemo from '@/pages/index/subPage/components/UploadDemo.vue'
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { languages } from '../TranslatePages/type'
@@ -87,7 +117,11 @@
 	import { saveFile } from '../TranslatePages/downLoadLocal';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	const currentLang = ref('英文')
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const pagingRef = ref(null)
 	const ChatStore = useChatStore()
 	const msgContent = ref(`👆请在上面上传要翻译的文档内容`)
@@ -128,7 +162,7 @@
 		const streamOptions = {
 			url: 'api/v1/chat2/zhipu',
 			data: data,
-			onmessage: async(text : string) => {
+			onmessage: async (text : string) => {
 				newStr += text
 				msgContent.value = await streamSpark(newStr)
 				onScroolToBottom()
@@ -193,7 +227,7 @@
 			uni.$u.toast('翻译执行中，请等待...')
 			return
 		}
-		const returnDatas = await uploadFileBefore(event, ['mp3', 'aac', 'opus', 'wav'])
+		const returnDatas = await uploadFileBefore(event, ['mp3', 'aac', 'opus', 'wav'], null, null, null, null, 'file2text')
 		if (returnDatas) {
 			let ReadFileReq = await $api.post('api/v1/media/audioFile2txt', returnDatas.formdata, returnDatas.isJosn, {}, null, returnDatas.isWechatSendImages)
 			if (typeof ReadFileReq == 'string') {

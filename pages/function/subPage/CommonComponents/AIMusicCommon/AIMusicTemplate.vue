@@ -33,37 +33,34 @@
 	</z-paging>
 	<up-overlay :show="showOverlay">
 		<view class="overlayMusicHeader">
-			<view class="loadingMusicHeader" :style="{height: navBarHeight + 40+ 'px' }">
-				<view :style="{paddingTop:menuButtonInfo?.top + 'px'}">
-					<view class="loadingMusicHeader_title">
-						<up-icon @click="backPage" name="arrow-left"></up-icon>
-						<text>AI音乐创作</text>
-						<view class="">
-
-						</view>
-					</view>
-				</view>
-				<view class="loadingMusic">
-					<view class="loadingMusic_loading">
-						<view class="shaft-load3">
-							<view class="shaft1"></view>
-							<view class="shaft2"></view>
-							<view class="shaft3"></view>
-							<view class="shaft4"></view>
-							<view class="shaft5"></view>
-							<view class="shaft6"></view>
-							<view class="shaft7"></view>
-							<view class="shaft8"></view>
-							<view class="shaft9"></view>
-							<view class="shaft10"></view>
-						</view>
-					</view>
-					<view class="loadingMusic_desc">
-						<text>AI正在努力创作歌曲，预计4分钟...</text>
-						<text>倒计时： {{ countdown }} 秒</text>
-					</view>
+			<view class="loadingMusicHeader" :style="{height: ScreenStore.navBarHeight  + 'px' }">
+				<view class="loadingMusicHeader_title">
+					<up-icon @click="backPage" name="arrow-left"></up-icon>
+					<text>AI音乐创作</text>
+					<view class=""></view>
 				</view>
 			</view>
+			<view class="loadingMusic">
+				<view class="loadingMusic_loading">
+					<view class="shaft-load3">
+						<view class="shaft1"></view>
+						<view class="shaft2"></view>
+						<view class="shaft3"></view>
+						<view class="shaft4"></view>
+						<view class="shaft5"></view>
+						<view class="shaft6"></view>
+						<view class="shaft7"></view>
+						<view class="shaft8"></view>
+						<view class="shaft9"></view>
+						<view class="shaft10"></view>
+					</view>
+				</view>
+				<view class="loadingMusic_desc">
+					<text>AI正在努力创作歌曲，预计4分钟...</text>
+					<text>倒计时： {{ countdown }} 秒</text>
+				</view>
+			</view>
+
 		</view>
 	</up-overlay>
 </template>
@@ -71,25 +68,18 @@
 <script setup lang="ts">
 	import { nextTick, ref, reactive, onMounted } from 'vue';
 	import MusicHeader from './MusicHeader.vue'
-	// import CxAudioplay from '../cx-audio-play/cx-audio-play.vue'
 	import NewCxAudioplay from '../cx-audio-play/index.vue'
 	import MyCreateMusicPages from './MyCreateMusicPages.vue'
 	import DefaultMusicPages from './DefaultMusicPages.vue'
 	import { debounce } from '@/utils';
-	import { useUserStore, useCounterStore, useMusicStore } from '@/store';
+	import { useUserStore, useMusicStore, useScreenStore } from '@/store';
 	import { commonParmasType } from '../types';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
-	import { storeToRefs } from "pinia"
+
 	import { deepClone } from '@/utils/deepClone';
 	const { checkNumFun, checkSubmit } = useStreamHooks()
-	//  #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
-	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
-	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
-	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
-	// #endif
+	const ScreenStore = useScreenStore()
 	const num = ref(0)
 	const MusicStore = useMusicStore()
 	const CxAudioplayRef = ref(null)
@@ -121,7 +111,7 @@
 	const commonParmas = reactive<commonParmasType>({
 		prompt: '',
 		title: '',
-		tags: [],
+		tags: ['Country(多村音乐)', 'Disco(迪斯科)'],
 		make_instrumental: 0,
 		mv: 'chirp-v3-5',
 
@@ -165,7 +155,7 @@
 			uni.$u.toast('请先输入歌词描述,且字数不得超过200字！')
 			return
 		}
-		if (commonParmas.tags.length == 0) {
+		if (commonParmas?.tags.length == 0) {
 			commonParmas.tags = ''
 		}
 
@@ -175,7 +165,7 @@
 		await checkSubmit('fun_music')
 		let formdata : commonParmasType | FormData
 		commonParmas.make_instrumental = commonParmas.make_instrumental ? 1 : 0
-		const sendTags = commonParmas.tags.toString()
+		const sendTags = commonParmas?.tags.toString()
 		let isformDataRequest = true;
 		let isWeChatSendImages = false;
 		// #ifdef H5
@@ -198,50 +188,105 @@
 		formdata.append('uid', UserStore.userInfo?.id)
 		// #endif
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		formdata = deepClone(commonParmas)
 		formdata.tags = sendTags
 		formdata.uid = UserStore.userInfo?.id
 		formdata.appid = UserStore?.userInfo?.appid
 		// #endif
 
-		const createReq = await $api.post('api/v1/music/custom_create', formdata, isformDataRequest, {}, null, isWeChatSendImages);
-		if (createReq.code == 200) {
+		let createReq = await $api.post('api/v1/music/custom_create', formdata, isformDataRequest, {}, null, isWeChatSendImages);
+		if (typeof createReq == 'string') {
+			createReq = JSON.parse(createReq)
+		}
+		console.log(createReq)
+		if (createReq.code == 1) {
+			uni.showLoading({
+				title: '正在进行人机验证，请耐心等待...',
+			})
+			await delay(120000)
+			uni.showLoading({
+				title: '验证失败，请重试...',
+			})
+			await delay(2000)
+			uni.hideLoading()
+			return
+		}
+		if (createReq.code == 0) {
 			showOverlay.value = true
 			startCountdown()
-			runTask.value = createReq.data
+			runTask.value = createReq.msg
 			queryMusic(runTask.value[0])
 			queryxun.value = runTask.value[0]
 		}
+
+		// if (createReq.code == 2) {
+		// 	uni.navigateTo({
+		// 		url: '/pages/function/subPage/AiMusicCreate/MusicVerification'
+		// 	})
+		// 	return
+		// }
+		// if (createReq.code == 0) {
+		// 	showOverlay.value = true
+		// 	startCountdown()
+		// 	runTask.value = createReq.msg
+		// 	queryMusic(runTask.value[0])
+		// 	queryxun.value = runTask.value[0]
+		// } else {
+		// 	uni.$u.toast(createReq.msg)
+		// }
 	}
+
 	const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-	const queryMusic = async (recivedQueryArr : string[]) => {
-
+	const queryMusic = async (recivedQueryArr : string) => {
 		const MusicQuery = await $api.post('api/v1/music/query', { task_id: recivedQueryArr })
-		if (MusicQuery.code == 200) {
-			if (MusicQuery.data.code !== -1) {
-				if (MusicQuery.data.code == 1) {
-					await delay(4000);
-					uni.$u.toast(MusicQuery.data.msg)
-					queryMusic(recivedQueryArr)
-				}
-				if (MusicQuery.data.code == 0) {
-					if (MusicQuery.data.task_id == queryxun.value) {
-						MusicStore.addMusicHistoryData(MusicQuery.data)
-						queryMusic(runTask.value[1])
-						return
-					}
-					MusicStore.addMusicHistoryData(MusicQuery.data)
-					uni.$u.toast(MusicQuery.data.msg)
-					showOverlay.value = false
-					currentPages.value = 2
-
-				}
-			}
-		} else {
-			uni.$u.toast('请求失败，请重试')
-			showOverlay.value = false
+		console.log(MusicQuery)
+		if (MusicQuery.code == 1) {
+			await delay(4000);
+			uni.$u.toast(MusicQuery.msg)
+			queryMusic(recivedQueryArr)
+			return
 		}
+		if (MusicQuery.code == 0) {
+			if (MusicQuery.task_id == runTask.value[0]) {
+				MusicStore.addMusicHistoryData(MusicQuery)
+				queryMusic(runTask.value[1])
+				return
+			}
+			MusicStore.addMusicHistoryData(MusicQuery)
+			uni.$u.toast(MusicQuery.msg)
+			showOverlay.value = false
+			currentPages.value = 2
+			return
+		}
+
+		uni.$u.toast('请求失败，请重试')
+		showOverlay.value = false
+
+		// if (MusicQuery.code == 200) {
+		// 	if (MusicQuery.data.code !== -1) {
+		// 		if (MusicQuery.data.code == 1) {
+		// 			await delay(4000);
+		// 			uni.$u.toast(MusicQuery.data.msg)
+		// 			queryMusic(recivedQueryArr)
+		// 		}
+		// 		if (MusicQuery.data.code == 0) {
+		// 			if (MusicQuery.data.task_id == queryxun.value) {
+		// 				MusicStore.addMusicHistoryData(MusicQuery.data)
+		// 				queryMusic(runTask.value[1])
+		// 				return
+		// 			}
+		// 			MusicStore.addMusicHistoryData(MusicQuery.data)
+		// 			uni.$u.toast(MusicQuery.data.msg)
+		// 			showOverlay.value = false
+		// 			currentPages.value = 2
+
+		// 		}
+		// 	}
+		// } else {
+		// 	uni.$u.toast('请求失败，请重试')
+		// 	showOverlay.value = false
+		// }
 	}
 </script>
 
@@ -461,21 +506,22 @@
 	}
 
 	.overlayMusicHeader {
-		width: 100%;
-		height: 100%;
 		background-color: #fff;
-
+		height: 100%;
 	}
 
 	.loadingMusicHeader {
-
+		display: flex;
 		font-weight: 800;
+		align-items: flex-end;
 		font-size: 30rpx;
 
+
 		&_title {
-			padding: 18rpx;
+			width: 100%;
 			display: flex;
 			justify-content: space-between;
+			padding: 18rpx;
 
 		}
 	}

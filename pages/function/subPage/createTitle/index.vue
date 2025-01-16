@@ -47,13 +47,20 @@
 		</view>
 		<template #bottom>
 			<view class="BtnGroup">
-				<up-button @click="onFetchChat" :customStyle="btnStyles">立即生成</up-button>
+				<up-button :disabled="isRecive" @click="onFetchChat" :customStyle="btnStyles">立即生成</up-button>
 			</view>
 		</template>
 	</z-paging>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { reactive, ref, nextTick } from 'vue';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
@@ -65,7 +72,11 @@
 	const pagingRef = ref(null)
 	const result = ref('')
 	const ChatStore = useChatStore()
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const { $assets } = useGlobalProperties()
 	const btnStyles = {
 		width: '80%',
@@ -111,11 +122,11 @@
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage: async (text:string) => {
+			onmessage: async (text : string) => {
 				newStr += text
-			    result.value = await streamSpark(newStr)
+				result.value = await streamSpark(newStr)
 				onScroolToBottom()
-				
+
 			},
 			onfinish() {
 				console.log('成功')

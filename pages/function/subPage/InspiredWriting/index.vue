@@ -101,9 +101,17 @@
 	</up-modal>
 	<up-modal showCancelButton :show="deleteModal" @cancel="deleteModal = false" @confirm="deleteContent" title="删除此段"
 		content="你是否需要删除此段内容,删除后无法复原!"></up-modal>
+
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import { reactive, ref, nextTick } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
@@ -114,7 +122,11 @@
 	const ChatStore = useChatStore()
 	const deleteModal = ref(false)
 	const pagingRef = ref(null)
-	const { streamRequest, isRecive , streamSpark} = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const radiovalue1 = ref('优选')
 	const showAllTextEdit = ref(false)
 	const iconsStyles = {

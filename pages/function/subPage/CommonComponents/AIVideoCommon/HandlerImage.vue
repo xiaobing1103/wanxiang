@@ -27,19 +27,27 @@
 						<view class="UploadMain_desc"> 点击上传视频 </view>
 						<view class="UploadMain_desc2"> 支持 MP4 / MOV 格式视频，分辨率不超过1080P，时长不超过 {{secoend}} 秒</view>
 					</view>
-
 				</up-upload>
 			</view>
 		</view>
+		<!-- #ifndef APP -->
 		<view class="playpreview">
 			<view class="playpreview_label"> 视频结果预览</view>
-			<view class="playpreview_tips" v-if="defindDatas.title == 'AI视频抠图'">有些视频没有画面是因为视频播放器不支持的原因，请下载视频到本地后打开视频查看,部分苹果机型不支持下载，可以复制链接到浏览器下载到本地查看视频</view>
+			<view class="playpreview_tips" v-if="defindDatas.title == 'AI视频抠图'">
+				有些视频没有画面是因为视频播放器不支持的原因，请下载视频到本地后打开视频查看,部分苹果机型不支持下载，可以复制链接到浏览器下载到本地查看视频</view>
 			<view class="playpreview_tips" v-else>有部分手机机型不支持mp3文件下载，需要复制链接到浏览器下载音频</view>
 			<view class="playpreview_video" v-if="playVideo">
 				<SunnyVideo :src="playVideo" />
 			</view>
 
 		</view>
+
+		<!-- #endif -->
+		<!-- #ifdef APP -->
+		<view class="playpreview">
+			<view class="playpreview_label"> {{tips}}</view>
+		</view>
+		<!-- #endif -->
 		<template #bottom>
 			<view class="bottomBox">
 				<up-button
@@ -63,6 +71,7 @@
 	import { AppName } from '@/http';
 	import { toCopyText } from '@/utils';
 	const playVideo = ref('')
+	const tips = ref('')
 	const props = defineProps<{ defindDatas : { title : string, requestUrl : string } }>()
 	const { $assets, $api } = useGlobalProperties()
 	const UserStore = useUserStore()
@@ -124,51 +133,76 @@
 		formdata.append('time_limit', secoend.value * 10)
 		// #endif
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		formdata = { video: file[0].url, time_limit: secoend.value * 10 }
 		isJson = true
 		isWechatSendImages = true
 		// #endif
-
+		tips.value = '正在提取视频内容，请等待....'
 		let VidoeReq = await $api.post(props.defindDatas.requestUrl, formdata, isJson, {}, null, isWechatSendImages)
 		if (typeof VidoeReq == 'string') {
 			VidoeReq = JSON.parse(VidoeReq)
 		}
+		console.log(VidoeReq)
 		if (VidoeReq.code == 200) {
-			uni.$u.toast('成功,请在下面预览！');
 			playVideo.value = VidoeReq.url
+			// uni.navigateTo({
+			// 	url: '/pages/function/subPage/TextCreateVideo/PlayVideo/index?url=' + VidoeReq.url
+			// })
+			// playVideo.value = VidoeReq.url
+			tips.value = '成功,请复制链接到浏览器下载,或者下载到手机！'
 			getCounts()
 		} else {
 			uni.$u.toast(VidoeReq.msg);
+			tips.value = VidoeReq.msg
 		}
-
 	};
-	const downLoad = (url : string) => {
+	const downLoad = (url : string, fileType : 'video' | 'audio' = 'video') => {
+		uni.showLoading({ title: '下载中...' });
+
 		uni.downloadFile({
+
 			url: url,
 			success: (res) => {
-				// 2 成功下载后而且状态码为200时将视频保存到本地系统
 				if (res.statusCode === 200) {
-					uni.saveVideoToPhotosAlbum({
-						filePath: res.tempFilePath
-					})
+					if (fileType === 'audio') {
+						// 保存音频文件
+						uni.saveFile({
+							tempFilePath: res.tempFilePath,
+							success: (saveRes) => {
+								uni.hideLoading();
+								uni.showToast({ title: "下载成功", icon: "success" });
+							},
+							fail: (err) => {
+								uni.hideLoading();
+								uni.showToast({ title: "保存失败", icon: "error" });
+							}
+						});
+					} else {
+						// 保存视频文件
+						uni.saveVideoToPhotosAlbum({
+							filePath: res.tempFilePath,
+							success: () => {
+								uni.hideLoading();
+								uni.showToast({ title: "下载成功", icon: "success" });
+							},
+							fail: () => {
+								uni.hideLoading();
+								uni.showToast({ title: "保存失败", icon: "error" });
+							}
+						});
+					}
+				} else {
 					uni.hideLoading();
-					// 提示用户下载成功
-					uni.showToast({ title: "下载成功", icon: "success" });
-				}
-				// 如果该资源不可下载或文件格式出错则提示用户
-				else {
 					uni.showToast({ title: "资源格式错误，请联系管理员" });
 				}
 			},
 			fail: (err) => {
-				// 下载失败提醒
 				uni.hideLoading();
-				uni.showToast({ title: "下载失败" })
+				uni.showToast({ title: "下载失败" });
 			}
-		})
+		});
 	}
-
 	onMounted(() => {
 		getCounts()
 	})
@@ -197,8 +231,8 @@
 			uni.$u.toast('请先上传视频！');
 			return
 		}
-
-		downLoad(playVideo.value)
+		const fileType = props.defindDatas.title == 'AI视频抠图' ? 'video' : 'audio'
+		downLoad(playVideo.value, fileType)
 	}
 </script>
 

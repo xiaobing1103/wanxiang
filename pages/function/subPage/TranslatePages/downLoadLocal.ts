@@ -9,7 +9,7 @@ export function saveFile(url : string, fileType : string) {
 			console.error('Base64 转换失败:', error);
 		});
 	} else {
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		uni.downloadFile({
 			url: url,
 			success: (res) => {

@@ -16,7 +16,6 @@
 						{{currentLang}} <up-icon :style="{margin:'0 10rpx'}" name="arrow-down" size="15"></up-icon>
 					</view>
 				</view>
-
 				<view class="uploadFileTranslate_content">
 					<view class="translateContent">
 						<view class="translateContent_top">
@@ -25,12 +24,22 @@
 						<view class="translateContent_middle">
 							<up-button :customStyle="{margin:'0 20rpx',flex:1}" type="primary"
 								@click="openImages">体验示例文档</up-button>
+							<!-- #ifdef APP -->
+							<UploadDemo :count="1" @UploadCallback="afterRead" type="file">
+								<template #defaultTemplate>
+									<up-button :customStyle="{margin:'0 20rpx',flex:1}" :disabled="isTransLateLoading"
+										type="primary">上传文档</up-button>
+								</template>
+							</UploadDemo>
+							<!-- #endif -->
+							<!-- #ifndef APP -->
 							<up-upload :customStyle="{width:'100%',display:'flex',alignItems:'center',}"
 								:fileList="fileList1" @afterRead="afterRead" name="4" multiple accept="all"
 								:maxCount="1">
 								<up-button :customStyle="{margin:'0 20rpx',flex:1}" :disabled="isTransLateLoading"
 									type="primary">上传文档</up-button>
 							</up-upload>
+							<!-- #endif -->
 						</view>
 						<view class="translateContent_buttom">
 							<view class="translateContent_buttom_items">
@@ -39,9 +48,11 @@
 									src="//file.1foo.com/2024/10/19/fcdf9e3eb07feae1362125abf6dc6f5e.svg" mode="">
 								</image>
 								<text> pdf (只支持扫描文件)</text>
-								<image :style="{width:'25rpx',height:'30rpx',padding:'0 5rpx'}"
-									src="//file.1foo.com/2024/10/19/b9d1db39b6e9d44dbfdda223ba59e258.svg" mode="">
-								</image>word
+								<template v-if="parmas.title == 'AI文档翻译2.0'">
+									<image :style="{width:'25rpx',height:'30rpx',padding:'0 5rpx'}"
+										src="//file.1foo.com/2024/10/19/b9d1db39b6e9d44dbfdda223ba59e258.svg" mode="">
+									</image>word
+								</template>
 							</view>
 							<view class="translateContent_buttom_items">
 								支持语言: 中、英互译
@@ -49,13 +60,12 @@
 							<view class="translateContent_buttom_items">
 								<text> 支持大小: 15MB、500页以内</text>
 							</view>
-
 						</view>
 					</view>
-
 				</view>
-
 			</view>
+			<!-- <view class="fileLists"></view> -->
+
 			<image @click="previewImages(images[seletedNum])" class="uploadFileTranslate_previewimage"
 				:src="images[seletedNum]" mode="">
 			</image>
@@ -78,15 +88,16 @@
 			</view>
 		</view>
 	</up-popup>
-
-
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import UploadDemo from '@/pages/index/subPage/components/UploadDemo.vue'
+	// #endif
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { languages } from './type'
-	import { reactive, ref } from 'vue';
+	import { onMounted, reactive, ref } from 'vue';
 	import { uploadFileBefore } from '@/utils';
 	import { useUserStore } from '@/store';
 	import { saveFile } from './downLoadLocal';
@@ -96,11 +107,19 @@
 	const openPopup = ref(false)
 	const isTransLateLoading = ref(false)
 	const { userInfo } = useUserStore()
+	const taskId = ref('')
 	const { $api } = useGlobalProperties()
 	const { checkNumFun, checkSubmit, verifyTranslateTextLimit } = useStreamHooks()
 	const changeLang = () => {
 		openPopup.value = !openPopup.value
 	}
+	const maxNumber = ref()
+	onMounted(async () => {
+		const checkNumData = await checkNumFun('doc_length')
+		if (checkNumData) {
+			maxNumber.value = checkNumData.maxNumber
+		}
+	})
 	const seletedNum = ref(0)
 	const images = ['https://file.1foo.com/2024/10/19/e959ca7fe809f2afd37ef9786b9e320f.png', 'https://file.1foo.com/2024/10/19/93d5c5cd054849feda312db69936ba7f.png', 'https://file.1foo.com/2024/10/19/71840afbe53c43a75b9facc57d21fe9e.png', 'https://file.1foo.com/2024/10/19/c77ea7ec2a77c890ae45daf958176c1b.png']
 	const seletedIndex = (index : number) => {
@@ -167,11 +186,7 @@
 						uni.$u.toast('解析文档错误，请您重试，本次不会计算次数！');
 						reject(new Error(`API error: ${progressReq.code}`));
 					}
-
 				}
-
-
-
 			} catch (error) {
 				reject(error);
 			}
@@ -185,6 +200,7 @@
 		isJson : boolean,
 		isWechatSendImages : boolean,
 		originFormData : null | any
+		maxNumber : number
 	}) : string | boolean => {
 		let formdata : any = null
 		return new Promise(async (resolve, reject) => {
@@ -202,82 +218,130 @@
 	}
 
 	const afterRead = async (event : { file : any; }) => {
-		if (!await checkNumFun('fun_doc_translate')) {
-			return
-		}
 		if (isTransLateLoading.value) {
 			uni.$u.toast('翻译执行中，请等待...')
 			return
 		}
-		const returnDatas = await uploadFileBefore(event, null, null, null, currentLang.value)
+		let fileTypeArr = ['pdf']
+		if (props.parmas.title == 'AI文档翻译2.0') {
+			fileTypeArr = ['pdf', 'docx']
+		}
+		const returnDatas = await uploadFileBefore(event, fileTypeArr, null, null, currentLang.value, maxNumber.value)
+		console.log(returnDatas)
+		if (!await checkNumFun('fun_doc_translate')) {
+			return
+		}
 		if (returnDatas) {
-			let ReadFileReq = await $api.post('api/v1/files/file2text', returnDatas.formdata, returnDatas.isJosn, {}, null, returnDatas.isWechatSendImages)
+			let ReadFileReq = await $api.post('api/v1/pdf/format_translate', returnDatas.formdata, returnDatas.isJosn, {}, null, returnDatas.isWechatSendImages)
 			if (typeof ReadFileReq == 'string') {
 				ReadFileReq = JSON.parse(ReadFileReq)
 			}
-
-			if (ReadFileReq.code == 200) {
-				if (!verifyTranslateTextLimit(ReadFileReq.data)) {
-					uni.$u.toast('字数超出限制！')
-					return
-				}
-				if (props.parmas.type == 'TranslateTem20') {
-					const transLate20R = await transLate20(returnDatas)
-					isTransLateLoading.value = true
-					if (transLate20R) {
-						const TaskLoopPro = await TaskLoop(transLate20R as string, props.parmas.type)
-						if (TaskLoopPro) {
-							isTransLateLoading.value = false
-							saveFile(TaskLoopPro.url, returnDatas.fileType)
-							await checkSubmit('fun_doc_translate')
-						} else {
-							isTransLateLoading.value = false
-						}
-					}
-				} else {
-
-					let UploadPdfReq = await $api.post('api/v1/pdf/uploadPdf', returnDatas.formdata, returnDatas.isJosn, {}, null, returnDatas.isWechatSendImages)
-					if (typeof UploadPdfReq == 'string') {
-						UploadPdfReq = JSON.parse(UploadPdfReq)
-					}
-					if (UploadPdfReq.code == 200) {
-						const TranslateReq = await $api.post('api/v1/pdf/translate', {
-							dstLang: currentLang.value,
-							fileUrl: 'upload/' + UploadPdfReq.data.url,
-							format: returnDatas.fileType,
-							uid: userInfo.id + '',
-						})
-
-						if (TranslateReq.code == 200) {
-							isTransLateLoading.value = true
-							TaskLoop(TranslateReq.data).then(async (res) => {
-								isTransLateLoading.value = false
-								saveFile(res.data.url, returnDatas.fileType)
-								await checkSubmit('fun_doc_translate')
-							}).catch((err) => {
-								isTransLateLoading.value = false
-							})
-						} else {
-							uni.$u.toast('获取任务失败！')
-						}
-					} else {
-						uni.$u.toast(UploadPdfReq.msg)
-					}
-				}
-
-
-			} else {
-				uni.$u.toast(ReadFileReq.msg)
+			if (ReadFileReq.code == 0) {
+				taskId.value = ReadFileReq.task_id
+				isTransLateLoading.value = true
+				await checkSubmit('fun_doc_translate')
+				queryOneTranlate()
 			}
+
+			// if (ReadFileReq.code == 200) {
+			// 	if (!verifyTranslateTextLimit(ReadFileReq.data)) {
+			// 		uni.$u.toast('字数超出限制！')
+			// 		return
+			// 	}
+			// 	if (props.parmas.type == 'TranslateTem20') {
+			// 		const transLate20R = await transLate20(returnDatas)
+			// 		isTransLateLoading.value = true
+			// 		if (transLate20R) {
+			// 			const TaskLoopPro = await TaskLoop(transLate20R as string, props.parmas.type)
+			// 			if (TaskLoopPro) {
+			// 				isTransLateLoading.value = false
+			// 				saveFile(TaskLoopPro.url, returnDatas.fileType)
+			// 				await checkSubmit('fun_doc_translate')
+			// 			} else {
+			// 				isTransLateLoading.value = false
+			// 			}
+			// 		}
+			// 	} else {
+
+			// 		let UploadPdfReq = await $api.post('api/v1/pdf/uploadPdf', returnDatas.formdata, returnDatas.isJosn, {}, null, returnDatas.isWechatSendImages)
+			// 		if (typeof UploadPdfReq == 'string') {
+			// 			UploadPdfReq = JSON.parse(UploadPdfReq)
+			// 		}
+			// 		if (UploadPdfReq.code == 200) {
+			// 			const TranslateReq = await $api.post('api/v1/pdf/translate', {
+			// 				dstLang: currentLang.value,
+			// 				fileUrl: 'upload/' + UploadPdfReq.data.url,
+			// 				format: returnDatas.fileType,
+			// 				uid: userInfo.id + '',
+			// 			})
+
+			// 			if (TranslateReq.code == 200) {
+			// 				isTransLateLoading.value = true
+			// 				TaskLoop(TranslateReq.data).then(async (res) => {
+			// 					isTransLateLoading.value = false
+			// 					saveFile(res.data.url, returnDatas.fileType)
+			// 					await checkSubmit('fun_doc_translate')
+			// 				}).catch((err) => {
+			// 					isTransLateLoading.value = false
+			// 				})
+			// 			} else {
+			// 				uni.$u.toast('获取任务失败！')
+			// 			}
+			// 		} else {
+			// 			uni.$u.toast(UploadPdfReq.msg)
+			// 		}
+			// 	}
+			// } else {
+			// 	uni.$u.toast(ReadFileReq.msg)
+			// }
+		}
+	};
+	// 	1.0	翻译查询
+	const queryOneTranlate = async () => {
+		let translateQuery = await $api.post('api/v1/pdf/format_translate_query', { task_id: taskId.value })
+		console.log(translateQuery)
+		if (translateQuery.code == -1) {
+			uni.$u.toast(translateQuery.msg);
+			return
+		}
+		if (translateQuery.code == 2) {
+			uni.$u.toast(translateQuery.msg);
+			await delay(2000)
+			queryOneTranlate()
+			return
+		}
+		if (translateQuery.code == 0) {
+			uni.$u.toast('翻译' + translateQuery.msg + '！');
+			isTransLateLoading.value = false
+			getFile(translateQuery.result)
 		}
 
+	}
 
+	const getFile = (url : string) => {
+		uni.showLoading({
+			title: '正在获取预览文件，请稍等....'
+		})
+		uni.downloadFile({
+			url: url,
+			success: function (downloadFileRes) {
+				console.log('downloadFileRes', downloadFileRes)
+				uni.openDocument({
+					showMenu: true,
+					filePath: downloadFileRes.tempFilePath,
+					success: function (openDocumentRes) {
+						console.log('openDocumentRes', openDocumentRes)
+						uni.hideLoading()
+					},
+					fail: function (openDocumentErr) {
+						console.log('openDocumentErr', openDocumentErr)
+						uni.hideLoading()
+					}
+				})
+			}
+		})
 
-
-	};
-
-
-
+	}
 
 	const fileList1 = ref([]);
 
@@ -404,9 +468,16 @@
 		&_buttom {
 			padding: 20rpx 0;
 			font-size: 27rpx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
 
 			&_items {
 				padding: 10rpx 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 			}
 		}
 	}

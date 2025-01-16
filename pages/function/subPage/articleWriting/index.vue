@@ -78,20 +78,31 @@
 
 		<template #bottom>
 			<view class="BtnGroup">
-				<up-button @click="onFetchChat" :customStyle="btnStyles">生成内容</up-button>
-				<up-button @click="copyTxt(result)" :customStyle="btnStyles">一键复制</up-button>
+				<up-button :disabled="isRecive" @click="onFetchChat" :customStyle="btnStyles">生成内容</up-button>
+				<up-button :disabled="isRecive" @click="copyTxt(result)" :customStyle="btnStyles">一键复制</up-button>
 			</view>
 		</template>
 	</z-paging>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { reactive, ref, nextTick } from 'vue';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { useChatStore } from '@/store';
 	import { exportTxt, toCopyText } from '@/utils';
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const ChatStore = useChatStore()
 	const seletedParmas = reactive({
 		length: '自动',

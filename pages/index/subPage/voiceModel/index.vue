@@ -71,15 +71,20 @@
 			<imageModelChat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 		</template>
 	</z-paging>
+	<!-- #ifdef APP -->
 	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
 		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP 
 	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
-	import { computed, nextTick, onMounted, ref } from 'vue';
 	import UploadDemo from '../components/UploadDemo.vue'
-	import ytUpload from '../components/yt-upload/components/yt-upload/yt-upload.vue'
+	// #endif
+
+	import { computed, nextTick, onMounted, ref } from 'vue';
+
 	import imageModelChat from '@/components/CommonChat/imageModelChat.vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import ChatBox from '@/components/CommonChat/ChatBox.vue';
@@ -125,7 +130,11 @@
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const { $api, $assets } = useGlobalProperties()
 	const { setChatInfo } = ChatStore;
-	const { streamRequest, isRecive, onCancelRequest, streamSpark, openCore, errorCore, messageCore, finishCore, chatSSEClientRef } = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks();
 	const onCancel = () => {
 		onCancelRequest()
 		ChatStore.setLoadingMessage(false)

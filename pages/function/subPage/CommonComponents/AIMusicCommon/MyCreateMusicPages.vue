@@ -1,5 +1,6 @@
 <template>
 	<view class="MyCreateMusicPages">
+
 		<template v-if="MusicList.length >0">
 			<template v-for="(music,index) in MusicList" :key="index">
 				<view class="MyCreateMusicPages_items" :style="{

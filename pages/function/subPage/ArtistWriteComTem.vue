@@ -38,7 +38,9 @@
 						<up-textarea v-model="text" height="300" placeholder="论文内容的长度至少300字,至多15万字"
 							maxlength="-1"></up-textarea>
 					</template>
+
 					<template v-if="radiovalue1 == '上传文件'">
+						<!-- #ifndef APP -->
 						<up-upload :customStyle="{width:'100%',display:'flex',alignItems:'center'}"
 							:fileList="fileList1" @afterRead="afterRead" name="4" multiple accept="all" :maxCount="1">
 							<view class="uploadFile">
@@ -55,6 +57,26 @@
 								</view>
 							</view>
 						</up-upload>
+						<!-- #endif -->
+						<!-- #ifdef APP -->
+						<upload-demo :count="1" @UploadCallback="afterRead" type="file">
+							<template #defaultTemplate>
+								<view class="uploadFile">
+									<view class="uploadFile_images">
+										<image class="uploadFile_images_img"
+											src="http://file.1foo.com/2024/05/21/66d1d578283e48950e200e90a074ef5c.png"
+											mode=""></image>
+									</view>
+									<view class="uploadFile_desc1">
+										点击上传文件
+									</view>
+									<view class="uploadFile_desc2">
+										暂时只支持docx格式的文件
+									</view>
+								</view>
+							</template>
+						</upload-demo>
+						<!-- #endif -->
 					</template>
 				</view>
 				<view class="ArtistTestMain_textAreaBox_buttom">
@@ -87,6 +109,9 @@
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import UploadDemo from '@/pages/index/subPage/components/UploadDemo.vue'
+	// #endif
 	import { ref, reactive } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
@@ -154,9 +179,13 @@
 		formdata = new FormData()
 		formdata.append('text', event.file[0].file)
 		// #endif
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN 
 		fileName = event.file[0].name
 		formdata = { text: event.file[0].url }
+		// #endif
+		// #ifdef APP
+		fileName = event[0].name
+		formdata = { text: event[0].url }
 		// #endif
 		if (!checkFileType(fileName)) {
 			uni.$u.toast('只支持上传视频格式docx！');
@@ -166,7 +195,7 @@
 		// #ifdef H5
 		response = await $api.post('https://appc.1foo.com/api/app/aigc/files/upload', formdata, null, { t: signApires.data.t, m: signApires.data.m, time: signApires.data.time })
 		// #endif
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		response = await $api.post('https://appc.1foo.com/api/app/aigc/files/upload', formdata, true, { t: signApires.data.t, m: signApires.data.m, time: signApires.data.time }, null, true)
 		// #endif
 		console.log(response)

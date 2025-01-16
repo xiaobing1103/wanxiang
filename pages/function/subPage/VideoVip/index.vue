@@ -2,8 +2,8 @@
 	<z-paging :show-scrollbar="false" ref="srollRef"
 		:pagingStyle="{ background: 'linear-gradient(to bottom, rgb(250,234,210), rgb(235, 214, 186))', padding: '0' }">
 		<template #top>
-			<view class="header" :style="{height:navBarHeight  + 'px'}">
-				<view class="header_weixin-header" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
+			<view class="header" :style="{height:ScreenStore.navBarHeight  + 'px'}">
+				<view class="header_weixin-header">
 					<up-icon @click="backview" name="arrow-left" size="20"></up-icon>
 					<view class="VideoVip">
 						视频会员
@@ -21,19 +21,11 @@
 </template>
 
 <script setup lang="ts">
-	import { useCounterStore } from '@/store';
+	import { useCounterStore, useScreenStore } from '@/store';
 	import VideoVipCom from './VideoVipCom.vue'
 	import { storeToRefs } from "pinia"
+	const ScreenStore = useScreenStore()
 
-
-
-	//  #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
-	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
-	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
-	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
-	// #endif
 	const backview = () => {
 		uni.navigateBack()
 	}
@@ -60,8 +52,11 @@
 		height: 40rpx;
 		margin: 20rpx 0;
 		padding: 0 30rpx;
+		display: flex;
+		align-items: center;
 
 		&_weixin-header {
+			width: 100%;
 			display: flex;
 			justify-content: space-between;
 

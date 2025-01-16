@@ -5,8 +5,7 @@
 				<view class="chatBox_main_View"
 					:style="{ alignItems: item.target == 'user' ? 'flex-end' : 'flex-start' }">
 					<view class="chatBox_main_View_header">
-						<template
-							v-if="item.target == 'assistant' || (item.target == 'system' && messageList.size == 1)">
+						<template v-if="item.target == 'assistant' || (item.target == 'system' && messageList.size == 1)">
 							<image class="chatBox_main_View_header_image"
 								:style="{width:AppName == 'bianjie' ? '200rpx' : '160rpx'}"
 								:src="AppName == 'bianjie' ? '../../static/logo.svg' : '../../static/wanxianglogo.svg' ">
@@ -35,7 +34,6 @@
 						</view>
 					</template>
 					<!-- 如果不为模板的情况 -->
-
 					<template v-else>
 						<view class="chatBox_main_View_main" :class="{
 								chatBox_main_View_main_userMessage: item.target == 'user',
@@ -57,8 +55,7 @@
 								<!-- 模版类型为image -->
 								<template v-if="item.messageType == 'image'">
 									<view class="iamge_album">
-										<up-album class="iamge_album_sty" :urls="[item.message]"
-											keyName="src2"></up-album>
+										<up-album class="iamge_album_sty" :urls="[item.message]" keyName="src2"></up-album>
 										<!-- <image :src="item.message" fade-show></image> -->
 									</view>
 								</template>

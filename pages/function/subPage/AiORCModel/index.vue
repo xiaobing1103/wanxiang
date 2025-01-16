@@ -12,7 +12,7 @@
 				<view class="AiORCModel_main_headers">
 					图片ORC识别
 				</view>
-				<ChangeFaceUploadImage v-model:showupOverlay="showupOverlay" description="请上传自定义原图"
+				<ChangeFaceUploadImage noUseCorpImage v-model:showupOverlay="showupOverlay" description="请上传自定义原图"
 					v-model:images="image1" :showAngle="true" :width="1000" :height="600" />
 				<view class="AiORCModel_main_example">
 					示例图片
@@ -114,8 +114,9 @@
 		// #endif
 
 
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN || APP
 		// 一定是临时路径或者链接
+		console.log(image1.value)
 		if (isWeChatTempPath(image1.value)) {
 			formData = { image: image1.value }
 			if (isWeChatTempPath(image1.value)) {
@@ -129,6 +130,7 @@
 		if (typeof AllRes == 'string') {
 			AllRes = JSON.parse(AllRes)
 		}
+		
 		if (AllRes?.code == 200) {
 			uni.$u.toast('识别图片成功,请查看识别结果！');
 			value.value = AllRes.data

@@ -33,7 +33,7 @@
 					</view>
 				</view>
 			</view>
-			<!-- #ifdef H5 -->
+			<!-- #ifdef H5  || APP -->
 			<view class="displayPay">
 				<view class="VideoVipCom_main_payItems">
 					<view @click="changePayConifg('wechat_scan','jsapi')"
@@ -88,10 +88,12 @@
 
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
-	import { useUserStore } from '@/store';
+	import { useScreenStore, useUserStore } from '@/store';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	const { $api, $assets } = useGlobalProperties()
 	const UserStore = useUserStore()
+	const ScreenStore = useScreenStore()
+
 	const showPayImage = ref('')
 	const showNums = ref(0)
 	const showVips = ref([])
@@ -101,12 +103,10 @@
 	onMounted(() => {
 		getVipCheckNums()
 		getVideoVipShop()
-
 	})
 	const onCreateOrder = async (type : string, pay_Id : string) => {
 		weChatPay()
 	}
-
 
 	const changePayConifg = (rechannel : string, rePayType : string) => {
 		if (rechannel == channel.value) {
@@ -155,7 +155,7 @@
 		if (showVideoShopReq.code == 200) {
 			showVips.value = showVideoShopReq.shops
 		}
-		// #ifdef H5
+		// #ifdef H5 || APP 
 		h5getCreateShopsOrder('wechat_scan', 'jsapi')
 		// #endif
 
@@ -233,6 +233,7 @@
 			padding: 30rpx 0;
 			display: flex;
 			align-items: center;
+
 		}
 
 		&_headerBox {

@@ -13,7 +13,7 @@
 		screenStore.setMenuButtonInfo(buttonInfo)
 		// #endif
 		screenStore.setSystemInfo(systemInfo)
-		
+
 	}
 	// #ifndef MP-WEIXIN
 	uni.onTabBarMidButtonTap(() => {

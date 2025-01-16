@@ -11,7 +11,7 @@
 					请输入你要纠正的文章
 				</view>
 				<view class="input-box">
-					<textarea :style="{fontSize:'30rpx',width:'100%'}" class="input-box_textarea" auto-height
+					<textarea :style="{fontSize:'30rpx',width:'100%',minHeight: '400rpx'}" auto-height
 						v-model="inputValue" maxlength='-1'
 						placeholder="示例:我们公司最近在开发一款新产品，目的是让用户更容易的使用我们的服务。虽然开发过程中遇到了一些问题，但我们正积极寻找解决方案。比如，我们的后台系统有时候会出现一些未知的错误，这可能导致用户在使用时遇到困难。我们正在努力提高系统的稳定性，以确保用户的体验不会受到影响。"></textarea>
 				</view>
@@ -33,11 +33,17 @@
 				</view>
 			</view>
 		</view>
-
 	</z-paging>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import { ref, nextTick } from 'vue'
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
@@ -58,7 +64,11 @@
 		}
 	}
 
-	const { streamRequest, isRecive , streamSpark} = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const pagingRef = ref(null)
 	const onScroolToBottom = () => {
 		nextTick(() => {
@@ -87,9 +97,9 @@
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage: async(text) =>{
+			onmessage: async (text) => {
 				newStr += text
-				contentStr.value =await streamSpark(newStr)
+				contentStr.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {
@@ -221,12 +231,12 @@
 		overflow-y: scroll;
 		border-radius: 20rpx;
 		border: 1px solid $uni-border-color;
-		max-height: 400rpx;
+		// max-height: 400rpx;
 		padding: 20rpx;
 		font-size: 27rpx;
 
-		&_textarea {
-			min-height: 400rpx;
-		}
+		// &_textarea {
+		// 	min-height: 400rpx;
+		// }
 	}
 </style>

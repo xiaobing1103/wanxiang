@@ -1,3 +1,7 @@
+<template>
+	<view :renderjsData="renderjsData" :change:renderjsData="chat?.startChatCore" :stopCount="stopCount"
+		:change:stopCount="chat?.stopChatCore" />
+</template>
 <script>
 	export default {
 		props: {},
@@ -58,9 +62,6 @@
 			}
 		},
 		methods: {
-			stopChatCore() {
-				this.ctrl?.abort();
-			},
 			onstart(reader) {
 				this.$ownerInstance.callMethod('open', reader);
 			},
@@ -75,6 +76,13 @@
 				}
 				reader.read().then(processChunk)
 			},
+			stopChatCore() {
+				if (this.ctrl) {
+					this.ctrl.abort();
+					this.ctrl = null;
+					this.$ownerInstance.callMethod('finish');
+				}
+			},
 			async startChatCore({
 				url,
 				body,
@@ -83,27 +91,30 @@
 				if (!url) return;
 
 				try {
+					// 创建新的 AbortController
+					this.ctrl = new AbortController();
+
 					const response = await fetch(url, {
 						method: 'POST',
 						headers,
-						body: body
-					})
+						body: body,
+						signal: this.ctrl.signal // 添加 signal
+					});
 
 					if (response.body) {
-						const reader = response.body.pipeThrough(new window.TextDecoderStream()).getReader() //获取读取器
-						this.onstart && this.onstart(reader)
-						this.getStream(reader)
+						const reader = response.body.pipeThrough(new window.TextDecoderStream()).getReader();
+						this.onstart && this.onstart(reader);
+						this.getStream(reader);
 					}
-
 				} catch (err) {
-					this.$ownerInstance.callMethod('error', err);
+					// 判断是否是用户主动取消的请求
+					if (err.name === 'AbortError') {
+						console.log('用户主动取消的请求');
+					} else {
+						this.$ownerInstance.callMethod('error', err);
+					}
 				}
 			}
 		}
 	}
 </script>
-
-<template>
-	<view :renderjsData="renderjsData" :change:renderjsData="chat?.startChatCore" :stopCount="stopCount"
-		:change:stopCount="chat?.stopChatCore" />
-</template>

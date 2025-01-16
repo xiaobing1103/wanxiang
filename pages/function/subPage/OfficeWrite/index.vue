@@ -46,9 +46,18 @@
 
 		</template>
 	</z-paging>
+
+
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import { ref, nextTick } from 'vue'
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
@@ -82,7 +91,11 @@
 		}
 	}
 
-	const { streamRequest, isRecive, streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const pagingRef = ref(null)
 	const onScroolToBottom = () => {
 		nextTick(() => {

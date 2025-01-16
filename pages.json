@@ -516,6 +516,14 @@
 					}
 				},
 				{
+					"path": "AiMusicCreate/MusicVerification",
+					"name": "MusicSquare",
+					"style": {
+						"navigationBarTitleText": "音乐验证",
+						"navigationStyle": "custom"
+					}
+				},
+				{
 					"path": "ImageCreateMusic/index",
 					"name": "ImageCreateMusic",
 					"style": {
@@ -544,6 +552,14 @@
 					"name": "VideoVip",
 					"style": {
 						"navigationBarTitleText": "视频会员",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "TextCreateVideo/PlayVideo/index",
+					"name": "PlayVideo",
+					"style": {
+						"navigationBarTitleText": "视频页面",
 						"navigationStyle": "custom"
 					}
 				},

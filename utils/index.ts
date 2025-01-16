@@ -157,6 +157,9 @@ const exportTxt = (textContent : string) => {
 	// #ifdef MP-WEIXIN
 	saveTextToFile(textContent)
 	// #endif
+	// #ifdef APP
+	toCopyText(textContent)
+	// #endif
 };
 
 function weChatTempPathToBase64(tempFilePath : string, deleteHeader ?: boolean) {
@@ -284,7 +287,6 @@ const saveTextToFile = (textContent : string) => {
 function timestampToDateString(timestamp, includeTime) {
 	// 创建一个新的Date对象
 	var date = new Date(timestamp * 1000);
-
 	// 获取年、月、日并确保它们是两位数
 	var year = date.getFullYear();
 	var month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份是从0开始的
@@ -313,14 +315,23 @@ function checkFileType(fileName : string, allowedExtensions = ['acc', 'mp4', 'op
 		return false; // 文件类型不允许
 	}
 }
-const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, acceptNumber ?: number, acceptTips ?: string, translateType ?: string) : Promise<{
+const uploadFileBefore = (
+	event : { file : any },
+	allowTypes ?: Array<string>,
+	acceptNumber ?: number,
+	acceptTips ?: string,
+	translateType ?: string,
+	maxNumber ?: number,
+	formdataTypes ?: 'file2text' | 'docTypes' 
+) : Promise<{
 	fileName : string,
 	fileType : string,
 	formdata : null,
 	response : null,
 	isJson : boolean,
 	isWechatSendImages : boolean,
-	originFormData : null | any
+	originFormData : null | any,
+	maxNumber : number
 }> => {
 	const returnDatas = {
 		fileType: '',
@@ -333,26 +344,66 @@ const uploadFileBefore = (event : { file : any }, allowTypes ?: Array<string>, a
 	}
 	return new Promise((resolve, reject) => {
 		// #ifdef H5
-		if (event.file[0].size > (acceptNumber || 5242880)) {
-			uni.$u.toast(acceptTips || '内容大小超出限制,不能上传超过5mb大小的文件！')
+		if (event.file[0].size > (acceptNumber || 15728640)) {
+			uni.$u.toast(acceptTips || '内容大小超出限制,不能上传超过15mb大小的文件！')
 			reject(false)
 		}
 		returnDatas.fileName = event.file[0].name
 		returnDatas.formdata = new FormData()
 		returnDatas.originFormData = new FormData()
-		returnDatas.originFormData.append('doc', event.file[0].file)
-		returnDatas.originFormData.append('target_lang', translateType)
-		returnDatas.formdata.append('file', event.file[0].file)
+		if (formdataTypes !== 'file2text') {
+			returnDatas.originFormData.append('doc', event.file[0].file)
+			returnDatas.originFormData.append('target_lang', translateType)
+			returnDatas.formdata.append('doc', event.file[0].file)
+			returnDatas.formdata.append('target_lang', translateType)
+			returnDatas.formdata.append('max_count', maxNumber)
+		}
+		if (formdataTypes == 'file2text') {
+			returnDatas.formdata.append('file', event.file[0].file)
+		}
+
 		// #endif
-		// #ifdef MP-WEIXIN
-		returnDatas.fileName = event.file[0].name
-		returnDatas.formdata = { file: event.file[0].url }
-		returnDatas.isWechatSendImages = true
-		returnDatas.isJosn = true
-		returnDatas.originFormData = { doc: event.file[0].url, target_lang: translateType }
+		// #ifdef MP-WEIXIN 
+		if (formdataTypes !== 'file2text') {
+			returnDatas.fileName = event.file[0].name
+			returnDatas.formdata = { doc: event.file[0].url, target_lang: translateType, translate_type: 'usual', max_count: maxNumber }
+			returnDatas.isWechatSendImages = true
+			returnDatas.isJosn = true
+			returnDatas.originFormData = { doc: event.file[0].url, target_lang: translateType, }
+		}
+		if (formdataTypes == 'file2text') {
+			returnDatas.fileName = event.file[0].name
+			returnDatas.formdata = { file: event.file[0].url }
+			returnDatas.isWechatSendImages = true
+			returnDatas.isJosn = true
+			returnDatas.originFormData = { file: event.file[0].url }
+		}
+		// #endif
+		// #ifdef APP
+		console.log(event)
+		if (event[0].size > (acceptNumber || 15728640)) {
+			uni.$u.toast(acceptTips || '内容大小超出限制,不能上传超过15mb大小的文件！')
+			reject(false)
+		}
+		if (formdataTypes !== 'file2text') {
+			returnDatas.fileName = event[0].name
+			returnDatas.formdata = { doc: event[0].url, translate_type: 'usual', target_lang: translateType, max_count: maxNumber }
+			returnDatas.isWechatSendImages = true
+			returnDatas.isJosn = true
+			returnDatas.originFormData = { doc: event[0].url, target_lang: translateType }
+		}
+		if (formdataTypes == 'file2text') {
+			returnDatas.fileName = event[0].name
+			returnDatas.formdata = { file: event[0].url }
+			returnDatas.isWechatSendImages = true
+			returnDatas.isJosn = true
+			returnDatas.originFormData = { file: event[0].url, }
+		}
+
+
 		// #endif
 		const types = allowTypes ? allowTypes : ['docx', 'pdf']
-		returnDatas.fileType = event.file[0].name.split('.').pop().toLowerCase();
+		returnDatas.fileType = returnDatas.fileName.split('.').pop().toLowerCase();
 		if (!checkFileType(returnDatas.fileName, types)) {
 			uni.$u.toast(`只支持上传文档格式${types}！`);
 			reject(false)

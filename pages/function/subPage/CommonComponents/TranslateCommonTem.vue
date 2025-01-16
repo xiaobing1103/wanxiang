@@ -6,6 +6,31 @@
 		<view class="TranslateCommonTem">
 			<ChangeLangs v-model:currentLang="currentLang" />
 			<view class="uploadBox">
+				<!-- #ifdef APP -->
+				<UploadDemo :count="1" @UploadCallback="afterRead" type="file">
+					<template #defaultTemplate>
+						<view class="uploadBoxmain">
+							<view class="uploadBoxmain_title">
+								<view class="uploadBoxmain_title_image"
+									v-for="(items,index)  in publicMethods.uploadImageSrc" :key="index">
+									<image class="uploadBoxmain_title_image_items" :src="items" mode=""></image>
+								</view>
+							</view>
+							<view class="uploadBoxmain_desc">
+								支持pdf, txt, docx, pptx, excel 等格式编码的文件
+							</view>
+							<view class="uploadBoxmain_elseDesc">
+								(部分音频内容比较多,可能Ai无法理解)
+							</view>
+							<view class="uploadBoxmain_button">
+								<up-button size="mini" :customStyle="{width:'50%',borderRadius:'15rpx',height:'50rpx'}"
+									type="primary">点击上传文档</up-button>
+							</view>
+						</view>
+					</template>
+				</UploadDemo>
+				<!-- #endif -->
+				<!-- #ifndef APP -->
 				<up-upload :customStyle="{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}"
 					:fileList="fileList1" @afterRead="afterRead" name="4" multiple accept="all" :maxCount="1">
 					<view class="uploadBoxmain">
@@ -28,6 +53,10 @@
 
 					</view>
 				</up-upload>
+				<!-- #endif -->
+
+
+
 			</view>
 			<view class="Zero_title">
 				<text>翻译结果</text>
@@ -43,9 +72,18 @@
 			<CommonViewer />
 		</view>
 	</z-paging>
+
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	import UploadDemo from '@/pages/index/subPage/components/UploadDemo.vue'
+	// #endif
 	import { publicMethodsType } from './types';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CommonViewer from './CommonViewer'
@@ -59,7 +97,11 @@
 	const fileList1 = ref([]);
 	const currentLang = ref('英文')
 	const msgContent = ref(`👉此处为翻译结果显示区域`)
-	const { streamRequest, isRecive, verifyTranslateTextLimit , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, verifyTranslateTextLimit, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const pagingRef = ref(null)
 	const isTransLateLoading = ref(false)
 	const { $api } = useGlobalProperties()
@@ -70,7 +112,7 @@
 			return
 		}
 		const exampleFiles = reactive(['pdf', 'txt', 'docx', 'pptx', 'excel'])
-		const returnDatas = await uploadFileBefore(event, exampleFiles)
+		const returnDatas = await uploadFileBefore(event, exampleFiles, null, null, null, null, "file2text")
 		if (returnDatas) {
 
 			let ReadFileReq = await $api.post('api/v1/files/file2text', returnDatas.formdata, returnDatas.isJson, undefined, null, returnDatas.isWechatSendImages)
@@ -123,10 +165,10 @@
 		const streamOptions = {
 			url: 'api/v1/chat2/zhipu',
 			data: data,
-			onmessage: async (text:string) => {
-			newStr += text
-			msgContent.value = await streamSpark(newStr)
-			onScroolToBottom()
+			onmessage: async (text : string) => {
+				newStr += text
+				msgContent.value = await streamSpark(newStr)
+				onScroolToBottom()
 			},
 			onfinish() {
 				console.log('成功')

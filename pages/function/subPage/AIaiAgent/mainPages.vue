@@ -25,7 +25,24 @@
 					description="支持上传文件(最多3个,每个4MB)接收.pdf,.doc,.xlsx,.ppt,.txt,.jpeg,.png,.docx格式"></up-alert>
 			</view>
 			<view class="uploadFileBox_content">
-				<template v-if="mainParmas.fileList.length<3">
+				<template v-if="mainParmas.fileList.length < 3 ">
+					<!-- #ifdef APP -->
+					<UploadDemo :count="1" @UploadCallback="afterRead" type="file">
+						<template #defaultTemplate>
+							<view class="UploadBox">
+								<view class="UploadBox_image">
+									<image class="UploadBox_image_content" :src="$assets.uploadFileIcon" mode="">
+									</image>
+								</view>
+								<view class="UploadBox_text">
+									点击上传文件
+								</view>
+							</view>
+						</template>
+					</UploadDemo>
+					<!-- #endif -->
+
+					<!-- #ifndef APP -->
 					<up-upload :previewImage="false"
 						:customStyle="{display:'flex',alignItems:'center',width:'100%',height:'150rpx'}" accept="all"
 						:fileList="mainParmas.fileList" @afterRead="afterRead" @delete="deletePic" name="5"
@@ -39,6 +56,8 @@
 							</view>
 						</view>
 					</up-upload>
+					<!-- #endif -->
+
 				</template>
 			</view>
 			<view class="uploadFileBox_previewBox">
@@ -71,9 +90,18 @@
 	</up-popup>
 	<AigentChangeItems />
 	<AiAgentHistory />
+	<!-- #ifdef APP -->
+
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	import UploadDemo from '@/pages/index/subPage/components/UploadDemo.vue'
+	// #endif
 	import AiAgentHistory from './AiAgentHistory.vue'
 	import AigentChangeItems from './AigentChangeItems.vue'
 	import ChangeAigent from './ChangeAigent.vue'
@@ -86,11 +114,16 @@
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { uploadFileBefore } from '@/utils';
 	import { generateUUID } from '@/tools/uuid';
-	import { useAiAgentChats } from '@/store'
+	import { useAiAgentChats, useChatStore } from '@/store'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import { FileItem, MainPagesInterFace } from '@/store/aiAgentChats';
 	const AIAgentChatBoxRef = ref<InstanceType<typeof AIAgentChatBox>>(null);
-	const { isRecive, streamRequest, setIsRecive, onCancelRequest , streamSpark} = useStreamHooks()
+	const ChatStore = useChatStore();
+	const { isRecive, streamRequest, setIsRecive, onCancelRequest, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const { $api, $assets } = useGlobalProperties()
 	const AiAgentChats = useAiAgentChats()
 	const mainParmas = reactive<MainPagesInterFace>({
@@ -106,10 +139,17 @@
 
 	// 新增图片
 	const afterRead = async (event : { file : { name : string; }; }) => {
-		const newFile = { ...event }
-		const type = event.file.name.split('.').pop()
+		console.log(event)
+		let newFile = null
+		// #ifdef APP
+		newFile = { ...event[0] }
+		newFile.file = [{ ...event[0], loadding: 'loadding', message: '上传中', }]
+		// #endif
+		// #ifndef APP
+		newFile = { ...event }
 		newFile.file = [{ ...event.file, loadding: 'loadding', message: '上传中', }]
-		const Files = await uploadFileBefore(newFile, accepetFileTypes, 4194304, '内容大小超出限制,不能上传超过4mb大小的文件！')
+		// #endif
+		const Files = await uploadFileBefore(newFile, accepetFileTypes, 4194304, '内容大小超出限制,不能上传超过4mb大小的文件！', null, null, 'file2text')
 		if (Files) {
 			mainParmas.fileList.push(newFile.file[0])
 			let FileReqs = await $api.post('https://open.aichatapi.com/api/v1/chat/zhipu.assistant/yfoo.file', Files.formdata, Files.isJson, {}, null, Files.isWechatSendImages)
@@ -118,9 +158,9 @@
 			}
 			const len = mainParmas.fileList.length - 1
 			if (FileReqs.code == 200) {
-				mainParmas.fileList[len].message = type + ' ' + bytesToKB(FileReqs.data.bytes) + 'KB'
+				mainParmas.fileList[len].message = Files.fileType + ' ' + bytesToKB(FileReqs.data.bytes) + 'KB'
 				mainParmas.fileList[len].loadding = 'complete'
-				mainParmas.fileList[len].type = type
+				mainParmas.fileList[len].type = Files.fileType
 				mainParmas.fileList[len].id = FileReqs.data.id
 			} else {
 				mainParmas.fileList[len].message = '上传文件失败，请手动删除此文件！'
@@ -155,7 +195,7 @@
 		AiAgentChats.setCurrentConversation_id(null)
 		await getLists()
 	})
-	
+
 	onUnmounted(() => {
 		console.log('卸载页面！')
 		AiAgentChats.setCurrentConversation_id(null)

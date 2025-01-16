@@ -28,7 +28,10 @@ const useMusicStore = defineStore("wanxiang_Music", () => {
 	const setMusicHistoryData = (newArr : musicHistoryType[]) => {
 		musicHistoryData.value = newArr
 	}
-
+	// const VideoBase64Image = ref('')
+	// const setVideoBase64Image = (base64 : string) => {
+	// 	VideoBase64Image.value = base64
+	// }
 	const addVideoHistoryData = (datas : VideoHistoryDataType) => {
 		VideoHistoryData.value.push(datas)
 	}
@@ -70,7 +73,9 @@ const useMusicStore = defineStore("wanxiang_Music", () => {
 		deleteVideoHistoryData,
 		NumbersPeopleHistoryData,
 		addNumbersPeopleHistoryData,
-		deleteNumbersPeopleHistoryData
+		deleteNumbersPeopleHistoryData,
+		// setVideoBase64Image,
+		// VideoBase64Image
 	}
 }, { unistorage: { paths: ['musicHistoryData', 'VideoHistoryData', 'NumbersPeopleHistoryData'] } })
 export default useMusicStore

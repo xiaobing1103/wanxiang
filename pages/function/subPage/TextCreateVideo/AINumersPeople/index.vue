@@ -3,15 +3,16 @@
 		<template #top>
 			<CommonHeader defindTitle="AI数字人" />
 		</template>
-		
+
 		<view class="AINumersPeople">
 			<view class="restNums">
 				<view class="restNums_box">
 					<up-button @click="toVipPages"
-						:customStyle="{background:'linear-gradient(to right, #314cd7, #ae1dfd)',width:'100%',height:'60rpx',borderRadius:'15rpx',color:'white'}">
+						:customStyle="{background:'linear-gradient(to right, #314cd7, #ae1dfd)',width:'100%',height:'60rpx',borderRadius:'15rpx',color:'white',whiteSpace:'nowrap'}">
 						<image class="restNums_box_icon" :src="$assets.createVideoVipIcon" mode=""></image>
-						<text :style="{marginRight:'10rpx'}">剩余次数</text>
-						{{restNum}}
+						<view :style="{marginRight:'10rpx', whiteSpace:'nowrap'}">剩余次数</view>
+						<view>{{restNum}}</view>
+
 					</up-button>
 
 				</view>
@@ -129,11 +130,13 @@
 		console.log(value[0].sdp)
 		seletedVoiceId.value = value[0].sdp
 		seletedVioceName.value = value[0].speechType
-
 		showPicker.value = false
-
 	}
 	const fastCreate = async () => {
+		if (!text.value) {
+			uni.$u.toast('请先输入朗读文案！')
+			return
+		}
 		const parmas = {
 			avatar_id: seletedAvatarId.value,
 			lenght: 1,
@@ -150,6 +153,8 @@
 			})
 
 			getCounts()
+		} else {
+			uni.$u.toast(danbooruReq.msg)
 		}
 	}
 	const toHistory = () => {
@@ -259,12 +264,12 @@
 
 		&_box {
 			display: flex;
-			font-size: 25rpx;
+			font-size: 20rpx;
 			align-items: center;
 
 			&_icon {
-				width: 40rpx;
-				height: 40rpx;
+				width: 36rpx;
+				height: 36rpx;
 				margin: 0 20rpx;
 			}
 		}

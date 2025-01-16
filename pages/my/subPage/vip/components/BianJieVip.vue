@@ -63,8 +63,7 @@
 		<MiddleVipView />
 		<PayItemView :payMode='payMode' :seletedVipIds="seletedVipIds" />
 		<VipNumberSteps :seletedVipIds="seletedVipIds" v-model:buChaJiaModal="buChaJiaModal" />
-		<template #bottom>
-		</template>
+
 		<up-modal :show="buChaJiaModal" :showConfirmButton='false'>
 			<view class="buChaJiaModal">
 				<view class="buChaJiaModal_header">

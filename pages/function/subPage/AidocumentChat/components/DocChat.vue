@@ -35,7 +35,7 @@
 	};
 
 
-	const { streamRequest, onCancelRequest,streamSpark } = useStreamHooks();
+	const { streamRequest, onCancelRequest, streamSpark } = useStreamHooks();
 	const scrollToBottom = () => {
 		props.scrollToBottom()
 	};
@@ -90,10 +90,7 @@
 		const id = generateUUID();
 		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
 		ChatStore.setLoadingMessage(true);
-		const LoadingConfig = {
-			showLoading: false,
-			title: '加载中...'
-		};
+		uni.$u.toast('正在写歌词，请等待...');
 		const requestOptions = {
 			url: options.url,
 			data: options.data,
@@ -104,7 +101,6 @@
 				scrollToBottom();
 			},
 			onerror: (err) => {
-				console.log(err);
 				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
 				console.log(currentMessage);
 				if (currentMessage.state == 'waite') {
@@ -116,8 +112,7 @@
 				// 存历史记录
 				saveHistory(selectChatId.value, currentMessage);
 				ChatStore.setLoadingMessage(false);
-			},
-			LoadingConfig
+			}
 		};
 		streamRequest(requestOptions);
 	}

@@ -49,15 +49,26 @@
 		</view>
 
 	</z-paging>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import { useChatStore } from '@/store';
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { ref } from 'vue';
 	import { toCopyText } from '@/utils';
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const ChatStore = useChatStore()
 	const inputValue = ref('')
 	const textareaValue = ref('')
@@ -91,7 +102,6 @@
 			{
 				role: 'user',
 				content: `帮我根据标题:${inputValue.value}提取出下面文章的关键词:${textareaValue.value}`
-
 			}
 		]
 		const data = {
@@ -103,7 +113,7 @@
 		const streamOptions = {
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage:async (text:string) => {
+			onmessage: async (text : string) => {
 				newStr += text
 				result.value = await streamSpark(newStr)
 			},

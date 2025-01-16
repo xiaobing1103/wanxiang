@@ -71,9 +71,16 @@
 		</view>
 	</up-popup>
 	<up-picker @cancel="showpicker= false" :show="showpicker" :columns="changeTypeList" @confirm="confirm"></up-picker>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { languages } from '../TranslatePages/type'
@@ -83,7 +90,11 @@
 	import { saveFile } from '../TranslatePages/downLoadLocal';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	const currentLang = ref('英文')
-	const { streamRequest, isRecive , streamSpark} = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const showpicker = ref(false)
 	const ChatStore = useChatStore()
 	const textValue = ref('')
@@ -160,7 +171,7 @@
 			onmessage: async (text : string) => {
 				console.log(text)
 				newStr += text
-				msgContent.value =	await streamSpark(newStr)
+				msgContent.value = await streamSpark(newStr)
 			},
 			onfinish() {
 				console.log('成功')

@@ -126,13 +126,32 @@
 			<view v-if="!zhaiyaoModalContent" class="createTitleModal_loading">
 				正在生成摘要...
 			</view>
-			<view class="zhaiyaoModal">
-				{{zhaiyaoModalContent}}
+			<view class="zhaiyaoModalStyle">
+				<view class="zhaiyaoModal">
+					{{zhaiyaoModalContent}}
+				</view>
+				<view class="zhaiyaoModalStyle_btnBox">
+					<up-button @click="copyText(zhaiyaoModalContent)"
+						:customStyle="{...btnStyles,height:'60rpx',fontSize:'24rpx',width:'40%'}">
+						复制摘要
+					</up-button>
+				</view>
+
 			</view>
+
+
 		</up-modal>
+
+		<!-- #ifdef APP -->
+		<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+			@onFinish="finishCore" />
+		<!-- #endif -->
 	</template>
 
 	<script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { ref, reactive, computed } from 'vue';
 	import ImageLoraScale from '../CommonComponents/ImageLoraScale.vue'
@@ -140,7 +159,11 @@
 	import { useChatStore } from '@/store';
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { exportTxt, toCopyText } from '@/utils';
-	const { streamRequest, isRecive ,streamSpark} = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const radiovalue1 = ref('2.0模式')
 	const switchValue = ref(false)
 	const newResult = ref([])
@@ -245,15 +268,15 @@
 			onmessage: async (text : string) => {
 				if (type == 'zhaiyaoModalContent') {
 					newStr += text
-					zhaiyaoModalContent.value  = await streamSpark(newStr)
+					zhaiyaoModalContent.value = await streamSpark(newStr)
 				}
 				if (type == 'titleValue') {
 					newStr += text
-					TiTleValues.value  = await streamSpark(newStr)
+					TiTleValues.value = await streamSpark(newStr)
 				}
 				if (!type) {
-				    newStr += text
-					resultValue.value  = await streamSpark(newStr)
+					newStr += text
+					resultValue.value = await streamSpark(newStr)
 				}
 			},
 			onfinish() {
@@ -303,8 +326,12 @@
 			return
 		}
 		zhaiyaoModal.value = true
-		onFetchChat(resultValue.value, `你需要帮我生成一个摘要，摘要内容为:根据业务分类，阿里影业的内容收入达到了12.2亿元人民币，相比去年减少了2.6亿元；票务与科技平台的收入为12.3亿元，较去年同期增长了7.1亿元；知识产权衍生品和其他业务的收入大约为6亿元，较上一年下降了0.2亿元。
-`, 'zhaiyaoModalContent')
+		onFetchChat(resultValue.value, `我需要你帮我提取文字内容的摘要，摘要内容为:` + resultValue.value, 'zhaiyaoModalContent')
+	}
+
+	const onCopyText = () => {
+		console.log(12312)
+		toCopyText()
 	}
 	</script>
 
@@ -422,6 +449,19 @@
 				align-items: center;
 				color: #fff;
 				justify-content: center;
+			}
+		}
+
+
+		.zhaiyaoModalStyle {
+			display: flex;
+			flex-direction: column;
+			min-width: 100%;
+
+			&_btnBox {
+				margin: 30rpx 0;
+				display: flex;
+				justify-content: flex-end;
 			}
 		}
 	</style>

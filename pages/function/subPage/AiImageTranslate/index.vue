@@ -16,8 +16,8 @@
 						{{currentLang}} <up-icon :style="{margin:'0 10rpx'}" name="arrow-down" size="15"></up-icon>
 					</view>
 				</view>
-				<ChangeFaceUploadImage noUseCorpImage v-model:showupOverlay="showupOverlay" description="请上传自定义原图"
-					v-model:images="image1" :showAngle="true" :width="900" :height="800" />
+				<ChangeFaceUploadImage appuUseBase64 noUseCorpImage v-model:showupOverlay="showupOverlay"
+					description="请上传自定义原图" v-model:images="image1" :showAngle="true" :width="900" :height="800" />
 			</view>
 			<view class="bottomView">
 				<view class="bottomView_title">
@@ -144,7 +144,7 @@
 		padding: 30rpx 0;
 		display: flex;
 		flex-direction: column;
-		
+
 		&_rightBox {
 			flex: 1;
 		}

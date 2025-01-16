@@ -1,7 +1,7 @@
 <template>
 	<view class="PayItemView">
 		<view class="PayItemView_header">
-			<!-- #ifdef H5 -->
+			<!-- #ifdef H5 || APP-->
 			<view class="PayItemView_header_zhifubao" @click="onCreateOrder('alipay','h5_yt')">
 				<image class="PayItemView_header_zhifubao_image" :src="$assets.zhiFuBaoIcon" mode=""></image> 支付宝支付
 			</view>
@@ -50,7 +50,7 @@
 		weChatPay()
 		// #endif
 
-		// #ifdef H5
+		// #ifdef H5 || APP
 		H5pay(type, pay_Id)
 		// #endif
 	}
@@ -114,7 +114,7 @@
 					success(res) {
 						refreshInfo()
 
-					},
+					},	
 					fail(e) {
 						console.log(e)
 					}

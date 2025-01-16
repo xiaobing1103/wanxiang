@@ -1,5 +1,6 @@
 <template>
-	<z-paging :scroll-with-animation="true" :show-scrollbar="false" ref="pagingRef" :pagingStyle="{padding:'0 40rpx'}">
+	<z-paging :scroll-with-animation="true" :show-scrollbar="false" ref="pagingRef"
+		:pagingStyle="{ padding: '0 40rpx' }">
 		<template #top>
 			<template v-if="!SoraPromptPramas.showVideo">
 				<CommonHeader :defindTitle="allParmas.title" />
@@ -9,8 +10,8 @@
 		<view class="AIVideoCommon">
 			<view class="AIVideoCommon_tabs">
 				<up-tabs :current="allParmas.currentPages" lineColor="rgba(0,0,0,0)"
-					:inactiveStyle="{padding:'10rpx 30rpx'}"
-					:activeStyle="{background:'linear-gradient(to right,#314cd7,#ae1dfd)',color:'white',padding:'10rpx 30rpx', borderRadius: '40rpx'}"
+					:inactiveStyle="{ padding: '10rpx 30rpx' }"
+					:activeStyle="{ background: 'linear-gradient(to right,#314cd7,#ae1dfd)', color: 'white', padding: '10rpx 30rpx', borderRadius: '40rpx' }"
 					customClass="customTabs" :list="list1" @change="changeTabs"></up-tabs>
 				<view class="AIVideoCommon_history" @click="toVideoHistory">
 					历史记录
@@ -26,22 +27,30 @@
 		<template #bottom>
 			<template v-if="!SoraPromptPramas.showVideo">
 				<view class="bottom">
-					<up-button @click="createVideo"
-						:customStyle="{width:'80%',height:'70rpx',background: 'linear-gradient(to right,#314cd7,#ae1dfd)',color:'white',border:'0rpx', borderRadius: '35rpx'}">开始创作</up-button>
+					<up-button @click="createVideo" :disabled="isRecive"
+						:customStyle="{ width: '80%', height: '70rpx', background: 'linear-gradient(to right,#314cd7,#ae1dfd)', color: 'white', border: '0rpx', borderRadius: '35rpx' }">开始创作</up-button>
 				</view>
 			</template>
 		</template>
 	</z-paging>
+
 	<VideoItems v-model:SoraPromptPramas="SoraPromptPramas" />
 	<up-modal @confirm="SoraPromptPramas.openModal = false" :show="SoraPromptPramas.openModal" title="温馨提示">
 		<view class="Tipsmodal">
-			{{Tips}}
+			{{ Tips }}
 		</view>
 	</up-modal>
 
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import { onMounted, reactive, ref, nextTick } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import SoraPrompt from './SoraPrompt.vue'
@@ -52,7 +61,11 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 
 	const MusicStore = useMusicStore()
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const { $api } = useGlobalProperties()
 	const queryId = ref('')
 	const ChatStore = useChatStore()
@@ -79,8 +92,9 @@
 		aloneChecked: false
 	})
 
-	const changeTabs = ({ index }) => {
+	const changeTabs = ({ index, name }) => {
 		allParmas.value.currentPages = index
+		allParmas.value.title = name
 	}
 
 	const createVideo = async () => {
@@ -92,10 +106,11 @@
 			uni.$u.toast('请先上传生成图片！')
 			return
 		}
-		await onFetchChat(SoraPromptPramas.prompt)
-
-
-
+		if (SoraPromptPramas.aloneChecked) {
+			await onFetchChat(SoraPromptPramas.prompt)
+		} else {
+			startRequestVideos()
+		}
 	}
 	onMounted(() => {
 		getCounts()
@@ -121,7 +136,14 @@
 				queryReq.data.video_result[0].title = SoraPromptPramas.prompt
 				MusicStore.addVideoHistoryData(queryReq.data.video_result[0])
 				SoraPromptPramas.isQuery = false
+				
+				// 如果有需要，可以手动触发视频加载
+				if (videoRef.value) {
+					videoRef.value.reload?.()
+				}
 			}
+		} else {
+			uni.$u.toast(queryReq.msg)
 		}
 	}
 
@@ -149,29 +171,11 @@
 			data: data,
 			onmessage: async (text : string) => {
 				newStr += text
-				SoraPromptPramas.prompt  =await streamSpark(newStr)
+				SoraPromptPramas.prompt = await streamSpark(newStr)
 			},
 			async onfinish() {
 				console.log('成功')
-				nextTick(async () => {
-					const datas = {
-						model: "cogvideox",
-						prompt: SoraPromptPramas.prompt,
-						image_url: SoraPromptPramas.image_url
-					}
-					const VideoCreateReq = await $api.post('api/v1/video/create', datas)
-					if (VideoCreateReq.code == 200) {
-						queryId.value = VideoCreateReq.data.id
-						getCounts()
-						SoraPromptPramas.isQuery = true
-						SoraPromptPramas.showVideo = true
-						await delay(2000)
-						queryVideo()
-					} else {
-						uni.$u.toast(VideoCreateReq.msg)
-					}
-				})
-
+				startRequestVideos()
 			},
 			onerror(err) {
 				if (err.includes('请升级会员')) {
@@ -184,6 +188,38 @@
 		}
 		streamRequest(streamOptions)
 	}
+
+
+	const startRequestVideos = () => {
+		nextTick(async () => {
+			const datas = {
+				model: "cogvideox",
+				prompt: SoraPromptPramas.prompt,
+				image_url: SoraPromptPramas.image_url
+			}
+			const VideoCreateReq = await $api.post('api/v1/video/create', datas)
+			if (VideoCreateReq.code == 200) {
+				// queryId.value = VideoCreateReq.data.id
+				// if (SoraPromptPramas.image_url) {
+				// 	MusicStore.setVideoBase64Image(SoraPromptPramas.image_url)
+				// }
+				uni.navigateTo({
+					url: `/pages/function/subPage/TextCreateVideo/PlayVideo/index?id=${VideoCreateReq.data.id}`
+				})
+				// getCounts()
+				// SoraPromptPramas.isQuery = true
+				// SoraPromptPramas.showVideo = true
+				// await delay(2000)
+				// queryVideo()
+			} else {
+				uni.$u.toast(VideoCreateReq.msg)
+			}
+		})
+
+	}
+
+	const videoKey = ref(0)
+	const videoRef = ref(null)
 </script>
 
 

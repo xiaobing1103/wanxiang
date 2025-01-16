@@ -32,7 +32,7 @@
 	import { ref } from 'vue';
 	import { fileToBase64, weChatTempPathToBase64 } from '@/utils';
 	const images = defineModel('images')
-	const props = defineProps<{ noUseCorpImage : boolean, description ?: string, radius ?: number, showAngle ?: boolean, width ?: number, height ?: number }>()
+	const props = defineProps<{ noUseCorpImage : boolean, description ?: string, radius ?: number, showAngle ?: boolean, width ?: number, height ?: number, appuUseBase64 ?: boolean, }>()
 	const showupOverlay = defineModel('showupOverlay')
 	const uploadImages = () => {
 		if (!props.noUseCorpImage) {
@@ -41,16 +41,31 @@
 			uni.chooseImage({
 				count: 1,
 				success: function (res) {
+
+
 					// #ifdef H5
 					fileToBase64(res.tempFiles[0], (base64 : string) => {
 						images.value = base64
 					}, true)
 					// #endif
+					console.log(res)
+					// #ifdef MP-WEIXIN || APP
+					if (props.appuUseBase64) {
+						weChatTempPathToBase64(res.tempFilePaths[0]).then((res) => {
+							console.log(res)
+							images.value = res
+						})
+						return
+					}
 
-					// #ifdef MP-WEIXIN
-					weChatTempPathToBase64(res.tempFilePaths[0]).then((res) => {
-						images.value = res
-					})
+					if (props.noUseCorpImage) {
+						images.value = res.tempFilePaths[0]
+					} else {
+						weChatTempPathToBase64(res.tempFilePaths[0]).then((res) => {
+							console.log(res)
+							images.value = res
+						})
+					}
 					// #endif
 				}
 			})

@@ -48,8 +48,8 @@
 	const getPublicMuisc = async () => {
 		const MusicListReq = await $api.post('api/v1/music/public')
 		console.log(MusicListReq)
-		if (MusicListReq.code == 200) {
-			MusicList.value = MusicListReq.data
+		if (MusicListReq.length > 0) {
+			MusicList.value = MusicListReq
 		}
 	}
 </script>

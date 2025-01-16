@@ -1,5 +1,5 @@
 <template>
-	<z-paging :scroll-with-animation="true" :show-scrollbar="false" ref="pagingRef" :pagingStyle="{padding:'0 24rpx'}">
+	<z-paging ref="pagingRef" :show-scrollbar="false" :pagingStyle="{padding:'0 24rpx'}">
 		<template #top>
 			<CommonHeader defindTitle="AI工作总结" />
 		</template>
@@ -48,13 +48,13 @@
 				</view>
 
 				<view class="btn">
-					<u-button :customStyle="{height:'60rpx', borderRadius:'25rpx',width:'80%'}" class="bth_content"
-						:disabled="isRecive" @click="onCreateContent" type="primary">生成报告</u-button>
+					<u-button :customStyle="{height:'60rpx', borderRadius:'10rpx',width:'80%',border:'0rpx'}"
+						class="bth_content" :disabled="isRecive" @click="onCreateContent" type="primary">生成报告</u-button>
 				</view>
 
 				<view class="btn">
-					<u-button :customStyle="{height:'60rpx', borderRadius:'25rpx',width:'80%'}" class="bth_content"
-						:disabled="isRecive" @click="exportFile">导出</u-button>
+					<u-button :customStyle="{height:'60rpx', borderRadius:'10rpx',width:'80%',border:'0rpx'}"
+						class="bth_content" :disabled="isRecive" @click="exportFile">复制文字</u-button>
 				</view>
 			</view>
 			<view class="create-type_header" v-if="contentStr">
@@ -64,12 +64,13 @@
 				<MessageItem :content="contentStr" />
 			</view>
 		</view>
+		<template #bottom>
+			<view class="AiDailyModel_footer">
+				<text class="AiDailyModel_footer_content">特别说明：本页面的所有文章内容为概率模型所生成，同一标题每次点击 “生成”
+					将会产生不同内容。生成内容不代表本应用的观点和立场</text>
+			</view>
+		</template>
 
-
-		<view class="AiDailyModel_footer">
-			<text class="AiDailyModel_footer_content">特别说明：本页面的所有文章内容为概率模型所生成，同一标题每次点击 “生成”
-				将会产生不同内容。生成内容不代表本应用的观点和立场</text>
-		</view>
 	</z-paging>
 	<up-popup v-model:show="show" round="15">
 		<view class="overPopup">
@@ -80,12 +81,18 @@
 				<text>{{items}} 字</text>
 			</view>
 		</view>
-
 	</up-popup>
 
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import { ref, nextTick, reactive } from 'vue'
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
@@ -94,6 +101,7 @@
 	import { useChatStore } from '@/store';
 	const show = ref(false)
 	const seletedNums = ref(150)
+	const pagingRef = ref(null)
 	const changeNums = (nums : number) => {
 		seletedNums.value = nums
 		show.value = false
@@ -124,14 +132,19 @@
 			exportTxt(contentStr.value);
 		}
 	}
-	const { streamRequest, isRecive , streamSpark} = useStreamHooks()
-	const pagingRef = ref()
+	const { streamRequest, isRecive, streamSpark, onCancelRequest
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	//滚动到底部
-	const onScroolToBottom = debounce(() => {
+	const scrollToBottom = () => {
 		nextTick(() => {
-			pagingRef.value.scrollToBottom()
-		})
-	}, 500)
+			if (pagingRef.value) {
+				pagingRef.value.scrollToBottom();
+			}
+		});
+	};
 	//开始生成内容
 	const onCreateContent = () => {
 		if (!inputValue.value) {
@@ -173,10 +186,10 @@
 		streamRequest({
 			url: 'api/v1/chat2/v35',
 			data: data,
-			onmessage: async (text:string) => {
+			onmessage: async (text : string) => {
 				newStr += text
 				contentStr.value = await streamSpark(newStr)
-				onScroolToBottom()
+				scrollToBottom()
 			},
 			onfinish() {
 				console.log('成功')
@@ -371,7 +384,7 @@
 		overflow-y: scroll;
 		border-radius: 20rpx;
 		border: 1px solid $uni-border-color;
-		max-height: 400rpx;
+		// max-height: 400rpx;
 		padding: 20rpx;
 		font-size: 27rpx;
 

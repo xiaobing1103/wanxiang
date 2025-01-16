@@ -15,11 +15,6 @@
 
 <script>
 	import {
-		urlToBase64,
-		pathToBase64,
-		base64ToPath
-	} from '@/uni_modules/sp-html2canvas-render/utils/index.js'
-	import {
 		saveBase64Img
 	} from '@/utils'
 
@@ -80,6 +75,8 @@
 				markmapDOM: null,
 				currentContent: '',
 				isScriptsLoaded: false,
+				updateCounter: 0, // 新增：计数器
+				updateThreshold: 10, // 新增：触发更新的阈值
 				defaultContent: `# ChatGptWeb系统
   ## 基础功能
   - 支持AI聊天
@@ -205,8 +202,12 @@
 				}
 				try {
 					this.currentContent = String(newValue);
+					this.updateCounter++; // 增加计数器
 					if (this.isScriptsLoaded && this.markmapDOM) {
-						this.renderContent(this.currentContent);
+						if (this.updateCounter >= this.updateThreshold) {
+							this.renderContent(this.currentContent);
+							this.updateCounter = 0; // 重置计数器
+						}
 					}
 					// 通知内容更新
 					this.$ownerInstance.callMethod('changeMap');

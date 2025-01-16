@@ -14,7 +14,9 @@ app.$mount()
 // #endif
 
 // #ifdef VUE3
-import { createSSRApp } from 'vue'
+import {
+	createSSRApp
+} from 'vue'
 import uviewPlus from 'uview-plus'
 import * as Pinia from 'pinia';
 export function createApp() {

@@ -8,7 +8,6 @@
 				<view class="uploadFileTranslate_top">
 					<view class="uploadFileTranslate_left">
 						<text>{{currentLangFirst}}</text>
-
 					</view>
 					<view class="uploadFileTranslate_middle">
 						→
@@ -27,6 +26,7 @@
 							<view class="translateContent_middle_desc">
 								支持PDF、Word、(.docx)、Excel或PowerPoint（.pptx）、txt 等格式文件
 							</view>
+							<!-- #ifndef APP -->
 							<up-upload
 								:customStyle="{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}"
 								:fileList="fileList1" @afterRead="afterRead" name="4" multiple accept="all"
@@ -36,6 +36,17 @@
 									上传文档
 								</view>
 							</up-upload>
+							<!-- #endif -->
+							<!-- #ifdef APP -->
+							<UploadDemo :count="1" @UploadCallback="afterRead" type="file">
+								<template #defaultTemplate>
+									<view :style="{background: isTransLateLoading ? '#c8c9cc': ''}" type="primary"
+										class="translateContent_middle_button2">
+										上传文档
+									</view>
+								</template>
+							</UploadDemo>
+							<!-- #endif -->
 						</view>
 					</view>
 				</view>
@@ -68,9 +79,18 @@
 		</template>
 	</z-paging>
 	<up-picker @cancel="openPopup= false" :show="openPopup" :columns="[languages]" @confirm="confirmPicker" />
+
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	import UploadDemo from '@/pages/index/subPage/components/UploadDemo.vue'
+	// #endif
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { nextTick, reactive, ref } from 'vue';
@@ -81,7 +101,11 @@
 	const languages = ['文言文', '白话文']
 	const currentLangFirst = ref('白话文')
 	const currentLang = ref('文言文')
-	const { streamRequest, isRecive , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, streamSpark
+		// #ifdef APP
+		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const showpicker = ref(false)
 	const textValue = ref('')
 	const currentType = ref('')
@@ -125,7 +149,7 @@
 			uni.$u.toast('翻译执行中，请等待...')
 			return
 		}
-		const returnDatas = await uploadFileBefore(event, ['pdf', 'txt', 'docx', 'pptx', 'excel'])
+		const returnDatas = await uploadFileBefore(event, ['pdf', 'txt', 'docx', 'pptx', 'excel'], null, null, null, null, 'file2text')
 		if (returnDatas) {
 			let ReadFileReq = await $api.post('api/v1/files/file2text', returnDatas.formdata, returnDatas.isJson, undefined, null, returnDatas.isWechatSendImages)
 			if (typeof ReadFileReq == 'string') {
@@ -250,7 +274,7 @@
 		const streamOptions = {
 			url: 'api/v1/chat2/zhipu',
 			data: data,
-			onmessage: async (text:string) => {
+			onmessage: async (text : string) => {
 				newStr += text
 				msgContent.value = await streamSpark(newStr)
 				onScroolToBottom()

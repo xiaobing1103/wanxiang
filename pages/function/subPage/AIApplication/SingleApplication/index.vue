@@ -108,9 +108,17 @@
 			</view>
 		</template>
 	</z-paging>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
+
 	import { onMounted, reactive, ref, nextTick } from 'vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import {
@@ -127,7 +135,11 @@
 	const ChatStore = useChatStore()
 	const pagingRef = ref(null)
 	const descInput = ref('')
-	const { isRecive, streamRequest , streamSpark} = useStreamHooks()
+	const { isRecive, streamRequest, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const bthStyles = {
 		height: '67rpx',
 		border: '0',
@@ -256,7 +268,7 @@
 			onmessage: async (text : string) => {
 				console.log(text)
 				newStr += text
-			    descInput.value = await streamSpark(newStr)	
+				descInput.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
 			onfinish() {

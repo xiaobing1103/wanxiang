@@ -85,7 +85,7 @@
 					})
 					uni.hideLoading();
 					// 提示用户下载成功
-					uni.showToast({ title: "下载成功", icon: "success" });
+					uni.showToast({ title: "下载成功,请到相册内查看内容！", icon: "success" });
 				}
 				// 如果该资源不可下载或文件格式出错则提示用户
 				else {
@@ -111,9 +111,11 @@
 	}
 
 	const playVideos = (items : VideoHistoryDataType) => {
-		SoraPromptPramas.showVideo = true
-		SoraPromptPramas.playVideo = items.url
-
+		// SoraPromptPramas.showVideo = true
+		// SoraPromptPramas.playVideo = items.url
+		uni.navigateTo({
+			url:'/pages/function/subPage/TextCreateVideo/PlayVideo/index?url=' + items.url
+		})
 	}
 
 	onLoad((query) => {

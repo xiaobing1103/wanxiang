@@ -23,7 +23,7 @@
 				<template v-for="(items,index) in layoutShowTags" :key="index">
 
 					<text @click="ChangeSeletedTags(items)"
-						:class="{'activeTags' : commonParmas.tags.find((item)=> item == items)  ,'DefaultMusicPages_MusicStyle_showTags_items': true }">{{items}}</text>
+						:class="{'activeTags' :  (commonParmas?.tags ?? []).find((item)=> item == items)  ,'DefaultMusicPages_MusicStyle_showTags_items': true }">{{items}}</text>
 				</template>
 			</view>
 		</view>
@@ -41,7 +41,7 @@
 					<template v-for="(items,index) in musicTags.filter((items)=>items.name == currentMusicStyleName)"
 						:key="index">
 						<view @click="ChangeSeletedTags(items.text)"
-							:class="{'activeTags' : commonParmas.tags.find((item)=> item == items.text) ,'DefaultMusicPages_MusicStyle_showTags_items': true }">
+							:class="{'activeTags' :(commonParmas?.tags ?? []).find((item)=> item == items.text) ,'DefaultMusicPages_MusicStyle_showTags_items': true }">
 							{{items.text}}
 						</view>
 					</template>
@@ -99,8 +99,14 @@
 		console.log('groupChange', n);
 	};
 	const ChangeSeletedTags = (items : string) => {
+
 		if (commonParmas.value.tags.includes(items)) {
-			commonParmas.value.tags = commonParmas.value.tags.filter((re) => items !== re)
+			if (commonParmas.value.tags.length > 1) {
+				commonParmas.value.tags = commonParmas.value.tags.filter((re) => items !== re)
+			} else {
+				uni.$u.toast('至少选择一个音乐风格进行创作！');
+			}
+
 		} else {
 			if (commonParmas.value.tags.length < 3) {
 				commonParmas.value.tags.push(items)

@@ -27,7 +27,6 @@
 	import { useAiAgentChats, useUserStore, useChatStore } from '@/store'
 	import DefaultTemplate from './defaultTemplate.vue'
 	import { AChat, Agent, AgentIdMap, AgentKeyEnum, CreateImageDrawComplete, CreateImageDrawLoadding, FileItem, MainPagesInterFace } from '@/store/aiAgentChats'
-	import { useStreamHooks } from '@/hooks/useStreamHooks'
 	import { generateUUID } from '@/tools/uuid';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks'
 	import { storeToRefs } from 'pinia'

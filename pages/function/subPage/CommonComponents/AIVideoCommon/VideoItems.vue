@@ -1,8 +1,8 @@
 <template>
 	<up-overlay :show="SoraPromptPramas.showVideo">
 		<view class="up-overlay">
-			<view class="header" :style="{height: navBarHeight + 'px' }">
-				<view :style="{paddingTop:menuButtonInfo?.top + 'px'}">
+			<view class="header" :style="{height: ScreenStore.navBarHeight + 'px' }">
+				<view>
 					<up-icon @click="SoraPromptPramas.showVideo = false" name="close" color="#2979ff"
 						size="28"></up-icon>
 				</view>
@@ -35,20 +35,14 @@
 </template>
 
 <script setup lang="ts">
-	import { useCounterStore } from '@/store';
+	import { useScreenStore } from '@/store';
 	import { storeToRefs } from 'pinia';
 	import SunnyVideo from '../sunny-video/components/sunny-video/sunny-video.vue'
 	import { onUnload } from '@dcloudio/uni-app';
 	import { VideoVmodalType } from './datas';
 	import { onMounted, ref } from 'vue';
 	const SoraPromptPramas = defineModel<VideoVmodalType>('SoraPromptPramas')
-	//  #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
-	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
-	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
-	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
-	// #endif
+	const ScreenStore = useScreenStore()
 	const countdown = ref(240);
 	// 模拟倒计时
 	onMounted(() => {
@@ -80,6 +74,7 @@
 		display: flex;
 		justify-content: flex-start;
 		padding: 20rpx 50rpx;
+		align-items: flex-end;
 	}
 
 	.VideoBox {

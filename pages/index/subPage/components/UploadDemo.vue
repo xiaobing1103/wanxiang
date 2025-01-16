@@ -50,6 +50,10 @@
 				default: false,
 				type: Boolean,
 			},
+			limitSize: {
+				default: 5,
+				type: Number,
+			}
 		},
 		data() {
 			return {

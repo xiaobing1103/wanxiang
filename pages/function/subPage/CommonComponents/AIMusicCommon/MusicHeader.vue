@@ -1,7 +1,6 @@
 <template>
-	<view class="MusicHeader" :style="{height: navBarHeight + 40+ 'px' }">
-
-		<view class="MusicHeader_icons" :style="{paddingTop:menuButtonInfo?.top + 'px'}">
+	<view class="MusicHeader" :style="{height: ScreenStore.navBarHeight + 40+ 'px' }">
+		<view class="MusicHeader_icons">
 			<view class="MusicHeader_leftIcons">
 				<up-icon @click="backPage" name="arrow-left"></up-icon>
 			</view>
@@ -27,16 +26,10 @@
 	import LevelUpVip from '@/components/CommonChat/LevelUpVip.vue';
 	import { reactive } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
-	import { useCounterStore } from '@/store';
+	import { useScreenStore } from '@/store';
 	import { storeToRefs } from "pinia"
 
-	//  #ifdef MP-WEIXIN
-	const system = useCounterStore()
-	const { statusBarHeight, menuButtonInfo, navBarHeight } = storeToRefs(system)
-	statusBarHeight.value = uni.getSystemInfoSync().statusBarHeight
-	menuButtonInfo.value = uni.getMenuButtonBoundingClientRect()
-	navBarHeight.value = menuButtonInfo.value.height + statusBarHeight.value + 10
-	// #endif
+	const ScreenStore = useScreenStore()
 	const currentPages = defineModel('currentPages')
 	const list1 = reactive([
 		{ name: '自定义作曲' },
@@ -67,7 +60,9 @@
 		width: 100%;
 		margin: 20rpx 0;
 		padding: 0 30rpx;
-
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
 		&_iconsBOX {
 			align-items: center;
 			justify-content: center;

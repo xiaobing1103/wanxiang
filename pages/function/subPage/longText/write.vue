@@ -1,7 +1,6 @@
 <template>
 	<z-paging ref="pagingRef" :show-scrollbar="false" :scroll-with-animation="true">
 		<template #top>
-			<!-- <up-navbar title="生成大纲" :fixed="false" :autoBack="true"></up-navbar> -->
 			<CommonHeader defindTitle="生成大纲" />
 		</template>
 		<view class="body">
@@ -29,7 +28,7 @@
 					class="description">文章大纲往往对文章生成的质量有着很大的关系，如AI生成的大纲不满意或不符合文章主题，建议点击重新生成!否则AI创作的文章水平会参差不齐，请知悉!</text>
 				<view class="layoutBtn" @click="createContent">
 					<up-button :customStyle="{width:'50%',height:'60rpx',}" shape="circle" type="primary"
-						:loading="buttonLoading" :disabled="buttonLoading">生成正文</up-button>
+						:loading="buttonLoading" :disabled="isRecive">生成正文</up-button>
 				</view>
 			</view>
 			<!-- 正文内容 -->
@@ -49,14 +48,22 @@
 				<text @click="onCopy" v-if="outLineIndex == splitOutLineArr.length" class="btn">复制全文</text>
 				<view @click="onGoOnCreate" v-else class="layoutBtn">
 					<up-button :customStyle="{width:'50%',height:'60rpx',}" shape="circle" type="primary"
-						:loading="buttonLoading" :disabled="buttonLoading">继续生成</up-button>
+						:loading="buttonLoading" :disabled="isRecive">继续生成</up-button>
 				</view>
 			</view>
 		</view>
 	</z-paging>
+	<!-- #ifdef APP -->
+	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
+		@onFinish="finishCore" />
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
+	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
+
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { ref, computed, watchEffect, watch, nextTick } from 'vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks.ts'
@@ -69,7 +76,11 @@
 		outLine ?: string
 	}
 	const pagingRef = ref()
-	const { streamRequest, isRecive, onCancelRequest , streamSpark } = useStreamHooks()
+	const { streamRequest, isRecive, onCancelRequest, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks()
 	const showContent = ref(false)
 	const themeStr = ref('')
 	const outlineStr = ref('')
@@ -159,8 +170,8 @@
 			},
 			onmessage: async (text : string) => {
 				newStr += text
-				contentExtraArr.value[outLineIndex.value].content =await streamSpark(newStr)
-	
+				contentExtraArr.value[outLineIndex.value].content = await streamSpark(newStr)
+
 				if (isScroll) {
 					pagingRef.value.scrollToBottom()
 				}
@@ -190,7 +201,7 @@
 			return
 		}
 		if (!themeStr.value) {
-			uni.$u.toast('写作主题为空,无法为您生成大纲')
+			uni.$u.toast('文章标题为空,无法为您生成大纲')
 			return
 		}
 		outlineStr.value = ''
@@ -274,9 +285,9 @@
 				uni.hideLoading()
 				buttonLoading.value = false
 			},
-			onmessage:async(text : string) => {
+			onmessage: async (text : string) => {
 				newStr += text
-				outlineStr.value=await streamSpark(newStr)
+				outlineStr.value = await streamSpark(newStr)
 				nextTick(() => {
 					pagingRef.value.scrollToBottom()
 				})

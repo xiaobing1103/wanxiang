@@ -47,8 +47,12 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 	const appStreamRequest = async (options : StreamOptions) => {
 		currentOptions = options
 		console.log(chatSSEClientRef)
+		let url = BaseApi + options.url
+		if (currentOptions.isAiAigent) {
+			url = options.url
+		}
 		chatSSEClientRef.value.startChat({
-			url: BaseApi + options.url,
+			url: url,
 			body: options.data,
 			headers: {
 				'Access-Token': UserStore.userInfo?.access_token,
@@ -110,9 +114,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 			}
 		}
 	}
-
 	// #endif
-
 
 	//用于微信
 	const wechatStreamRequest = async (options : StreamOptions) => {
@@ -130,7 +132,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 					console.log(err, '微信错误');
 					options.onerror(err)
 				},
-				LoadingConfig: LoadingConfig,
+				LoadingConfig: options.LoadingConfig ? options.LoadingConfig : LoadingConfig,
 				checkNumsType: options.checkNumsType ? options.checkNumsType : commonModel[ChatStore.model]?.checkNumsType,
 				noCheckNums: options.noCheckNums
 			}
@@ -219,7 +221,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 					console.log(err)
 					onError(err)
 				},
-				LoadingConfig: LoadingConfig,
+				LoadingConfig: options.LoadingConfig ? options.LoadingConfig : LoadingConfig,
 				controller: { signal },
 				checkNumsType: options.checkNumsType ? options.checkNumsType : commonModel[ChatStore.model]?.checkNumsType,
 				noCheckNums: options.noCheckNums
@@ -444,7 +446,6 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 		cancelFn && cancelFn()
 		uni.$u.toast('已暂停请求！');
 		// #endif
-
 		// #ifdef H5
 		if (controller.value) {
 			controller.value.abort();
@@ -454,8 +455,14 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 			console.warn('No active request to cancel');
 		}
 		// #endif
+		// #ifdef APP
+		chatSSEClientRef.value.stopChat()
+		console.log(chatSSEClientRef.value.stopCount)
+		// #endif
 	};
-
+	const onStop = (a) => {
+		console.log(a)
+	}
 	//文档翻译限制
 	const verifyTranslateTextLimit = (text : string) => {
 		// 统计汉字数量
@@ -493,7 +500,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 				ChatStore.setShowlevelUpVip(true)
 				resolve(false)
 			} else {
-				resolve(true)
+				resolve(checkRes.data)
 			}
 		})
 
@@ -530,7 +537,8 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 		errorCore,
 		messageCore,
 		finishCore,
-		chatSSEClientRef
+		chatSSEClientRef,
+		onStop
 		// #endif
 	}
 }
