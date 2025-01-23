@@ -1,6 +1,7 @@
 <template>
 	<view class="SoraPrompt">
 		<view class="restNums">
+			<!-- #ifndef APP -->
 			<view class="restNums_box">
 				<up-button @click="toVipPages"
 					:customStyle="{background:'linear-gradient(to right, #314cd7, #ae1dfd)',width:'100%',height:'70rpx',borderRadius:'15rpx',color:'white'}">
@@ -12,6 +13,23 @@
 					<up-icon @click="SoraPromptPramas.openModal = true" name="info-circle-fill"></up-icon>
 				</text>
 			</view>
+			<!-- #endif -->
+			<!-- #ifdef APP -->
+			<template v-if="UserStore.Ios_control">
+				<view class="restNums_box">
+					<up-button @click="toVipPages"
+						:customStyle="{background:'linear-gradient(to right, #314cd7, #ae1dfd)',width:'100%',height:'70rpx',borderRadius:'15rpx',color:'white'}">
+						<image class="restNums_box_icon" :src="$assets.createVideoVipIcon" mode=""></image>
+						<text :style="{marginRight:'10rpx'}">剩余次数</text>
+						{{SoraPromptPramas.restNum}}
+					</up-button>
+					<text :style="{marginLeft:'20rpx'}">
+						<up-icon @click="SoraPromptPramas.openModal = true" name="info-circle-fill"></up-icon>
+					</text>
+				</view>
+			</template>
+			<!-- #endif -->
+
 		</view>
 		<template v-if="currentPages">
 			<view class="SoraPrompt_Input_uploadImages">
@@ -92,7 +110,8 @@
 	import { videoword, exampleData, VideoVmodalType, imgword } from './datas';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { useStreamHooks } from '@/hooks/useStreamHooks'
-	import { useChatStore } from '@/store';
+	import { useChatStore, useUserStore } from '@/store';
+	const UserStore = useUserStore()
 	const { streamRequest, isRecive, streamSpark
 		// #ifdef APP
 		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef

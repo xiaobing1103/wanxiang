@@ -5,6 +5,7 @@
 		</template>
 		<view class="HandlerImage">
 			<view class="restNums">
+				<!-- #ifndef APP -->
 				<view class="restNums_box">
 					<up-button @click="toVipPages"
 						:customStyle="{background:'linear-gradient(to right, #314cd7, #ae1dfd)',width:'100%',height:'60rpx',borderRadius:'15rpx',color:'white'}">
@@ -13,6 +14,19 @@
 						{{restNum}}
 					</up-button>
 				</view>
+				<!-- #endif -->
+				<!-- #ifdef APP -->
+				<template v-if="UserStore.Ios_control">
+					<view class="restNums_box">
+						<up-button @click="toVipPages"
+							:customStyle="{background:'linear-gradient(to right, #314cd7, #ae1dfd)',width:'100%',height:'60rpx',borderRadius:'15rpx',color:'white'}">
+							<image class="restNums_box_icon" :src="$assets.createVideoVipIcon" mode=""></image>
+							<text :style="{marginRight:'10rpx'}">剩余次数</text>
+							{{restNum}}
+						</up-button>
+					</view>
+				</template>
+				<!-- #endif -->
 				<!-- <view class="restNums_history" @click="toHistory">
 					历史记录
 				</view> -->
@@ -70,6 +84,7 @@
 	import { useUserStore } from '@/store';
 	import { AppName } from '@/http';
 	import { toCopyText } from '@/utils';
+
 	const playVideo = ref('')
 	const tips = ref('')
 	const props = defineProps<{ defindDatas : { title : string, requestUrl : string } }>()

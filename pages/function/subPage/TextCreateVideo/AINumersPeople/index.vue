@@ -6,16 +6,16 @@
 
 		<view class="AINumersPeople">
 			<view class="restNums">
+				<!-- #ifndef APP -->
 				<view class="restNums_box">
 					<up-button @click="toVipPages"
 						:customStyle="{background:'linear-gradient(to right, #314cd7, #ae1dfd)',width:'100%',height:'60rpx',borderRadius:'15rpx',color:'white',whiteSpace:'nowrap'}">
 						<image class="restNums_box_icon" :src="$assets.createVideoVipIcon" mode=""></image>
 						<view :style="{marginRight:'10rpx', whiteSpace:'nowrap'}">剩余次数</view>
 						<view>{{restNum}}</view>
-
 					</up-button>
-
 				</view>
+				<!-- #endif -->
 				<view class="restNums_history" @click="toHistory">
 					历史记录
 				</view>

@@ -33,14 +33,11 @@
 		computed: {
 			richimg() {
 				return `
-		    <img style="width: 200px; object-fit: cover" src="${this.webImageBase1}" />
-		    <img style="width: 200px; object-fit: cover" src="${this.webImageBase2}" />
-		    <img style="width: 200px; object-fit: cover" src="${this.locImageBase}" />
-		    `
+	            <img style="width: 200px; object-fit: cover" src="${this.webImageBase1}" />
+	            <img style="width: 200px; object-fit: cover" src="${this.webImageBase2}" />
+	            <img style="width: 200px; object-fit: cover" src="${this.locImageBase}" />
+	            `
 			}
-		},
-		created() {
-			this.handleImage()
 		},
 		methods: {
 			renderOver(e) {
@@ -68,92 +65,44 @@
 </script>
 
 <script module="renderScript" lang="renderjs">
+	import * as d3 from 'd3';
+	import {
+		Transformer
+	} from 'markmap-lib';
+	import {
+		Markmap
+	} from 'markmap-view';
+
 	export default {
 		data() {
 			return {
-				transformer: null,
+				transformer: new Transformer(),
 				markmapDOM: null,
 				currentContent: '',
-				isScriptsLoaded: false,
-				updateCounter: 0, // 新增：计数器
-				updateThreshold: 10, // 新增：触发更新的阈值
+				updateCounter: 0,
+				updateThreshold: 10,
 				defaultContent: `# ChatGptWeb系统
-  ## 基础功能
-  - 支持AI聊天
-  - 支持GPT4
-  - 支持DLLAE2
-  - 支持Midjourney
-  - 支持mind思维导图生成
-  - 更多功能等你探索......
-
-  ## 更多内容
-  -  在上面输入您想要生成的内容
-  - 点击生成即可
-  `
+	  ## 基础功能
+	  - 支持AI聊天
+	  - 支持GPT4
+	  - 支持DLLAE2
+	  - 支持Midjourney
+	  - 支持mind思维导图生成
+	  - 更多功能等你探索......
+	
+	  ## 更多内容
+	  - 在上面输入您想要生成的内容
+	  - 点击生成即可
+	  `
 			}
 		},
 		mounted() {
-			// 按顺序加载所需资源
-			this.loadBasicScripts();
+			this.initializeMarkmap();
 		},
 		methods: {
-			loadBasicScripts() {
-				// 先加载基础样式
-				const baseStyle = document.createElement('style');
-				baseStyle.textContent = `
-	                .markmap-wrapper {
-	                    width: 100%;
-	                    height: 100%;
-	                    min-height: 500px;
-	                }
-	                .markmap-svg {
-	                    width: 100%;
-	                    height: 100%;
-	                }
-	                .markmap-node {
-	                    cursor: pointer;
-	                }
-	                .markmap-node-circle {
-	                    fill: #fff;
-	                    stroke: #999;
-	                    stroke-width: 1.5px;
-	                }
-	                .markmap-node-text {
-	                    fill: #333;
-	                    font: 12px sans-serif;
-	                }
-	                .markmap-link {
-	                    fill: none;
-	                    stroke: #999;
-	                    stroke-width: 1.5px;
-	                }
-	            `;
-				document.head.appendChild(baseStyle);
-				// 按顺序加载脚本
-				this.loadScript('static/d3@7.js')
-					.then(() => this.loadScript('static/markmap-lib.js'))
-					.then(() => this.loadScript('static/markmap-view.js'))
-					.then(() => {
-						this.isScriptsLoaded = true;
-						this.initializeMarkmap();
-					})
-					.catch(error => {
-						console.error('脚本加载失败:', error);
-					});
-			},
-
-			loadScript(src) {
-				return new Promise((resolve, reject) => {
-					const script = document.createElement('script');
-					script.src = src;
-					script.onload = resolve;
-					script.onerror = reject;
-					document.head.appendChild(script);
-				});
-			},
 			initializeMarkmap() {
 				try {
-					if (!window.markmap || !window.d3) {
+					if (!Markmap || !d3) {
 						throw new Error('必要的库未加载');
 					}
 					// 清理现有内容
@@ -164,17 +113,12 @@
 					svg.setAttribute('id', 'svgRef');
 					svg.setAttribute('class', 'markmap-svg');
 					container.appendChild(svg);
-					// 初始化transformer
-					const {
-						Transformer
-					} = window.markmap;
-					this.transformer = new Transformer();
-					// 创建markmap实例
-					this.markmapDOM = window.markmap.Markmap.create(svg, {
+					// 初始化markmap实例
+					this.markmapDOM = Markmap.create(svg, {
 						autoFit: true,
+						fitRatio: 1.0,
 						initialZoom: 0.9,
-						maxWidth: 600,
-						color: window.d3.scaleOrdinal(window.d3.schemeCategory10),
+						color: d3.scaleOrdinal(d3.schemeCategory10),
 						nodeMinHeight: 16,
 						spacingVertical: 5,
 						spacingHorizontal: 80,
@@ -182,17 +126,15 @@
 						embedGlobalCSS: true
 					});
 					// 初始渲染
+					svg.setAttribute('width', '100%');
+					svg.setAttribute('height', '100%');
+
 					this.renderContent();
 				} catch (error) {
 					console.error('初始化失败:', error);
 				}
 			},
 			restartData() {
-				if (!this.isScriptsLoaded) {
-					this.loadBasicScripts();
-					return;
-				}
-				// this.currentContent = this.defaultContent
 				this.initializeMarkmap();
 			},
 			propObserver(newValue) {
@@ -203,14 +145,12 @@
 				try {
 					this.currentContent = String(newValue);
 					this.updateCounter++; // 增加计数器
-					if (this.isScriptsLoaded && this.markmapDOM) {
+					if (this.markmapDOM) {
 						if (this.updateCounter >= this.updateThreshold) {
 							this.renderContent(this.currentContent);
 							this.updateCounter = 0; // 重置计数器
 						}
 					}
-					// 通知内容更新
-					this.$ownerInstance.callMethod('changeMap');
 				} catch (error) {
 					console.error('处理新内容失败:', error);
 				}
@@ -242,7 +182,7 @@
 				}
 			}
 		}
-	}
+	};
 </script>
 
 <style lang="scss" scoped>
@@ -264,6 +204,7 @@
 		width: 100%;
 		height: 100%;
 		height: 600rpx;
+		position: relative;
 	}
 
 	.AImapping1 {
@@ -304,5 +245,10 @@
 
 	.base-img {
 		width: 100%;
+	}
+
+	#svgRef {
+		width: 100vw;
+		height: 40vh;
 	}
 </style>

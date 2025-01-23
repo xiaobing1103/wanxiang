@@ -118,14 +118,17 @@
 				break
 		}
 	}
+	
 	const changeMap = () => {
 		if (MappingRenderJSRef.value) {
 			MappingRenderJSRef.value.handleContentChange(descInput.value)
 		}
 	}
+	
 	const initMap = (e) => {
 		console.log(e)
 	}
+	
 	const updateInput = (newValue) => {
 		descInput.value = newValue;
 	};
@@ -141,6 +144,7 @@
 		)
 		downloadBase64Image(data, '123')
 	}
+	
 	const descInput = ref(`# ChatGptWeb系统
   ## 基础功能
   - 支持AI聊天
@@ -154,6 +158,7 @@
   -  在上面输入您想要生成的内容
   - 点击生成即可
   `)
+  
 	enum createEnum {
 		'TITLE' = 'title',
 		'CONTENT' = 'content'
@@ -168,6 +173,7 @@
 		markmap?.setData(root)
 		markmap?.fit()
 	}
+	
 	onMounted(() => {
 		descInput.value = `# ChatGptWeb系统
   ## 基础功能
@@ -247,7 +253,6 @@
 		} else {
 			uni.$u.toast('请先登录账号！')
 		}
-
 		// #endif
 
 	}
@@ -397,5 +402,12 @@
 			width: 100%;
 			padding: 20rpx;
 		}
+	}
+
+	.parent-container {
+		display: flex;
+		flex-direction: column;
+		height: 600px;
+		width: 100vw;
 	}
 </style>

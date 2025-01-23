@@ -11,9 +11,11 @@
 			<UserInfo />
 			<!-- 会员卡片 -->
 			<template v-if="userStore.userInfo ">
+				<!-- #ifndef APP -->
 				<template v-if="isIos">
 					<VipCard />
 				</template>
+				<!-- #endif -->
 			</template>
 		</template>
 		<!-- 菜单列表 -->
@@ -56,8 +58,10 @@
 	onMounted(() => {
 		getIosEnv()
 	})
+
+	
 	const getIosEnv = () => {
-		$api.get(`api/v1/vip/xcx_pay?version_code=0.1.34`, {}, {}).then((res) => {
+		$api.get(`api/v1/vip/xcx_pay?version_code=2.3.1.9`, {}, {}).then((res) => {
 			if (res.code == 200) {
 				isIos.value = true
 			} else {

@@ -22,7 +22,7 @@
 
 	<!-- #ifdef APP -->
 	<up-popup round="10" :show="ChatStore.shareButton" @close="ChatStore.setShareButton(false)">
-		<ShareBtn :sharedataTemp="ChatStore.sharedata"></ShareBtn>
+		<!-- <ShareBtn :sharedataTemp="ChatStore.sharedata"></ShareBtn> -->
 	</up-popup>
 	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
 		@onFinish="finishCore" />
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 	// #ifdef APP
 	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
-	import ShareBtn from '@/components/ShareBtn.vue';
+	// import ShareBtn from '@/components/ShareBtn.vue';
 	// #endif
 	import ChangeModel from '@/components/CommonChat/ChangeModel.vue'
 	import { onLoad, onShow } from '@dcloudio/uni-app'
@@ -205,17 +205,15 @@
 				scrollToBottom();
 			},
 			onerror: (err) => {
+				console.log(err)
 				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
 				if (currentMessage.state == 'waite') {
 					ChatBoxRef.value.deleteMessage(id)
 				}
 				if (err?.includes('请升级会员')) {
-					uni.hideTabBar({
-						success: () => {
-							ChatStore.setShowLevelUpVipContent(err)
-							ChatStore.setShowlevelUpVip(true)
-						}
-					})
+					ChatStore.setShowLevelUpVipContent(err)
+					ChatStore.setShowlevelUpVip(true)
+					ChatStore.setLoadingMessage(false)
 				}
 			},
 			onfinish: (response) => {
