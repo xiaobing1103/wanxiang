@@ -172,9 +172,20 @@
 			if (users.code == 200) {
 				userStore.userInfo = users.data;
 				await getLastdayInfo()
-				uni.switchTab({
-					url: '/pages/my/index'
-				});
+				setTimeout(() => {
+					uni.switchTab({
+						url: '/pages/my/index',
+						success() {
+							console.log('跳转成功');
+						},
+						fail(err) {
+							console.error('跳转失败:', err);
+						}
+					},
+
+					);
+				}, 1000);
+
 				uni.$u.toast('登录成功！')
 			}
 
@@ -198,10 +209,15 @@
 		if (lastDatReq.code == 200) {
 			if (lastDatReq.data.end == false) {
 				ScreenStore.setLastDayDatas(lastDatReq.data)
+				// #ifndef APP
 				ScreenStore.setLastModalisOpen(true)
+				// #endif
+				
+
 			}
 		}
 	}
+	const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 	const sendCode = async () => {
 		if (!verifyPhoneFn(PhoneLoginParmas.phone || '')) {
 			uni.$u.toast('请输入正确的手机号！');

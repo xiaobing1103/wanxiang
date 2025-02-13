@@ -16,6 +16,11 @@
 					<VipCard />
 				</template>
 				<!-- #endif -->
+				<!-- #ifdef APP -->
+				<template v-if="userStore.Ios_control">
+					<VipCard />
+				</template>
+				<!-- #endif -->
 			</template>
 		</template>
 		<!-- 菜单列表 -->
@@ -57,11 +62,12 @@
 	const isIos = ref(false)
 	onMounted(() => {
 		getIosEnv()
+
 	})
 
-	
+
 	const getIosEnv = () => {
-		$api.get(`api/v1/vip/xcx_pay?version_code=2.3.1.9`, {}, {}).then((res) => {
+		$api.get(`api/v1/vip/xcx_pay?version_code=2.3.2.1`, {}, {}).then((res) => {
 			if (res.code == 200) {
 				isIos.value = true
 			} else {
@@ -69,6 +75,9 @@
 			}
 		})
 	}
+
+
+
 	const popupShow4 = ref(false);
 	const popupShow5 = ref(false)
 	const popupShow6 = ref(false)

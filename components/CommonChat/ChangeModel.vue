@@ -45,13 +45,14 @@
 		background-color: white;
 		align-items: center;
 		position: absolute;
-		width: 71%;
+		width: 80%;
 		display: flex;
 		border-radius: 40rpx;
 		padding: 10rpx;
 		font-size: 27rpx;
 
 		&_text2 {
+			width: max-content;
 			font-size: 27rpx;
 			color: #9292a9;
 		}
@@ -63,7 +64,8 @@
 			border: 2rpx solid #eaeaea;
 			justify-content: center;
 			border-radius: 30rpx;
-			width: 67%;
+			width: max-content;
+			min-width: 67%;
 			padding: 10rpx;
 		}
 

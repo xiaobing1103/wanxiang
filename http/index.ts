@@ -254,11 +254,11 @@ async function getStream(options : { url : string, data : any, isStream : boolea
 	console.log(options)
 	const { url, data, isStream, callback, errorCallback, LoadingConfig, controller, checkNumsType, noCheckNums } = options
 	let res
-	if (!noCheckNums) {
+	if (!noCheckNums && checkNumsType) {
 		res = await post('api/v1/number2/check', { type: checkNumsType, })
 	}
 
-	if (res?.code == 200 || noCheckNums) {
+	if (res?.code == 200 || noCheckNums || !checkNumsType) {
 		const httpDTO = {
 			url,
 			method: 'POST',

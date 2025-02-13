@@ -35,7 +35,7 @@ export default {
 		},
 		themeColor: {
 			type: String,
-			default: '#007AFF'
+			default: '#4955f5'
 		},
 		codeBgColor: {
 			type: String,
@@ -46,7 +46,7 @@ export default {
 		return {
 			html: '',
 			tagStyle: '',
-			containerstyle: 'white-space: pre-wrap;',
+			containerstyle: 'pre;',
 			mpkey: 'zero'
 		};
 	},
@@ -67,7 +67,6 @@ export default {
 			const codeBgColor = this.codeBgColor;
 			let zeroStyle = {
 				p: `
-
 				// margin:5px 5px;
 				// font-size: 15px;
 				// line-height:1.75;
@@ -80,7 +79,7 @@ export default {
 				`,
 				// 一级标题
 				h1: `
-				margin:25rpx 0;
+				margin:20rpx 0;
 				font-size: 24px;
 				text-align: center;
 				font-weight: bold;
@@ -92,7 +91,7 @@ export default {
 				`,
 				// 二级标题
 				h2: `
-				margin:40rpx 0 20rpx 0;
+				margin:30rpx 0 20rpx 0;
 				font-size: 20px;
 				text-align:center;
 				color:${themeColor};
@@ -102,7 +101,7 @@ export default {
 				`,
 				// 三级标题
 				h3: `
-				margin:30rpx 0 10rpx 0;
+				margin:20rpx 0 10rpx 0;
 				font-size: 18px;
 				color: ${themeColor};
 				padding-left:10rpx;

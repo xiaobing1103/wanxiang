@@ -265,7 +265,7 @@ export interface IconConfig {
 	MusicSquare : string
 	ImageCreateMusicIcon : string
 	VideoCreateMusicIcon : string
-	doubao_llamaIcon:string
+	doubao_llamaIcon : string
 	text2videoIcon : string
 	createVideoVipIcon : string
 	wechatPayIcon : string
@@ -329,6 +329,14 @@ export interface IconConfig {
 	Application24 : string
 	ApplicationsBackground : string
 	NoApplicationsData : string
+	DeepSeekModelIcon : string
+	DeepSeekModalThinkIngIcon : string
+	copyIcon : string
+	reStartChatIcon : string
+	ExportIcon : string
+	jubaoIcon : string
+	lianwangIcon : string
+	OverBGImage : string
 }
 export interface ModelConfig {
 	title : string;
@@ -527,6 +535,15 @@ const iconConfig : IconConfig = {
 	Application24: getUrl('/2024/12/16/80313b822a072ead218aeaf1131f798d.jpg'),
 	ApplicationsBackground: getUrl('/2024/12/16/64639c24c88011dc33ebea90f16b8924.jpg'),
 	NoApplicationsData: getUrl('/2024/12/17/318c0e6fd3d37e1f1a4fc6ecf0ecfb6c.png'),
+	// deepseekModel icon 
+	DeepSeekModelIcon: getUrl('/2025/01/02/df6570e38b9a23ce8aea1b4524b95bda.svg'),
+	DeepSeekModalThinkIngIcon: getUrl('/2025/02/09/379662ddb132e683c9eb815021104d0a.svg'),
+	copyIcon: getUrl('/2025/02/10/d6e0864517fd96415a5aef168d460fe2.svg'),
+	reStartChatIcon: getUrl('/2025/02/10/8129facf60e8c17e5a49146ef71141fd.svg'),
+	ExportIcon: getUrl('/2025/02/10/fa825ab103cde6b915c66bc66984d938.svg'),
+	jubaoIcon: getUrl('/2025/02/10/854adb8db7fbc645a41b50a10c42073f.svg'),
+	lianwangIcon: getUrl('/2024/07/13/347294b9cc60e5f510644999eda40c2a.png'),
+	OverBGImage: getUrl('/2025/02/13/e47dece101d681759bae5a3aaa051192.png')
 
 }
 

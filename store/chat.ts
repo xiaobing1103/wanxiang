@@ -1,7 +1,7 @@
 import {
 	defineStore
 } from 'pinia';
-import { reactive, ref } from 'vue';
+import { ref } from 'vue';
 import { ChatHistory, ItemMessage, ModelType, } from '../type/chatData';
 import { generateUUID } from '../tools/uuid';
 import { commonModel } from '../config/modelConfig';
@@ -24,8 +24,14 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const showlevelUpVip = ref<boolean>(false)
 	const showLevelUpVipContent = ref<string>('')
 	const openHistoryModel = ref<boolean>(false)
+	const openDeepSeekModel = ref(false)
+
+	const isShowSearchTabbar = ref('HomeTemPlate')
 	const chats = ref<ChatHistory[]>([])
 	const shareButton = ref(false)
+	const seletedModel = ref('DeepSeek_R1')
+	const isDeepSeekModels = ['DeepSeek_R1', 'DeepSeek_V3', 'deepseek_r1_qwen_70b', 'glm-zero-preview', 'deepseek_r1_qwen_32b', 'DeepSeek_Coder_V2', 'DeepSeek_Coder']
+	const isDeepSeekR1ChatModels = ['DeepSeek_R1', 'deepseek_r1_qwen_70b', 'glm-zero-preview', 'deepseek_r1_qwen_32b',]
 	const sharedata = ref<shareDataType>({
 		type: 1,
 		strShareUrl: "http://www.baidu.com",
@@ -33,6 +39,16 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		strShareSummary: "分享总结",
 		strShareImageUrl: "http://www.xuelejia.com/xljapp/h5/static/aboutUsLogo.png"
 	})
+	const setIsShowSearchTabbar = (val : string) => {
+		isShowSearchTabbar.value = val
+	}
+	const setSeletedModel = (val : string) => {
+		seletedModel.value = val
+	}
+	const setOpenDeepSeekModel = (val : boolean) => {
+		openDeepSeekModel.value = val
+	}
+
 	const setSharedata = (val : shareDataType) => {
 		sharedata.value = val
 	}
@@ -187,7 +203,15 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		sharedata,
 		shareButton,
 		setShareButton,
-		setSharedata
+		setSharedata,
+		isDeepSeekModels,
+		isDeepSeekR1ChatModels,
+		setOpenDeepSeekModel,
+		openDeepSeekModel,
+		seletedModel,
+		setSeletedModel,
+		isShowSearchTabbar,
+		setIsShowSearchTabbar
 	}
 }, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id', 'loadingMessage'] } }
 );

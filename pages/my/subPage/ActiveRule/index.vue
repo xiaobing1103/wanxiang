@@ -12,7 +12,7 @@
 		<view class="overRule">
 			{{ScreenStore.lastDayDatas.rule}}
 		</view>
-		
+
 	</z-paging>
 </template>
 

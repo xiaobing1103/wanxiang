@@ -148,7 +148,7 @@
 				contentStr.value = await streamSpark(newStr)
 				onScroolToBottom()
 			},
-			onfinish() {
+				onfinish() {
 				console.log('成功')
 			},
 			onerror(err) {

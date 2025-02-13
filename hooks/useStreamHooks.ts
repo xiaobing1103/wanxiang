@@ -2,8 +2,9 @@ import { useGlobalProperties } from './useGlobalHooks'
 import { ref } from 'vue'
 import { useAiAgentChats, useChatStore, useUserStore } from '@/store'
 import { commonModel } from '@/config/modelConfig'
-import { CreateImageDrawLoadding } from '@/store/aiAgentChats';
+import { CreateDeepSeekLoadding, CreateImageDrawLoadding } from '@/store/aiAgentChats';
 import { BaseApi } from '@/http/baseApi';
+import { AppName } from '../http';
 interface Options {
 	onerror(str : any) : unknown;
 	onmessage : (text : string) => void
@@ -41,16 +42,20 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 	const isRecive = ref(false)
 	const chatSSEClientRef = ref(null)
 	let requestTask = null;
+	const pages = getCurrentPages(); // 获取页面栈
+	const currentPage = pages[pages.length - 1]; // 获取当前页面对象
+	const currentRoute = '/' + currentPage.route; // 获取当前页面路径
 	let cancelFn
 	// 用于App
 	// #ifdef APP
 	const appStreamRequest = async (options : StreamOptions) => {
-		currentOptions = options
-		console.log(chatSSEClientRef)
-		let url = BaseApi + options.url
-		if (currentOptions.isAiAigent) {
+		let url = ''
+		if (options.url.startsWith('https://') || currentOptions.isAiAigent) {
 			url = options.url
+		} else {
+			url = BaseApi + options.url
 		}
+
 		chatSSEClientRef.value.startChat({
 			url: url,
 			body: options.data,
@@ -60,7 +65,8 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 				'Token': UserStore.userInfo?.token,
 				'Vt': UserStore.userInfo?.vip,
 				'Uid': UserStore.userInfo?.id,
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'app-name': AppName
 			},
 		})
 	}
@@ -83,8 +89,9 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 					chunk = await handlerCurrentModel(chunk)
 				}
 			}
-			if (currentOptions.isAiAigent) {
+			if (currentOptions.isAiAigent || ChatStore.isDeepSeekModels.includes(ChatStore.model)) {
 				let newChunk = await handlerCurrentAiagent(chunk)
+
 				currentOptions.onmessage(newChunk);
 			} else {
 				currentOptions.onmessage && currentOptions.onmessage(chunk)
@@ -99,8 +106,6 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 			await $api.post('api/v1/number2/submit', { number: 1, type: currentOptions.checkNumsType ? currentOptions.checkNumsType : commonModel[ChatStore.model]?.checkNumsType })
 		}
 	}
-
-
 	let result = ''
 	const revserAppChunk = async (text : string) => {
 		const lines = text.split('\n');
@@ -140,14 +145,15 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 			console.log(requestTask)
 			if (requestTask && typeof requestTask.onChunkReceived === 'function') {
 				requestTask.onChunkReceived(async res => {
-					let message = resloveResponseText(res.data);
 
+					let message = resloveResponseText(res.data);
+					// console.log(message)
 					if (!options.checkNumsType) {
 						if (ChatStore.model == 'net') {
 							message = await handlerCurrentModel(message)
 						}
 					}
-					if (options.isAiAigent) {
+					if (options.isAiAigent || ChatStore.isDeepSeekModels.includes(ChatStore.model)) {
 						message = await handlerCurrentAiagent(message)
 						options.onmessage(message)
 					} else {
@@ -178,9 +184,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 		}
 	}
 	// h5端流处理
-
 	const h5StreamRequest = async (options : StreamOptions) => {
-		currentOptions = options
 		isRecive.value = true
 		controller.value = new AbortController();
 		const signal = controller.value.signal;
@@ -198,14 +202,15 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 					chunk = await handlerCurrentModel(chunk)
 				}
 			}
-			if (options.isAiAigent) {
-				let newChunk = await handlerCurrentAiagent(chunk)
-				options.onmessage(newChunk);
+			const aiAigentArr = ['/pages/index/index', '/pages/function/subPage/AIaiAgent/mainPages']
+			if (aiAigentArr.includes(currentRoute)) {
+				if (ChatStore.isDeepSeekModels.includes(ChatStore.model) || options.isAiAigent) {
+					let newChunk = await handlerCurrentAiagent(chunk)
+					options.onmessage(newChunk);
+				}
 			} else {
 				options.onmessage && options.onmessage(chunk)
 			}
-
-
 		}
 		const onError = (err : any) => {
 			isRecive.value = false
@@ -236,142 +241,189 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 			console.log(error)
 		}
 	}
-
-
 	// 处理当前ai智能
 	const handlerCurrentAiagent = (result : string) : Promise<string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }> => {
-		return new Promise((resolve, reject) => {
-			let resultArr = []
-			result = result.replace(/[\u0000-\u001F\u007F-\u009F]/g, function (match) {
-				switch (match) {
-					case '\n': return '\\n';
-					case '\t': return '\\t';
-					default:
-						return '\\u' + match.charCodeAt(0).toString(16).padStart(4, '0')
-				}
-			});
-
-			if (result.includes('data: ')) {
-				resultArr = result.split('data: ')
-				resultArr.forEach((items) => {
-					if (items) {
-						if (handlerAiAgentFn(items)) {
-							resolve(handlerAiAgentFn(items))
-						}
-
+		return new Promise(async (resolve, reject) => {
+			try {
+				// 处理特殊字符
+				result = result.replace(/[\u0000-\u001F\u007F-\u009F]/g, function (match) {
+					switch (match) {
+						case '\n': return '\\n';
+						case '\t': return '\\t';
+						default:
+							return '\\u' + match.charCodeAt(0).toString(16).padStart(4, '0')
 					}
-				})
+				});
+				// 处理特殊状态
+				// 如果包含 data: 则分割处理
+				if (result.includes('data: ')) {
+					let accumulatedContent = '';
+					const resultArr = result.split('data: ').filter(item => item.trim());
+					// 处理每个数据块
+					for (const item of resultArr) {
+						try {
+							switch (item) {
+								case '[SUCCESS]':
+									resolve('');
+									return;
+								case '[DONE]':
+									isRecive.value = false;
+									if (ChatStore.isDeepSeekR1ChatModels.includes(ChatStore.model)) {
+										if (!endDate) {
+											endDate = new Date().getTime();
+											thinkTime = Math.ceil((endDate - startDate) / 1000);
+											isReasoning_assistant = 'done';
+										}
+										if (!startDate) {
+											isReasoning_assistant = 'noStart';
+										}
+										resolve({
+											reasoning_assistant: isReasoning_assistant,
+											content: '',
+											thinkTime: thinkTime
+										});
+										return;
+									}
+									resolve('');
+									return;
+								case '[ERROR]':
+									resolve(item);
+									return;
+							}
+							const jsonData = JSON.parse(item);
+							const processed = await handlerAiAgentFn(jsonData);
+							if (processed) {
+								resolve(processed);
+							}
+						} catch (err) {
+							console.error('JSON parse error:', err);
+							continue;
+						}
+					}
+				}
+			} catch (err) {
+				console.error('Error in handlerCurrentAiagent:', err);
+				reject(err);
 			}
-		})
-	}
+		});
+	};
 	const setIsRecive = () => {
 		isRecive.value = false;
 	}
 
 	let htmlString = ''
-
 	let globalSearchResults = [];
-	// 检查元素是否已存在于数组中，基于某个唯一标识符（例如链接）
+	let startDate = null
+	let endDate = null
+	let thinkTime = null
 	function isDuplicate(item, array) {
 		return array.some(element => element.link === item.link);
 	}
+	let isReasoning_assistant = 'noStart';
 	const handlerAiAgentFn = (str : string) => {
-		try {
-			switch (str) {
-				case '[SUCCESS]':
-					break;
-				case '[DONE]':
-					isRecive.value = false;
-					break;
-				case '[ERROR]':
-					break;
-				default:
-					let jsonPart = null
-					let da = '成功解析'
-					try {
-						jsonPart = JSON.parse(str)
-					} catch (err) {
-						da = '解析失败'
-						jsonPart = str
-						console.log(da, jsonPart)
-						currentOptions.onerror(jsonPart);
-					}
-					if (da == '成功解析') {
-						console.log(da, jsonPart)
-						if (!AiAgentChats.currentConversation_id) {
-							AiAgentChats.setCurrentConversation_id(jsonPart.conversation_id)
-						}
-						if (jsonPart.type == 'web_browser') {
-							if (!jsonPart.content?.input?.includes('mclick')) {
-								if (jsonPart.content?.input?.startsWith('search') || jsonPart.content?.input?.startsWith('msearch')) {
-									const regex = /"([^"]*)"/;
-									const match = jsonPart.content.input.match(regex);
-									return { SearchTitle: match[1] }
-								}
-								if (jsonPart.content?.outputs instanceof Array) {
-									if (jsonPart.content?.outputs.length > 0) {
-										// 过滤掉重复的数据
-										const uniqueOutputs = jsonPart.content.outputs.filter(item => !isDuplicate(item, globalSearchResults));
-										// 将去重后的新数据追加到全局数组中
-										globalSearchResults = globalSearchResults.concat(uniqueOutputs);
-										// 返回最新的全局搜索结果数组
-										return { aiAgentSearchList: globalSearchResults };
-									}
-								}
-							}
-						}
-						if (jsonPart.type == 'code_interpreter') {
-							if (jsonPart.content.input) {
-								return `\`\`\`python\n\n${jsonPart.content.input}\n\`\`\`\n`
-							}
-							if (jsonPart.content.outputs && jsonPart.content.outputs.length > 0) {
-								if (
-									jsonPart.content.outputs[0].logs &&
-									/^https?:\/\//i.test(jsonPart.content.outputs[0].logs)
-								) {
-									return `![alt image](${jsonPart.content.outputs[0].logs})\n\n`
-								} else {
-									console.log('结果', jsonPart.content.outputs[0].logs)
-									return `\`\`\`javascript\n\n${jsonPart.content.outputs[0].logs}\n\`\`\`\n`
-								}
-							}
-						}
-						if (jsonPart.type == 'drawing_tool') {
-							if (jsonPart.content.input) {
-								return CreateImageDrawLoadding()
-							}
-							if (jsonPart.content.outputs instanceof Array) {
-								return `<div style="padding:10px;"><img style="max-width:160px;min-height:160px;border-radius:20rpx;" src='${jsonPart.content.outputs[0].image}'/></div>`
-							}
-						}
-						if (jsonPart.type == 'function') {
-							if (jsonPart.content.arguments) {
-								let code_msg = '\n\n' + jsonPart.content.arguments + '\n\n'
-								if (jsonPart.content.name) {
-									code_msg = `<p style="font-size:16px;font-weight:700;margin:10px 0;">方法${jsonPart.content.name}</p>` + code_msg
-								}
-								return code_msg
-							}
-							if (jsonPart.content.outputs && jsonPart.content.outputs.length > 0) {
-								let data = JSON.parse(jsonPart.content.outputs[0].content)
-								if (data.url) {
-									return `![alt image](${data.url})`
-								}
-							}
-							if (jsonPart.content.url) {
-								return `![alt image](${jsonPart.content.url})`
-							}
-						}
-						if (jsonPart.role == 'assistant') {
-							return jsonPart.content
-						}
-					}
-
+		return new Promise((resolve, reject) => {
+			let jsonPart : any = str
+			console.log(jsonPart)
+			if (!AiAgentChats.currentConversation_id) {
+				AiAgentChats.setCurrentConversation_id(jsonPart.conversation_id)
 			}
-		} catch (err) {
-			console.log(err)
-			currentOptions.onerror(err);
-		}
+			if (jsonPart.type == 'web_browser') {
+				if (!jsonPart.content?.input?.includes('mclick')) {
+					if (jsonPart.content?.input?.startsWith('search') || jsonPart.content?.input?.startsWith('msearch')) {
+						const regex = /"([^"]*)"/;
+						const match = jsonPart.content.input.match(regex);
+						resolve({ SearchTitle: match[1] });
+						return
+					}
+					if (jsonPart.content?.outputs instanceof Array) {
+						if (jsonPart.content?.outputs.length > 0) {
+							// 过滤掉重复的数据
+							const uniqueOutputs = jsonPart.content.outputs.filter(item => !isDuplicate(item, globalSearchResults));
+							// 将去重后的新数据追加到全局数组中
+							globalSearchResults = globalSearchResults.concat(uniqueOutputs);
+							// 返回最新的全局搜索结果数组
+							resolve({ aiAgentSearchList: globalSearchResults });
+							return
+						}
+					}
+				}
+			}
+			if (jsonPart.type == 'code_interpreter') {
+				if (jsonPart.content.input) {
+					resolve(`\`\`\`python\n\n${jsonPart.content.input}\n\`\`\`\n`);
+					return
+				}
+				if (jsonPart.content.outputs && jsonPart.content.outputs.length > 0) {
+					if (
+						jsonPart.content.outputs[0].logs &&
+						/^https?:\/\//i.test(jsonPart.content.outputs[0].logs)
+					) {
+						resolve(`![alt image](${jsonPart.content.outputs[0].logs})\n\n`);
+						return
+					} else {
+						resolve(`\`\`\`javascript\n\n${jsonPart.content.outputs[0].logs}\n\`\`\`\n`);
+						return
+					}
+				}
+			}
+			if (jsonPart.type == 'drawing_tool') {
+				if (jsonPart.content.input) {
+					resolve(CreateImageDrawLoadding());
+					return
+				}
+				if (jsonPart.content.outputs instanceof Array) {
+					resolve(`<div style="padding:10px;"><img style="max-width:160px;min-height:160px;border-radius:20rpx;" src='${jsonPart.content.outputs[0].image}'/></div>`);
+					return
+				}
+			}
+			if (jsonPart.type == 'function') {
+				if (jsonPart.content.arguments) {
+					let code_msg = '\n\n' + jsonPart.content.arguments + '\n\n'
+					if (jsonPart.content.name) {
+						code_msg = `<p style="font-size:16px;font-weight:700;margin:10px 0;">方法${jsonPart.content.name}</p>` + code_msg
+					}
+					resolve(code_msg);
+					return
+				}
+				if (jsonPart.content.outputs && jsonPart.content.outputs.length > 0) {
+					let data = JSON.parse(jsonPart.content.outputs[0].content)
+					if (data.url) {
+						resolve(`![alt image](${data.url})`);
+						return
+					}
+				}
+				if (jsonPart.content.url) {
+					resolve(`![alt image](${jsonPart.content.url})`);
+					return
+				}
+			}
+			if (ChatStore.isDeepSeekR1ChatModels.includes(ChatStore.model) && !currentOptions.isAiAigent) {
+				if (jsonPart.role == 'reasoning_assistant') {
+					if (!startDate) startDate = Date.now()
+					if (isReasoning_assistant == 'noStart') {
+						isReasoning_assistant = 'isLoading'
+					}
+					resolve({ reasoning_assistant: isReasoning_assistant, content: jsonPart.content });
+					return
+				}
+				if (jsonPart.role == 'assistant') {
+					if (!endDate) {
+						endDate = new Date().getTime()
+						thinkTime = Math.ceil((endDate - startDate) / 1000)
+						isReasoning_assistant = startDate ? 'done' : 'noStart'
+					}
+					resolve({ reasoning_assistant: isReasoning_assistant, content: jsonPart.content, thinkTime: thinkTime });
+					return
+				}
+			}
+			if (currentOptions.isAiAigent || ChatStore.model == 'DeepSeek_V3' || ChatStore.model == 'DeepSeek_Coder_V2' || ChatStore.model == 'DeepSeek_Coder') {
+				if (jsonPart.role == 'assistant') {
+					resolve(jsonPart.content);
+					return
+				}
+			}
+		})
+
 	}
 	// 处理当前net模型的数据
 	let shouldProcess : boolean = false;
@@ -428,15 +480,29 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 		});
 	};
 	//统一处理
-	const streamRequest = (options ?: StreamOptions) => {
+	const streamRequest = async (options : any) => {
+		console.log(options)
+		startDate = null
+		endDate = null
+		thinkTime = null
+		isReasoning_assistant = 'noStart';
+		currentOptions = options
 		// #ifdef MP-WEIXIN
-		wechatStreamRequest(options)
+		wechatStreamRequest(currentOptions)
 		// #endif
 		// #ifdef H5
-		h5StreamRequest(options)
+		h5StreamRequest(currentOptions)
 		// #endif
 		// #ifdef APP
-		appStreamRequest(options)
+		if (ChatStore.model !== 'deepseek_r1_qwen_70b') {
+			let res = await $api.post('api/v1/number2/check', { type: options.checkNumsType || commonModel[ChatStore.model].checkNumsType })
+			if (res.code !== 200) {
+				errorCore(res.msg)
+				return
+			}
+		}
+
+		appStreamRequest(currentOptions)
 		// #endif
 	}
 

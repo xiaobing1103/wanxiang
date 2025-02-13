@@ -1,9 +1,9 @@
 {
     "name" : "边界AIchat",
     "appid" : "__UNI__33AE902",
-    "description" : "",
-    "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "description" : "ai绘画,智能对话,ai作画,图片生成,智能助手,chatgpt,ai聊天,人工智能,ai创作,画图,写作助手,智能问答,艺术创作,ai写作,图像生成",
+    "versionName" : "1.0.8",
+    "versionCode" : 108,
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : false,
@@ -16,11 +16,10 @@
             "delay" : 0
         },
         "modules" : {
-            "Share" : {},
             "Gallery" : {},
             "VideoPlayer" : {},
-            "UIWebview" : {},
             "Record" : {},
+            "Share" : {},
             "Camera" : {}
         },
         "optimization" : {
@@ -44,14 +43,62 @@
                 ]
             },
             "ios" : {
-                "dSYMs" : false
+                "dSYMs" : false,
+                "devices" : "iphone",
+                "permissions" : {
+                    "camera" : {
+                        "description" : "我们需要访问您的相机，以便您可以直接在应用中拍摄照片。例如，您可以拍摄照片用于AI绘画或图像生成。"
+                    },
+                    "photos" : {
+                        "description" : "我们需要访问您的照片库，以便您可以选择并上传图片用于AI绘画或图像生成。这样您可以在应用中使用已有的照片。"
+                    }
+                },
+                "privacyDescription" : {
+                    "NSPhotoLibraryUsageDescription" : "边界 Alchat\"需要您的同意，才能访问相册，以便于选取照片上传图片，用于更换用户头像。拒绝或者取消不会影响使用其他服务",
+                    "NSPhotoLibraryAddUsageDescription" : "边界 Alchat\"需要您的同意，才能访问相册，以便于选取照片上传图片，用于更换用户头像。拒绝或者取消不会影响使用其他服务",
+                    "NSCameraUsageDescription" : "边界 Alchat\"想访问您的相机实现您拍摄并上传图片或视频，用于在头像上传、发布内容等服务",
+                    "NSMicrophoneUsageDescription" : "边界 Alchat\"应用程序需要访问麦克风”为您提供语音搜索功能，智能语音交互功能"
+                }
             },
             "sdkConfigs" : {
                 "ad" : {},
-                "share" : {}
+                "share" : {},
+                "payment" : {}
             },
             "splashscreen" : {
                 "useOriginalMsgbox" : true
+            },
+            "icons" : {
+                "android" : {
+                    "hdpi" : "unpackage/res/icons/72x72.png",
+                    "xhdpi" : "unpackage/res/icons/96x96.png",
+                    "xxhdpi" : "unpackage/res/icons/144x144.png",
+                    "xxxhdpi" : "unpackage/res/icons/192x192.png"
+                },
+                "ios" : {
+                    "appstore" : "unpackage/res/icons/1024x1024.png",
+                    "ipad" : {
+                        "app" : "unpackage/res/icons/76x76.png",
+                        "app@2x" : "unpackage/res/icons/152x152.png",
+                        "notification" : "unpackage/res/icons/20x20.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "proapp@2x" : "unpackage/res/icons/167x167.png",
+                        "settings" : "unpackage/res/icons/29x29.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "spotlight" : "unpackage/res/icons/40x40.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png"
+                    },
+                    "iphone" : {
+                        "app@2x" : "unpackage/res/icons/120x120.png",
+                        "app@3x" : "unpackage/res/icons/180x180.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "notification@3x" : "unpackage/res/icons/60x60.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "settings@3x" : "unpackage/res/icons/87x87.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "spotlight@3x" : "unpackage/res/icons/120x120.png"
+                    }
+                }
             }
         },
         "nativePlugins" : {}

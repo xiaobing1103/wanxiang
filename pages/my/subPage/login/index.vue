@@ -9,20 +9,12 @@
 		<template #top>
 			<CommonHeader noBackGround />
 		</template>
-	<!-- 	<view class="LoginTitle">
-			<view class="LoginTitle_welocome">欢迎回来</view>
-			<view class="LoginTitle_NoRegister">未注册的手机号码登录后自动注册账号</view>
-		</view> -->
-		
-		
-		
 		<view class="loginAccount">
 			<view class="loginAccount_tabList">
 				<up-tabs :activeStyle="{ color: 'rgba(50, 100, 237, 1)', }" :lineWidth="'100rpx'" :lineHeight="'15rpx'"
 					:lineColor="`url(${lineBg}) 100% 100%`" :current="current" @change="changeTabs"
 					:list="tabList"></up-tabs>
 			</view>
-
 			<view class="loginAccount_main">
 				<view class="loginAccount_main_input">
 					<up-input :customStyle="{ width: '70%', borderRadius: '10rpx', fontSize: '20rpx' }"
@@ -52,27 +44,21 @@
 				<view class="vertifyStuas">
 					<text @click="changeType">{{ type == 'phone' ? '账户密码登录' : '短信验证码登录' }}</text>
 				</view>
-
 				<view class="loginButton">
 					<up-button :customStyle="{ width: '100%', borderRadius: '15rpx', marginTop: '40rpx' }"
 						@click="onLogin" type="primary" text="立即登录"></up-button>
 				</view>
 			</view>
 		</view>
-	
 		<template #bottom>
 			<LoginDecscriptions v-model:aloneChecked="aloneChecked" />
 		</template>
-		
-		
 		<up-overlay :show="show">
 			<view class="warp">
 				<up-loading-icon vertical color="#e8e8e8" text-color="#e8e8e8" text="登录中"
 					textSize="18"></up-loading-icon>
 			</view>
 		</up-overlay>
-
-
 		<view class="buttonGroup">
 			<!-- #ifdef MP-WEIXIN -->
 			<up-button shape="circle" :customStyle="{width: '85%',marginBottom:'20rpx'}" size="normal" type="success"
@@ -81,7 +67,6 @@
 			<!-- <up-button shape="circle" :hairline="false"
 				:customStyle="{width: '85%',borderRadius:'50rpx',border:'1px solid #ccc'}" size="normal" text="账户登录/注册"
 				@click="toAccountLogin"></up-button> -->
-
 		</view>
 		<!-- <LoginDecscriptions /> -->
 	</z-paging>
@@ -92,13 +77,13 @@
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { useUserStore, useScreenStore, } from '@/store';
-	
-	
+
+
 	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue';
-	
-	
-	
-	
+
+
+
+
 	const toAccountLogin = () => {
 		uni.navigateTo({
 			url: '/pages/my/subPage/loginAccount/index'
@@ -144,6 +129,7 @@
 		if (!ScreenStore.saveTime) {
 			ScreenStore.setSaveTime(Math.floor(Date.now() / 1000))
 		}
+		// #ifndef APP
 		const lastDatReq = await $api.post('https://open-app.1foo.com/api/v1/activity/last.day/info', {
 			appid: UserStore.userInfo.appid,
 			time: ScreenStore.saveTime,
@@ -156,6 +142,7 @@
 				ScreenStore.setLastModalisOpen(true)
 			}
 		}
+		// #endif
 	}
 
 
@@ -267,6 +254,7 @@
 				uni.switchTab({
 					url: '/pages/my/index'
 				});
+
 				uni.$u.toast('登录成功！')
 			}
 
@@ -297,10 +285,6 @@
 			uni.$u.toast(result.msg);
 		}
 	};
-	
-	
-	
-	
 </script>
 
 <style lang="scss" scoped>
@@ -414,7 +398,7 @@
 				margin: 20rpx 0;
 
 				&_code {
-					color: rgb(192, 196, 204);
+					color: #09e0ab;
 					padding: 0 15rpx;
 					font-size: 30rpx;
 				}

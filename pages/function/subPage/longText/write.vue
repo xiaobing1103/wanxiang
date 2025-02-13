@@ -67,7 +67,7 @@
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { ref, computed, watchEffect, watch, nextTick } from 'vue'
 	import { useStreamHooks } from '@/hooks/useStreamHooks.ts'
-	import AreaText from '@/components/areaText/index.vue'
+	import AreaText from '../CommonComponents/areaText/index.vue'
 	import { exportTxt, toCopyText } from '@/utils';
 	import { useChatStore } from '@/store';
 	interface ContentArr {

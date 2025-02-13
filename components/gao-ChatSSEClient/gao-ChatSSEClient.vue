@@ -93,7 +93,7 @@
 				try {
 					// 创建新的 AbortController
 					this.ctrl = new AbortController();
-
+					console.log(url)
 					const response = await fetch(url, {
 						method: 'POST',
 						headers,

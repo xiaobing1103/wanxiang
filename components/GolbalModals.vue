@@ -8,7 +8,7 @@
 		</view>
 	</up-modal>
 	<up-modal closeOnClickOverlay @close="closeLastModals" :showConfirmButton="false"
-		:title="ScreenStore.lastDayDatas?.title || ''" :show="openlastModalisOpen">
+		:title="ScreenStore.lastDayDatas?.title || ''" :show="ScreenStore.lastModalisOpen">
 		<view class="lastVipModalBox">
 			<view class="lastVipModal">
 				<view class="lastVipModal_overBox">
@@ -115,28 +115,28 @@
 		ScreenStore.setLastModalisOpen(false)
 		openlastModalisOpen.value = false
 	}
-	const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-	watch(() => ScreenStore.lastModalisOpen, async (val) => {
-		console.log(' ScreenStore.lastModalisOpen', val)
-		if (val) {
-			await delay(15000)
-			openlastModalisOpen.value = true
-			updateCountdown();
-		} else {
-			openlastModalisOpen.value = false
-			if (countdownTimer) {
-				clearInterval(countdownTimer);
-			}
-		}
-	});
+	// const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+	// watch(() => ScreenStore.lastModalisOpen, async (val) => {
+	// 	console.log(' ScreenStore.lastModalisOpen', val)
+	// 	if (val) {
+	// 		await delay(5000)
+	// 		openlastModalisOpen.value = true
+	// 		updateCountdown();
+	// 	} else {
+	// 		openlastModalisOpen.value = false
+	// 		if (countdownTimer) {
+	// 			clearInterval(countdownTimer);
+	// 		}
+	// 	}
+	// });
 
 
 	// 组件卸载前清除定时器
-	onUnload(() => {
-		if (countdownTimer) {
-			clearInterval(countdownTimer);
-		}
-	});
+	// onUnload(() => {
+	// 	if (countdownTimer) {
+	// 		clearInterval(countdownTimer);
+	// 	}
+	// });
 	function newPadStart(targetString, length, padCharacter) {
 		if (targetString.length >= length) {
 			return targetString;

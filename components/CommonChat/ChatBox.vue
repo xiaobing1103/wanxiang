@@ -5,11 +5,48 @@
 				<view class="chatBox_main_View"
 					:style="{ alignItems: item.target == 'user' ? 'flex-end' : 'flex-start' }">
 					<view class="chatBox_main_View_header">
-						<template v-if="item.target == 'assistant' || (item.target == 'system' && messageList.size == 1)">
-							<image class="chatBox_main_View_header_image"
-								:style="{width:AppName == 'bianjie' ? '200rpx' : '160rpx'}"
-								:src="AppName == 'bianjie' ? '../../static/logo.svg' : '../../static/wanxianglogo.svg' ">
+						<template
+							v-if="item.target == 'assistant' || (item.target == 'system' && messageList.size == 1)">
+
+							<image v-if="!ChatStore.isDeepSeekModels.includes(model)"
+								class="chatBox_main_View_header_image"
+								:style="{width:AppName == 'bianjie' ? '50rpx' : '50rpx'}"
+								:src="commonModel[model].modelIcon">
 							</image>
+							<!-- 	<image v-if="!ChatStore.isDeepSeekModels.includes(model)"
+								class="chatBox_main_View_header_image"
+								:style="{width:AppName == 'bianjie' ? '200rpx' : '160rpx'}"
+								:src=" AppName == 'bianjie' ? '../../static/logo.svg' : '../../static/wanxianglogo.svg'">
+							</image> -->
+							<template v-else>
+								<view class="OverdeepSeekThinkBox">
+									<view class="OverdeepSeekThinkBox_top">
+										<image style="width:80rpx;height:50rpx;" :src="commonModel[model].modelIcon"
+											mode="">
+										</image>
+										<view class="deepSeekThinkBox"
+											v-if="item.reasoning_assistant && item.reasoning_assistant !=='noStart'">
+											<image class="deepSeekThinkBox_SvgIcon"
+												:src="$assets.DeepSeekModalThinkIngIcon" mode=""></image>
+											<text class="deepSeekThinkBox_text">
+												<template v-if="item.reasoning_assistant == 'isLoading'">
+													{{ '深度思考中 ......'  }}
+												</template>
+												<template v-if="item.reasoning_assistant == 'done'">
+													{{ `已深度思考（用时${item.thinkTime || 0}秒）` }}
+												</template>
+											</text>
+											<up-icon size="12" class="deepSeekThinkBox_icon"
+												@click="item.isShowDeepSeekThinks = !item.isShowDeepSeekThinks"
+												:name="item.isShowDeepSeekThinks?'arrow-down':'arrow-up'"></up-icon>
+										</view>
+									</view>
+
+									<view class="OverdeepSeekThinkBox_Bottom" v-if="item.isShowDeepSeekThinks">
+										{{item.reasoning_content}}
+									</view>
+								</view>
+							</template>
 						</template>
 						<template v-else>
 							<!-- <view class="avatar">刘立</view> -->
@@ -42,8 +79,8 @@
 							}" :style="{
 								marginLeft: item.target === 'user' ? '0' : '20rpx',
 								marginRight: item.target === 'user' ? '20rpx' : '0',
-								padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
-								background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'white',
+								padding: item.messageType == 'text' || item.messageType == 'text2' ? '10rpx' : '0',
+								background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'transparent',
 								minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%',
 								wordBreak: 'break-all'
 							}">
@@ -55,7 +92,8 @@
 								<!-- 模版类型为image -->
 								<template v-if="item.messageType == 'image'">
 									<view class="iamge_album">
-										<up-album class="iamge_album_sty" :urls="[item.message]" keyName="src2"></up-album>
+										<up-album class="iamge_album_sty" :urls="[item.message]"
+											keyName="src2"></up-album>
 										<!-- <image :src="item.message" fade-show></image> -->
 									</view>
 								</template>
@@ -68,8 +106,8 @@
 											<view style="width: 100%">
 												<MessageItem :uType="item.echartsType" :content="item.message" />
 												<!-- 模版下面逻辑组件 -->
-												<ChatEelseHandler ref="ChatEelseHandlerRef" @passUp="handlePassUp"
-													:msgId="item.id" :text="item.message" />
+												<ChatEelseHandler @passUp="handlePassUp" :msgId="item.id"
+													:text="item.message" />
 												<!--  v-model:currentAsk="currentAsk"  -->
 											</view>
 										</template>
@@ -105,7 +143,7 @@
 	import { generateUUID } from '../../tools/uuid';
 	import { storeToRefs } from 'pinia';
 	import { AppName } from '@/http';
-
+	import { commonModel } from '@/config/modelConfig';
 	import { TemplateConfig, noHistoryArr } from '../../pages/chat/chatConfig';
 	const ChatStore = useChatStore();
 	const { model, selectChatId } = storeToRefs(ChatStore);
@@ -113,7 +151,6 @@
 	const handlePassUp = (value) => {
 		emit('passToGrandparent', value);
 	};
-	const ChatEelseHandlerRef = ref(null);
 	const IsHasChatOverMessage = defineModel('IsHasChatOverMessage')
 	// 获取初始消息模版
 	const getInitTemplate = () => {
@@ -131,6 +168,10 @@
 		});
 		return maps;
 	};
+
+	const openThinkMessages = () => {
+		console.log(123123)
+	}
 	//所有的消息集合
 	const messageList = ref<MessageItems>(new Map());
 	// 切换模型的监听
@@ -225,7 +266,11 @@
 			}
 		});
 		const combinedData = [...historyData, ...requestData];
-		const paramsString = JSON.stringify(combinedData);
+		let paramsString : any = combinedData
+		if (!ChatStore.isDeepSeekModels.includes(model.value)) {
+			paramsString = JSON.stringify(combinedData);
+		}
+
 		return paramsString
 	}
 
@@ -260,10 +305,10 @@
 		&_header {
 			display: flex;
 			padding: 10rpx;
+			width: 100%;
 
 			&_image {
-				height: 40rpx;
-				width: 160rpx;
+				height: 50rpx;
 			}
 		}
 
@@ -280,7 +325,7 @@
 			}
 
 			&_systemMessage {
-				max-width: 80% !important;
+				max-width: 94% !important;
 				min-width: 6% !important;
 			}
 
@@ -324,5 +369,59 @@
 		color: wheat;
 		height: 60rpx !important;
 		width: 60rpx !important;
+	}
+
+	.deepSeekThinkBox {
+		display: flex;
+		margin: 5rpx 20rpx;
+		padding: 10rpx 20rpx;
+		background-color: #e5e5e5;
+		border-radius: 10rpx;
+		align-items: center;
+
+		&_SvgIcon {
+			width: 30rpx;
+			height: 40rpx;
+			padding-right: 20rpx;
+		}
+
+		&_text {
+			font-size: 24rpx;
+		}
+
+		&_icon {
+			padding-left: 20rpx;
+		}
+	}
+
+	.OverdeepSeekThinkBox {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+
+		&_top {
+			width: 100%;
+			display: flex;
+		}
+
+		&_Bottom {
+			color: #8b8b8b;
+			white-space: pre-wrap;
+			margin: 0;
+			padding: 0 0 0 13px;
+			line-height: 40rpx;
+			position: relative;
+			font-size: 24rpx;
+			border-left: 5rpx solid #d0d0d0;
+			width: 100%;
+			overflow-wrap: break-word;
+			/* 优先在单词内换行 */
+			word-break: break-word;
+			/* 兼容性处理 */
+			hyphens: auto;
+			/* 启用连字符（需lang属性支持） */
+			max-width: 100%;
+			/* 容器宽度约束 */
+		}
 	}
 </style>

@@ -2,8 +2,102 @@
 import { ModelType } from '../type/chatData';
 import $assets from './assets.config';
 import { ModelConfig } from './type';
-import { AppStrName } from '@/http';
 
+
+export const columns =
+	[
+		{
+			label: '深度思考（R1）满血版', modelKey: 'DeepSeek_R1', desc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力，尤其擅长数学、代码和自然语言推理等复杂任务。',
+			tag: [{ title: '深度思考', color: 'rgb(94,146,227)', bgcolor: 'rgba(94,146,227,0.3)' }, { title: '推理模型', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }, { title: '高速专线', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }, { title: '671B', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }, { title: '64k', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }]
+			, hot: '边界独家服务支持-全尺寸-满血版本'
+		},
+		{
+
+			label: 'DeepSeek · V3',
+			modelKey: 'DeepSeek_V3',
+			desc: 'DeepSeek-V3适用于各种自然语言处理任务，包括但不限于文本生成、语言理解、机器翻译等。其高性能和高效训练的特点使其在科研、开发和商业应用中具有广泛的应用前景。',
+			tag: [{ title: '深度思考', color: 'rgb(94,146,227)', bgcolor: 'rgba(94,146,227,0.3)' }, { title: '推理模型', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }, { title: '高速专线', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }, { title: '671B', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }, { title: '64k', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }]
+			, hot: '边界独家服务支持-全尺寸-满血版本'
+		},
+		{
+
+			label: 'DeepSeek-R1（DistillQwen）',
+			modelKey: 'deepseek_r1_qwen_32b',
+			desc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力，尤其擅长数学、代码和自然语言推理等复杂任务。',
+			tag: [{ title: '深度思考', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }, { title: '推理模型', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }],
+			hot: '边界独家服务支持-全尺寸-满血版本'
+		},
+		{
+
+			label: 'DeepSeek-R1（70B专线）免费中',
+			modelKey: 'deepseek_r1_qwen_70b',
+			desc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力，尤其擅长数学、代码和自然语言推理等复杂任务。',
+			tag: [{ title: '70b', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }, { title: '推理模型', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }],
+			hot: '边界独家专线-免费使用'
+		},
+		{
+
+			label: 'DeepSeek·Coder (代码模型)', modelKey: 'DeepSeek_Coder',
+			desc: 'DeepSeek Coder适用于各种场景，包括初创企业的快速原型设计、大型公司的复杂代码重构以及个人开发者的日常编码需求。无论是编码生成、智能代码修复还是作为编程助手，DeepSeek Coder都能提供强大的支持。',
+			tag: [{ title: '推理模型', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }],
+			hot: '代码模型'
+		},
+		{
+
+			label: 'DeepSeek-Coder（V2）', modelKey: 'DeepSeek_Coder_V2',
+			desc: 'DeepSeek Coder_V2适用于各种场景，包括初创企业的快速原型设计、大型公司的复杂代码重构以及个人开发者的日常编码需求。无论是编码生成、智能代码修复还是作为编程助手，DeepSeek Coder都能提供强大的支持。',
+			tag: [{ title: '代码模型V2', color: 'rgb(159,100,238)', bgcolor: 'rgba(159,100,238,0.3)' }],
+			hot: '代码模型v2'
+
+		},
+	]
+
+
+
+export const seletedModels : { title : string, icon : string, isDeepSeekModelTag ?: boolean, path ?: string, isNews ?: boolean, }[] = [
+	{
+		title: 'DeepSeek专线',
+		icon: $assets.DeepSeekModelIcon,
+		isNews: true,
+		isDeepSeekModelTag: true
+	},
+	{
+		title: 'AI写作',
+		icon: '//file.1foo.com/2024/12/26/fafa1b255d7b77938c93fb26ccb62533.svg',
+		path: '/pages/function/subPage/AIWriteSomething/index'
+	},
+	{
+		title: '图像生成',
+		icon: '//file.1foo.com/2024/12/26/ada7cb241211f0ede6252a254e865a1f.svg',
+		path: '/pages/draw/subPage/text2image/index'
+	},
+	{
+		title: 'AI阅读',
+		icon: '//file.1foo.com/2024/12/26/565b333623bfd955830ee21d5cdb41f2.png',
+		path: '/pages/function/subPage/AIApplication/SingleApplication/index?id=633'
+	},
+	{
+		title: 'AI文档',
+		icon: '//file.1foo.com/2025/01/03/7fe7c649b4922a03ff689a342db9cef6.svg',
+		path: '/pages/function/subPage/AidocumentChat/index'
+
+	},
+	{
+		title: 'AI视频',
+		icon: '//file.1foo.com/2024/08/23/af7423793ea3fde1f135875432b2b84e.svg',
+		path: '/pages/function/subPage/TextCreateVideo/index?currentPages=0'
+
+	},
+	{
+		title: '音乐生成',
+		icon: '//file.1foo.com/2024/12/26/a54324f50a76f2adc4adcaf9999581e0.svg',
+		path: '/pages/function/subPage/AiMusicCreate/index?currentPages=0'
+	},
+	// {
+	// 	title: '更多',
+	// 	icon: '//file.1foo.com/2024/12/26/5abb883a22612e1c8dde43ca475e084c.svg'
+	// }
+]
 export const commonModel : Record<ModelType, ModelConfig> = {
 	'v35': {
 		title: '推荐模型（组合）',
@@ -13,11 +107,76 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelDesc: '推荐模型基座训练数据超50亿T，是目前大语言模型中...',
 		checkNumsType: 'chat'
 	},
+	DeepSeek_V3: {
+		title: 'DeepSeek · V3',
+		ModelPath: '',
+		ModelApi: 'https://open.aichatapi.com/api/v1/chat/tencent/yfoo.deepseek.v3',
+		modelIcon: $assets.DeepSeekModelIcon,
+		modelDesc: '`DeepSeek-V3适用于各种自然语言处理任务，包括但不限于...',
+		hotDesc: '边界独家服务支持-专线支持',
+		checkNumsType: 'chat_v40'
+	},
+
+	DeepSeek_R1: {
+		title: 'DeepSeek · R1 满血版',
+		ModelPath: '',
+		ModelApi: 'https://open.aichatapi.com/api/v1/chat/tencent/yfoo.deepseek.r1',
+		modelIcon: $assets.DeepSeekModelIcon,
+		modelDesc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力...',
+		hotDesc: '边界独家服务支持-全尺寸-满血版本',
+		checkNumsType: 'chat_v40'
+	},
+
+	deepseek_r1_qwen_32b: {
+		title: 'DeepSeek-R1（DistillQwen）',
+		ModelPath: '',
+		ModelApi: 'https://open.aichatapi.com/api/v1/chat/yfoo/yfoo_deepseek_r1_qwen_32b',
+		modelIcon: $assets.DeepSeekModelIcon,
+		modelDesc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力...',
+		hotDesc: '边界独家服务支持-32b版本',
+		checkNumsType: 'chat_v40'
+	},
+	deepseek_r1_qwen_70b: {
+		title: 'DeepSeek-R1（70B专线）',
+		ModelPath: '',
+		ModelApi: 'https://open.aichatapi.com/api/v1/chat/yfoo/yfoo_deepseek_r1_qwen_70b',
+		modelIcon: $assets.DeepSeekModelIcon,
+		modelDesc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推...',
+		hotDesc: '边界独家专线-免费使用',
+		checkNumsType: ''
+	},
+	'DeepSeek_Coder_V2': {
+		title: 'DeepSeek-Coder（V2）',
+		ModelPath: '',
+		ModelApi: 'https://open.aichatapi.com/api/v1/chat/yfoo/yfoo.deepseek.coder.v2',
+		modelIcon: $assets.DeepSeekModelIcon,
+		modelDesc: 'DeepSeek-代码模型v2", "DeepSeek Coder v2适用于各种...',
+		hotDesc: '代码模型v2',
+		checkNumsType: 'chat_v40'
+	},
+	'DeepSeek_Coder': {
+		title: 'DeepSeek·Coder (代码模型)',
+		ModelPath: '',
+		ModelApi: 'https://open.aichatapi.com/api/v1/chat/yfoo/yfoo.deepseek.coder.v2',
+		modelIcon: $assets.DeepSeekModelIcon,
+		modelDesc: 'DeepSeek-代码模型", "DeepSeek Coder适用于各种...',
+		hotDesc: '代码模型',
+		checkNumsType: 'chat'
+	},
+	'glm-zero-preview': {
+		title: '智谱 · Zero深度思考',
+		ModelPath: '',
+		ModelApi: 'https://open.aichatapi.com/api/v1/chat/zhipu/yfoo-glm-zero-preview',
+		modelIcon: $assets.zhipu_glm4Icon,
+		modelDesc: 'GLM-Zero-Preview 具有强大的归纳与演绎能力，能够快速...',
+		hotDesc: 'New',
+		checkNumsType: 'chat'
+	},
 	"net": {
 		title: '联网模型',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/completionNet',
-		modelIcon: $assets.netModelIcon,
+		modelIcon: $assets.lianwangIcon,
 		modelDesc: `我是您的 AI助手，我已连接互联网，知晓近日的...`,
 		checkNumsType: 'chat_networking'
 	},
@@ -264,7 +423,7 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelDesc: '我是跟KimiAI同款的模型,支持 128K 长上下文窗...',
 		checkNumsType: 'chat'
 	},
-	doubao_v1_4k:{
+	doubao_v1_4k: {
 		title: '豆包Pro · 4K',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/moonshot_v1_8k',
@@ -272,7 +431,7 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelDesc: '豆包是你的 AI 聊天智能对话问答助手，写作文...',
 		checkNumsType: 'chat'
 	},
-	doubao_v1_32k:{
+	doubao_v1_32k: {
 		title: '豆包Pro · 32K',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/moonshot_v1_32k',
@@ -280,7 +439,7 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelDesc: '豆包是你的 AI 聊天智能对话问答助手，写作文...',
 		checkNumsType: 'chat'
 	},
-	doubao_v1_128k:{
+	doubao_v1_128k: {
 		title: '豆包Pro · 128K',
 		ModelPath: '',
 		ModelApi: 'api/v1/chat2/moonshot_v1_128k',
@@ -296,7 +455,6 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		modelDesc: '文心一言 · Llama英文是Llama的新一代版本，是...',
 		checkNumsType: 'chat'
 	},
-
 	baidu_code_llama: {
 		title: 'Llama · 代码',
 		ModelPath: '',

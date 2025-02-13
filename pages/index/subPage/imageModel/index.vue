@@ -49,12 +49,17 @@
 			<imageModelChat @onCancel="onCancel" v-model:chatValue="chatValue" @onSend="onSend" />
 		</template>
 	</z-paging>
+	<!-- #ifdef APP -->
 	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
 		@onFinish="finishCore" />
+	<!-- #endif -->
+
 </template>
 
 <script setup lang="ts">
+	// #ifdef APP
 	import ChatSSEClient from "@/components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
+	// #endif
 	import { nextTick, onMounted, ref } from 'vue';
 	import imageModelChat from '@/components/CommonChat/imageModelChat.vue';
 	import { simpleModels, imagesList, imageDesception } from './data';
@@ -78,7 +83,11 @@
 	const { model, selectChatId } = storeToRefs(ChatStore);
 	const { $api } = useGlobalProperties()
 	const { setChatInfo } = ChatStore;
-	const { streamRequest, isRecive, onCancelRequest, streamSpark, openCore, errorCore, messageCore, finishCore, chatSSEClientRef } = useStreamHooks();
+	const { streamRequest, isRecive, onCancelRequest, streamSpark,
+		// #ifdef APP
+		openCore, errorCore, messageCore, finishCore, chatSSEClientRef
+		// #endif
+	} = useStreamHooks();
 	const onCancel = () => {
 		onCancelRequest()
 		ChatStore.setLoadingMessage(false)

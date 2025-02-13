@@ -91,7 +91,6 @@
 	<AigentChangeItems />
 	<AiAgentHistory />
 	<!-- #ifdef APP -->
-
 	<ChatSSEClient ref="chatSSEClientRef" @onOpen="openCore" @onError="errorCore" @onMessage="messageCore"
 		@onFinish="finishCore" />
 	<!-- #endif -->

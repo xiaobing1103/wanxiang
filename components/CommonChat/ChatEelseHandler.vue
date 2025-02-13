@@ -1,34 +1,45 @@
 <template>
-	<view class="elseTips">
-		<text class="elseTips_text">由AI生成,注意甄别</text>
+	<!--<view class="elseTips">
+		 <text class="elseTips_text">由AI生成,注意甄别</text> 
 	</view>
+	-->
 	<view class="ChatEelseHandler">
-		<view class="ChatEelseHandler_item">
-			<image class="ChatEelseHandler_item_newIcon"
-				src="//file.1foo.com/2024/08/23/9980b2a11f01db21440dc639f4a67260.svg" mode=""></image>
+		<!--	<view class="ChatEelseHandler_item">
+			 <image class="ChatEelseHandler_item_newIcon"
+				src="//file.1foo.com/2024/08/23/9980b2a11f01db21440dc639f4a67260.svg" mode=""></image> 
+		</view>-->
+		<view class="ChatEelseHandler_item" @click="copy">
+			<view class="ChatEelseHandler_item_text">
+				<image class="ChatEelseHandler_item_text_image" :src="$assets.copyIcon" mode=""></image>
+			</view>
 		</view>
-		<view class="ChatEelseHandler_item" @click="openJubao">
-			<text class="ChatEelseHandler_item_text">举报</text>
-			<up-icon color="#ccc" class="ChatEelseHandler_item_icon" name="arrow-down-fill" size="10"></up-icon>
-		</view>
+
+
 		<!-- #ifdef H5  -->
 		<view class="ChatEelseHandler_item" @click="exprotFile">
-			<text class="ChatEelseHandler_item_text">导出</text>
-			<up-icon color="#ccc" class="ChatEelseHandler_item_icon" name="arrow-down-fill" size="10"></up-icon>
+			<text class="ChatEelseHandler_item_text">
+				<image class="ChatEelseHandler_item_text_image" :src="$assets.ExportIcon" mode=""></image>
+			</text>
+			<!-- <up-icon color="#ccc" class="ChatEelseHandler_item_icon" name="arrow-down-fill" size="10"></up-icon> -->
 		</view>
 		<!-- #endif -->
 		<!-- #ifndef H5 || MP-WEIXIN -->
-		<view class="ChatEelseHandler_item" @click="shareFile">
+		<!-- <view class="ChatEelseHandler_item" @click="shareFile">
 			<text class="ChatEelseHandler_item_text">分享</text>
 			<up-icon color="#ccc" class="ChatEelseHandler_item_icon" name="share" size="10"></up-icon>
-		</view>
+		</view> -->
 		<!-- #endif -->
-		<view class="ChatEelseHandler_item" @click="copy">
-			<text class="ChatEelseHandler_item_text">复制</text>
-		</view>
 
 		<view class="ChatEelseHandler_item" @click="againAsk">
-			<text class="ChatEelseHandler_item_text">重试</text>
+			<view class="ChatEelseHandler_item_text">
+				<image class="ChatEelseHandler_item_text_image" :src="$assets.reStartChatIcon " mode=""></image>
+			</view>
+		</view>
+		<view class="ChatEelseHandler_item" @click="openJubao">
+			<view class="ChatEelseHandler_item_text">
+				<image class="ChatEelseHandler_item_text_image" :src="$assets.jubaoIcon " mode=""></image>
+			</view>
+			<!-- <up-icon color="#ccc" class="ChatEelseHandler_item_icon" name="arrow-down-fill" size="10"></up-icon> -->
 		</view>
 	</view>
 	<up-modal :showConfirmButton="false" :show="show" @cancel="oncancel" closeOnClickOverlay @close="oncancel">
@@ -162,17 +173,17 @@
 <style lang="scss">
 	.ChatEelseHandler {
 		display: flex;
-		border-top: 1rpx solid #f1f1ff;
-		padding-top: 10rpx !important;
+		width: 100%;
+		// border-top: 1rpx solid #f1f1ff;
+		padding-top: 0rpx !important;
 		// justify-content: space-between;
 
 		&_item {
 			font-size: 22rpx;
 			display: flex;
-			padding: 0 10rpx;
+			padding: 0 5rpx;
 			align-items: center;
 			box-sizing: border-box;
-			color: #ccc;
 			justify-content: center;
 
 			&_newIcon {
@@ -183,6 +194,13 @@
 			&_text {
 				padding: 0rpx 5rpx;
 				box-sizing: border-box;
+
+				&_image {
+					width: 30rpx;
+					// filter: drop-shadow(0px 0 0 #eaeaea);
+					height: 30rpx;
+
+				}
 			}
 
 			&_icon {

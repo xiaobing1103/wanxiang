@@ -23,7 +23,6 @@
 	import CommonHeader from '@/components/CommonHeader.vue'
 	import CreateMapTem from './components/CreateMapTem'
 	import { debounce } from '@/utils';
-	import config from '@/config'
 	import { base64ToPath } from '@/utils/imgPath';
 	import { useUserStore } from '@/store';
 	const current = ref(0)

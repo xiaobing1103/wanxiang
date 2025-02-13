@@ -77,7 +77,7 @@
 		data() {
 			return {
 				transformer: new Transformer(),
-				markmapDOM: null,
+					markmapDOM: null,
 				currentContent: '',
 				updateCounter: 0,
 				updateThreshold: 10,

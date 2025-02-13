@@ -6,6 +6,7 @@ export interface ModelConfig {
 	modelDesc : string;
 	resetPassWord ?: string
 	checkNumsType ?: string
+	hotDesc ?: string
 }
 
 export type CommonModelKeys = 'v35' | 'v40' | 'net' | 'echarts' | 'vfast';

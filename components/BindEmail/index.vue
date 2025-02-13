@@ -30,8 +30,8 @@
 
 <script setup lang="ts">
 	import { ref } from 'vue';
-	import { useUserStore } from '../../store';
-	import { useGlobalProperties } from '../../hooks/useGlobalHooks';
+	import { useUserStore } from '@/store';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	const popupShow = defineModel<boolean>('popupShow');
 	const email = ref('');
 	const vierfCode = ref('');

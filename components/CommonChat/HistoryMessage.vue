@@ -160,7 +160,7 @@
 
 				&_text {
 					font-size: 25rpx;
-					width: 200rpx;
+					width: 350rpx;
 					white-space: nowrap;
 					/* 强制文本在一行显示，不换行 */
 					overflow: hidden;

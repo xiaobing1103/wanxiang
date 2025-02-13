@@ -154,6 +154,14 @@
 						"navigationBarTitleText": "个人中心",
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "otherPage/index",
+					"name": "otherPage",
+					"style": {
+						"navigationBarTitleText": "其他客户端产品",
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		},

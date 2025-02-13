@@ -9,6 +9,8 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 	const token = ref('')
 	const invite_code = ref('')
 	const showVip = ref(true)
+	const Ios_control = ref(false)
+	const Ios_controlTG = ref(false)
 	const exitLogin = () => {
 		userInfo.value = null
 		token.value = ''
@@ -31,6 +33,12 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 			return $api.post('api/v1/user/wechatPhoneLogin', parmas)
 		}
 
+	}
+
+	const getIsShowVipuI = async () => {
+		const ios_control = await $api.get('ios_control.json')
+		Ios_control.value = ios_control.open
+		Ios_controlTG.value = ios_control.tg
 	}
 
 	const setInvite_code = (val : string) => {
@@ -98,7 +106,10 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 		exitLogin,
 		wxAuthLogin,
 		invite_code,
-		setInvite_code
+		setInvite_code,
+		getIsShowVipuI,
+		Ios_control,
+		Ios_controlTG
 	}
 }, { unistorage: { paths: ['userInfo', 'token', 'invite_code'] } })
 export default useUserStore

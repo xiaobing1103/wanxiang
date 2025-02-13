@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 	import { onLaunch } from '@dcloudio/uni-app'
-	import { useScreenStore, useChatStore } from '@/store'
+	import { useScreenStore, useChatStore, useUserStore } from '@/store'
 	import { useGlobalProperties } from './hooks/useGlobalHooks';
 	const { $api } = useGlobalProperties();
 	const screenStore = useScreenStore()
+	const UserStore = useUserStore()
 	const ChatStore = useChatStore()
 	const initPageSystem = async () => {
 		const systemInfo = await uni.getSystemInfo()
@@ -25,6 +26,7 @@
 		//初始化页面信息
 		await initPageSystem()
 		ChatStore.initChatInfo()
+		UserStore.getIsShowVipuI()
 		// getInviteCode()
 		console.log('App Launch');
 		// #ifdef APP-PLUS

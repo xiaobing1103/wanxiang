@@ -36,7 +36,13 @@ export const modelTypes : Record<ModelType, string> = {
 	moonshot_v1_128k: "",
 	moonshot_v1_32k: "",
 	qwen_plus: "",
-	moonshot_v1_8k: ""
+	moonshot_v1_8k: "",
+	DeepSeek_V3: '',
+	deepseek_r1_qwen_32b: '',
+	deepseek_r1_qwen_70b: '',
+	DeepSeek_Coder: '',
+	DeepSeek_Coder_V2: '',
+	'glm-zero-preview': ''
 };
 export const exParmas : Record<ModelType, string | any> = {
 	v35: {},
@@ -82,8 +88,14 @@ export const exParmas : Record<ModelType, string | any> = {
 	qwen_farui: {},
 	baidu_code_llama: {},
 	baidu_llama: {},
+	DeepSeek_V3: {},
+	'glm-zero-preview': {},
+	DeepSeek_R1: {},
+	deepseek_r1_qwen_32b: {},
+	DeepSeek_Coder_V2: {},
 	moonshot_v1_128k: {},
 	moonshot_v1_32k: {},
+
 	qwen_plus: {},
 	moonshot_v1_8k: {},
 	chat_4o_mini: {
@@ -131,6 +143,13 @@ export const currentModelReversParmas : Record<ModelType, string | any> = {
 	qwen_farui: undefined,
 	baidu_code_llama: undefined,
 	baidu_llama: undefined,
+	DeepSeek_V3: 'messages',
+	DeepSeek_R1: 'messages',
+	deepseek_r1_qwen_70b: 'messages',
+	deepseek_r1_qwen_32b: 'messages',
+	DeepSeek_Coder_V2: 'messages',
+	'glm-zero-preview': 'messages',
+	DeepSeek_Coder: 'messages',
 	moonshot_v1_128k: undefined,
 	moonshot_v1_32k: undefined,
 	qwen_plus: undefined,
@@ -435,6 +454,62 @@ export const TemplateConfig : Record<ModelType, chatConfigProps> = {
 			template: 'baidu_llamaTemplate',
 			messageType: 'text2',
 			message: `文心一言·Llama英文是Llama的新一代版本，是其系列大模型发展的自然延续。Llama可以根据提示生成文本和代码的模型，在英文对话中优势于其他模型。`
+		}]
+	},
+	DeepSeek_V3: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'DeepSeek_V3Template',
+			messageType: 'text2',
+			message: `DeepSeek-V3适用于各种自然语言处理任务，包括但不限于文本生成、语言理解、机器翻译等。其高性能和高效训练的特点使其在科研、开发和商业应用中具有广泛的应用前景。`
+		}]
+	},
+	DeepSeek_R1: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'DeepSeek_R1Template',
+			messageType: 'text2',
+			message: `DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力，尤其擅长数学、代码和自然语言推理等复杂任务。`
+		}]
+	},
+	deepseek_r1_qwen_70b: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'deepseek_r1_qwen_70bTemplate',
+			messageType: 'text2',
+			message: `DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力，尤其擅长数学、代码和自然语言推理等复杂任务。`
+		}]
+	},
+	deepseek_r1_qwen_32b: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'deepseek_r1_qwen_32bTemplate',
+			messageType: 'text2',
+			message: `DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力，尤其擅长数学、代码和自然语言推理等复杂任务。`
+		}]
+	},
+	DeepSeek_Coder: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'DeepSeek_CoderTemplate',
+			messageType: 'text2',
+			message: `DeepSeek Coder适用于各种场景，包括初创企业的快速原型设计、大型公司的复杂代码重构以及个人开发者的日常编码需求。无论是编码生成、智能代码修复还是作为编程助手，DeepSeek Coder都能提供强大的支持。`
+		}]
+	},
+	DeepSeek_Coder_V2: {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'DeepSeek_Coder_V2Template',
+			messageType: 'text2',
+			message: `DeepSeek Coder_V2适用于各种场景，包括初创企业的快速原型设计、大型公司的复杂代码重构以及个人开发者的日常编码需求。无论是编码生成、智能代码修复还是作为编程助手，DeepSeek Coder都能提供强大的支持。`
+		}]
+	},
+	'glm-zero-preview': {
+		messagesTemplate: [{
+			role: 'system',
+			template: 'glm-zero-previewTemplate',
+			messageType: 'text2',
+			message: `GLM-Zero-Preview 具有强大的归纳与演绎能力，能够快速处理复杂的数学运算，解答包括代数、微积分、概率统计等领域的问题。`
 		}]
 	},
 	baidu_code_llama: {

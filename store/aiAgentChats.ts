@@ -12,7 +12,7 @@ export interface MainPagesInterFace {
 	streamRequest : () => void
 	setIsRecive : (val : boolean) => void
 	onCancelRequest : () => void
-	streamSpark : (text: string) => Promise<string>
+	streamSpark : (text : string) => Promise<string>
 }
 //菜单类型枚举
 export enum AgentKeyEnum {
@@ -136,6 +136,24 @@ export const CreateImageDrawLoadding = () => {
 		  </div>
 	`
 }
+
+export const CreateDeepSeekLoadding = () => {
+	return `
+		<div style="display:flex;align-items: center;padding: 10px 0;" id="draw_loading">
+		      <img  notScal="true" style="width:50rpx;height:50rpx;margin-right:10rpx;"  src="${$assets.DeepSeekModelIcon}"/>
+		      <span class="name">深度思考中...</span>
+			  <span class="arrow"> 👇 </span>
+		  </div>
+	`
+}
+export const CreateDeepSeekComplete = () => {
+	return `
+		<div style="display:flex;align-items: center;padding: 10px 0;" id="draw_loading">
+		      <img  notScal="true" style="width:50rpx;height:50rpx;margin-right:10rpx;"  src="${$assets.DeepSeekModelIcon}"/>
+		      <span class="name">已深度思考...</span>
+		  </div>
+	`
+}
 export const CreateImageDrawComplete = () => {
 	return `
 	  <div style="display:flex;align-items: center;padding: 10px 0;" id="draw_loading">
@@ -143,6 +161,8 @@ export const CreateImageDrawComplete = () => {
 		  <span class="name">CogView3-PlusAI绘画：已完成</span>
 	  </div>\n\n`
 }
+
+
 export let newStr = ''
 const useAiAgentChats = defineStore('wanxiang_aiAgentChats', () => {
 	const openHistoryModal = ref(false)
@@ -217,7 +237,7 @@ const useAiAgentChats = defineStore('wanxiang_aiAgentChats', () => {
 		}])
 
 	const agentId = ref<string>('')
-	
+
 	const agentItem = ref<Agent.Item | null>(null)
 	const agentList = ref<Agent.Item[]>([])
 	const showAgentChangeBox = ref(false)

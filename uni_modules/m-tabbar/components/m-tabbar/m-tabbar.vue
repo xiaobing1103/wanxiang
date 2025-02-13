@@ -241,7 +241,7 @@
 				} = this
 				if(isReload){}
 				return obj2strStyle({
-					'height': `${tabbarHeight}rpx`,
+					// 'height': `${tabbarHeight}rpx`,
 					'background-color': backgroundColor || '#fff',
 				})
 			},

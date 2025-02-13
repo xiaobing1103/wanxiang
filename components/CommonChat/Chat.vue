@@ -21,7 +21,6 @@
 	<!-- <up-overlay :show="showOverlay" opacity="0.3">
 		<view class="overlay">
 			<view class="overlay_top" @click="showOverlay = false">
-
 			</view>
 			<view class="showOverlaychatAll" :style="{bottom: inputBottom + 'rpx'}">
 				<view class="chatInputBox">
@@ -29,7 +28,6 @@
 						<image @click="toImageModel" class="chatInput_left_image" src="@/static/image.svg" mode="">
 						</image>
 					</view>
-
 					<view class="chatInput_input">
 						<textarea cursor-spacing="100rpx" :show-confirm-bar="false" :adjust-position="false" auto-height
 							disable-default-padding
@@ -43,10 +41,8 @@
 					</view>
 				</view>
 			</view>
-
 		</view>
 	</up-overlay> -->
-
 </template>
 
 <script setup lang="ts">
@@ -96,7 +92,7 @@
 		flex-direction: column;
 		width: 100%;
 		padding: 0 30rpx;
-		margin-bottom: 30rpx;
+		margin-bottom: 15rpx;
 		max-height: 90rpx;
 		z-index: 900;
 	}

@@ -9,7 +9,7 @@
 					<CommonTitle title="图片预览" desc="" />
 				</view> -->
 				<view class="PreviewPage_content">
-					<uni-swiper-dot :style="{ height: '100%', width: '100%' }" :info="currentImages?.images"
+					<UniSwiperDot :style="{ height: '100%', width: '100%' }" :info="currentImages?.images"
 						:current="current" field="content" :mode="'round'">
 						<view class="swiper">
 							<swiper class="swiper-box" @change="change">
@@ -22,7 +22,7 @@
 								</swiper-item>
 							</swiper>
 						</view>
-					</uni-swiper-dot>
+					</UniSwiperDot>
 				</view>
 				<view class="PreviewPage_main">图片分辨率 ：（ 512 * 512 ）</view>
 			</view>
@@ -62,6 +62,7 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
 	import ShareMenu from '../ShareMenu/components/cc-shareMenu/cc-shareMenu.vue'
+	import UniSwiperDot from '../components/uni-swiper-dot/components/uni-swiper-dot/uni-swiper-dot.vue'
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import { useDrawStore } from '@/store';
 	import { drawTaskJson } from '@/store/draw';

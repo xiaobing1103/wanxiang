@@ -2,10 +2,9 @@
 	<view class="ChatTemplate">
 		<view class="systemChat">
 			<view v-if="model == 'v35'">
-				<V35Template />
-			</view>
-			<view v-if="model == 'v40'">
-				<v40Template />
+				<view class="V35Template">
+					👋你好啊，我是{{AppStrName}}AI,很高兴认识你！我可厉害了😎 对话、绘画、写作什么的统统不在话下，想试试吗？
+				</view>
 			</view>
 			<view v-if="model == 'echarts'">
 				<EchartsTemplate @onsendTemMessage="onsendTemMessage" />
@@ -15,9 +14,8 @@
 </template>
 
 <script lang="ts" setup>
+	import { AppStrName } from '@/http';
 	import { computed, ref } from 'vue';
-	import V35Template from '@/components/ChatTemplate/V35Template.vue';
-	import V40Template from "@/components/ChatTemplate/V40Template.vue"
 	import EchartsTemplate from "@/components/ChatTemplate/EchartsTemplate.vue"
 	import useChatStore from '@/store/chat';
 	import { storeToRefs } from "pinia"
@@ -53,5 +51,11 @@
 		border-radius: 15rpx;
 		padding: 10rpx;
 		box-sizing: border-box;
+	}
+
+	.V35Template {
+		background-color: white;
+		padding: 15rpx;
+		border-radius: 10rpx;
 	}
 </style>
