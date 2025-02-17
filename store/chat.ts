@@ -30,6 +30,7 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const chats = ref<ChatHistory[]>([])
 	const shareButton = ref(false)
 	const seletedModel = ref('DeepSeek_R1')
+	const isNotThinkModels = ['DeepSeek_V3', 'DeepSeek_Coder_V2', 'DeepSeek_Coder']
 	const isDeepSeekModels = ['DeepSeek_R1', 'DeepSeek_V3', 'deepseek_r1_qwen_70b', 'glm-zero-preview', 'deepseek_r1_qwen_32b', 'DeepSeek_Coder_V2', 'DeepSeek_Coder']
 	const isDeepSeekR1ChatModels = ['DeepSeek_R1', 'deepseek_r1_qwen_70b', 'glm-zero-preview', 'deepseek_r1_qwen_32b',]
 	const sharedata = ref<shareDataType>({
@@ -211,7 +212,8 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		seletedModel,
 		setSeletedModel,
 		isShowSearchTabbar,
-		setIsShowSearchTabbar
+		setIsShowSearchTabbar,
+		isNotThinkModels
 	}
 }, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id', 'loadingMessage'] } }
 );

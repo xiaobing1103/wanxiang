@@ -59,6 +59,32 @@
 	import { useStreamHooks } from '@/hooks/useStreamHooks';
 	import { currentModelReversParmas, exParmas, modelTypes, noHistoryArr } from '../chat/chatConfig';
 	import { MainPagesInterFace } from "@/store/aiAgentChats";
+	import { onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
+	// 2. 添加分享到好友的方法
+	onShareAppMessage((res) => {
+	  // 可以根据不同的分享场景自定义分享内容
+	  const shareInfo = {
+	    title: '快来和AI对话吧',
+	    path: '/pages/index/AllModelChatCom',
+	    imageUrl: '', // 可以添加自定义分享图片
+	  }
+	  
+	  // 如果是从聊天内容分享的
+	  if (res.from === 'button' && res.target?.dataset?.content) {
+	    shareInfo.title = res.target.dataset.content
+	  }
+	  
+	  return shareInfo
+	})
+	
+	// 3. 添加分享到朋友圈的方法
+	onShareTimeline(() => {
+	  return {
+	    title: '快来和AI对话吧',
+	    query: '',
+	    imageUrl: ''
+	  }
+	})
 	const { streamRequest, isRecive, onCancelRequest, streamSpark, setIsRecive
 		// #ifdef APP
 		, openCore, errorCore, messageCore, finishCore, chatSSEClientRef
@@ -110,10 +136,12 @@
 		scrollToBottom();
 	});
 	onLoad((options : any) => {
+		uni.showShareMenu({})
 		if (options.invite_code) {
 			UserStore.setInvite_code(options.invite_code)
 		}
 		console.log('apppppppp -----------------------', options)
+
 	})
 	const echartsOnsendMessage = (val : any) => {
 		const { messages, uchartsType } = val
@@ -197,7 +225,7 @@
 		let reasoning_contentRe = ''
 		let thinkTime = 0
 		const id = generateUUID();
-		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text' });
+		ChatBoxRef.value.addMessage(id, { id: id, state: 'waite', target: 'assistant', message: result, messageType: 'text', isShowDeepSeekThinks: true });
 		ChatStore.setLoadingMessage(true);
 		const LoadingConfig = {
 			showLoading: false,
@@ -207,14 +235,14 @@
 			url: options.url,
 			data: options.data,
 			onmessage: async (text : UniApp.RequestSuccessCallbackResult | { reasoning_assistant : boolean, content : string }) => {
-				console.log(text)
 				if (text?.reasoning_assistant) {
 					reasoning_assistant = text?.reasoning_assistant
 					reasoning_assistant == 'isLoading' ? reasoning_contentRe += text?.content : newStr += text?.content
 					thinkTime = text?.thinkTime
 					let newRes = await streamSpark(newStr)
+					const currentMessage = ChatBoxRef.value.getSingelMessage(id);
 					ChatBoxRef.value.setMessage(id, {
-						id: id,
+						...currentMessage, // 保留原有的所有属性，包括 isShowDeepSeekThinks
 						state: reasoning_assistant == 'isLoading' ? 'waite' : 'ok',
 						target: 'assistant',
 						message: newRes,
@@ -222,15 +250,18 @@
 						messageType: 'text',
 						echartsType: options?.echartsType,
 						reasoning_assistant,
-						isShowDeepSeekThinks: true,
 						thinkTime
 					});
+					scrollToBottom();
 					return
 				}
+
 				newStr += text
 				result = await streamSpark(newStr)
+
+				const currentMessage = ChatBoxRef.value.getSingelMessage(id);
 				ChatBoxRef.value.setMessage(id, {
-					id: id,
+					...currentMessage, // 保留原有的所有属性，包括 isShowDeepSeekThinks
 					state: 'ok',
 					target: 'assistant',
 					message: result,
@@ -238,9 +269,7 @@
 					echartsType: options.echartsType,
 					reasoning_assistant,
 					reasoning_content: reasoning_contentRe,
-					isShowDeepSeekThinks: true,
 					thinkTime
-
 				});
 				scrollToBottom();
 			},

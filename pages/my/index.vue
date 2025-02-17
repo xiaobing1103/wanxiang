@@ -65,9 +65,8 @@
 
 	})
 
-
 	const getIosEnv = () => {
-		$api.get(`api/v1/vip/xcx_pay?version_code=2.3.2.1`, {}, {}).then((res) => {
+		$api.get(`api/v1/vip/xcx_pay?version_code=2.3.2.3`, {}, {}).then((res) => {
 			if (res.code == 200) {
 				isIos.value = true
 			} else {
@@ -75,8 +74,6 @@
 			}
 		})
 	}
-
-
 
 	const popupShow4 = ref(false);
 	const popupShow5 = ref(false)

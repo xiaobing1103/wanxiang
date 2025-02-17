@@ -24,22 +24,25 @@
 										<image style="width:80rpx;height:50rpx;" :src="commonModel[model].modelIcon"
 											mode="">
 										</image>
-										<view class="deepSeekThinkBox"
-											v-if="item.reasoning_assistant && item.reasoning_assistant !=='noStart'">
-											<image class="deepSeekThinkBox_SvgIcon"
-												:src="$assets.DeepSeekModalThinkIngIcon" mode=""></image>
-											<text class="deepSeekThinkBox_text">
-												<template v-if="item.reasoning_assistant == 'isLoading'">
-													{{ '深度思考中 ......'  }}
-												</template>
-												<template v-if="item.reasoning_assistant == 'done'">
-													{{ `已深度思考（用时${item.thinkTime || 0}秒）` }}
-												</template>
-											</text>
-											<up-icon size="12" class="deepSeekThinkBox_icon"
-												@click="item.isShowDeepSeekThinks = !item.isShowDeepSeekThinks"
-												:name="item.isShowDeepSeekThinks?'arrow-down':'arrow-up'"></up-icon>
-										</view>
+										<template v-if="ChatStore.isDeepSeekR1ChatModels.includes(model)">
+											<view class="deepSeekThinkBox"
+												v-if="item.reasoning_assistant && item.reasoning_assistant !=='noStart'">
+												<image class="deepSeekThinkBox_SvgIcon"
+													:src="$assets.DeepSeekModalThinkIngIcon" mode=""></image>
+												<text class="deepSeekThinkBox_text"
+													@click="item.isShowDeepSeekThinks = !item.isShowDeepSeekThinks">
+													<template v-if="item.reasoning_assistant == 'isLoading'">
+														{{ '深度思考中 ......'  }}
+													</template>
+													<template v-if="item.reasoning_assistant == 'done'">
+														{{ `已深度思考（用时${item.thinkTime || 0}秒）` }}
+													</template>
+												</text>
+												<up-icon size="12" class="deepSeekThinkBox_icon"
+													:name="item.isShowDeepSeekThinks?'arrow-down':'arrow-up'"></up-icon>
+											</view>
+
+										</template>
 									</view>
 
 									<view class="OverdeepSeekThinkBox_Bottom" v-if="item.isShowDeepSeekThinks">

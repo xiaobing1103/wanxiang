@@ -140,7 +140,7 @@
 		loaddingKeyword ?: boolean
 		keywords ?: string[]
 		onRevertChat ?: () => void
-		senMessage : (val : string) => void
+		// senMessage : (val : string) => void
 		loadingWebPage : boolean
 		isRecive : boolean
 	}

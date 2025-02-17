@@ -19,7 +19,7 @@ export interface LoadingConfigTypes {
 	title : string | "加载中..."
 }
 export type projectType = 'wanxiang' | 'bianjie'
-export const AppName : projectType = 'bianjie'
+export const AppName : projectType = 'wanxiang'
 export const AppStrName = AppName == 'wanxiang' ? '万象' : '边界'
 
 export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig, controller, isWechatSendImages } : httpDTO) => {
@@ -254,6 +254,19 @@ async function getStream(options : { url : string, data : any, isStream : boolea
 	console.log(options)
 	const { url, data, isStream, callback, errorCallback, LoadingConfig, controller, checkNumsType, noCheckNums } = options
 	let res
+	// const httpDTO = {
+	// 	url,
+	// 	method: 'POST',
+	// 	data,
+	// 	isJson: true,
+	// 	isStream: isStream,
+	// 	callback: callback,
+	// 	errorCallback: errorCallback,
+	// 	config: null,
+	// 	LoadingConfig: LoadingConfig,
+	// 	controller
+	// };
+	// return $http(httpDTO);
 	if (!noCheckNums && checkNumsType) {
 		res = await post('api/v1/number2/check', { type: checkNumsType, })
 	}
