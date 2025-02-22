@@ -2,15 +2,15 @@
 	<view class="header" :style="{background: noBackGround ?  '' : 'white'}">
 		<view class="headerItems" :style="{height: ScreenStore.navBarHeight + 'px' }">
 			<view class="weixin-header">
-				<template v-if="curRoute == 'pages/index/index'">
+				<template
+					v-if="curRoute == 'pages/index/index' || curRoute == 'pages/middlePage/index' || curRoute == 'pages/draw/index' || curRoute == 'pages/function/index'  || curRoute == 'pages/my/index'">
 					<up-navbar :bgColor="bgColor">
 						<template v-slot:left>
-							<up-icon :color="chatStore.openHistoryModel ? '#4955f5' :''"
-								@click="chatStore.setopenHistoryModel(true)" name="clock" size="22"></up-icon>
+							{{""}}
 						</template>
 						<template v-slot:center>
 							<view>
-								<image :src="AppName =='bianjie' ? '/static/logo.svg' :'/static/wanxianglogo.svg'"
+								<image :src="AppName =='bianjie' ? '/static/logo.svg' : '/static/wanxianglogo.svg'"
 									:style="{height: '25px',width:AppName =='bianjie'? '120px': '100px'}">
 								</image>
 							</view>
@@ -18,42 +18,25 @@
 					</up-navbar>
 				</template>
 				<template v-else>
-					<template
-						v-if="curRoute == 'pages/draw/index' || curRoute == 'pages/function/index'  || curRoute == 'pages/my/index'">
-						<up-navbar :bgColor="bgColor">
-							<template v-slot:left>
-								{{""}}
-							</template>
-							<template v-slot:center>
-								<view>
-									<image :src="AppName =='bianjie' ? '/static/logo.svg' : '/static/wanxianglogo.svg'"
-										:style="{height: '25px',width:AppName =='bianjie'? '120px': '100px'}">
-									</image>
-								</view>
-							</template>
-						</up-navbar>
-					</template>
-					<template v-else>
-						<up-navbar :bgColor="bgColor" :left-icon="'arrow-left'" @leftClick="backpage">
-							<template v-slot:center>
-								<view class="" v-if="defindTitle">
-									{{defindTitle}}
-								</view>
-								<view v-else>
-									<image :src="AppName =='bianjie' ? '/static/logo.svg' :'/static/wanxianglogo.svg'"
-										:style="{height: '25px',width:AppName =='bianjie'? '120px': '100px'}">
-									</image>
-								</view>
-							</template>
-						</up-navbar>
-					</template>
+					<up-navbar :bgColor="bgColor" :left-icon="'arrow-left'" @leftClick="backpage">
+						<template v-slot:center>
+							<view class="" v-if="defindTitle">
+								{{defindTitle}}
+							</view>
+							<view v-else>
+								<image :src="AppName =='bianjie' ? '/static/logo.svg' :'/static/wanxianglogo.svg'"
+									:style="{height: '25px',width:AppName =='bianjie'? '120px': '100px'}">
+								</image>
+							</view>
+						</template>
+					</up-navbar>
 				</template>
+
 			</view>
 		</view>
 		<template v-if="!noRenderLastModal">
 			<GolbalModals />
 		</template>
-		<CommonTabbar />
 	</view>
 	<LevelUpVip />
 
@@ -63,7 +46,6 @@
 <script setup lang="ts">
 	import LevelUpVip from '@/components/CommonChat/LevelUpVip.vue';
 	import GolbalModals from './GolbalModals.vue';
-	import CommonTabbar from './CommonTabbar.vue';
 	import { computed, reactive } from 'vue';
 	import { AppName } from '@/http';
 	import { useChatStore, useScreenStore } from '@/store';

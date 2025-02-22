@@ -6,11 +6,54 @@ export type ItemMessage = {
 	messageType : MessageType //消息类型
 	templateType ?: MessageType //模版类型 仅在messageType为template时生效
 	echartsType ?: any
-	reasoning_assistant ?: 'isLoading' | 'done' | 'noStart' // 控制深度思考的下拉框出现
+	reasoning_assistant ?: reasoning_assistantType // 控制深度思考的下拉框出现
 	reasoning_content ?: string // 深度思考的内容
 	isShowDeepSeekThinks ?: boolean //是否展开当前深度思考
+	isThisChatOpenLianWangSearch ?: boolean // 当前对话是否可以搜索和思考
+	isShowSrearchBox ?: boolean  //是否展开当前联网搜索
 	thinkTime ?: number //深度思考耗时
+	searchItems ?: searchItemsContent[]
+	segments ?: TextSegment[]
 }
+export interface TextSegment {
+	type : 'text' | 'marker';
+	content : string;
+	index ?: number;
+	sourceData ?: any;
+}
+
+export type textDeepSeekType = {
+	reasoning_assistant : reasoning_assistantType,
+	content : string,
+	thinkTime : number,
+
+}
+export type searchItemsContent = {
+	content : string,
+	icon : string,
+	index : number
+	link : string
+	media : string
+	refer : string
+	title : string
+}
+
+export type reasoning_assistantType = 'isLoading' | 'done' | 'noStart' | 'search'
+export type searchItems = {
+	content : {
+		content : string,
+		icon : string,
+		index : number
+		link : string
+		media : string
+		refer : string
+		title : string
+	},
+	role : string
+	tool : 'search',
+	reasoning_assistant : reasoning_assistantType
+}
+
 export type MessageItems = Map<string, ItemMessage>
 
 export type StateType = 'ok' | 'waite' | 'error'

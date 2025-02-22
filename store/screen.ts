@@ -40,7 +40,7 @@ const useScreenStore = defineStore("screen", () => {
 		// #endif
 		return 44
 	})
-
+	
 
 	const safeTopHeight = computed(() => {
 		let height : number = 0

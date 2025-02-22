@@ -2,10 +2,10 @@ import {
 	defineStore
 } from 'pinia';
 import { ref } from 'vue';
-import { ChatHistory, ItemMessage, ModelType, } from '../type/chatData';
+import { ChatHistory, ItemMessage, MessageItems, ModelType, } from '../type/chatData';
 import { generateUUID } from '../tools/uuid';
 import { commonModel } from '../config/modelConfig';
-import { noHistoryArr } from '@/pages/chat/chatConfig';
+import { TemplateConfig, noHistoryArr } from '@/pages/chat/chatConfig';
 export interface shareDataType {
 	sharedata ?: any
 	type : number
@@ -25,14 +25,15 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	const showLevelUpVipContent = ref<string>('')
 	const openHistoryModel = ref<boolean>(false)
 	const openDeepSeekModel = ref(false)
-
+	const messageList = ref<MessageItems>(new Map());
 	const isShowSearchTabbar = ref('HomeTemPlate')
 	const chats = ref<ChatHistory[]>([])
 	const shareButton = ref(false)
-	const seletedModel = ref('DeepSeek_R1')
+	const openLianWangModel = ref(false)
 	const isNotThinkModels = ['DeepSeek_V3', 'DeepSeek_Coder_V2', 'DeepSeek_Coder']
 	const isDeepSeekModels = ['DeepSeek_R1', 'DeepSeek_V3', 'deepseek_r1_qwen_70b', 'glm-zero-preview', 'deepseek_r1_qwen_32b', 'DeepSeek_Coder_V2', 'DeepSeek_Coder']
 	const isDeepSeekR1ChatModels = ['DeepSeek_R1', 'deepseek_r1_qwen_70b', 'glm-zero-preview', 'deepseek_r1_qwen_32b',]
+
 	const sharedata = ref<shareDataType>({
 		type: 1,
 		strShareUrl: "http://www.baidu.com",
@@ -40,12 +41,14 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		strShareSummary: "分享总结",
 		strShareImageUrl: "http://www.xuelejia.com/xljapp/h5/static/aboutUsLogo.png"
 	})
+
+	const setopenLianWangModel = (val : boolean) => {
+		openLianWangModel.value = val
+	}
 	const setIsShowSearchTabbar = (val : string) => {
 		isShowSearchTabbar.value = val
 	}
-	const setSeletedModel = (val : string) => {
-		seletedModel.value = val
-	}
+
 	const setOpenDeepSeekModel = (val : boolean) => {
 		openDeepSeekModel.value = val
 	}
@@ -77,13 +80,26 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	}
 
 
-
+	const getInitTemplate = () => {
+		const maps = new Map();
+		TemplateConfig[model.value].messagesTemplate.map((item, index) => {
+			const id = generateUUID();
+			item.id = id;
+			maps.set(item.id, {
+				id: id,
+				state: 'ok',
+				target: item.role,
+				message: item.message || item.template,
+				messageType: item.messageType || 'template'
+			});
+		});
+		return maps;
+	};
 	const addchats = (value : ChatHistory) => {
-		if (chats.value.length >= 10) {
-			uni.$u.toast('历史记录不能超过十条,请删除历史记录后重试！')
-
-			return
-		}
+		// if (chats.value.length >= 10) {
+		// 	uni.$u.toast('历史记录不能超过十条,请删除历史记录后重试！')
+		// 	return
+		// }
 		setModel(value.model)
 		changeSelectChatId(value.id)
 		if (noHistoryArr.includes(value.model)) return
@@ -91,39 +107,27 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 	}
 
 	const delChats = (id : string) => {
-		if (chats.value.length === 1) {
-			// 如果只有一个消息，不允许删除
-			UNI.$u.toast('只有一条消息记录，无法删除');
-			return;
-		}
 		const newChats = chats.value.filter((val) => val.id !== id);
-		chats.value = newChats;
-		if (chats.value.length > 0) {
-			// 如果还有剩余的消息，更新选择的聊天和模型
-			setTimeout(() => {
-				changeSelectChatId(chats.value[0].id);
-				setModel(chats.value[0].model);
-			}, 100)
 
-		} else {
-			// 如果删除后没有剩余消息，可以处理这种情况
+		chats.value = newChats
+		// if (chats.value.length > 0) {
+		// 	setTimeout(() => {
+		// 		changeSelectChatId(chats.value[0].id);
+		// 		setModel(chats.value[0].model);
+		// 	}, 100)
+		// } else {
+		// 	uni.$u.toast('没有剩余的消息');
+		// }
+		if (chats.value.length == 0) {
 			uni.$u.toast('没有剩余的消息');
 		}
 	};
 	const clearChats = () => {
-		if (chats.value.length > 1) {
-			chats.value = []
-			addchats({
-				id: generateUUID(),
-				iconUrl: commonModel.v35.modelIcon,
-				title: commonModel.v35.title,
-				data: [],
-				model: 'v35'
-			})
-		} else {
+		setModel(model.value)
+		chats.value = []
+		messageList.value = getInitTemplate()
+		uni.$u.toast('清楚全部历史记录成功！');
 
-			uni.$u.toast('只有一条消息记录，无法删除！');
-		}
 	}
 	const clearChartLoadingStauts = () => {
 		console.log(chats.value.find((items) => items.id == selectChatId.value))
@@ -149,32 +153,50 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		chats.value = newChats;
 	};
 
-	const initChatInfo = (refreshPage ?: boolean) => {
-		if (chats.value.length >= 10) {
-			uni.$u.toast('历史记录不能超过十条！')
-			return
-		}
-		if (chats.value.length == 0 || refreshPage) {
-			const chatId = generateUUID()
-			changeSelectChatId(chatId)
-			addchats({
-				id: chatId,
-				data: [],
-				iconUrl: commonModel[model.value].modelIcon,
-				model: model.value,
-				title: commonModel[model.value].title
-			})
-			changeSelectChatId(chatId)
-		}
-	}
+	// const initChatInfo = (refreshPage ?: boolean) => {
+	// 	if (chats.value.length >= 10) {
+	// 		uni.$u.toast('历史记录不能超过十条！')
+	// 		return
+	// 	}
+	// 	if (chats.value.length == 0 || refreshPage) {
+	// 		const chatId = generateUUID()
+	// 		changeSelectChatId(chatId)
+	// 		addchats({
+	// 			id: chatId,
+	// 			data: [],
+	// 			iconUrl: commonModel[model.value].modelIcon,
+	// 			model: model.value,
+	// 			title: commonModel[model.value].title
+	// 		})
+	// 		changeSelectChatId(chatId)
+	// 	}
+	// }
 	const getCurrentInfo = (id : string) => {
 		return chats.value.find((item) => item.id == id)
 	}
 
 	const seletedFirstChats = () => {
-		setModel(chats.value[0].model)
-		changeSelectChatId(chats.value[0].id)
+		if (chats.value.length > 0) {
+			setModel(chats.value[0].model)
+			changeSelectChatId(chats.value[0].id)
+		}
+
 	}
+	// 修改对话title
+	const updateChatTitle = (id : string, newTitle : string) => {
+		const newChats = chats.value.map((chat) => {
+			if (chat.id === id) {
+				return {
+					...chat,
+					title: newTitle
+				};
+			}
+			return chat;
+		});
+
+		chats.value = newChats;
+	};
+
 	return {
 		model,
 		setModel,
@@ -192,7 +214,7 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		persona_id,
 		setPersonaId,
 		setChatInfo,
-		initChatInfo,
+		// initChatInfo,
 		getCurrentInfo,
 		setLoadingMessage,
 		seletedFirstChats,
@@ -209,12 +231,15 @@ const useChatStore = defineStore('wanxiang_chat', () => {
 		isDeepSeekR1ChatModels,
 		setOpenDeepSeekModel,
 		openDeepSeekModel,
-		seletedModel,
-		setSeletedModel,
 		isShowSearchTabbar,
 		setIsShowSearchTabbar,
-		isNotThinkModels
+		isNotThinkModels,
+		messageList,
+		getInitTemplate,
+		updateChatTitle,
+		openLianWangModel,
+		setopenLianWangModel
 	}
-}, { unistorage: { paths: ['model', 'selectChatId', 'chats', 'persona_id', 'loadingMessage'] } }
+}, { unistorage: { paths: ['model', 'chats', 'persona_id', 'loadingMessage'] } }
 );
 export default useChatStore

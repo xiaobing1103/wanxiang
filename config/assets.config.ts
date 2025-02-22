@@ -337,6 +337,10 @@ export interface IconConfig {
 	jubaoIcon : string
 	lianwangIcon : string
 	OverBGImage : string
+	activeLianWang : string
+	activeLianwangIcon : string
+	moreHomeIndexIcon : string
+	IndexHotIcon : string
 }
 export interface ModelConfig {
 	title : string;
@@ -543,8 +547,11 @@ const iconConfig : IconConfig = {
 	ExportIcon: getUrl('/2025/02/10/fa825ab103cde6b915c66bc66984d938.svg'),
 	jubaoIcon: getUrl('/2025/02/10/854adb8db7fbc645a41b50a10c42073f.svg'),
 	lianwangIcon: getUrl('/2024/07/13/347294b9cc60e5f510644999eda40c2a.png'),
-	OverBGImage: getUrl('/2025/02/13/e47dece101d681759bae5a3aaa051192.png')
-
+	activeLianwangIcon: getUrl('/2025/02/20/7ab9f857a6fbd42b7ca406186d856b71.svg'),
+	OverBGImage: getUrl('/2025/02/13/e47dece101d681759bae5a3aaa051192.png'),
+	activeLianWang: getUrl('/2025/02/19/aae9957af7f48716aedba3d26d5e0cde.svg'),
+	moreHomeIndexIcon: getUrl('/2024/12/26/5abb883a22612e1c8dde43ca475e084c.svg'),
+	IndexHotIcon: getUrl('/2025/02/22/b2ffba60e12c7e1e2d95940269a54b32.svg')
 }
 
 export default iconConfig

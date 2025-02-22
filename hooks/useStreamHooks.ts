@@ -45,7 +45,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 	const pages = getCurrentPages(); // 获取页面栈
 	const currentPage = pages[pages.length - 1]; // 获取当前页面对象
 	const currentRoute = '/' + currentPage.route; // 获取当前页面路径
-	const isNotChatAndAiagent = ['/pages/index/index', '/pages/function/subPage/AIaiAgent/mainPages']
+	const isNotChatAndAiagent = ['/pages/index/subPage/AllChatPage/index', '/pages/function/subPage/AIaiAgent/mainPages']
 	let cancelFn
 	// 用于App
 	// #ifdef APP
@@ -56,7 +56,6 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 		} else {
 			url = BaseApi + options.url
 		}
-
 		chatSSEClientRef.value.startChat({
 			url: url,
 			body: options.data,
@@ -94,13 +93,12 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 		} else {
 			chunk = await revserAppChunk(message)
 		}
-
 		if (chunk) {
-			if (!currentOptions.checkNumsType) {
-				if (ChatStore.model == 'net') {
-					chunk = await handlerCurrentModel(chunk)
-				}
-			}
+			// if (!currentOptions.checkNumsType) {
+			// 	if (ChatStore.model == 'net') {
+			// 		chunk = await handlerCurrentModel(chunk)
+			// 	}
+			// }
 			if (isNotChatAndAiagent.includes(currentRoute)) {
 				if (currentOptions.isAiAigent || ChatStore.isDeepSeekModels.includes(ChatStore.model)) {
 					let newChunk = await handlerCurrentAiagentApp(chunk)
@@ -112,7 +110,6 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 			} else {
 				currentOptions.onmessage(chunk);
 			}
-
 		}
 	}
 	const finishCore = async () => {
@@ -139,7 +136,6 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 	const objRevserAppChunk = async (text : string) => {
 		const lines = text.split('\n');
 		let chunks = [];
-
 		for (let i = 0; i < lines.length; i++) {
 			const line = lines[i].trim();
 			if (line && line.startsWith('data: ')) {
@@ -177,11 +173,11 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 				requestTask.onChunkReceived(async res => {
 					let message = resloveResponseText(res.data);
 					// console.log(message)
-					if (!options.checkNumsType) {
-						if (ChatStore.model == 'net') {
-							message = await handlerCurrentModel(message)
-						}
-					}
+					// if (!options.checkNumsType) {
+					// 	if (ChatStore.model == 'net') {
+					// 		message = await handlerCurrentModel(message)
+					// 	}
+					// }
 					if (isNotChatAndAiagent.includes(currentRoute)) {
 						if (options.isAiAigent || ChatStore.isDeepSeekModels.includes(ChatStore.model)) {
 							message = await handlerCurrentAiagent(message)
@@ -231,13 +227,15 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 				}
 				return null
 			}
-			if (!options.checkNumsType) {
-				if (ChatStore.model == 'net') {
-					chunk = await handlerCurrentModel(chunk)
-				}
-			}
-			if (isNotChatAndAiagent.includes(currentRoute)) {
-				if (ChatStore.isDeepSeekModels.includes(ChatStore.model) || options.isAiAigent) {
+			// 没有携带检查model
+			// if (!options.checkNumsType) {
+			// 	// 旧版联网搜索
+			// 	if (ChatStore.model == 'net') {
+			// 		chunk = await handlerCurrentModel(chunk)
+			// 	}
+			// }
+			if (isNotChatAndAiagent.includes(currentRoute) || ChatStore.openLianWangModel) {
+				if (ChatStore.isDeepSeekModels.includes(ChatStore.model) || options.isAiAigent || ChatStore.openLianWangModel) {
 					let newChunk = await handlerCurrentAiagent(chunk)
 					options.onmessage(newChunk);
 				} else {
@@ -284,16 +282,13 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 					const resultArr = result.split('data: ').filter(item => item.trim());
 					let reasoningContent = '';
 					let assistantContent = '';
-
 					for (const item of resultArr) {
 						const cleanItem = item.replace(/\n/g, '').trim();
 						if (['[SUCCESS]', '[DONE]', '[ERROR]'].includes(cleanItem)) {
 							continue;
 						}
-
 						try {
 							const jsonData = JSON.parse(cleanItem);
-
 							if (currentOptions.isAiAigent) {
 								const processed = handlerAiAgentFn(jsonData);
 								if (processed) {
@@ -305,6 +300,11 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 									}
 								}
 							} else {
+								if (jsonData?.tool == 'search') {
+									console.log('需要处理的数据search', jsonData)
+									resolve({ ...jsonData, reasoning_assistant: jsonData.tool })
+									return
+								}
 								if (jsonData.role === 'reasoning_assistant') {
 									if (!startDate) startDate = Date.now();
 									if (isReasoning_assistant === 'noStart') {
@@ -369,6 +369,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 	// #endif
 
 
+
 	const handlerCurrentAiagent = (result : string) : Promise<string | { SearchTitle : string } | { aiAgentSearchList : { content : string, link : string, title : string }[] }> => {
 		console.log(result)
 		return new Promise((resolve, reject) => {
@@ -381,13 +382,11 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 							return '\\u' + match.charCodeAt(0).toString(16).padStart(4, '0')
 					}
 				});
-
 				if (result.includes('data: ')) {
 					const resultArr = result.split('data: ').filter(item => item.trim());
 					console.log(resultArr, 'resultArr at hooks/useStreamHooks.ts:354');
 					let reasoningContent = '';
 					let assistantContent = '';
-
 					for (const item of resultArr) {
 						console.log(item, 'current item at hooks/useStreamHooks.ts:358');
 						try {
@@ -416,6 +415,11 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 								continue;
 							}
 							// 处理普通对话消息
+							if (jsonData?.tool == 'search') {
+								console.log('需要处理的数据search', jsonData)
+								resolve({ ...jsonData, reasoning_assistant: jsonData.tool })
+								return
+							}
 							if (jsonData.role === 'reasoning_assistant') {
 								if (!startDate) startDate = Date.now();
 								if (isReasoning_assistant === 'noStart') {
@@ -432,10 +436,11 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 								assistantContent += jsonData.content;
 							}
 							continue;
+
 							// #endif
 							// #ifdef H5
-							const h5process = handlerAiAgentFn(jsonData); +
-								resolve(h5process)
+							const h5process = handlerAiAgentFn(jsonData);
+							resolve(h5process)
 							// #endif
 						} catch (err) {
 							console.error('Processing error:', err);
@@ -553,8 +558,13 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 				return `![alt image](${jsonPart.content.url})`
 			}
 		}
+
 		// #ifdef H5 
-		if (ChatStore.isDeepSeekR1ChatModels.includes(ChatStore.model) && !currentOptions.isAiAigent) {
+		if ((ChatStore.openLianWangModel || ChatStore.isDeepSeekR1ChatModels.includes(ChatStore.model)) && !currentOptions.isAiAigent) {
+			if (jsonPart.tool == 'search') {
+				console.log('需要处理的数据search', jsonPart)
+				return { ...jsonPart, reasoning_assistant: jsonPart.tool }
+			}
 			if (jsonPart.role == 'reasoning_assistant') {
 				if (!startDate) startDate = Date.now()
 				if (isReasoning_assistant == 'noStart') {
@@ -584,59 +594,60 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 
 
 	// 处理当前net模型的数据
-	let shouldProcess : boolean = false;
-	let accumulatedData : string = '';
-	const handlerCurrentModel = (result : string) : Promise<string> => {
-		let searchResult : string = ''
-		return new Promise((resolve, reject) => {
-			accumulatedData += result;
-			if (accumulatedData.startsWith(`data: {"type":"event","event":"search_read"`)) {
-				const tagPattern = /"tag":"([\s\S]*?)"/;
-				const contentPattern = /"content":\s*(\[[\s\S]*?\])/;
-				const tagMatch = accumulatedData.match(tagPattern);
-				const tag = tagMatch ? tagMatch[1] : null;
-				const contentMatch = accumulatedData.match(contentPattern);
-				const content = contentMatch ? contentMatch[1] : null;
-				console.log("Tag:", tag);
-				const contentArr = JSON.parse(content)
-				contentArr.forEach((items : { title : string; link : string, icon : string, media : string }) => {
-					searchResult += `<a style="color:rgb(0, 122, 255);display:block;padding:10rpx 0;" href="${items.link}"><img style="width: 30rpx; height:30rpx;margin-right:20rpx;" src="${items.icon}" alt="${items.media}"/>${items.title}</a>\n`
-				})
-				resolve(`<div style="margin:20rpx 0;padding:20rpx;background-color:#282c34;border-radius:10rpx;">${searchResult}</div>`)
-			}
-			try {
-				const jsonPattern = /data:\s*({.*?})\s*/g;
-				let match : RegExpExecArray | null;
-				while ((match = jsonPattern.exec(accumulatedData)) !== null) {
-					const jsonString = match[1];
-					if (jsonString) {
-						try {
-							const obj = JSON.parse(jsonString);
-							if (obj?.type === 'event' && obj?.event === 'search') {
-								shouldProcess = true;
-								resolve(`\nAl联网搜索: ${obj?.content.replace(/search\//g, '').replace(/正在搜索:/g, '')}\n------\n`);
-							}
-							if (shouldProcess && obj?.type === 'event' && obj?.event === 'search_read') {
-								let searchResult = '';
-								obj.content.forEach((item : { title : string; href : string }) => {
-									searchResult += `<a style="color:red;">${item.title} + ${item.href}</a>\n`;
-								});
-								resolve(`<code>${searchResult}</code>`);
-							}
-							if (obj?.type === 'text') {
-								resolve(shouldProcess ? obj?.content : obj?.content.replace(/search\//g, ''));
-							}
-						} catch (error) {
-							reject(`JSON parsing error: ${error.message}`);
-						}
-					}
-				}
-				accumulatedData = '';
-			} catch (error) {
-				reject(`Error in processing data: ${error.message}`);
-			}
-		});
-	};
+	// let shouldProcess : boolean = false;
+	// let accumulatedData : string = '';
+	// const handlerCurrentModel = (result : string) : Promise<string> => {
+	// 	let searchResult : string = ''
+	// 	return new Promise((resolve, reject) => {
+	// 		accumulatedData += result;
+	// 		if (accumulatedData.startsWith(`data: {"type":"event","event":"search_read"`)) {
+	// 			const tagPattern = /"tag":"([\s\S]*?)"/;
+	// 			const contentPattern = /"content":\s*(\[[\s\S]*?\])/;
+	// 			const tagMatch = accumulatedData.match(tagPattern);
+	// 			const tag = tagMatch ? tagMatch[1] : null;
+	// 			const contentMatch = accumulatedData.match(contentPattern);
+	// 			const content = contentMatch ? contentMatch[1] : null;
+	// 			console.log("Tag:", tag);
+	// 			const contentArr = JSON.parse(content)
+	// 			contentArr.forEach((items : { title : string; link : string, icon : string, media : string }) => {
+	// 				searchResult += `<a style="color:rgb(0, 122, 255);display:block;padding:10rpx 0;" href="${items.link}"><img style="width: 30rpx; height:30rpx;margin-right:20rpx;" src="${items.icon}" alt="${items.media}"/>${items.title}</a>\n`
+	// 			})
+	// 			resolve(`<div style="margin:20rpx 0;padding:20rpx;background-color:#282c34;border-radius:10rpx;">${searchResult}</div>`)
+	// 		}
+	// 		try {
+	// 			const jsonPattern = /data:\s*({.*?})\s*/g;
+	// 			let match : RegExpExecArray | null;
+	// 			while ((match = jsonPattern.exec(accumulatedData)) !== null) {
+	// 				const jsonString = match[1];
+	// 				if (jsonString) {
+	// 					try {
+	// 						const obj = JSON.parse(jsonString);
+	// 						if (obj?.type === 'event' && obj?.event === 'search') {
+	// 							shouldProcess = true;
+	// 							resolve(`\nAl联网搜索: ${obj?.content.replace(/search\//g, '').replace(/正在搜索:/g, '')}\n------\n`);
+	// 						}
+	// 						if (shouldProcess && obj?.type === 'event' && obj?.event === 'search_read') {
+	// 							let searchResult = '';
+	// 							obj.content.forEach((item : { title : string; href : string }) => {
+	// 								searchResult += `<a style="color:red;">${item.title} + ${item.href}</a>\n`;
+	// 							});
+	// 							resolve(`<code>${searchResult}</code>`);
+	// 						}
+	// 						if (obj?.type === 'text') {
+	// 							resolve(shouldProcess ? obj?.content : obj?.content.replace(/search\//g, ''));
+	// 						}
+	// 					} catch (error) {
+	// 						reject(`JSON parsing error: ${error.message}`);
+	// 					}
+	// 				}
+	// 			}
+	// 			accumulatedData = '';
+	// 		} catch (error) {
+	// 			reject(`Error in processing data: ${error.message}`);
+	// 		}
+	// 	});
+	// };
+	
 	//统一处理
 	const streamRequest = async (options : any) => {
 		console.log(options)
@@ -686,6 +697,7 @@ export const useStreamHooks = (options ?: StreamOptions) => {
 	const onStop = (a) => {
 		console.log(a)
 	}
+
 	//文档翻译限制
 	const verifyTranslateTextLimit = (text : string) => {
 		// 统计汉字数量

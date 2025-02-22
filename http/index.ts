@@ -19,7 +19,7 @@ export interface LoadingConfigTypes {
 	title : string | "加载中..."
 }
 export type projectType = 'wanxiang' | 'bianjie'
-export const AppName : projectType = 'wanxiang'
+export const AppName : projectType = 'bianjie'
 export const AppStrName = AppName == 'wanxiang' ? '万象' : '边界'
 
 export const $http = ({ url, method, data, isJson, isStream, callback, errorCallback, config, LoadingConfig, controller, isWechatSendImages } : httpDTO) => {
@@ -59,8 +59,8 @@ export const $http = ({ url, method, data, isJson, isStream, callback, errorCall
 		uni.hideLoading();
 		if (response?.status == 401 || response?.data?.code === 401 || response?.data?.code === 4001 || response?.statusCode === 401) {
 			console.log(response)
-			if (response.data?.msg) {
-				uni.$u.toast(response.data.msg);
+			if (response.data?.msg || response.data?.message) {
+				uni.$u.toast(response.data.msg ||  response.data?.message);
 				ChatStore.setLoadingMessage(false)
 			} else {
 				uni.$u.toast('登录信息已过期，请重新登录！');

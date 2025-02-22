@@ -54,49 +54,87 @@ export const columns =
 
 
 
-export const seletedModels : { title : string, icon : string, isDeepSeekModelTag ?: boolean, path ?: string, isNews ?: boolean, }[] = [
+export const seletedModels : { title : string, icon : string, isDeepSeekModelTag ?: boolean, path ?: string, isNews ?: boolean, desc ?: string, isTop ?: boolean }[] = [
 	{
 		title: 'DeepSeek专线',
 		icon: $assets.DeepSeekModelIcon,
 		isNews: true,
-		isDeepSeekModelTag: true
+		isDeepSeekModelTag: true,
+		desc: '全新模型',
+		isTop: true
 	},
 	{
 		title: 'AI写作',
 		icon: '//file.1foo.com/2024/12/26/fafa1b255d7b77938c93fb26ccb62533.svg',
-		path: '/pages/function/subPage/AIWriteSomething/index'
+		path: '/pages/function/subPage/longText/index',
+		desc: '多种体裁、润色校队、一键成文',
+		isTop: true
 	},
 	{
 		title: '图像生成',
 		icon: '//file.1foo.com/2024/12/26/ada7cb241211f0ede6252a254e865a1f.svg',
-		path: '/pages/draw/subPage/text2image/index'
+		path: '/pages/draw/subPage/image2image/index',
+		desc: '自定风格、搜集灵感、复制同款',
+		isTop: true
+	},
+	{
+		title: 'AI搜索',
+		icon: '//file.1foo.com/2024/12/26/504e351cfe28e4438ebb9461f527ef71.svg',
+		path: '/pages/function/subPage/AIaiAgent/mainPages?id=659e54b1b8006379b4b2abd6',
+		desc: '实时资讯、丰富信源、整合搜索',
+		isTop: true
 	},
 	{
 		title: 'AI阅读',
 		icon: '//file.1foo.com/2024/12/26/565b333623bfd955830ee21d5cdb41f2.png',
-		path: '/pages/function/subPage/AIApplication/SingleApplication/index?id=633'
+		path: '/pages/function/subPage/AIApplication/SingleApplication/index?id=633',
+		desc: '论文课件、财报合同、翻译总结',
+		isTop: true
 	},
 	{
 		title: 'AI文档',
 		icon: '//file.1foo.com/2025/01/03/7fe7c649b4922a03ff689a342db9cef6.svg',
-		path: '/pages/function/subPage/AidocumentChat/index'
-
+		path: '/pages/function/subPage/AidocumentChat/index',
+		desc: 'PPT思维导高效生成',
+		isTop: true
 	},
 	{
 		title: 'AI视频',
 		icon: '//file.1foo.com/2024/08/23/af7423793ea3fde1f135875432b2b84e.svg',
-		path: '/pages/function/subPage/TextCreateVideo/index?currentPages=0'
+		path: '/pages/function/subPage/TextCreateVideo/index?currentPages=0',
+		desc: "对标（sora、科灵、Pica）"
 
 	},
 	{
 		title: '音乐生成',
 		icon: '//file.1foo.com/2024/12/26/a54324f50a76f2adc4adcaf9999581e0.svg',
-		path: '/pages/function/subPage/AiMusicCreate/index?currentPages=0'
+		path: '/pages/function/subPage/AiMusicCreate/index?currentPages=0',
+		desc: '歌词定制、曲风任选、人声演唱'
 	},
-	// {
-	// 	title: '更多',
-	// 	icon: '//file.1foo.com/2024/12/26/5abb883a22612e1c8dde43ca475e084c.svg'
-	// }
+	{
+		title: '数据分析',
+		icon: '//file.1foo.com/2024/12/26/521b34e82f6705331d4a4ad86a00526c.svg',
+		path: '/pages/function/subPage/AIaiAgent/mainPages?id=65a265419d72d299a9230616',
+		desc: '处理数据、精准分析、绘制图表'
+	},
+	{
+		title: 'AI翻译',
+		icon: '//file.1foo.com/2024/12/26/48988cd9fd314c5f21d6efd040ca863e.svg',
+		path: '/pages/function/subPage/TranslatePages/index',
+		desc: '处理数据、精准分析、绘制图表'
+	},
+	{
+		title: '网页摘要',
+		icon: '//file.1foo.com/2024/12/26/4101b529746d511720e50414f559113c.svg',
+		path: '/pages/index/subPage/webModel/index',
+		desc: '处理数据、精准分析、绘制图表'
+	},
+	{
+		title: 'AI语音',
+		icon: '//file.1foo.com/2025/01/03/b98f16fbe3a4e9eade85517a52772a4e.svg',
+		path: '/pages/function/subPage/AiVioceCreate/index',
+		desc: '打通人机交互的闭环，让应用逼真发声'
+	},
 ]
 export const commonModel : Record<ModelType, ModelConfig> = {
 	'v35': {
@@ -105,16 +143,19 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: 'api/v1/chat2/v35',
 		modelIcon: $assets.v35ModelIcon,
 		modelDesc: '推荐模型基座训练数据超50亿T，是目前大语言模型中...',
-		checkNumsType: 'chat'
+		checkNumsType: 'chat',
+		NormalTitle: '推荐模型'
 	},
 	DeepSeek_V3: {
 		title: 'DeepSeek · V3',
 		ModelPath: '',
 		ModelApi: 'https://open.aichatapi.com/api/v1/chat/tencent/yfoo.deepseek.v3',
 		modelIcon: $assets.DeepSeekModelIcon,
-		modelDesc: '`DeepSeek-V3适用于各种自然语言处理任务，包括但不限于...',
-		hotDesc: '边界独家服务支持-专线支持',
-		checkNumsType: 'chat_v40'
+		modelDesc: 'DeepSeek-V3适用于各种自然语言处理任务，包括但不限于...',
+		// hotDesc: '边界独家服务支持-专线支持',
+		hotDesc: 'New',
+		checkNumsType: 'chat_v40',
+		NormalTitle: 'DeepSeek'
 	},
 
 	DeepSeek_R1: {
@@ -123,8 +164,10 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: 'https://open.aichatapi.com/api/v1/chat/tencent/yfoo.deepseek.r1',
 		modelIcon: $assets.DeepSeekModelIcon,
 		modelDesc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力...',
-		hotDesc: '边界独家服务支持-全尺寸-满血版本',
-		checkNumsType: 'chat_v40'
+		// hotDesc: '边界独家服务支持-全尺寸-满血版本',
+		hotDesc: 'New',
+		checkNumsType: 'chat_v40',
+		R1Name: 'R1'
 	},
 
 	deepseek_r1_qwen_32b: {
@@ -133,8 +176,10 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: 'https://open.aichatapi.com/api/v1/chat/yfoo/yfoo_deepseek_r1_qwen_32b',
 		modelIcon: $assets.DeepSeekModelIcon,
 		modelDesc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推理能力...',
-		hotDesc: '边界独家服务支持-32b版本',
-		checkNumsType: 'chat_v40'
+		// hotDesc: '边界独家服务支持-32b版本',
+		hotDesc: 'New',
+		checkNumsType: 'chat_v40',
+		R1Name: 'DistillQwen'
 	},
 	deepseek_r1_qwen_70b: {
 		title: 'DeepSeek-R1（70B专线）',
@@ -142,8 +187,10 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: 'https://open.aichatapi.com/api/v1/chat/yfoo/yfoo_deepseek_r1_qwen_70b',
 		modelIcon: $assets.DeepSeekModelIcon,
 		modelDesc: 'DeepSeek-R1采用强化学习进行后训练，旨在提升推...',
-		hotDesc: '边界独家专线-免费使用',
-		checkNumsType: ''
+		// hotDesc: '边界独家专线-免费使用',
+		hotDesc: '免费',
+		checkNumsType: '',
+		R1Name: '70B'
 	},
 	'DeepSeek_Coder_V2': {
 		title: 'DeepSeek-Coder（V2）',
@@ -151,7 +198,8 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: 'https://open.aichatapi.com/api/v1/chat/yfoo/yfoo.deepseek.coder.v2',
 		modelIcon: $assets.DeepSeekModelIcon,
 		modelDesc: 'DeepSeek-代码模型v2", "DeepSeek Coder v2适用于各种...',
-		hotDesc: '代码模型v2',
+		// hotDesc: '代码模型v2',
+		hotDesc: 'Hot',
 		checkNumsType: 'chat_v40'
 	},
 	'DeepSeek_Coder': {
@@ -160,7 +208,8 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: 'https://open.aichatapi.com/api/v1/chat/yfoo/yfoo.deepseek.coder.v2',
 		modelIcon: $assets.DeepSeekModelIcon,
 		modelDesc: 'DeepSeek-代码模型", "DeepSeek Coder适用于各种...',
-		hotDesc: '代码模型',
+		// hotDesc: '代码模型',
+		hotDesc: 'Hot',
 		checkNumsType: 'chat'
 	},
 	'glm-zero-preview': {
@@ -169,17 +218,18 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: 'https://open.aichatapi.com/api/v1/chat/zhipu/yfoo-glm-zero-preview',
 		modelIcon: $assets.zhipu_glm4Icon,
 		modelDesc: 'GLM-Zero-Preview 具有强大的归纳与演绎能力，能够快速...',
-		hotDesc: 'New',
+		// hotDesc: 'New',
+		hotDesc: 'Hot',
 		checkNumsType: 'chat'
 	},
-	"net": {
-		title: '联网模型',
-		ModelPath: '',
-		ModelApi: 'api/v1/chat2/completionNet',
-		modelIcon: $assets.lianwangIcon,
-		modelDesc: `我是您的 AI助手，我已连接互联网，知晓近日的...`,
-		checkNumsType: 'chat_networking'
-	},
+	// "net": {
+	// 	title: '联网模型',
+	// 	ModelPath: '',
+	// 	ModelApi: 'api/v1/chat2/completionNet',
+	// 	modelIcon: $assets.lianwangIcon,
+	// 	modelDesc: `我是您的 AI助手，我已连接互联网，知晓近日的...`,
+	// 	checkNumsType: 'chat_networking'
+	// },
 	'echarts': {
 		title: '图表模型',
 		ModelPath: '',
@@ -194,7 +244,8 @@ export const commonModel : Record<ModelType, ModelConfig> = {
 		ModelApi: 'api/v1/chat2/v40',
 		modelIcon: $assets.v40ModelIcon,
 		modelDesc: '推荐模型=高中阶段，智慧4.0模型=博士阶段...',
-		checkNumsType: 'chat_v40'
+		checkNumsType: 'chat_v40',
+		NormalTitle: '智慧4.0'
 	},
 	"vfast": {
 		title: '极速模型',
