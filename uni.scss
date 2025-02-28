@@ -45,7 +45,7 @@ $color-gradual-blue: linear-gradient(45deg, #0081ff, #1cbbb4);
 $color-bg: #f3f4f6;
 $color-bg-light: #f8f8f8;
 $color-bg-dark: #eeeeee;
-
+$color-blogal-borderColor : rgb(110,110,110);
 // 暗黑和明亮模式背景颜色
 $color-dark-mode: #111111;
 $color-light-mode: #f8f8f8;
@@ -89,6 +89,9 @@ $u-type-info-light: #f4f4f5;
 $u-form-item-height: 70rpx;
 $u-form-item-border-color: #dcdfe6;
 
+$aichat-placeholader-color: rgba(146, 146, 169, 1);
+
+$aichat-border-224color: rgba(238,238,238);
 $aichat-button-color: rgb(9,224,171);
 $aichat-border-color: rgb(9,224,171);
 $aichat-text-color: rgb(16,192,215);
@@ -97,9 +100,9 @@ $aichat-seletedView-textColor :rgb(28, 78, 255);
 $aichat-golbal-background :rgb(246, 247, 249); 
 $aichat-golbal-vipText :#974D1C; 
 $aichat-golbal-vipActiveText :#813803; 
-$uni-color-primary: rgb(9,224,171);
+$uni-color-primary:  rgb(50,100,237);
 $uni-color-success: #4cd964;
-$u-primary: rgb(9,224,171);
+$u-primary: rgb(50,100,237);
 $u-primary-dark: #08d09e;
 $u-primary-disabled: #0affc2;
 $u-primary-light: #ecf5ff;
@@ -155,3 +158,27 @@ page, scroll-view, view, chat-box, message-item {
 	padding-bottom: env(safe-area-inset-bottom); // 兼容 IOS>=11.2
 }
 
+
+button::after {
+            border: none;
+        }
+        button {
+            position: relative;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 0px;
+            padding-right: 0px;
+            box-sizing: border-box;
+            text-align: center;
+            text-decoration: none;
+            line-height: 1.35;
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+            color: #000;
+            font-size: 32rpx;
+            background-color: #fff;
+            width: 100%;
+            height: 100%;
+        }
+		

@@ -49,6 +49,22 @@
 			"root": "pages/index/subPage",
 			"independent": true,
 			"pages": [{
+					"path": "AllChatPage/index",
+					"name": "AllChatPage",
+					"style": {
+						"navigationBarTitleText": "对话页面",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "SearchPage/index",
+					"name": "SearchPage",
+					"style": {
+						"navigationBarTitleText": "功能搜索",
+						"navigationStyle": "custom"
+					}
+				},
+				{
 					"path": "imageModel/index",
 					"name": "imageModel",
 					"style": {
@@ -696,8 +712,8 @@
 	"tabBar": {
 		"fontSize": "24rpx",
 		"height": "40rpx  !important",
-		"color": "#95ACBE",
-		"selectedColor": "#4955f5",
+		"color": "#afafb3",
+		"selectedColor": "#3d3d3d",
 		"backgroundColor": "#fff",
 		"list": [{
 				"pagePath": "pages/index/index",

@@ -341,6 +341,8 @@ export interface IconConfig {
 	activeLianwangIcon : string
 	moreHomeIndexIcon : string
 	IndexHotIcon : string
+	voiceIcons : string
+	addFilesIcons : string
 }
 export interface ModelConfig {
 	title : string;
@@ -551,7 +553,9 @@ const iconConfig : IconConfig = {
 	OverBGImage: getUrl('/2025/02/13/e47dece101d681759bae5a3aaa051192.png'),
 	activeLianWang: getUrl('/2025/02/19/aae9957af7f48716aedba3d26d5e0cde.svg'),
 	moreHomeIndexIcon: getUrl('/2024/12/26/5abb883a22612e1c8dde43ca475e084c.svg'),
-	IndexHotIcon: getUrl('/2025/02/22/b2ffba60e12c7e1e2d95940269a54b32.svg')
+	IndexHotIcon: getUrl('/2025/02/22/b2ffba60e12c7e1e2d95940269a54b32.svg'),
+	voiceIcons: getUrl('/2025/02/24/859120e76b13bd734e6db6c879ef9eba.svg'),
+	addFilesIcons: getUrl('/2025/02/24/f3a7f0845e26af89a9ed87dcb8599877.svg')
 }
 
 export default iconConfig
