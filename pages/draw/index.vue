@@ -16,14 +16,14 @@
 		</view>
 		<template #bottom>
 			<m-tabbar native safeBottom>
-				<template v-slot:tabbar_index_2>
+				<!-- <template v-slot:tabbar_index_2>
 					<view class="custom_style">
 						<view class="custom_style_icon">
 							<image class="custom_style_icon_image" :src="$assets.DeepSeekModelIcon" mode=""></image>
 							<image class="custom_style_icon_hotimage" :src="$assets.IndexHotIcon" mode=""></image>
 						</view>
 					</view>
-				</template>
+				</template> -->
 			</m-tabbar>
 		</template>
 	</z-paging>

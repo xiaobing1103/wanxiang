@@ -1,15 +1,18 @@
 <template>
 	<view class="HomeChatBox">
-		<up-icon :customStyle="{padding:'10rpx'}" name="camera" size="30"></up-icon>
+		<up-icon color="rgb(29,30,34)" :customStyle="{paddingLeft:'30rpx'}" name="camera" size="30"></up-icon>
 		<view class="Chat" :style="{ paddingLeft: isShowCamera ? '0rpx' :  '30rpx' }">
 			<textarea @keyboardheightchange="keyboardheightchange" :adjust-position="isIOS" :show-confirm-bar="false"
 				auto-height disable-default-padding
 				:style="{margin:'0rpx' , overflow: 'scroll',maxHeight:'100rpx', padding:'10rpx', fontSize:'30rpx', width:'100%'}"
-				maxlength="-1" placeholder="请输入内容" border="surround" v-model="chatValue"></textarea>
+				maxlength="-1" placeholder="有问题尽管问,知无不答~" border="surround" v-model="chatValue"></textarea>
 		</view>
 		<view class="right">
 			<!-- activeSend : ChatStore.loadingMessage ? -->
+			<!-- <image class="voiceChatIcon" :src="$assets.voiceIcons" mode=""></image>
+			<image class="addFilesIcon" :src="$assets.addFilesIcons" mode=""></image> -->
 			<image @click="ClickMessage" class="image" :src="chatValue ?  activeSend : send" mode=""></image>
+
 		</view>
 	</view>
 </template>
@@ -20,11 +23,12 @@
 	import activeSend from '@/static/activeSend.svg'
 	import send from '@/static/send.svg'
 	import { useChatStore } from '@/store';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	const chatValue = ref('')
 	const ChatStore = useChatStore()
 	const isShowCamera = ref(true)
 	const KeyHight = defineModel('KeyHight')
-	
+	const { $assets } = useGlobalProperties()
 	const isIOS = ref(false)
 	// 检查平台
 	// // #ifdef MP-WEIXIN 
@@ -60,9 +64,10 @@
 		margin: 18rpx 30rpx;
 		border-radius: 10rpx;
 		align-items: center;
-		box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+		box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 		min-height: 90rpx;
 		background-color: #fff;
+		border-radius: 45rpx;
 
 		.Chat {
 			flex: 1;
@@ -70,9 +75,19 @@
 		}
 
 		.right {
-			padding: 0 20rpx;
+			padding: 0 30rpx;
 
 			.image {
+				height: 56rpx;
+				width: 56rpx;
+			}
+
+			.voiceChatIcon {
+				height: 56rpx;
+				width: 56rpx;
+			}
+
+			.addFilesIcon {
 				height: 56rpx;
 				width: 56rpx;
 			}

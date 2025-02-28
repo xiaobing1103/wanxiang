@@ -9,14 +9,15 @@
 					path="/pages/my/subPage/PersonalCenter/index"></form-cell>
 
 				<!-- #ifdef APP -->
-				<template v-if="UserStore.Ios_control">
-					<form-cell label="我的会员" isHasToken :expand="true" path="/pages/my/subPage/vip/index">
-						<template #extra>
-							<text
-								:class="{'vip-desc' : UserStore.userInfo?.vip !== 0 } ">{{UserStore.userInfo?.vipType}}</text>
-						</template>
-					</form-cell>
-				</template>
+
+				<form-cell label="我的会员" isHasToken :expand="true" path="/pages/my/subPage/vip/index">
+					<template #extra>
+						<text
+							:class="{'vip-desc' : UserStore.userInfo?.vip !== 0 } ">{{UserStore.userInfo?.vipType}}</text>
+					</template>
+				</form-cell>
+				<!-- <template v-if="UserStore.Ios_control">
+				</template> -->
 				<!-- #endif -->
 				<!-- #ifndef APP -->
 				<template v-if="props.isIos">
@@ -28,7 +29,6 @@
 					</form-cell>
 				</template>
 				<!-- #endif -->
-
 
 
 				<!-- #ifdef APP -->

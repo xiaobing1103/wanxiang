@@ -34,7 +34,7 @@
 		margin-top: 15rpx;
 		margin-bottom: 9rpx;
 		box-sizing: content-box;
-		background-color: rgb(246, 247, 249);
+		// background-color: #e2e2e2;
 
 	}
 
@@ -47,6 +47,7 @@
 		border-radius: 40rpx;
 		padding: 10rpx;
 		font-size: 27rpx;
+		// background-color: #e2e2e2;
 
 		&_text2 {
 			font-size: 27rpx;

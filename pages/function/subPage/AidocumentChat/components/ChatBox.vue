@@ -35,10 +35,8 @@
 												<up-icon size="12" class="deepSeekThinkBox_icon"
 													:name="item.isShowDeepSeekThinks?'arrow-down':'arrow-up'"></up-icon>
 											</view>
-
 										</template>
 									</view>
-
 									<view class="OverdeepSeekThinkBox_Bottom" v-if="item.isShowDeepSeekThinks">
 										{{item.reasoning_content}}
 									</view>
@@ -103,8 +101,8 @@
 											<view style="width: 100%">
 												<MessageItem :uType="item.echartsType" :content="item.message" />
 												<!-- 模版下面逻辑组件 -->
-													<ChatEelseHandler @passUp="handlePassUp" :msgId="item.id"
-														:text="item.message" />
+												<ChatEelseHandler @passUp="handlePassUp" :msgId="item.id"
+													:text="item.message" />
 												<!--  v-model:currentAsk="currentAsk"  -->
 											</view>
 										</template>

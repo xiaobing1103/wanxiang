@@ -7,7 +7,7 @@
 					<view class="chatBox_main_View_header">
 						<template
 							v-if="item.target == 'assistant' || (item.target == 'system' && messageList.size == 1)">
-							<image class="chatBox_main_View_header_image"
+							<image v-if="item.messageType == 'template'" class="chatBox_main_View_header_image"
 								:style="{width:AppName == 'bianjie' ? '50rpx' : '50rpx'}"
 								:src="commonModel[model].modelIcon">
 							</image>
@@ -102,15 +102,15 @@
 					</template>
 					<!-- 如果不为模板的情况 -->
 					<template v-else>
-						<view class="chatBox_main_View_main" :class="{
+						<view @longpress="longpress(item.message)" class="chatBox_main_View_main" :class="{
 								chatBox_main_View_main_userMessage: item.target == 'user',
 								chatBox_main_View_main_systemMessage: item.target == 'assistant',
 								chatBox_main_View_main_echarts: model == 'echarts'
 							}" :style="{
 								marginLeft: item.target === 'user' ? '0' : '20rpx',
 								marginRight: item.target === 'user' ? '20rpx' : '0',
-								padding: item.messageType == 'text' || item.messageType == 'text2' ? '10rpx' : '0',
-								background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'transparent',
+								padding: item.messageType == 'text' || item.messageType == 'text2' ? '15rpx' : '0',
+								background: item.messageType == 'template' || item.messageType == 'image' ? 'transparent' : 'rgb(245,245,245)',
 								minWidth: item.messageType == 'template' || item.messageType == 'image' ? '1%' : '100%',
 								wordBreak: 'break-all'
 							}">
@@ -134,27 +134,13 @@
 										<!-- 消息不为用户 且 消息是系统发送的 需要遍历循环消息显示的 且消息状态不为等待 -->
 										<template v-if="item.target == 'assistant' && item.state !== 'waite'">
 											<view style="width: 100%">
-												<!-- 如果此条消息为联网搜索 -->
-												<!-- <template v-if="item.isThisChatOpenLianWangSearch">
-													<view class="message-content">
-														<template v-for="(segment, i) in item.segments" :key="i">
-															<MessageItem v-if="segment.type === 'text'"
-																:uType="item.echartsType" :content="segment.content" />
-															<text v-else="segment.type === 'marker'"
-																class="message-content_marked"
-																@click="handleMarkerClick(segment.sourceData)">
-																{{segment.index}}
-															</text>
-														</template>
-													</view>
-												</template> -->
 												<MessageItem :uType="item.echartsType" :content="item.message" />
 												<ChatEelseHandler @passUp="handlePassUp" :msgId="item.id"
 													:text="item.message" />
 											</view>
 										</template>
 										<template v-else>
-											<!-- 如果消息为用户而且 模式为图表模式的 -->
+											<!-- 如果消息为用户 或者 模式为图表模式的 -->
 											<template v-if="item.target == 'user' || model == 'echarts'">
 												<view v-html="item.message"></view>
 											</template>
@@ -189,6 +175,7 @@
 	import { TemplateConfig, noHistoryArr } from '@/pages/chat/chatConfig';
 	import { toCopyText } from '../../../../utils';
 	const ChatStore = useChatStore();
+	const uType = ref('')
 	const { model, selectChatId, messageList } = storeToRefs(ChatStore);
 	const emit = defineEmits(['passToGrandparent', 'echartsOnsendMessage']);
 	const handlePassUp = (value) => {
@@ -201,11 +188,14 @@
 	}
 
 	// 切换模型的监听
-	const uType = ref('')
 	const handleMarkerClick = (index) => {
 		console.log(index)
 	};
 
+	const longpress = (message : string) => {
+		// console.log(message)
+		toCopyText(message)
+	}
 	const ChatTemplateOnSend = (val : any) => {
 		const { uchartsType } = val
 		uType.value = uchartsType
@@ -339,17 +329,20 @@
 			display: flex;
 			box-sizing: border-box;
 			font-size: 27rpx;
-			border-radius: 10rpx;
+
 
 			&_userMessage {
 				min-width: 4% !important;
 				max-width: 70% !important;
-				background: #95ec69 !important;
+				background: rgb(1, 102, 255) !important;
+				color: white;
+				border-radius: 20rpx 0 20rpx 20rpx;
 			}
 
 			&_systemMessage {
 				max-width: 94% !important;
 				min-width: 6% !important;
+				border-radius: 20rpx 20rpx 20rpx 0;
 			}
 
 			&_echarts {
@@ -377,7 +370,7 @@
 	}
 
 	.messageTemplate {
-		background-color: white;
+		background-color: rgb(231, 231, 231);
 		padding: 10rpx;
 		border-radius: 10rpx;
 	}

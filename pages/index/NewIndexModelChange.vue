@@ -7,9 +7,10 @@
 					<text class="text"> {{commonModel[items].NormalTitle}}</text>
 				</view>
 			</template>
-			<view class="items" @click="opeChangeModel">
-				<up-icon name="grid" size="20"></up-icon>
-				<text class="text">更多</text>
+			<view class="items ChangeItems" @click="opeChangeModel">
+				<!-- <up-icon name="grid" size="20"></up-icon> -->
+				<image class="modelIcon" :src="$assets.Change_Model_Icon" mode=""></image>
+				<text class="text">切换</text>
 			</view>
 		</view>
 	</view>
@@ -20,14 +21,16 @@
 	import { generateUUID } from '@/tools/uuid';
 	import { commonModel } from '@/config/modelConfig';
 	import { ModelType } from '@/type/chatData';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 
+	const { $assets } = useGlobalProperties()
 	const showIndexModel : ModelType[] = ['v35', 'DeepSeek_V3', 'v40']
 
 	const ChatStore = useChatStore()
 	const toChatModel = (model : ModelType) => {
-	
-	
-	
+
+
+
 		ChatStore.setModel(model)
 
 		setTimeout(() => {
@@ -36,6 +39,7 @@
 			})
 		}, 500)
 	}
+	
 	const opeChangeModel = () => {
 		ChatStore.setOpenSeletedModel(true)
 	}
@@ -43,18 +47,28 @@
 
 <style lang="scss" scoped>
 	.NewIndexModelChange {
-		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+		box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.13);
 		border-radius: 50rpx;
 		min-height: 80rpx;
 		margin: 20rpx 30rpx;
 		display: flex;
 		align-items: center;
-
+		justify-content: center;
 		.NewIndexModelChangeBox {
 			display: flex;
 			align-items: center;
 			height: 100%;
 			justify-content: space-between;
+
+			.ChangeItems {
+				color: $aichat-placeholader-color;
+
+				.modelIcon {
+					height: 20rpx;
+					width: 20rpx;
+					padding: 0 5rpx;
+				}
+			}
 
 			.items {
 				display: flex;

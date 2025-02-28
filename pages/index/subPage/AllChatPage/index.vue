@@ -1,17 +1,17 @@
 <template>
-	<z-paging fixed ref="srollRef" safe-area-inset-bottom :show-scrollbar="false"
-		:pagingStyle="{ background: 'rgb(246, 247, 249)', padding: '0'}">
+	<z-paging fixed ref="srollRef" safe-area-inset-bottom :show-scrollbar="false" :pagingStyle="{  padding: '0'}">
 		<template #top>
 			<CommonHeader />
 			<view class="chatHeader">
 				<ChangeModel :style="{width:'100%'}" />
 				<up-icon size="20" :customStyle="{margin:'0 20rpx'}" @click="ChatStore.setopenHistoryModel(true)"
-					color="#4955f5" name="clock"></up-icon>
+					color="#c2c2c2" name="clock"></up-icon>
 			</view>
 		</template>
 		<view class="content-wrapper">
 			<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" @echartsOnsendMessage="echartsOnsendMessage"
 				v-model:IsHasChatOverMessage="IsHasChatOverMessage" />
+				
 		</view>
 		<template #bottom>
 			<view class="input-container" :style="{ bottom: keyboardHeight + 'px' }">
@@ -46,7 +46,7 @@
 	import ChatBox from '../CommonChat/ChatBox.vue';
 	import HistoryMessage from '../CommonChat/HistoryMessage.vue';
 	import ChatInputToolTipVue from '../CommonChat/ChatInputToolTip.vue';
-	import NewChatInputToolTip from '../CommonChat/NewChatInputToolTip.vue';
+	import NewChatInputToolTip from '@/components/CommonChat/NewChatInputToolTip.vue';
 	import CommonHeader from '@/components/CommonHeader.vue';
 	import CommonModelSeleted from '@/components/CommonChat/CommonModelSeleted.vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
@@ -441,12 +441,12 @@
 		padding-bottom: constant(safe-area-inset-bottom);
 		padding-bottom: env(safe-area-inset-bottom);
 		/* #endif */
-		background-color: rgb(246, 247, 249);
+		background-color: #fff;
 	}
 
 	.chatBoxLayout {
 		overflow: hidden;
-		background-color: rgb(246, 247, 249);
+		background-color: #fff;
 		// box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
 	}
 

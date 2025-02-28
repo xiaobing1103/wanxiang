@@ -23,7 +23,7 @@
 					</view>
 				</template>
 			</view>
-			<view class="historyBox_footer">
+			<view class="historyBox_footer safe-area-inset-bottom">
 				<view class="historyBox_footer_button">
 					<up-button size="small" type="primary" @click="addChat">新建对话</up-button>
 				</view>
@@ -174,8 +174,8 @@
 			bottom: 0;
 			padding: 20rpx 0;
 			overflow: hidden;
-
-			&_button {
+			
+			&_button {	
 				width: 80% !important;
 				margin: 10rpx 0;
 			}

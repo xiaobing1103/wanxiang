@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 	import { useChatStore, useUserStore } from '@/store';
-	import ChangeModelVue from '@/components/CommonChat/ChangeModel.vue';
+	// import ChangeModelVue from '@/components/CommonChat/ChangeModel.vue';
 	import { seletedModels } from '@/config/modelConfig';
 	import { computed, ref } from 'vue';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
@@ -60,7 +60,8 @@
 			display: flex;
 			flex-direction: column;
 			font-size: 800;
-			font-size: 30rpx;
+			font-size: 32rpx;
+			font-weight: 800;
 		}
 
 		&_section {
@@ -72,7 +73,7 @@
 			&_item {
 				display: flex;
 				align-items: flex-start;
-				border: 1rpx solid #ccc;
+				border: 1rpx solid $aichat-border-224color;
 				border-radius: 15rpx;
 				padding: 20rpx;
 

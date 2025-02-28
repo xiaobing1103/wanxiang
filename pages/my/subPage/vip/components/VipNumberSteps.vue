@@ -2,7 +2,7 @@
 	<view class="VipNumberSteps">
 		<view class="VipNumberSteps_headers">
 			<view class="VipNumberSteps_headers_textbox">
-				{{AppStrName}}AI平台会员权益 · {{TableTh[seletedVipIds].thName}}
+				{{AppStrName}}AI平台会员权益 · {{TableTh[seletedVipIds]?.thName || ''}}
 			</view>
 			<view class="VipNumberSteps_headers_buttonBox" @click="buChaJiaModal = true">
 				<up-icon color="#974d1c" name="question-circle"></up-icon>
@@ -25,7 +25,7 @@
 					<view class="tables_items_td"
 						:style="{fontWeight:'900',fontSize:'23rpx',background:'linear-gradient(to right,#fff7e6,#fadaae)'}">
 						<view class="tables_items_td_text">
-							{{TableTh[seletedVipIds].thName}}
+							{{TableTh[seletedVipIds]?.thName || ''}}
 						</view>
 						<image class="tables_items_td_image" :src="$assets.vipIcon" mode=""></image>
 					</view>

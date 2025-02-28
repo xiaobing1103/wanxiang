@@ -42,7 +42,7 @@
 				</view>
 
 				<view class="loginButton">
-					<up-button :customStyle="{ width: '100%', borderRadius: '15rpx', marginTop: '40rpx' }"
+					<up-button :customStyle="{ width: '100%', borderRadius: '50rpx', marginTop: '40rpx' }"
 						@click="onLogin" type="primary" text="立即登录"></up-button>
 				</view>
 			</view>

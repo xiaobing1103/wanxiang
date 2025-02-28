@@ -28,14 +28,14 @@
 			v-model:popupShow6="popupShow6" />
 		<template #bottom>
 			<m-tabbar native safeBottom>
-				<template v-slot:tabbar_index_2>
+				<!-- <template v-slot:tabbar_index_2>
 					<view class="custom_style">
 						<view class="custom_style_icon">
 							<image class="custom_style_icon_image" :src="$assets.DeepSeekModelIcon" mode=""></image>
 							<image class="custom_style_icon_hotimage" :src="$assets.IndexHotIcon" mode=""></image>
 						</view>
 					</view>
-				</template>
+				</template> -->
 			</m-tabbar>
 		</template>
 	</z-paging>
@@ -73,7 +73,7 @@
 		getIosEnv()
 	})
 	const getIosEnv = () => {
-		$api.get(`api/v1/vip/xcx_pay?version_code=2.3.2.5`, {}, {}).then((res) => {
+		$api.get(`api/v1/vip/xcx_pay?version_code=2.3.2.6`, {}, {}).then((res) => {
 			if (res.code == 200) {
 				isIos.value = true
 			} else {

@@ -41,7 +41,7 @@
 		overflow: hidden;
 		margin-bottom: 9rpx;
 		box-sizing: content-box;
-		background-color: rgb(246, 247, 249);
+
 	}
 
 	.changeView {
@@ -53,7 +53,7 @@
 		border-radius: 40rpx;
 		padding: 10rpx;
 		font-size: 27rpx;
-
+		background-color: #f2f2f2;
 		&_text2 {
 			width: max-content;
 			font-size: 27rpx;

@@ -30,12 +30,14 @@
 				<!-- #ifdef MP-WEIXIN -->
 				<template v-if="isIOS">
 					<view class="fixedBox" :style="{bottom:`${KeyHight > 0 ? KeyHight : safeBottom}px`}">
+						<NewChatInputToolTip />
 						<HomeChatBox v-model:KeyHight="KeyHight" />
 						<ChangeModelButton />
 					</view>
 				</template>
 				<template v-else>
 					<view :class="{fixedBox:KeyHight}" :style="{bottom:`${KeyHight}px`}">
+						<NewChatInputToolTip />
 						<HomeChatBox v-model:KeyHight="KeyHight" />
 						<ChangeModelButton />
 					</view>
@@ -43,12 +45,13 @@
 				<!-- #endif -->
 				<!-- #ifdef APP || H5 -->
 				<view :class="{fixedBox:KeyHight}" :style="{bottom:`${KeyHight}px`}">
+					<NewChatInputToolTip />
 					<HomeChatBox v-model:KeyHight="KeyHight" />
 					<ChangeModelButton />
 				</view>
 				<!-- #endif -->
-				<m-tabbar ref="tabbarRef" :native="true" :current="0" safeBottom>
-					<template v-slot:tabbar_index_2>
+				<m-tabbar ref="tabbarRef" native safeBottom>
+					<!-- <template v-slot:tabbar_index_2>
 						<view class="custom_style">
 							<view class="custom_style_icon">
 								<image class="custom_style_icon_image" :src="$assets.DeepSeekModelIcon"
@@ -57,7 +60,7 @@
 								</image>
 							</view>
 						</view>
-					</template>
+					</template> -->
 				</m-tabbar>
 			</template>
 		</template>
@@ -77,6 +80,7 @@
 	import NewIndexModelChange from './NewIndexModelChange.vue'
 	import ChangeModelButton from './ChangeModelButton/index.vue'
 	import DeepSeekModelSelect from './DeepSeekModelSelect.vue'
+	import NewChatInputToolTip from '@/components/CommonChat/NewChatInputToolTip.vue';
 	import CommonHeader from '@/components/CommonHeader.vue'
 	const ChatStore = useChatStore()
 	const KeyHight = ref<number>(0)
@@ -90,11 +94,11 @@
 		// #endif 
 	})
 
-	onMounted(() => {
-		if (tabbarRef.value) {
-			tabbarRef.value.reload()
-		}
-	})
+	// onMounted(() => {
+	// 	if (tabbarRef.value) {
+	// 		tabbarRef.value.reload()
+	// 	}
+	// })
 
 	const safeBottom = ref(0)
 	const handleModelSelect = (key : string) => {
@@ -120,8 +124,10 @@
 
 <style lang="scss" scoped>
 	.content-wrapper {
+		margin-top: 40rpx;
 		// #ifdef MP-WEIXIN
 		padding-bottom: calc(204rpx + env(safe-area-inset-bottom));
+
 		// #endif
 	}
 

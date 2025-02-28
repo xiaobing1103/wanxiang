@@ -1,6 +1,6 @@
 <template>
 	<z-paging :pagingStyle="{ background: 'rgb(246, 247, 249)',
-		backgroundImage:'url(http://file.1foo.com/2024/10/14/4a280259e65335bb282318abbd51f889.png)', 
+		// backgroundImage:'url(http://file.1foo.com/2024/10/14/4a280259e65335bb282318abbd51f889.png)', 
 		backgroundRepeat: 'no-repeat',
 		padding: '0 30rpx' ,
 		backgroundSize: 'cover',
@@ -11,22 +11,25 @@
 		</template>
 		<view class="loginAccount">
 			<view class="loginAccount_tabList">
-				<up-tabs :activeStyle="{ color: 'rgba(50, 100, 237, 1)', }" :lineWidth="'100rpx'" :lineHeight="'15rpx'"
-					:lineColor="`url(${lineBg}) 100% 100%`" :current="current" @change="changeTabs"
-					:list="tabList"></up-tabs>
+				<up-tabs :inactiveStyle="{...tabstyles}" :activeStyle="{ color: 'rgba(50, 100, 237, 1)', ...tabstyles}"
+					:lineWidth="'100rpx'" :lineHeight="'15rpx'" :lineColor="`url(${lineBg}) 100% 100%`"
+					:current="current" @change="changeTabs" :list="tabList"></up-tabs>
 			</view>
 			<view class="loginAccount_main">
 				<view class="loginAccount_main_input">
 					<up-input :customStyle="{ width: '70%', borderRadius: '10rpx', fontSize: '20rpx' }"
 						:placeholder="type == 'phone' ? '请输入手机号' : '请输入邮箱或用户名'" border="surround"
 						v-model="userComputed"></up-input>
+
 				</view>
+				<up-line :custom-style="lineStyles"></up-line>
 				<template v-if="type == 'phone'">
 					<view class="loginAccount_main_input">
 						<up-input :customStyle="{ width: '70%', borderRadius: '10rpx', fontSize: '20rpx' }"
 							placeholder="请输入手机验证码" border="surround" v-model="PhoneLoginParmas.code"></up-input>
 						<text class="loginAccount_main_input_code" @click="sendCode">获取验证码</text>
 					</view>
+					<up-line :custom-style="lineStyles"></up-line>
 				</template>
 				<template v-else>
 					<view class="loginAccount_main_input">
@@ -34,19 +37,31 @@
 							:customStyle="{ width: '70%', borderRadius: '10rpx', fontSize: '20rpx' }"
 							placeholder="请输入密码" border="surround" v-model="loginParmas.pass"></up-input>
 					</view>
+					<up-line :custom-style="lineStyles"></up-line>
 				</template>
 				<template v-if="type == 'register'">
 					<view class="loginAccount_main_input">
 						<up-input type="text" :customStyle="{ width: '70%', borderRadius: '10rpx', fontSize: '20rpx' }"
 							placeholder="请输入邀请码" border="surround" v-model="loginParmas.code"></up-input>
+
 					</view>
+
+					<up-line :custom-style="lineStyles"></up-line>
 				</template>
 				<view class="vertifyStuas">
 					<text @click="changeType">{{ type == 'phone' ? '账户密码登录' : '短信验证码登录' }}</text>
 				</view>
 				<view class="loginButton">
-					<up-button :customStyle="{ width: '100%', borderRadius: '15rpx', marginTop: '40rpx' }"
+					<up-button :customStyle="{ width: '100%', borderRadius: '50rpx', marginTop: '40rpx' }"
 						@click="onLogin" type="primary" text="立即登录"></up-button>
+				</view>
+				<view class="loginButton">
+					<!-- #ifdef MP-WEIXIN -->
+					<up-button shape="circle"
+						:customStyle="{ background:'#e2e2e2',border:'0',width: '100%', borderRadius: '50rpx', marginTop: '40rpx' }"
+						size="normal" text="手机号快捷登录" open-type="getPhoneNumber"
+						@getphonenumber="decryptPhoneNumber"></up-button>
+					<!-- #endif -->
 				</view>
 			</view>
 		</view>
@@ -59,16 +74,6 @@
 					textSize="18"></up-loading-icon>
 			</view>
 		</up-overlay>
-		<view class="buttonGroup">
-			<!-- #ifdef MP-WEIXIN -->
-			<up-button shape="circle" :customStyle="{width: '85%',marginBottom:'20rpx'}" size="normal" type="success"
-				text="手机号快捷登录" open-type="getPhoneNumber" @getphonenumber="decryptPhoneNumber"></up-button>
-			<!-- #endif -->
-			<!-- <up-button shape="circle" :hairline="false"
-				:customStyle="{width: '85%',borderRadius:'50rpx',border:'1px solid #ccc'}" size="normal" text="账户登录/注册"
-				@click="toAccountLogin"></up-button> -->
-		</view>
-		<!-- <LoginDecscriptions /> -->
 	</z-paging>
 </template>
 
@@ -82,7 +87,15 @@
 	import LoginDecscriptions from '@/components/LoginCom/LoginDecscriptions.vue';
 
 
-
+	const lineStyles = {
+		height: '',
+		width: '88%'
+	}
+	const tabstyles = {
+		position: 'relative',
+		bottom: '-9px',
+		zIndex: '1'
+	}
 
 	const toAccountLogin = () => {
 		uni.navigateTo({
@@ -394,11 +407,11 @@
 				border-radius: 15rpx;
 				justify-content: center;
 				align-items: center;
-				background-color: #f7f7f7;
+				// background-color: #f7f7f7;
 				margin: 20rpx 0;
 
 				&_code {
-					color: #09e0ab;
+					color: $u-primary;
 					padding: 0 15rpx;
 					font-size: 30rpx;
 				}
@@ -416,6 +429,7 @@
 		font-size: 27rpx;
 		color: $u-primary;
 		justify-content: flex-end;
+		margin: 20rpx 0;
 	}
 
 	.warp {

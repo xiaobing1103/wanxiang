@@ -3,7 +3,7 @@
 		<view class="headerItems">
 			<view class="OverSearchBox" @tap="handleSearchTap">
 				<view class="placeHolder">搜索300+热门AI功能</view>
-				<up-icon class="OverSearchBox_icon" name="search" size="28"></up-icon>
+				<up-icon color="rgba(61,61,61)" class="OverSearchBox_icon" name="search" size="28"></up-icon>
 			</view>
 		</view>
 	</view>
@@ -12,6 +12,7 @@
 <script setup lang="ts">
 	import { useChatStore, useScreenStore } from '@/store';
 	const ScreenStore = useScreenStore()
+	
 	// 修改跳转方法
 	const handleSearchTap = () => {
 		// 使用 setTimeout 确保在安卓端正常工作
@@ -41,7 +42,7 @@
 	.NewIndexHeader {
 		z-index: 100;
 		margin: 30rpx 0;
-		// margin
+
 		.headerItems {
 			display: flex;
 			align-items: center;
@@ -51,18 +52,18 @@
 
 			.OverSearchBox {
 				display: flex;
-				border: 4rpx solid #888;
+				border: 4rpx solid $color-blogal-borderColor;
 				border-radius: 15rpx;
 				width: 100%;
 				justify-content: space-between;
 				align-items: center;
-				padding: 10rpx;
+				padding: 16rpx 20rpx;
 				background-color: white;
 
 				.placeHolder {
 					flex: 1;
 					display: flex;
-					color: rgb(191, 191, 191);
+					color: $uni-text-color-placeholder;
 					height: 50rpx;
 					font-size: 28rpx;
 					align-items: center;
