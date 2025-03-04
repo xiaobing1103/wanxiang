@@ -24,11 +24,16 @@ const useScreenStore = defineStore("screen", () => {
 	const systemInfo = ref<UniApp.GetSystemInfoResult>()
 	const NotificationSign = ref('')
 	const saveTime = ref(0)
+	const IsRise = ref(false)
 	const lastModalisOpen = ref(false)
 	const lastDayDatas = ref<lastDayDatasTypes>(null)
 	const openGolbalList = ref<boolean>(false)
 	const setOpenGolbalList = (val : boolean) => {
 		openGolbalList.value = val
+	}
+
+	const setIsRise = (isRise : boolean) => {
+		IsRise.value = isRise
 	}
 
 	const navBarHeight = computed(() => {
@@ -40,7 +45,7 @@ const useScreenStore = defineStore("screen", () => {
 		// #endif
 		return 44
 	})
-	
+
 
 	const safeTopHeight = computed(() => {
 		let height : number = 0
@@ -107,7 +112,9 @@ const useScreenStore = defineStore("screen", () => {
 		changeVieHeight,
 		setOpenGolbalList,
 		openGolbalList,
-		navBarHeight
+		navBarHeight,
+		setIsRise,
+		IsRise
 	}
-}, { unistorage: { paths: ['statusBarHeight', 'menuButtonInfo', 'systemInfo', 'NotificationSign', 'saveTime', 'lastModalisOpen', 'lastDayDatas'] } })
+}, { unistorage: { paths: ['statusBarHeight', 'menuButtonInfo', 'systemInfo', 'NotificationSign', 'saveTime', 'lastModalisOpen', 'lastDayDatas', 'IsRise'] } })
 export default useScreenStore

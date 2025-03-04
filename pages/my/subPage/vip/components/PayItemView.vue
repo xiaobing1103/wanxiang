@@ -1,14 +1,17 @@
 <template>
 	<view class="PayItemView">
 		<view class="PayItemView_header">
-			<!-- #ifdef H5 || APP-->
+			<!-- #ifdef H5 -->
 			<view class="PayItemView_header_zhifubao" @click="onCreateOrder('alipay','h5_yt')">
 				<image class="PayItemView_header_zhifubao_image" :src="$assets.zhiFuBaoIcon" mode=""></image> 支付宝支付
 			</view>
 			<!-- #endif -->
+			<!-- #ifdef MP-WEIXIN  || H5 -->
 			<view class="PayItemView_header_wechat" @click="onCreateOrder('wechat_scan','jsapi')">
 				<image class="PayItemView_header_wechat_image" :src="$assets.weChatIcon" mode=""></image> 微信支付
 			</view>
+			<!-- #endif -->
+
 		</view>
 	</view>
 	<up-modal :show="openModal" :showConfirmButton="false">
@@ -34,9 +37,10 @@
 
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
-	import { useGlobalProperties } from '../../../../../hooks/useGlobalHooks';
+	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
 	import { payModeType, vipShowModals } from '../data'
 	import { useUserStore } from '@/store';
+
 	const { $api, $assets } = useGlobalProperties()
 	const UserStore = useUserStore()
 	const shops = ref([])
@@ -45,20 +49,22 @@
 	const queryUrl = ref('')
 	const isAlipay = ref(false)
 	const props = defineProps<{ payMode : payModeType[], seletedVipIds : number }>()
+
 	const onCreateOrder = async (type : string, pay_Id : string) => {
 		// #ifdef MP-WEIXIN
 		weChatPay()
 		// #endif
 
-		// #ifdef H5 || APP
+		// #ifdef H5 
 		H5pay(type, pay_Id)
 		// #endif
+
 	}
 	const refreshInfo = async () => {
 		const users = await $api.get('api/v1/user/info')
 		if (users.code == 200) {
 			UserStore.userInfo = users.data;
-			uni.$u.toast('支付成功！');
+
 		}
 	}
 	const payOver = async () => {
@@ -67,6 +73,7 @@
 		})
 		if (queryRes.code == 200) {
 			refreshInfo()
+			uni.$u.toast('支付成功！');
 			openModal.value = false
 		} else {
 			uni.$u.toast(queryRes.msg);
@@ -114,7 +121,7 @@
 					success(res) {
 						refreshInfo()
 
-					},	
+					},
 					fail(e) {
 						console.log(e)
 					}

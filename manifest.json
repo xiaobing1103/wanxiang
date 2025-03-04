@@ -2,8 +2,8 @@
     "name" : "边界AIchat",
     "appid" : "__UNI__33AE902",
     "description" : "ai绘画,智能对话,ai作画,图片生成,智能助手,chatgpt,ai聊天,人工智能,ai创作,画图,写作助手,智能问答,艺术创作,ai写作,图像生成",
-    "versionName" : "1.1.14",
-    "versionCode" : 1114,
+    "versionName" : "1.1.16",
+    "versionCode" : 1116,
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : false,

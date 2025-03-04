@@ -11,6 +11,12 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 	const showVip = ref(true)
 	const Ios_control = ref(false)
 	const Ios_controlTG = ref(false)
+
+	const iosOrderHistory = ref([])
+	const setIosOrderHistory = (arr : any[]) => {
+		iosOrderHistory.value = arr
+	}
+
 	const exitLogin = () => {
 		userInfo.value = null
 		token.value = ''
@@ -109,7 +115,9 @@ const useUserStore = defineStore("wanxiang_userInfo", () => {
 		setInvite_code,
 		getIsShowVipuI,
 		Ios_control,
-		Ios_controlTG
+		Ios_controlTG,
+		setIosOrderHistory,
+		iosOrderHistory
 	}
-}, { unistorage: { paths: ['userInfo', 'token', 'invite_code'] } })
+}, { unistorage: { paths: ['userInfo', 'token', 'invite_code', 'iosOrderHistory'] } })
 export default useUserStore

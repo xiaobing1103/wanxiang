@@ -142,7 +142,7 @@
 		if (!ScreenStore.saveTime) {
 			ScreenStore.setSaveTime(Math.floor(Date.now() / 1000))
 		}
-		// #ifndef APP
+
 		const lastDatReq = await $api.post('https://open-app.1foo.com/api/v1/activity/last.day/info', {
 			appid: UserStore.userInfo.appid,
 			time: ScreenStore.saveTime,
@@ -150,16 +150,17 @@
 			vt: UserStore.userInfo.vip
 		})
 		if (lastDatReq.code == 200) {
+			if (lastDatReq.data.end) {
+				ScreenStore.setIsRise(true)
+				return
+			}
 			if (lastDatReq.data.end == false) {
 				ScreenStore.setLastDayDatas(lastDatReq.data)
 				ScreenStore.setLastModalisOpen(true)
-			}
+				ScreenStore.setIsRise(false)
+			}	
 		}
-		// #endif
 	}
-
-
-
 	const lineBg = `http://file.1foo.com/2024/10/14/6cd06f2c1b04a9677b0124fa40d698cc.png`
 	const userStore = useUserStore();
 	const aloneChecked = ref(false);

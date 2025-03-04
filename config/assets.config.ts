@@ -343,6 +343,7 @@ export interface IconConfig {
 	IndexHotIcon : string
 	voiceIcons : string
 	addFilesIcons : string
+	appleStoreIcons : string
 }
 export interface ModelConfig {
 	title : string;
@@ -555,7 +556,8 @@ const iconConfig : IconConfig = {
 	moreHomeIndexIcon: getUrl('/2024/12/26/5abb883a22612e1c8dde43ca475e084c.svg'),
 	IndexHotIcon: getUrl('/2025/02/22/b2ffba60e12c7e1e2d95940269a54b32.svg'),
 	voiceIcons: getUrl('/2025/02/24/859120e76b13bd734e6db6c879ef9eba.svg'),
-	addFilesIcons: getUrl('/2025/02/24/f3a7f0845e26af89a9ed87dcb8599877.svg')
+	addFilesIcons: getUrl('/2025/02/24/f3a7f0845e26af89a9ed87dcb8599877.svg'),
+	appleStoreIcons: getUrl('/2025/03/03/a7d7925a08c6eb8990ad14a7a02391a0.png')
 }
 
 export default iconConfig

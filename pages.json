@@ -148,6 +148,14 @@
 					}
 				},
 				{
+					"path": "appleHistory/index",
+					"name": "AppleHistory",
+					"style": {
+						"navigationBarTitleText": "订单记录",
+						"navigationStyle": "custom"
+					}
+				},
+				{
 					"path": "ActiveRule/index",
 					"name": "ActiveRule",
 					"style": {
