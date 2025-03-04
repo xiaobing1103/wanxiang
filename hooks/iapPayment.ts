@@ -23,33 +23,33 @@ export function useIAPPayment() {
 	const ScreenStore = useScreenStore()
 	const { $api } = useGlobalProperties()
 	// 把对应的apple 商品id 和 对应后端表id 进行映射
-	const bianjieVipId = computed(() => {
-		return ScreenStore.IsRise ? {
-			58: 'com.yfoo.ai.chat2_Rise58',
-			52: 'com.yfoo.ai.chat2_Rise52',
-			120: 'com.yfoo.ai.chat2_Rise120',
-			152: 'com.yfoo.ai.chat2_Rise152',
-			53: 'com.yfoo.ai.chat2_Rise53',
-			78: 'com.yfoo.ai.chat2_Rise78',
-			79: 'com.yfoo.ai.chat2_Rise79'
-		} : {
-			58: 'com.yfoo.ai.chat2_Num58',
-			52: 'com.yfoo.ai.chat2_Num52',
-			120: 'com.yfoo.ai.chat2_Num120',
-			152: 'com.yfoo.ai.chat2_Num152',
-			53: 'com.yfoo.ai.chat2_Num53',
-			78: 'com.yfoo.ai.chat2_Num78',
-			79: 'com.yfoo.ai.chat2_Num79'
-		}
-	})
+	const bianjieVipId = ScreenStore.IsRise ? {
+		58: 'com.yfoo.ai.chat2_Rise58',
+		52: 'com.yfoo.ai.chat2_Rise52',
+		120: 'com.yfoo.ai.chat2_Rise120',
+		152: 'com.yfoo.ai.chat2_Rise152',
+		53: 'com.yfoo.ai.chat2_Rise53',
+		78: 'com.yfoo.ai.chat2_Rise78',
+		79: 'com.yfoo.ai.chat2_Rise79'
+	} : {
+		58: 'com.yfoo.ai.chat2_Num58',
+		52: 'com.yfoo.ai.chat2_Num52',
+		120: 'com.yfoo.ai.chat2_Num120',
+		152: 'com.yfoo.ai.chat2_Num152',
+		53: 'com.yfoo.ai.chat2_Num53',
+		78: 'com.yfoo.ai.chat2_Num78',
+		79: 'com.yfoo.ai.chat2_Num79'
+	}
+
 
 	// 初始化支付通道
 	const initIAPChannel = async () => {
+		uni.showLoading({
+			title: '获取iap通道中...',
+			mask: false
+		});
 		return new Promise((resolve, reject) => {
-			uni.showLoading({
-				title: '获取iap通道中...',
-				mask: false
-			});
+
 			plus.payment.getChannels(channels => {
 				for (let i in channels) {
 					if (channels[i].id === 'appleiap') {
@@ -73,6 +73,7 @@ export function useIAPPayment() {
 
 	// 获取商品信息
 	const getProducts = (productIds : string[]) => {
+		console.log(productIds)
 		return new Promise((resolve, reject) => {
 			try {
 				if (!iapChannel.value) {

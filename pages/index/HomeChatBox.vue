@@ -24,19 +24,13 @@
 	import send from '@/static/send.svg'
 	import { useChatStore } from '@/store';
 	import { useGlobalProperties } from '@/hooks/useGlobalHooks';
+	import { debounce } from '../../utils';
 	const chatValue = ref('')
 	const ChatStore = useChatStore()
 	const isShowCamera = ref(true)
 	const KeyHight = defineModel('KeyHight')
 	const { $assets } = useGlobalProperties()
 	const isIOS = ref(false)
-	// 检查平台
-	// // #ifdef MP-WEIXIN 
-	// onLoad(() => {
-	// 	const system = uni.getSystemInfoSync()
-	// 	isIOS.value = syste·m.platform === 'ios'
-	// })
-	// // #endif 
 	const ClickMessage = (e) => {
 		if (!chatValue.value) {
 			uni.$u.toast('请先输入内容后再进行对话！');
@@ -50,8 +44,14 @@
 			}
 		})
 	}
+	// const keyboardheightchange = (event : any) => {
+	// 	// iOS小程序不处理键盘高度变化
+	// 	if (isIOS.value) return
+	// 	KeyHight.value = event.detail.height
+	// 	console.log('键盘高度变化', event.detail.height)
+	// 	debounce()
+	// }
 	const keyboardheightchange = (event : any) => {
-		// iOS小程序不处理键盘高度变化
 		if (isIOS.value) return
 		KeyHight.value = event.detail.height
 		console.log('键盘高度变化', event.detail.height)

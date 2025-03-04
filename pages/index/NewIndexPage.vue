@@ -43,8 +43,11 @@
 					</view>
 				</template>
 				<!-- #endif -->
+
+
 				<!-- #ifdef APP || H5 -->
-				<view :class="{fixedBox:KeyHight}" :style="{bottom:`${KeyHight}px`}">
+				<view :class="{fixedBox:KeyHight}"
+					:style="{bottom:`${KeyHight > 0? KeyHight- safeBottom :'0'}px`}">
 					<NewChatInputToolTip />
 					<HomeChatBox v-model:KeyHight="KeyHight" />
 					<ChangeModelButton />
@@ -94,11 +97,6 @@
 		// #endif 
 	})
 
-	// onMounted(() => {
-	// 	if (tabbarRef.value) {
-	// 		tabbarRef.value.reload()
-	// 	}
-	// })
 
 	const safeBottom = ref(0)
 	const handleModelSelect = (key : string) => {
@@ -116,8 +114,17 @@
 		// #ifdef MP-WEIXIN
 		safeBottom.value = tabBarHeight + safeAreaBottom
 		// #endif
-		// #ifdef H5
+		// #ifdef H5 
 		safeBottom.value = tabBarHeight
+		// #endif
+		// #ifdef APP
+		uni.getSystemInfo({
+			success: (res) => {
+				// 计算实际的底部安全区域高度
+				safeBottom.value = res.screenHeight - res.safeArea.bottom;
+				console.log('底部安全区域高度:', safeBottom.value);
+			}
+		});
 		// #endif
 	})
 </script>
@@ -125,9 +132,8 @@
 <style lang="scss" scoped>
 	.content-wrapper {
 		margin-top: 40rpx;
-		// #ifdef MP-WEIXIN
+		// #ifdef MP-WEIXIN 
 		padding-bottom: calc(204rpx + env(safe-area-inset-bottom));
-
 		// #endif
 	}
 

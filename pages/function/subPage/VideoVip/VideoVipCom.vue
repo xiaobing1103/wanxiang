@@ -180,6 +180,7 @@
 				shop_id: seletedVips.value,
 				appid: "wx67c8453af19438e3",
 				openid: res.openid,
+				appstore: "wechat"
 			})
 			if (createShopsOrderRes.code == 200) {
 				const { pay } = createShopsOrderRes.data

@@ -21,17 +21,20 @@ const getRandomInt = (min : number, max : number) : number => {
 };
 function debounce(fn : Function, delay : number) {
 	// 1.定义一个定时器, 保存上一次的定时器
-	let timer = null;
+	let timer : any = null;
+
 	// 2.真正执行的函数
-	const _debounce = function () {
+	const _debounce = function (...args : any[]) {
 		// 取消上一次的定时器 
 		if (timer) clearTimeout(timer);
+
 		// 延迟执行
 		timer = setTimeout(() => {
-			// 外部传入的真正要执行的函数
-			fn();
+			// 外部传入的真正要执行的函数，并传递参数
+			fn.apply(this, args);
 		}, delay);
 	};
+
 	return _debounce;
 }
 function isPureLink(str : string) {
@@ -322,7 +325,7 @@ const uploadFileBefore = (
 	acceptTips ?: string,
 	translateType ?: string,
 	maxNumber ?: number,
-	formdataTypes ?: 'file2text' | 'docTypes' 
+	formdataTypes ?: 'file2text' | 'docTypes'
 ) : Promise<{
 	fileName : string,
 	fileType : string,

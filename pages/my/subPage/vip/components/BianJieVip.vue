@@ -69,7 +69,6 @@
 		<up-button :customStyle="buttonStyles" class="applepayButton" @click="applePay">
 			<image class="imgae" :src="$assets.appleStoreIcons" mode=""></image>
 			<text class="buttontext">App Store支付</text>
-
 		</up-button>
 		<!-- #endif -->
 		<VipNumberSteps :seletedVipIds="seletedVipIds" v-model:buChaJiaModal="buChaJiaModal" />

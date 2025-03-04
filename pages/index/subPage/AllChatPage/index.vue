@@ -11,9 +11,21 @@
 		<view class="content-wrapper">
 			<ChatBox ref="ChatBoxRef" @passToGrandparent="handleValue" @echartsOnsendMessage="echartsOnsendMessage"
 				v-model:IsHasChatOverMessage="IsHasChatOverMessage" />
-				
+
 		</view>
 		<template #bottom>
+			<!-- #ifdef APP || H5 -->
+			<view :class="{'input-container': keyboardHeight}"
+				:style="{bottom:`${keyboardHeight > 0 ? keyboardHeight -safeBottom :'0'}px`}">
+				<view class="chatBoxLayout">
+					<NewChatInputToolTip />
+					<Chat v-model:keyboardHeight="keyboardHeight" @onCancel="onCancel" v-model:chatValue="chatValue"
+						@onSend="onSend" />
+					<ChatModelButton />
+				</view>
+			</view>
+			<!-- #endif -->
+			<!-- #ifdef MP-WEIXIN -->
 			<view class="input-container" :style="{ bottom: keyboardHeight + 'px' }">
 				<view class="chatBoxLayout">
 					<NewChatInputToolTip />
@@ -22,6 +34,9 @@
 					<ChatModelButton />
 				</view>
 			</view>
+			<!-- #endif -->
+
+
 		</template>
 	</z-paging>
 	<CommonModelSeleted />
@@ -63,6 +78,7 @@
 	import { globalKeyboard } from "@/hooks/useKeyBoard";
 	import { isString } from "util";
 	const keyboardHeight = ref(0)
+	const safeBottom = ref(0)
 	onShareAppMessage((res) => {
 		const shareInfo = {
 			title: '快来和AI对话吧',
@@ -128,6 +144,16 @@
 				scrollToBottom()
 			}
 		})
+
+		// #ifdef APP
+		uni.getSystemInfo({
+			success: (res) => {
+				// 计算实际的底部安全区域高度
+				safeBottom.value = res.screenHeight - res.safeArea.bottom;
+				console.log('底部安全区域高度:', safeBottom.value);
+			}
+		});
+		// #endif
 	})
 	onUnmounted(() => {
 		ChatStore.changeSelectChatId('')
@@ -427,8 +453,10 @@
 <style scoped lang="scss">
 	.content-wrapper {
 		// 添加底部间距，确保内容不被输入框遮挡
-
+		/* #ifdef MP-WEIXIN */
 		margin-bottom: calc(127px + env(safe-area-inset-bottom)); // 根据实际输入框高度调整
+		/* #endif */
+
 	}
 
 	.input-container {

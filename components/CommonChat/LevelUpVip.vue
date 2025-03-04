@@ -7,40 +7,23 @@
 						<up-icon @click="closeOverLay" size='20' name="close"></up-icon>
 					</view>
 				</view>
-
 				<view class="levelUpVip_header">
 					<view class="levelUpVip_header_title">
-						<!-- #ifdef APP -->
-						提示
-						<!-- #endif -->
-						<!-- #ifndef APP -->
 						升级会员
-						<!-- #endif -->
 					</view>
 				</view>
 
 				<view class="levelUpVip_main">
-					<!-- #ifdef APP -->
-					ios端暂时不支持支付功能，请移步到AIchat网页端进行支付
-					<!-- #endif -->
-					<!-- #ifndef APP -->
 					{{ChatStore.showLevelUpVipContent}}
-					<!-- #endif -->
 				</view>
 				<view class="levelUpVip_footer">
 					<view class="levelUpVip_footer_leftBox" @click="closeOverLay">
 						取消
 					</view>
-					<!-- #ifdef APP -->
-					<view class="levelUpVip_footer_rightBox" @click="closeOverLay">
-						确认
-					</view>
-					<!-- #endif -->
-					<!-- #ifndef APP -->
 					<view class="levelUpVip_footer_rightBox" @click="toVipPath">
 						确认
 					</view>
-					<!-- #endif -->
+
 				</view>
 			</view>
 		</view>
@@ -56,14 +39,7 @@
 		const currentPage = pages[pages.length - 1]; // 获取当前页面对象
 		const currentRoute = '/' + currentPage.route; // 获取当前页面路径
 		if (tabbarPages.includes(currentRoute)) {
-			// uni.showTabBar({
-			// 	success: () => {
-			// 		ChatStore.setShowlevelUpVip(false)
-			// 		uni.navigateTo({
-			// 			url: '/pages/my/subPage/vip/index'
-			// 		})
-			// 	}
-			// })
+
 			ChatStore.setShowlevelUpVip(false)
 			uni.navigateTo({
 				url: '/pages/my/subPage/vip/index'
@@ -77,11 +53,7 @@
 	}
 	const closeOverLay = () => {
 		ChatStore.setShowlevelUpVip(false)
-		// uni.showTabBar({
-		// 	success: () => {
-		// 		ChatStore.setShowlevelUpVip(false)
-		// 	}
-		// })
+
 	}
 </script>
 
